@@ -1,0 +1,10 @@
+/**
+ * Barrel export for all interfaces.
+ * Usage: import { Skill, ActionDefinition, SkillNode } from '@/interfaces';
+ */
+
+export * from './skill.interface';
+export * from './action.interface';
+export * from './node.interface';
+export * from './common.interface';
+export * from './layout.interface';
