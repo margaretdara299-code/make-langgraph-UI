@@ -1,33 +1,26 @@
 /**
- * MainLayout styles — global application shell.
- * All colors reference CSS custom properties from index.css for theming.
+ * MainLayout styles — minimal overrides for AntD Layout.
+ * Most styling is handled by AntD's theme config in theme.config.ts.
  */
 
 .main-layout {
-  display: flex;
-  flex-direction: column;
   min-height: 100vh;
-  background-color: var(--color-bg-primary);
 }
+
+/* ── Header ── */
 
 .main-layout__header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  height: 56px;
-  padding: 0 var(--spacing-lg);
-  background-color: var(--color-nav-bg);
-  color: var(--color-nav-text-bold);
-  box-shadow: var(--color-nav-shadow);
-  z-index: 100;
+  gap: 24px;
 }
 
 .main-layout__logo {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  font-size: var(--font-size-md);
-  letter-spacing: 0.3px;
+  gap: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
 .main-layout__logo-icon {
@@ -35,64 +28,92 @@
   color: var(--color-nav-accent);
 }
 
-.main-layout__logo-text {
-  color: var(--color-nav-text);
+.main-layout__logo-brand {
+  color: var(--color-nav-text-bold) !important;
+  font-size: 16px !important;
 }
 
-.main-layout__logo-text strong {
-  color: var(--color-nav-text-bold);
+.main-layout__logo-sub {
+  color: var(--color-nav-text) !important;
+  font-size: 16px !important;
 }
 
 .main-layout__search {
   flex: 1;
   max-width: 480px;
-  margin: 0 var(--spacing-xl);
 }
 
-.main-layout__search-input {
-  width: 100%;
-  height: 36px;
-  padding: 0 var(--spacing-md);
-  border: 1px solid var(--color-nav-input-border);
-  border-radius: var(--radius-md);
-  background-color: var(--color-nav-input-bg);
-  color: var(--color-nav-input-text);
-  font-size: var(--font-size-base);
-  outline: none;
-  transition: border-color 0.2s;
+.main-layout__search .ant-input-search,
+.main-layout__search .ant-input-wrapper,
+.main-layout__search .ant-input-group-addon,
+.main-layout__search .ant-input,
+.main-layout__search .ant-btn {
+  background-color: var(--color-nav-input-bg) !important;
+  border-color: var(--color-nav-input-border) !important;
 }
 
-.main-layout__search-input::placeholder {
-  color: var(--color-text-secondary);
+.main-layout__search .ant-input-search {
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.main-layout__search-input:focus {
-  border-color: var(--color-nav-accent);
+.main-layout__search .ant-input {
+  color: var(--color-nav-text-bold) !important;
+  border: none !important;
+}
+
+.main-layout__search .ant-input::placeholder {
+  color: var(--color-nav-input-placeholder) !important;
+}
+
+.main-layout__search .ant-btn {
+  box-shadow: none !important;
+  border-left: 1px solid var(--color-nav-input-border) !important;
+}
+
+.main-layout__search .anticon-search {
+  color: var(--color-nav-input-placeholder) !important;
 }
 
 .main-layout__actions {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
+  margin-left: auto;
 }
 
 .main-layout__env-badge {
-  padding: var(--spacing-xs) 10px;
-  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  border-radius: 4px;
   background-color: var(--color-nav-badge-bg);
   color: var(--color-nav-badge-text);
-  font-size: var(--font-size-xs);
+  font-size: 12px;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.main-layout__user-avatar {
-  font-size: var(--font-size-lg);
+.main-layout__user-icon {
+  font-size: 18px;
+  color: var(--color-nav-text);
   cursor: pointer;
 }
 
+/* ── Sidebar ── */
+
+.main-layout__sidebar {
+  border-right: 1px solid var(--color-border);
+}
+
+.main-layout__sidebar .ant-menu-item {
+  font-weight: 500 !important;
+}
+
+.main-layout__sidebar .ant-menu-item .anticon {
+  stroke-width: 40px;
+  /* Makes AntD outlined icons bolder */
+}
+
+/* ── Content ── */
+
 .main-layout__content {
-  flex: 1;
-  padding: var(--spacing-lg);
+  padding: 24px;
+  min-height: calc(100vh - 56px);
 }
