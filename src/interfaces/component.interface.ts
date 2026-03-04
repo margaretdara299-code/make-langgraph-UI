@@ -44,3 +44,16 @@ export interface ModalProps {
     children: ReactNode;
     size?: 'sm' | 'md' | 'lg';
 }
+
+export interface SkillCardProps {
+    skill: import('./skill.interface').Skill;
+    onClick?: () => void;
+}
+
+export interface StatusFilterItemProps {
+    filterKey: string;
+    label: string;
+    count: number;
+    isActive: boolean;
+    onClick: () => void;
+}

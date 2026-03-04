@@ -1,0 +1,76 @@
+/**
+ * Skills Library page styles.
+ * Filter item styles are in StatusFilterItem component.
+ * All colors use CSS variables or AntD theme tokens.
+ */
+
+.skills-library {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ── Page Header ── */
+
+.skills-library__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.skills-library__title {
+    margin: 0 !important;
+}
+
+/* ── Search ── */
+
+.skills-library__search {
+    max-width: 480px;
+}
+
+/* ── Body (sidebar + grid) ── */
+
+.skills-library__body {
+    display: flex;
+    gap: 24px;
+}
+
+/* ── Sidebar Filters ── */
+
+.skills-library__sidebar {
+    flex-shrink: 0;
+    width: 200px;
+}
+
+.skills-library__filter-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-nav-input-placeholder);
+    margin-bottom: 8px;
+    padding: 0 12px;
+}
+
+/* ── Grid ── */
+
+.skills-library__grid-area {
+    flex: 1;
+    min-width: 0;
+}
+
+.skills-library__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+/* ── Loading / Empty ── */
+
+.skills-library__loading,
+.skills-library__empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+}

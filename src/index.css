@@ -19,6 +19,11 @@
 
   /* Colors – Surfaces */
   --color-bg-white: #ffffff;
+  --color-bg-hover: #f5f7fa;
+  --color-bg-active: #dbeafe;
+
+  /* Colors – Brand */
+  --color-primary: #3b82f6;
 
   /* Colors – Borders */
   --color-border: #e2e8f0;
