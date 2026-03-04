@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Input, Spin, Empty, Button, Typography } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useSkills } from '@/hooks';
-import { SkillCard, StatusFilterItem } from '@/components';
+import { SkillCard, StatusFilterItem, CreateSkillModal } from '@/components';
 import { STATUS_FILTER_OPTIONS } from '@/constants';
 import type { UseSkillsFilters } from '@/interfaces';
 import './SkillsLibraryPage.css';
@@ -16,8 +16,9 @@ const { Title } = Typography;
 export default function SkillsLibraryPage() {
     const [activeStatus, setActiveStatus] = useState<string>('all');
     const [searchValue, setSearchValue] = useState('');
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-    const { skills, isLoading, statusCounts, setFilters } = useSkills();
+    const { skills, isLoading, statusCounts, setFilters, refetch } = useSkills();
 
     /** Handle status filter click */
     const handleStatusFilter = (statusKey: string) => {
@@ -48,7 +49,12 @@ export default function SkillsLibraryPage() {
             {/* ── Page Header ── */}
             <div className="skills-library__header">
                 <Title level={3} className="skills-library__title">Skills Library</Title>
-                <Button type="primary" icon={<PlusOutlined />} size="large">
+                <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    size="large"
+                    onClick={() => setIsCreateModalOpen(true)}
+                >
                     Create Skill
                 </Button>
             </div>
@@ -99,6 +105,13 @@ export default function SkillsLibraryPage() {
                     )}
                 </main>
             </div>
+
+            {/* ── Create Skill Modal ── */}
+            <CreateSkillModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onCreated={refetch}
+            />
         </div>
     );
 }

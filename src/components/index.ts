@@ -11,3 +11,7 @@ export { default as Card } from './Card/Card';
 export { default as Modal } from './Modal/Modal';
 export { default as SkillCard } from './SkillCard/SkillCard';
 export { default as StatusFilterItem } from './StatusFilterItem/StatusFilterItem';
+export { default as CreateSkillModal } from './CreateSkillModal/CreateSkillModal';
+export { default as SkillDetailsForm } from './SkillDetailsForm/SkillDetailsForm';
+export { default as CreationMethodCard } from './CreationMethodCard/CreationMethodCard';
+export { default as CreateSkillFooter } from './CreateSkillFooter/CreateSkillFooter';

@@ -57,3 +57,38 @@ export interface StatusFilterItemProps {
     isActive: boolean;
     onClick: () => void;
 }
+
+export interface CreateSkillModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onCreated: () => void;
+}
+
+export interface CreateSkillFormData {
+    name: string;
+    skillKey: string;
+    description: string;
+    category: string;
+    tags: string[];
+    creationMethod: string;
+}
+
+export interface SkillDetailsFormProps {
+    form: import('antd').FormInstance<CreateSkillFormData>;
+}
+
+export interface CreationMethodCardProps {
+    methodKey: string;
+    title: string;
+    description: string;
+    isSelected: boolean;
+    onClick: () => void;
+}
+
+export interface CreateSkillFooterProps {
+    currentStep: number;
+    isSubmitting: boolean;
+    onBack: () => void;
+    onNext: () => void;
+    onCreate: () => void;
+}
