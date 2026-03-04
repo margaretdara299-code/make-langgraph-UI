@@ -1,13 +1,15 @@
 /**
  * Skills Library page — displays all skills with filters, search, and card grid.
+ * Handles card actions (Edit, Test, Publish, Archive, Delete).
  */
 
 import { useState } from 'react';
-import { Input, Spin, Empty, Button, Typography } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Input, Spin, Empty, Button, Typography, Modal, message } from 'antd';
+import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useSkills } from '@/hooks';
 import { SkillCard, StatusFilterItem, CreateSkillModal } from '@/components';
-import { STATUS_FILTER_OPTIONS } from '@/constants';
+import { STATUS_FILTER_OPTIONS, CARD_ACTION_KEYS } from '@/constants';
+import { deleteSkill, updateSkillStatus } from '@/services';
 import type { UseSkillsFilters } from '@/interfaces';
 import './SkillsLibraryPage.css';
 
@@ -42,6 +44,58 @@ export default function SkillsLibraryPage() {
             newFilters.status = activeStatus;
         }
         setFilters(newFilters);
+    };
+
+    /** Handle card action menu clicks */
+    const handleCardAction = (actionKey: string, skillId: string) => {
+        switch (actionKey) {
+            case CARD_ACTION_KEYS.DELETE:
+                Modal.confirm({
+                    title: 'Delete Skill',
+                    icon: <ExclamationCircleOutlined />,
+                    content: 'Are you sure you want to delete this skill? This action cannot be undone.',
+                    okText: 'Delete',
+                    okType: 'danger',
+                    onOk: async () => {
+                        const result = await deleteSkill(skillId);
+                        if (result.success) {
+                            message.success('Skill deleted successfully');
+                            refetch();
+                        } else {
+                            message.error(result.error || 'Failed to delete skill');
+                        }
+                    },
+                });
+                break;
+
+            case CARD_ACTION_KEYS.PUBLISH:
+                handleStatusChange(skillId, 'published', 'Skill published successfully');
+                break;
+
+            case CARD_ACTION_KEYS.UNPUBLISH:
+                handleStatusChange(skillId, 'draft', 'Skill moved back to Draft');
+                break;
+
+            case CARD_ACTION_KEYS.ARCHIVE:
+                handleStatusChange(skillId, 'archived', 'Skill archived successfully');
+                break;
+
+            case CARD_ACTION_KEYS.EDIT:
+            case CARD_ACTION_KEYS.TEST:
+                message.info('Coming in Phase 3...');
+                break;
+        }
+    };
+
+    /** Helper to update skill status */
+    const handleStatusChange = async (skillId: string, status: 'draft' | 'published' | 'archived', successMsg: string) => {
+        const result = await updateSkillStatus(skillId, status);
+        if (result.success) {
+            message.success(successMsg);
+            refetch();
+        } else {
+            message.error(result.error || 'Failed to update skill');
+        }
     };
 
     return (
@@ -99,7 +153,11 @@ export default function SkillsLibraryPage() {
                     ) : (
                         <div className="skills-library__grid">
                             {skills.map((skill) => (
-                                <SkillCard key={skill.id} skill={skill} />
+                                <SkillCard
+                                    key={skill.id}
+                                    skill={skill}
+                                    onAction={handleCardAction}
+                                />
                             ))}
                         </div>
                     )}

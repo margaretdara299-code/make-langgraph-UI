@@ -113,6 +113,21 @@ export async function deleteSkill(
     return { success: true, data: null };
 }
 
+/** Update a skill's status (mock). */
+export async function updateSkillStatus(
+    id: string,
+    status: 'draft' | 'published' | 'archived'
+): Promise<ApiResponse<Skill>> {
+    await delay(200);
+    const skill = skills.find((s) => s.id === id);
+    if (!skill) {
+        return { success: false, error: 'Skill not found.' };
+    }
+    skill.status = status;
+    skill.updatedAt = new Date().toISOString();
+    return { success: true, data: skill };
+}
+
 /** Get counts of skills grouped by status. */
 export async function fetchSkillStatusCounts(): Promise<
     Record<string, number>

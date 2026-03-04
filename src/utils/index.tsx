@@ -4,3 +4,4 @@
 
 export * from './skill.utils';
 export * from './format.utils';
+export * from './skill-card.utils';

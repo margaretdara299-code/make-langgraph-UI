@@ -48,6 +48,7 @@ export interface ModalProps {
 export interface SkillCardProps {
     skill: import('./skill.interface').Skill;
     onClick?: () => void;
+    onAction?: (actionKey: string, skillId: string) => void;
 }
 
 export interface StatusFilterItemProps {

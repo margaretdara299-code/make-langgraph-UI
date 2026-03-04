@@ -72,3 +72,13 @@ export const METHOD_ICONS: Record<string, React.ReactNode> = {
     template: <CopyOutlined className="create-skill__method-icon" />,
     ai: <RobotOutlined className="create-skill__method-icon" />,
 };
+
+/** Action keys for SkillCard dropdown menu */
+export const CARD_ACTION_KEYS = {
+    EDIT: 'edit',
+    TEST: 'test',
+    PUBLISH: 'publish',
+    UNPUBLISH: 'unpublish',
+    ARCHIVE: 'archive',
+    DELETE: 'delete',
+} as const;

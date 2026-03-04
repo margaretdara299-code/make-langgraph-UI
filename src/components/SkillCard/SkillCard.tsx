@@ -1,25 +1,34 @@
 /**
  * SkillCard — displays a single skill as a card in the Skills Library grid.
+ * Includes a dropdown action menu for Edit, Test, Publish, Archive, Delete.
  */
 
-import { Card, Tag, Typography, Space, Tooltip } from 'antd';
+import { Card, Tag, Typography, Space, Tooltip, Dropdown } from 'antd';
+import type { MenuProps } from 'antd';
 import {
     ClockCircleOutlined,
     UserOutlined,
     TagOutlined,
+    MoreOutlined,
 } from '@ant-design/icons';
 import StatusPill from '@/components/StatusPill/StatusPill';
+import { getMenuItems } from '@/utils';
 import type { SkillCardProps } from '@/interfaces';
 import './SkillCard.css';
 
 const { Text, Paragraph } = Typography;
 
-export default function SkillCard({ skill, onClick }: SkillCardProps) {
+export default function SkillCard({ skill, onClick, onAction }: SkillCardProps) {
     const updatedDate = new Date(skill.updatedAt).toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
         year: 'numeric',
     });
+
+    const handleMenuClick: MenuProps['onClick'] = (e) => {
+        e.domEvent.stopPropagation();
+        onAction?.(e.key, skill.id);
+    };
 
     return (
         <Card
@@ -28,8 +37,20 @@ export default function SkillCard({ skill, onClick }: SkillCardProps) {
             onClick={onClick}
         >
             <div className="skill-card__header">
-                <StatusPill status={skill.status} />
-                <Tag color="blue">{skill.environment.toUpperCase()}</Tag>
+                <div className="skill-card__header-left">
+                    <StatusPill status={skill.status} />
+                    <Tag color="blue">{skill.environment.toUpperCase()}</Tag>
+                </div>
+                <Dropdown
+                    menu={{ items: getMenuItems(skill.status), onClick: handleMenuClick }}
+                    trigger={['click']}
+                    placement="bottomRight"
+                >
+                    <MoreOutlined
+                        className="skill-card__actions-btn"
+                        onClick={(e) => e.stopPropagation()}
+                    />
+                </Dropdown>
             </div>
 
             <Text strong className="skill-card__name">{skill.name}</Text>

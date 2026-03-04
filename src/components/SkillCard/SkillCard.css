@@ -17,8 +17,28 @@
 .skill-card__header {
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: space-between;
     margin-bottom: 12px;
+}
+
+.skill-card__header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.skill-card__actions-btn {
+    font-size: 18px;
+    padding: 4px;
+    border-radius: 4px;
+    color: var(--color-nav-input-placeholder);
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.skill-card__actions-btn:hover {
+    color: var(--color-nav-input-text);
+    background-color: var(--color-bg-hover);
 }
 
 .skill-card__name {
