@@ -30,15 +30,20 @@ export default function SkillDesignerCanvas() {
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
     const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
 
-    // Track which node is actively opened in the properties drawer (prevents opening on drag)
+    // Track which node or edge is actively opened in the properties drawer
     const [drawerNodeId, setDrawerNodeId] = useState<string | null>(null);
+    const [drawerEdgeId, setDrawerEdgeId] = useState<string | null>(null);
 
     // Call our extracted drag & drop hook
     const { onDragOver, onDrop } = useCanvasDragDrop(reactFlowInstance, setNodes);
 
     /** Connect two nodes */
     const onConnect: OnConnect = useCallback(
-        (params) => setEdges((eds) => addEdge({ ...params, animated: true }, eds)),
+        (params) => setEdges((eds) => addEdge({
+            ...params,
+            animated: true,
+            data: { routeType: 'unconditional' },
+        }, eds)),
         [setEdges]
     );
 
@@ -61,11 +66,26 @@ export default function SkillDesignerCanvas() {
                     nodeTypes={nodeTypes}
                     fitView
                     deleteKeyCode={['Backspace', 'Delete']}
-                    onNodeClick={(_, node) => setDrawerNodeId(node.id)}
-                    onPaneClick={() => setDrawerNodeId(null)}
+                    onNodeClick={(_, node) => {
+                        setDrawerNodeId(node.id);
+                        setDrawerEdgeId(null);
+                    }}
+                    onEdgeClick={(_, edge) => {
+                        setDrawerEdgeId(edge.id);
+                        setDrawerNodeId(null);
+                    }}
+                    onPaneClick={() => {
+                        setDrawerNodeId(null);
+                        setDrawerEdgeId(null);
+                    }}
                     onNodesDelete={(deleted) => {
                         if (deleted.some(node => node.id === drawerNodeId)) {
                             setDrawerNodeId(null);
+                        }
+                    }}
+                    onEdgesDelete={(deleted) => {
+                        if (deleted.some(edge => edge.id === drawerEdgeId)) {
+                            setDrawerEdgeId(null);
                         }
                     }}
                 >
@@ -79,7 +99,11 @@ export default function SkillDesignerCanvas() {
                 </ReactFlow>
                 <PropertiesDrawer
                     selectedNodeId={drawerNodeId}
-                    onClose={() => setDrawerNodeId(null)}
+                    selectedEdgeId={drawerEdgeId}
+                    onClose={() => {
+                        setDrawerNodeId(null);
+                        setDrawerEdgeId(null);
+                    }}
                 />
             </div>
         </div>

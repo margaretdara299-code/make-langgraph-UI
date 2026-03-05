@@ -4,39 +4,46 @@
  */
 
 import { Drawer, Input, Form, Typography, Select, Button, theme } from 'antd';
-import { useReactFlow, useNodes } from '@xyflow/react';
+import { useReactFlow, useNodes, useEdges } from '@xyflow/react';
 import { useEffect } from 'react';
-import type { CanvasNodeData, PropertiesDrawerProps } from '@/interfaces';
+import type { CanvasNodeData, CanvasEdgeData, PropertiesDrawerProps } from '@/interfaces';
 import './PropertiesDrawer.css';
 
 const { Title, Text } = Typography;
 
-export default function PropertiesDrawer({ selectedNodeId, onClose }: PropertiesDrawerProps) {
+export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClose }: PropertiesDrawerProps) {
     const { token } = theme.useToken();
-    const { setNodes } = useReactFlow();
+    const { setNodes, setEdges } = useReactFlow();
     const nodes = useNodes();
+    const edges = useEdges();
 
-    // Find the reactive node instance based on the explicit click ID
-    const selectedNode = selectedNodeId ? nodes.find(n => n.id === selectedNodeId) || null : null;
+    // Find the reactive node or edge instance based on the explicit click ID
+    const selectedNode = selectedNodeId ? nodes.find(node => node.id === selectedNodeId) || null : null;
+    const selectedEdge = selectedEdgeId ? edges.find(edge => edge.id === selectedEdgeId) || null : null;
     const [form] = Form.useForm();
 
-    // Re-surface the correct node title onto the form fields when a new one is clicked
+    // Re-surface the correct node/edge title onto the form fields when a new one is clicked
     useEffect(() => {
         if (selectedNode) {
             form.setFieldsValue({
                 label: (selectedNode.data as unknown as CanvasNodeData).label,
             });
+        } else if (selectedEdge) {
+            const edgeData = selectedEdge.data as unknown as CanvasEdgeData | undefined;
+            form.setFieldsValue({
+                routeType: edgeData?.routeType || 'unconditional',
+                conditionLabel: edgeData?.conditionLabel || '',
+            });
         } else {
             form.resetFields();
         }
-    }, [selectedNodeId, selectedNode?.data?.label, form]);
+    }, [selectedNodeId, selectedEdgeId, selectedNode?.data?.label, selectedEdge?.data, form]);
 
-    // When the form values change (i.e. the user types in the label input)
-    // we want to instantly update the React Flow node data so the canvas updates.
-    const handleValuesChange = (changedValues: any) => {
-        if (changedValues.label !== undefined && selectedNode) {
-            setNodes((nds) =>
-                nds.map((node) => {
+    // When the form values change we instantly update the React Flow instance
+    const handleValuesChange = (changedValues: any, allValues: any) => {
+        if (selectedNode && changedValues.label !== undefined) {
+            setNodes((nodes) =>
+                nodes.map((node) => {
                     if (node.id === selectedNode.id) {
                         return {
                             ...node,
@@ -47,6 +54,27 @@ export default function PropertiesDrawer({ selectedNodeId, onClose }: Properties
                         };
                     }
                     return node;
+                })
+            );
+        } else if (selectedEdge) {
+            setEdges((edges) =>
+                edges.map((edge) => {
+                    if (edge.id === selectedEdge.id) {
+                        const newRouteType = allValues.routeType;
+                        // Use conditionLabel as the visual edge 'label' in ReactFlow if Route is conditional
+                        const labelText = newRouteType === 'conditional' ? allValues.conditionLabel : (newRouteType === 'fallback' ? 'Default' : undefined);
+                        return {
+                            ...edge,
+                            label: labelText,
+                            labelShowBg: !!labelText,
+                            data: {
+                                ...edge.data,
+                                routeType: newRouteType,
+                                conditionLabel: allValues.conditionLabel,
+                            },
+                        };
+                    }
+                    return edge;
                 })
             );
         }
@@ -104,32 +132,15 @@ export default function PropertiesDrawer({ selectedNodeId, onClose }: Properties
         }
     };
 
-    // Drawer is open if exactly ONE node is selected
-    const isOpen = selectedNode !== null;
+    // Drawer is open if exactly ONE node or exactly ONE edge is selected
+    const isOpen = selectedNode !== null || selectedEdge !== null;
     const nodeData = selectedNode?.data as unknown as CanvasNodeData | undefined;
+    const edgeData = selectedEdge?.data as unknown as CanvasEdgeData | undefined;
 
-    return (
-        <Drawer
-            title={
-                <div className="properties-drawer__header">
-                    <span className="properties-drawer__icon">{nodeData?.icon}</span>
-                    <span className="properties-drawer__title-text">Node Properties</span>
-                </div>
-            }
-            placement="right"
-            closable={true}
-            onClose={onClose}
-            open={isOpen}
-            mask={false} // Allow interacting with the canvas while drawer is open
-            width={340}
-            className="properties-drawer"
-            zIndex={10} // Keep it above the canvas but below modals
-            styles={{
-                header: { padding: '16px 20px', background: token.colorBgContainer },
-                body: { padding: '20px', background: token.colorBgLayout },
-            }}
-        >
-            {nodeData && (
+    // Render forms based on what is selected
+    const renderContent = () => {
+        if (selectedNode && nodeData) {
+            return (
                 <div className="properties-drawer__content">
                     {/* Node Metadata Card */}
                     <div className="properties-drawer__meta" style={{ background: token.colorBgContainer, borderColor: token.colorBorderSecondary }}>
@@ -176,16 +187,123 @@ export default function PropertiesDrawer({ selectedNodeId, onClose }: Properties
                             Apply
                         </Button>
                         <Button danger variant="outlined" block onClick={() => {
-                            if (selectedNode) {
-                                setNodes((nds) => nds.filter(n => n.id !== selectedNode.id));
-                                onClose();
-                            }
+                            setNodes((nds) => nds.filter(n => n.id !== selectedNode.id));
+                            onClose();
                         }}>
                             Delete Node
                         </Button>
                     </div>
                 </div>
-            )}
+            );
+        }
+
+        if (selectedEdge) {
+            return (
+                <div className="properties-drawer__content">
+                    <div className="properties-drawer__meta" style={{ background: token.colorBgContainer, borderColor: token.colorBorderSecondary }}>
+                        <div className="properties-drawer__meta-item">
+                            <Text type="secondary">Connection</Text>
+                            <Text strong>Edge Route</Text>
+                        </div>
+                        <div className="properties-drawer__meta-item">
+                            <Text type="secondary">Current Route</Text>
+                            <div className="properties-drawer__capability-badge badge-default" style={{ textTransform: 'capitalize' }}>
+                                {edgeData?.routeType || 'unconditional'}
+                            </div>
+                        </div>
+                        <div className="properties-drawer__meta-item">
+                            <Text type="secondary">From Node</Text>
+                            <Text code>{selectedEdge.source}</Text>
+                        </div>
+                        <div className="properties-drawer__meta-item">
+                            <Text type="secondary">To Node</Text>
+                            <Text code>{selectedEdge.target}</Text>
+                        </div>
+                    </div>
+
+                    <div className="properties-drawer__divider" />
+
+                    <Title level={5} className="properties-drawer__section-title">Routing Configuration</Title>
+                    <Form
+                        form={form}
+                        layout="vertical"
+                        onValuesChange={handleValuesChange}
+                        className="properties-drawer__form"
+                        initialValues={{ routeType: 'unconditional' }}
+                    >
+                        <Form.Item label="Route Type" name="routeType">
+                            <Select
+                                options={[
+                                    { value: 'unconditional', label: 'Unconditional (Always)' },
+                                    { value: 'conditional', label: 'Conditional' },
+                                    { value: 'fallback', label: 'Default / Fallback' },
+                                ]}
+                            />
+                        </Form.Item>
+
+                        {/* Render condition label input only when conditional route type is selected */}
+                        <Form.Item
+                            noStyle
+                            shouldUpdate={(prevValues, currentValues) => prevValues.routeType !== currentValues.routeType}
+                        >
+                            {({ getFieldValue }) =>
+                                getFieldValue('routeType') === 'conditional' ? (
+                                    <Form.Item
+                                        label="Condition Label"
+                                        name="conditionLabel"
+                                        rules={[{ required: true, message: 'Please provide a condition label' }]}
+                                    >
+                                        <Input placeholder="e.g. status == 'success'" />
+                                    </Form.Item>
+                                ) : null
+                            }
+                        </Form.Item>
+                    </Form>
+
+                    <div style={{ marginTop: '32px', display: 'flex', gap: '8px' }}>
+                        <Button type="primary" block onClick={() => form.submit()}>
+                            Apply
+                        </Button>
+                        <Button danger variant="outlined" block onClick={() => {
+                            setEdges((edges) => edges.filter(edge => edge.id !== selectedEdge.id));
+                            onClose();
+                        }}>
+                            Delete Edge
+                        </Button>
+                    </div>
+                </div>
+            );
+        }
+
+        return null;
+    };
+
+    return (
+        <Drawer
+            title={
+                <div className="properties-drawer__header">
+                    <span className="properties-drawer__icon">
+                        {selectedNode ? nodeData?.icon : selectedEdge ? '↪️' : ''}
+                    </span>
+                    <span className="properties-drawer__title-text">
+                        {selectedNode ? 'Node Properties' : 'Edge Properties'}
+                    </span>
+                </div>
+            }
+            placement="right"
+            closable={true}
+            onClose={onClose}
+            open={isOpen}
+            mask={false} // Allow interacting with the canvas while drawer is open
+            width={340}
+            className="properties-drawer"
+            zIndex={10} // Keep it above the canvas but below modals
+            styles={{
+                header: { padding: '16px 20px', background: token.colorBgContainer },
+                body: { padding: '20px', background: token.colorBgLayout },
+            }}
+        >
+            {renderContent()}
         </Drawer>
     );
 }

@@ -96,5 +96,6 @@ export interface CreateSkillFooterProps {
 
 export interface PropertiesDrawerProps {
     selectedNodeId: string | null;
+    selectedEdgeId?: string | null;
     onClose: () => void;
 }

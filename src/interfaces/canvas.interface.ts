@@ -14,6 +14,12 @@ export interface CanvasNodeData {
     icon: string;
 }
 
+/** Data payload attached to each canvas edge */
+export interface CanvasEdgeData {
+    routeType: 'unconditional' | 'conditional' | 'fallback';
+    conditionLabel?: string;
+}
+
 /** Props for a single draggable item in the Node Palette */
 export interface NodePaletteItemProps {
     action: import('./action.interface').ActionDefinition;
