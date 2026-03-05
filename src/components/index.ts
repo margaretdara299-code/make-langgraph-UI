@@ -15,3 +15,8 @@ export { default as CreateSkillModal } from './CreateSkillModal/CreateSkillModal
 export { default as SkillDetailsForm } from './SkillDetailsForm/SkillDetailsForm';
 export { default as CreationMethodCard } from './CreationMethodCard/CreationMethodCard';
 export { default as CreateSkillFooter } from './CreateSkillFooter/CreateSkillFooter';
+export { default as ActionNode } from './ActionNode/ActionNode';
+export { default as NodePaletteItem } from './NodePaletteItem/NodePaletteItem';
+export { default as NodePalette } from './NodePalette/NodePalette';
+export { default as SkillDesignerCanvas } from './SkillDesignerCanvas/SkillDesignerCanvas';
+

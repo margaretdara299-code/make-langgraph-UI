@@ -1,0 +1,39 @@
+/**
+ * SkillDesignerPage styles.
+ * Full-height layout: palette (left) + canvas (right).
+ */
+
+.skill-designer {
+    display: flex;
+    height: calc(100vh - 64px);
+    margin: -24px;
+    overflow: hidden;
+}
+
+.skill-designer__canvas {
+    flex: 1;
+    min-width: 0;
+    background: var(--color-bg-canvas);
+}
+
+/* React Flow overrides */
+.skill-designer__canvas .react-flow__pane {
+    cursor: default;
+}
+
+.skill-designer__canvas .react-flow__edge-path {
+    stroke: var(--color-primary);
+    stroke-width: 2;
+}
+
+.skill-designer__canvas .react-flow__controls {
+    box-shadow: var(--shadow-sm-strong);
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+}
+
+.skill-designer__canvas .react-flow__minimap {
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm-strong);
+}

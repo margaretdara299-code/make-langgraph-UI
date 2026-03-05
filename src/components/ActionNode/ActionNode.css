@@ -1,0 +1,72 @@
+/**
+ * ActionNode styles — custom canvas node appearance.
+ */
+
+.action-node {
+    background: var(--color-bg-white);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    min-width: 180px;
+    max-width: 220px;
+    box-shadow: var(--shadow-sm);
+    font-family: inherit;
+    overflow: hidden;
+    transition: box-shadow 0.15s ease;
+}
+
+.action-node:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.action-node__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-top: 3px solid transparent;
+}
+
+.action-node__icon {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.action-node__label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-nav-input-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.action-node__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px 8px;
+    border-top: 1px solid var(--color-border);
+    background: var(--color-bg-footer);
+}
+
+.action-node__capability-badge {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--color-text-white);
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.action-node__category {
+    font-size: 11px;
+    color: var(--color-nav-input-placeholder);
+}
+
+.action-node__handle {
+    width: 8px !important;
+    height: 8px !important;
+    background: var(--color-primary) !important;
+    border: 2px solid var(--color-bg-white) !important;
+}

@@ -1,13 +1,15 @@
 /**
- * Placeholder for the Skill Designer (Canvas) page.
- * Will be implemented in Phase 3 of the roadmap.
+ * SkillDesignerPage — the visual orchestrator canvas route.
+ * Acts as a wrapper for the React Flow provider and the canvas component.
  */
+
+import { ReactFlowProvider } from '@xyflow/react';
+import SkillDesignerCanvas from '@/components/SkillDesignerCanvas/SkillDesignerCanvas';
 
 export default function SkillDesignerPage() {
     return (
-        <div>
-            <h1>Skill Designer</h1>
-            <p>Coming in Phase 3...</p>
-        </div>
+        <ReactFlowProvider>
+            <SkillDesignerCanvas />
+        </ReactFlowProvider>
     );
 }

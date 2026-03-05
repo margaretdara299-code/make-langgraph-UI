@@ -21,12 +21,22 @@
   --color-bg-white: #ffffff;
   --color-bg-hover: #f5f7fa;
   --color-bg-active: #dbeafe;
+  --color-bg-footer: #fafbfc;
+  --color-bg-canvas: #f8fafc;
+
+  /* Colors - Text */
+  --color-text-white: #ffffff;
 
   /* Colors – Brand */
   --color-primary: #3b82f6;
 
   /* Colors – Borders */
   --color-border: #e2e8f0;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-sm-strong: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.14);
 }
 
 /* ── CSS Reset ── */

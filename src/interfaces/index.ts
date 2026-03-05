@@ -9,3 +9,4 @@ export * from './node.interface';
 export * from './common.interface';
 export * from './layout.interface';
 export * from './component.interface';
+export * from './canvas.interface';
