@@ -1,0 +1,75 @@
+/**
+ * ConnectorNode styles.
+ */
+
+.connector-node {
+    background: var(--color-bg-white);
+    border: 2px solid var(--color-node-connector);
+    /* Sky blue border for connectors */
+    border-radius: 8px;
+    /* Slightly squarer than actions */
+    min-width: 180px;
+    max-width: 220px;
+    box-shadow: var(--shadow-sm);
+    font-family: inherit;
+    overflow: hidden;
+    transition: box-shadow 0.15s ease;
+}
+
+.connector-node:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.connector-node__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--color-node-connector-bg);
+    /* Light blue background for the top */
+}
+
+.connector-node__icon {
+    font-size: 16px;
+    line-height: 1;
+}
+
+.connector-node__label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-node-connector-text);
+    /* Deep blue text */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.connector-node__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px 8px;
+    border-top: 1px solid var(--color-border);
+    background: var(--color-bg-footer);
+}
+
+.connector-node__badge {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--color-node-connector);
+    letter-spacing: 0.5px;
+}
+
+.connector-node__category {
+    font-size: 11px;
+    color: var(--color-nav-input-placeholder);
+}
+
+.connector-node__handle {
+    width: 10px !important;
+    height: 6px !important;
+    border-radius: 2px !important;
+    /* Squarish handles for connectors */
+    background: var(--color-node-connector) !important;
+    border: none !important;
+}

@@ -32,9 +32,14 @@ export default function useCanvasDragDrop(
                 y: event.clientY,
             });
 
+            let nodeType = 'action';
+            if (data.category.toLowerCase() === 'triggers') nodeType = 'trigger';
+            else if (data.category.toLowerCase() === 'connectors') nodeType = 'connector';
+            else if (data.category.toLowerCase() === 'ends') nodeType = 'end';
+
             const newNode: Node = {
                 id: getNextNodeId(),
-                type: 'action',
+                type: nodeType,
                 position,
                 data: data as any,
             };

@@ -7,6 +7,64 @@
 import type { ActionDefinition } from '@/interfaces';
 
 export const MOCK_ACTIONS: ActionDefinition[] = [
+    // ── Triggers ──
+    {
+        id: 'act-trg-01',
+        actionKey: 'trigger.schedule',
+        name: 'Schedule Trigger',
+        description: 'Starts the workflow on a defined cron schedule.',
+        category: 'Triggers',
+        capability: 'api',
+        scope: 'global',
+        icon: '⏱️',
+        defaultNodeTitle: 'Scheduled Run',
+        createdAt: '2026-03-01T10:00:00Z',
+        updatedAt: '2026-03-01T09:00:00Z',
+    },
+
+    // ── Connectors ──
+    {
+        id: 'act-cnn-01',
+        actionKey: 'connector.emr',
+        name: 'Epic EMR Connector',
+        description: 'Bidirectional sync with the facility EMR.',
+        category: 'Connectors',
+        capability: 'api',
+        scope: 'client',
+        icon: '🏥',
+        defaultNodeTitle: 'Epic Binding',
+        createdAt: '2026-03-01T10:00:00Z',
+        updatedAt: '2026-03-01T09:00:00Z',
+    },
+
+    // ── Ends ──
+    {
+        id: 'act-end-01',
+        actionKey: 'end.success',
+        name: 'Success Flow',
+        description: 'Marks the workflow completion as successful.',
+        category: 'Ends',
+        capability: 'rules',
+        scope: 'global',
+        icon: '✅',
+        defaultNodeTitle: 'Success',
+        createdAt: '2026-03-01T10:00:00Z',
+        updatedAt: '2026-03-01T09:00:00Z',
+    },
+    {
+        id: 'act-end-02',
+        actionKey: 'end.error',
+        name: 'Error Flow',
+        description: 'Marks the workflow completion as an error state.',
+        category: 'Ends',
+        capability: 'rules',
+        scope: 'global',
+        icon: '🚨',
+        defaultNodeTitle: 'Error',
+        createdAt: '2026-03-01T10:00:00Z',
+        updatedAt: '2026-03-01T09:00:00Z',
+    },
+
     // ── API Capability ──
     {
         id: 'act-001',

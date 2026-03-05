@@ -30,6 +30,20 @@
   /* Colors – Brand */
   --color-primary: #3b82f6;
 
+  /* Colors - Status */
+  --color-success: #10b981;
+  --color-success-text: #047857;
+  --color-error: #ef4444;
+  --color-error-text: #b91c1c;
+
+  /* Colors - Node Types */
+  --color-node-trigger: #8b5cf6;
+  --color-node-trigger-bg: #f3e8ff;
+  --color-node-trigger-text: #4c1d95;
+  --color-node-connector: #0ea5e9;
+  --color-node-connector-bg: #e0f2fe;
+  --color-node-connector-text: #0369a1;
+
   /* Colors – Borders */
   --color-border: #e2e8f0;
 

@@ -19,4 +19,6 @@ export { default as ActionNode } from './ActionNode/ActionNode';
 export { default as NodePaletteItem } from './NodePaletteItem/NodePaletteItem';
 export { default as NodePalette } from './NodePalette/NodePalette';
 export { default as SkillDesignerCanvas } from './SkillDesignerCanvas/SkillDesignerCanvas';
-
+export { default as TriggerNode } from './TriggerNode/TriggerNode';
+export { default as ConnectorNode } from './ConnectorNode/ConnectorNode';
+export { default as EndNode } from './EndNode/EndNode';

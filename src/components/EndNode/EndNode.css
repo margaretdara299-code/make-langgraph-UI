@@ -1,0 +1,63 @@
+/**
+ * EndNode styles.
+ */
+
+.end-node {
+    border-radius: 40px;
+    /* Fully rounded pill */
+    padding: 8px 16px;
+    min-width: 120px;
+    box-shadow: var(--shadow-sm);
+    font-family: inherit;
+    border: 2px solid;
+    background: var(--color-bg-white);
+    transition: box-shadow 0.15s ease;
+}
+
+.end-node:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.end-node__content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.end-node__icon {
+    font-size: 16px;
+    line-height: 1;
+}
+
+.end-node__label {
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* ── Variants ── */
+
+.end-node--success {
+    border-color: var(--color-success);
+    color: var(--color-success-text);
+}
+
+.end-node--error {
+    border-color: var(--color-error);
+    color: var(--color-error-text);
+}
+
+.end-node__handle {
+    width: 8px !important;
+    height: 8px !important;
+    border: 2px solid var(--color-bg-white) !important;
+}
+
+.end-node--success .end-node__handle {
+    background: var(--color-success) !important;
+}
+
+.end-node--error .end-node__handle {
+    background: var(--color-error) !important;
+}
