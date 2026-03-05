@@ -22,3 +22,4 @@ export { default as SkillDesignerCanvas } from './SkillDesignerCanvas/SkillDesig
 export { default as TriggerNode } from './TriggerNode/TriggerNode';
 export { default as ConnectorNode } from './ConnectorNode/ConnectorNode';
 export { default as EndNode } from './EndNode/EndNode';
+export { default as PropertiesDrawer } from './PropertiesDrawer/PropertiesDrawer';

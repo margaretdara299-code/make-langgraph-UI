@@ -1,0 +1,82 @@
+/**
+ * PropertiesDrawer styles.
+ */
+
+.properties-drawer {
+    /* We override the AntD drawer position because mask={false} on a full screen 
+       can sometimes push layout oddly unless bound to its container.
+       We manage absolute positioning inside the main pane wrapper. */
+    position: absolute !important;
+}
+
+/* Ensure the wrapper doesn't capture clicks when the drawer is open with mask={false} */
+.ant-drawer-inline {
+    position: absolute;
+}
+
+.properties-drawer__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.properties-drawer__icon {
+    font-size: 20px;
+    line-height: 1;
+}
+
+.properties-drawer__title-text {
+    font-weight: 600;
+}
+
+.properties-drawer__content {
+    display: flex;
+    flex-direction: column;
+}
+
+.properties-drawer__meta {
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.properties-drawer__meta-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+}
+
+.properties-drawer__divider {
+    height: 1px;
+    background-color: var(--color-border);
+    margin: 24px 0;
+}
+
+.properties-drawer__section-title {
+    margin-top: 0 !important;
+    margin-bottom: 16px !important;
+}
+
+.properties-drawer__capability-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.properties-drawer__empty-config {
+    padding: 24px 0;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    border: 1px dashed var(--color-border);
+}
+
+.properties-drawer__form .ant-form-item-label>label {
+    font-weight: 500;
+    font-size: 13px;
+}

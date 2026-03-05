@@ -4,11 +4,10 @@
  */
 
 import type { NodePaletteItemProps } from '@/interfaces';
-import { CAPABILITY_COLORS, CAPABILITY_LABELS, DEFAULT_CAPABILITY_COLOR } from '@/constants';
+import { CAPABILITY_LABELS } from '@/constants';
 import './NodePaletteItem.css';
 
 export default function NodePaletteItem({ action }: NodePaletteItemProps) {
-    const capColor = CAPABILITY_COLORS[action.capability] || DEFAULT_CAPABILITY_COLOR;
 
     const handleDragStart = (e: React.DragEvent) => {
         const dragData = JSON.stringify({
@@ -33,8 +32,7 @@ export default function NodePaletteItem({ action }: NodePaletteItemProps) {
             <div className="node-palette-item__info">
                 <span className="node-palette-item__name">{action.name}</span>
                 <span
-                    className="node-palette-item__badge"
-                    style={{ backgroundColor: capColor }}
+                    className={`node-palette-item__badge badge-${action.capability}`}
                 >
                     {CAPABILITY_LABELS[action.capability] || action.capability}
                 </span>

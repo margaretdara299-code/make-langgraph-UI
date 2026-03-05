@@ -93,3 +93,8 @@ export interface CreateSkillFooterProps {
     onNext: () => void;
     onCreate: () => void;
 }
+
+export interface PropertiesDrawerProps {
+    selectedNodeId: string | null;
+    onClose: () => void;
+}

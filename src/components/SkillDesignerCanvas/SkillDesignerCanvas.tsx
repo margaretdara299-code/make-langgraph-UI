@@ -19,6 +19,7 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import NodePalette from '@/components/NodePalette/NodePalette';
+import PropertiesDrawer from '@/components/PropertiesDrawer/PropertiesDrawer';
 import { NODE_TYPES } from '@/constants';
 import { useCanvasDragDrop } from '@/hooks';
 import './SkillDesignerCanvas.css';
@@ -28,6 +29,9 @@ export default function SkillDesignerCanvas() {
     const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
     const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
+
+    // Track which node is actively opened in the properties drawer (prevents opening on drag)
+    const [drawerNodeId, setDrawerNodeId] = useState<string | null>(null);
 
     // Call our extracted drag & drop hook
     const { onDragOver, onDrop } = useCanvasDragDrop(reactFlowInstance, setNodes);
@@ -57,6 +61,13 @@ export default function SkillDesignerCanvas() {
                     nodeTypes={nodeTypes}
                     fitView
                     deleteKeyCode={['Backspace', 'Delete']}
+                    onNodeClick={(_, node) => setDrawerNodeId(node.id)}
+                    onPaneClick={() => setDrawerNodeId(null)}
+                    onNodesDelete={(deleted) => {
+                        if (deleted.some(node => node.id === drawerNodeId)) {
+                            setDrawerNodeId(null);
+                        }
+                    }}
                 >
                     <Background color="var(--color-border)" gap={20} size={1} />
                     <Controls />
@@ -66,6 +77,10 @@ export default function SkillDesignerCanvas() {
                         zoomable
                     />
                 </ReactFlow>
+                <PropertiesDrawer
+                    selectedNodeId={drawerNodeId}
+                    onClose={() => setDrawerNodeId(null)}
+                />
             </div>
         </div>
     );
