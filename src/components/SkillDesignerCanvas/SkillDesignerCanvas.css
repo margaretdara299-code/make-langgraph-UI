@@ -21,6 +21,20 @@
     cursor: default;
 }
 
+.skill-designer__tabs-panel {
+    background: var(--color-bg-container);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm-strong);
+    padding: 0 16px;
+    margin: 16px;
+    pointer-events: all;
+}
+
+.skill-designer__canvas-tabs .ant-tabs-nav {
+    margin-bottom: 0 !important;
+}
+
 .skill-designer__canvas .react-flow__edge-path {
     stroke: var(--color-primary);
     stroke-width: 2;

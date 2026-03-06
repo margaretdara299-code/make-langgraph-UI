@@ -90,8 +90,9 @@ export default function SkillDesignerCanvas() {
                     }}
                 >
                     <Background color="var(--color-border)" gap={20} size={1} />
-                    <Controls />
+                    <Controls position="bottom-right" />
                     <MiniMap
+                        position="bottom-left"
                         nodeStrokeWidth={3}
                         pannable
                         zoomable
