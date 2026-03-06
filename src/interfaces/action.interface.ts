@@ -17,6 +17,7 @@ export interface ActionDefinition {
     scope: ActionScope;
     icon?: string;
     defaultNodeTitle: string;
+    status: ActionVersionStatus;
     createdAt: string;
     updatedAt: string;
 }
@@ -38,5 +39,8 @@ export interface ActionVersion {
 export interface ActionFilters {
     category?: string;
     capability?: string;
+    status?: string;
     search?: string;
+    page?: number;
+    pageSize?: number;
 }

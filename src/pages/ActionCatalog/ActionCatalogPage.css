@@ -1,0 +1,103 @@
+/**
+ * Action Catalog page styles.
+ * Inherits much of the layout structure from skills-library.
+ */
+
+.action-catalog {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: calc(100vh - 112px);
+    /* Matches skill library layout height */
+}
+
+/* ── Page Header ── */
+
+.action-catalog__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.action-catalog__title {
+    margin: 0 !important;
+}
+
+/* ── Search & Filters ── */
+
+.action-catalog__search-bar {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.action-catalog__search-input {
+    flex: 1;
+    min-width: 250px;
+    max-width: 480px;
+}
+
+.action-catalog__dropdown {
+    width: 160px;
+}
+
+/* ── Body (sidebar + grid) ── */
+
+.action-catalog__body {
+    display: flex;
+    gap: 24px;
+    flex: 1;
+    min-height: 0;
+}
+
+/* ── Sidebar Filters ── */
+
+.action-catalog__sidebar {
+    flex-shrink: 0;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.action-catalog__sidebar-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.action-catalog__filter-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-nav-input-placeholder);
+    margin-bottom: 8px;
+    padding: 0 12px;
+}
+
+/* ── Grid ── */
+
+.action-catalog__grid-area {
+    flex: 1;
+    min-width: 0;
+    overflow-y: auto;
+    padding-right: 12px;
+}
+
+.action-catalog__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+/* ── Loading / Empty ── */
+
+.action-catalog__loading,
+.action-catalog__empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+}

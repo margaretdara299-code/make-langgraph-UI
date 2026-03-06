@@ -3,23 +3,35 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import type { ActionDefinition } from '@/interfaces';
-import { fetchActions } from '@/services';
+import type { ActionDefinition, ActionFilters } from '@/interfaces';
+import { fetchActions, fetchActionStatusCounts, fetchActionCategoryCounts } from '@/services';
 
 export default function useActions() {
     const [actions, setActions] = useState<ActionDefinition[]>([]);
     const [actionsByCategory, setActionsByCategory] = useState<Record<string, ActionDefinition[]>>({});
+    const [statusCounts, setStatusCounts] = useState<Record<string, number>>({});
+    const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
+    const [totalActions, setTotalActions] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+    const [filters, setFilters] = useState<ActionFilters>({ page: 1, pageSize: 12 });
 
-    const loadActions = useCallback(async () => {
+    const loadActions = useCallback(async (currentFilters: ActionFilters = filters) => {
         setIsLoading(true);
         try {
-            const result = await fetchActions();
-            setActions(result);
+            const [result, sCounts, cCounts] = await Promise.all([
+                fetchActions(currentFilters),
+                fetchActionStatusCounts(),
+                fetchActionCategoryCounts()
+            ]);
 
-            // Group by category
+            setActions(result.data || []);
+            setTotalActions(result.total || 0);
+            setStatusCounts(sCounts);
+            setCategoryCounts(cCounts);
+
+            // Group by category (primarily for NodePalette)
             const grouped: Record<string, ActionDefinition[]> = {};
-            for (const action of result) {
+            for (const action of (result.data || [])) {
                 if (!grouped[action.category]) {
                     grouped[action.category] = [];
                 }
@@ -29,11 +41,21 @@ export default function useActions() {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [filters]);
 
     useEffect(() => {
-        loadActions();
-    }, [loadActions]);
+        loadActions(filters);
+    }, [filters, loadActions]);
 
-    return { actions, actionsByCategory, isLoading, refetch: loadActions };
+    return {
+        actions,
+        actionsByCategory,
+        statusCounts,
+        categoryCounts,
+        totalActions,
+        filters,
+        setFilters,
+        isLoading,
+        refetch: loadActions
+    };
 }

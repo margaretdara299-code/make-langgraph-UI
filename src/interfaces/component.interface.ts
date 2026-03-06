@@ -99,3 +99,8 @@ export interface PropertiesDrawerProps {
     selectedEdgeId?: string | null;
     onClose: () => void;
 }
+
+export interface ActionCardProps {
+    action: import('./action.interface').ActionDefinition;
+    onAction?: (actionKey: string, actionId: string) => void;
+}

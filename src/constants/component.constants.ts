@@ -30,3 +30,12 @@ export const MODAL_SIZE_MAP = {
     lg: 720,
 } as const;
 
+/** Action Catalog Capability Filter Options */
+export const CAPABILITY_OPTIONS = [
+    { value: 'all', label: 'All Capabilities' },
+    { value: 'api', label: 'API Connectors' },
+    { value: 'ai', label: 'AI Models' },
+    { value: 'rpa', label: 'RPA Bots' },
+    { value: 'human', label: 'Human Tasks' },
+    { value: 'rules', label: 'Rules Engines' },
+];

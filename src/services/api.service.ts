@@ -152,11 +152,14 @@ export async function fetchSkillStatusCounts(): Promise<
 /** Fetch action definitions with optional filters. */
 export async function fetchActions(
     filters?: ActionFilters
-): Promise<ActionDefinition[]> {
+): Promise<PaginatedResponse<ActionDefinition>> {
     await delay(200);
 
     let filtered = [...actions];
 
+    if (filters?.status && filters.status !== 'all') {
+        filtered = filtered.filter((a) => a.status === filters.status);
+    }
     if (filters?.category) {
         filtered = filtered.filter((a) => a.category === filters.category);
     }
@@ -173,7 +176,21 @@ export async function fetchActions(
         );
     }
 
-    return filtered;
+    filtered.sort(
+        (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    );
+
+    const page = filters?.page ?? 1;
+    const pageSize = filters?.pageSize ?? 12;
+    const start = (page - 1) * pageSize;
+
+    return {
+        data: filtered.slice(start, start + pageSize),
+        total: filtered.length,
+        page,
+        pageSize,
+        totalPages: Math.ceil(filtered.length / pageSize),
+    };
 }
 
 /** Fetch a single action definition by ID. */
@@ -196,6 +213,23 @@ export async function fetchActionCategoryCounts(): Promise<
     const counts: Record<string, number> = {};
     for (const a of actions) {
         counts[a.category] = (counts[a.category] ?? 0) + 1;
+    }
+    return counts;
+}
+
+/** Get action counts grouped by status. */
+export async function fetchActionStatusCounts(): Promise<
+    Record<string, number>
+> {
+    await delay(100);
+    const counts: Record<string, number> = {
+        all: actions.length,
+        published: 0,
+        draft: 0,
+        archived: 0,
+    };
+    for (const a of actions) {
+        counts[a.status] = (counts[a.status] ?? 0) + 1;
     }
     return counts;
 }
