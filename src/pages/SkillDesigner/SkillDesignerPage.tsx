@@ -5,11 +5,18 @@
 
 import { ReactFlowProvider } from '@xyflow/react';
 import SkillDesignerCanvas from '@/components/SkillDesignerCanvas/SkillDesignerCanvas';
+import SkillDesignerHeader from '@/components/SkillDesignerHeader/SkillDesignerHeader';
+import './SkillDesignerPage.css';
 
 export default function SkillDesignerPage() {
     return (
-        <ReactFlowProvider>
-            <SkillDesignerCanvas />
-        </ReactFlowProvider>
+        <div className="skill-designer-page">
+            <SkillDesignerHeader />
+            <div className="skill-designer-page__content">
+                <ReactFlowProvider>
+                    <SkillDesignerCanvas />
+                </ReactFlowProvider>
+            </div>
+        </div>
     );
 }

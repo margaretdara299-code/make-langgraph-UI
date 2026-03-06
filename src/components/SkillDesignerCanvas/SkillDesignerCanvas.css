@@ -5,8 +5,9 @@
 
 .skill-designer {
     display: flex;
-    height: calc(100vh - 64px);
-    margin: -24px;
+    flex: 1;
+    /* Take remaining space from page layout */
+    min-height: 0;
     overflow: hidden;
 }
 
