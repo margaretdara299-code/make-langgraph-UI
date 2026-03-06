@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { Input, Select, Button, Typography, Spin, Empty, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useActions } from '@/hooks';
-import { ActionCard, StatusFilterItem } from '@/components';
+import { ActionCard, StatusFilterItem, CreateActionModal } from '@/components';
 import { STATUS_FILTER_OPTIONS, CARD_ACTION_KEYS, CAPABILITY_OPTIONS } from '@/constants';
 import type { ActionFilters } from '@/interfaces';
 import './ActionCatalogPage.css';
@@ -18,6 +18,7 @@ export default function ActionCatalogPage() {
     const [searchValue, setSearchValue] = useState('');
     const [activeStatus, setActiveStatus] = useState<string>('all');
     const [activeCapability, setActiveCapability] = useState<string>('all');
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     const { actions, statusCounts, categoryCounts, isLoading, setFilters, refetch } = useActions();
 
@@ -61,10 +62,16 @@ export default function ActionCatalogPage() {
 
     return (
         <div className="action-catalog">
+            <CreateActionModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onCreated={() => refetch()}
+            />
+
             {/* ── Page Header ── */}
             <div className="action-catalog__header">
                 <Title level={3} className="action-catalog__title">Action Catalog</Title>
-                <Button type="primary" icon={<PlusOutlined />} size="large" onClick={() => message.info('Coming in Phase 4.2...')}>
+                <Button type="primary" icon={<PlusOutlined />} size="large" onClick={() => setIsCreateModalOpen(true)}>
                     Create Action
                 </Button>
             </div>

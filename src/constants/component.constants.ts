@@ -39,3 +39,13 @@ export const CAPABILITY_OPTIONS = [
     { value: 'human', label: 'Human Tasks' },
     { value: 'rules', label: 'Rules Engines' },
 ];
+
+/** Create Action Wizard Steps (Steps 2-7 for Preview Panel) */
+export const CREATE_ACTION_STEPS = [
+    'Define Inputs',
+    'Configure Execution',
+    'Define Outputs',
+    'Configure UI Form',
+    'Set Policy & Security',
+    'Review & Publish',
+];

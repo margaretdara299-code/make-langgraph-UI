@@ -104,3 +104,23 @@ export interface ActionCardProps {
     action: import('./action.interface').ActionDefinition;
     onAction?: (actionKey: string, actionId: string) => void;
 }
+
+export interface ActionPreviewPanelProps {
+    actionDef: Partial<import('./action.interface').ActionDefinition>;
+    currentStep: number;
+}
+
+export interface CreateActionModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onCreated: () => void;
+}
+
+export interface CreateActionOverviewProps {
+    draft: Partial<import('./action.interface').ActionDefinition>;
+    setDraft: import('react').Dispatch<import('react').SetStateAction<Partial<import('./action.interface').ActionDefinition>>>;
+}
+
+export interface PlaceholderStepProps {
+    stepName: string;
+}
