@@ -21,13 +21,14 @@ import '@xyflow/react/dist/style.css';
 import NodePalette from '@/components/NodePalette/NodePalette';
 import PropertiesDrawer from '@/components/PropertiesDrawer/PropertiesDrawer';
 import { NODE_TYPES } from '@/constants';
-import { useCanvasDragDrop } from '@/hooks';
+import { useCanvasDragDrop, useSkillGraph } from '@/hooks';
 import './SkillDesignerCanvas.css';
 
 export default function SkillDesignerCanvas() {
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
-    const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
-    const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
+    const { initialNodes, initialEdges } = useSkillGraph();
+    const [nodes, setNodes, onNodesChange] = useNodesState<Node>(initialNodes);
+    const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initialEdges);
     const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
 
     // Track which node or edge is actively opened in the properties drawer

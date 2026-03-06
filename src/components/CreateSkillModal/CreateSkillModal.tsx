@@ -17,6 +17,7 @@ export default function CreateSkillModal({ isOpen, onClose, onCreated }: CreateS
     const [currentStep, setCurrentStep] = useState(0);
     const [selectedMethod, setSelectedMethod] = useState<string>('scratch');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [formData, setFormData] = useState<Partial<CreateSkillFormData>>({});
     const [form] = Form.useForm<CreateSkillFormData>();
 
     /** Reset state when modal closes */
@@ -24,6 +25,7 @@ export default function CreateSkillModal({ isOpen, onClose, onCreated }: CreateS
         form.resetFields();
         setCurrentStep(0);
         setSelectedMethod('scratch');
+        setFormData({});
         onClose();
     };
 
@@ -31,6 +33,7 @@ export default function CreateSkillModal({ isOpen, onClose, onCreated }: CreateS
     const handleNext = async () => {
         try {
             await form.validateFields();
+            setFormData(form.getFieldsValue());
             setCurrentStep(1);
         } catch {
             // form validation will show errors
@@ -41,13 +44,12 @@ export default function CreateSkillModal({ isOpen, onClose, onCreated }: CreateS
     const handleCreate = async () => {
         setIsSubmitting(true);
         try {
-            const values = form.getFieldsValue();
             await createSkill({
-                name: values.name,
-                skillKey: values.skillKey,
-                description: values.description,
-                category: values.category,
-                tags: values.tags || [],
+                name: formData.name || '',
+                skillKey: formData.skillKey || '',
+                description: formData.description || '',
+                category: formData.category || 'Eligibility', // default fallback
+                tags: formData.tags || [],
                 clientId: 'client-acme',
                 owner: 'Current User',
                 updatedBy: 'Current User',

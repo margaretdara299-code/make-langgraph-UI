@@ -10,13 +10,13 @@ import './SkillDesignerPage.css';
 
 export default function SkillDesignerPage() {
     return (
-        <div className="skill-designer-page">
-            <SkillDesignerHeader />
-            <div className="skill-designer-page__content">
-                <ReactFlowProvider>
+        <ReactFlowProvider>
+            <div className="skill-designer-page">
+                <SkillDesignerHeader />
+                <div className="skill-designer-page__content">
                     <SkillDesignerCanvas />
-                </ReactFlowProvider>
+                </div>
             </div>
-        </div>
+        </ReactFlowProvider>
     );
 }

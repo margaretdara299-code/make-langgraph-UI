@@ -6,10 +6,12 @@
 import { useState } from 'react';
 import { Input, Spin, Empty, Button, Typography, Modal, message } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import { useSkills } from '@/hooks';
 import { SkillCard, StatusFilterItem, CreateSkillModal } from '@/components';
 import { STATUS_FILTER_OPTIONS, CARD_ACTION_KEYS } from '@/constants';
 import { deleteSkill, updateSkillStatus } from '@/services';
+import { ROUTES } from '@/routes';
 import type { UseSkillsFilters } from '@/interfaces';
 import './SkillsLibraryPage.css';
 
@@ -19,6 +21,7 @@ export default function SkillsLibraryPage() {
     const [activeStatus, setActiveStatus] = useState<string>('all');
     const [searchValue, setSearchValue] = useState('');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const navigate = useNavigate();
 
     const { skills, isLoading, statusCounts, setFilters, refetch } = useSkills();
 
@@ -81,6 +84,9 @@ export default function SkillsLibraryPage() {
                 break;
 
             case CARD_ACTION_KEYS.EDIT:
+                navigate(ROUTES.SKILL_DESIGNER.replace(':skillId', skillId).replace(':versionId', 'v1'));
+                break;
+
             case CARD_ACTION_KEYS.TEST:
                 message.info('Coming in Phase 3...');
                 break;

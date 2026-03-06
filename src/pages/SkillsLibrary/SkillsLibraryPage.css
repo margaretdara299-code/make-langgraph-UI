@@ -8,6 +8,8 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+    height: calc(100vh - 112px);
+    /* 64px header + 24px top padding + 24px bottom padding */
 }
 
 /* ── Page Header ── */
@@ -33,6 +35,9 @@
 .skills-library__body {
     display: flex;
     gap: 24px;
+    flex: 1;
+    min-height: 0;
+    /* Prevents flex flex-basis blowout */
 }
 
 /* ── Sidebar Filters ── */
@@ -57,6 +62,10 @@
 .skills-library__grid-area {
     flex: 1;
     min-width: 0;
+    overflow-y: auto;
+    /* Make only the grid area scrollable */
+    padding-right: 12px;
+    /* Breathing room for scrollbar */
 }
 
 .skills-library__grid {
