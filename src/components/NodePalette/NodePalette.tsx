@@ -13,7 +13,8 @@ const { Text } = Typography;
 
 export default function NodePalette({ className = '' }: NodePaletteProps) {
     const [search, setSearch] = useState('');
-    const { actionsByCategory, isLoading } = useActions();
+    // Hydrate the palette with all actions, ignoring default 12-item pagination
+    const { actionsByCategory, isLoading } = useActions({ pageSize: 1000 });
 
     /** Filter actions by search query */
     const getFilteredCategories = () => {

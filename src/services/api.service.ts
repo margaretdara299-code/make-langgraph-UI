@@ -149,6 +149,33 @@ export async function fetchSkillStatusCounts(): Promise<
 //  ACTIONS
 // ══════════════════════════════════════════════════
 
+/** Create a new action (mock — adds to in-memory array). */
+export async function createAction(
+    input: Partial<ActionDefinition>
+): Promise<ApiResponse<ActionDefinition>> {
+    await delay(400);
+    const now = new Date().toISOString();
+
+    // Fallbacks for minimally required fields
+    const newAction: ActionDefinition = {
+        id: `act-${Math.random().toString(36).substring(2, 9)}`,
+        actionKey: input.actionKey || 'new.action.key',
+        name: input.name || 'Untitled Action',
+        description: input.description || '',
+        category: input.category || 'Uncategorized',
+        capability: input.capability || 'api',
+        scope: input.scope || 'global',
+        icon: input.icon || '🧩',
+        defaultNodeTitle: input.defaultNodeTitle || input.name || 'Untitled',
+        status: 'published', // Automatically publish for MVP demo
+        createdAt: now,
+        updatedAt: now,
+    };
+
+    actions.unshift(newAction); // Add to beginning of array
+    return { success: true, data: newAction };
+}
+
 /** Fetch action definitions with optional filters. */
 export async function fetchActions(
     filters?: ActionFilters

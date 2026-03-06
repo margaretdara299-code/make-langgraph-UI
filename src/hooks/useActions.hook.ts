@@ -6,14 +6,16 @@ import { useState, useEffect, useCallback } from 'react';
 import type { ActionDefinition, ActionFilters } from '@/interfaces';
 import { fetchActions, fetchActionStatusCounts, fetchActionCategoryCounts } from '@/services';
 
-export default function useActions() {
+export default function useActions(initialFilters?: ActionFilters) {
+    const defaultFilters: ActionFilters = initialFilters || { page: 1, pageSize: 12 };
+
     const [actions, setActions] = useState<ActionDefinition[]>([]);
     const [actionsByCategory, setActionsByCategory] = useState<Record<string, ActionDefinition[]>>({});
     const [statusCounts, setStatusCounts] = useState<Record<string, number>>({});
     const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
     const [totalActions, setTotalActions] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
-    const [filters, setFilters] = useState<ActionFilters>({ page: 1, pageSize: 12 });
+    const [filters, setFilters] = useState<ActionFilters>(defaultFilters);
 
     const loadActions = useCallback(async (currentFilters: ActionFilters = filters) => {
         setIsLoading(true);

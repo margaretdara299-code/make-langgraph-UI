@@ -5,6 +5,7 @@
 import { useState } from 'react';
 import { Modal, Steps, Button, Space, message } from 'antd';
 import { ActionPreviewPanel, PlaceholderStep } from '@/components';
+import { createAction } from '@/services';
 import type { ActionDefinition, CreateActionModalProps } from '@/interfaces';
 import './CreateActionModal.css';
 
@@ -34,13 +35,21 @@ export default function CreateActionModal({ isOpen, onClose, onCreated }: Create
 
     const handlePublish = async () => {
         setIsSubmitting(true);
-        // Simulate API call to save the new action
-        setTimeout(() => {
-            message.success('Action published successfully!');
+        try {
+            const res = await createAction(actionDraft);
+            if (res.success) {
+                message.success('Action published successfully!');
+                onCreated(); // Triggers a refetch in the parent table
+                handleClose();
+            } else {
+                message.error(res.error || 'Failed to publish action.');
+            }
+        } catch (error) {
+            console.error('Error publishing action:', error);
+            message.error('An unexpected error occurred.');
+        } finally {
             setIsSubmitting(false);
-            onCreated(); // Triggers a refetch in the parent table
-            handleClose();
-        }, 1200);
+        }
     };
 
     const handleClose = () => {
