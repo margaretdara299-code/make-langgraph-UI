@@ -1,0 +1,40 @@
+/**
+ * StatusFilterItem styles.
+ */
+
+.status-filter-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--color-nav-input-text);
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.status-filter-item:hover {
+    background-color: var(--color-bg-hover);
+}
+
+.status-filter-item--active {
+    background-color: var(--color-bg-active);
+    color: var(--color-primary);
+}
+
+.status-filter-item--active .anticon {
+    color: var(--color-primary);
+}
+
+.status-filter-item__count {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-nav-input-placeholder);
+    min-width: 24px;
+    text-align: right;
+}
+
+.status-filter-item--active .status-filter-item__count {
+    color: var(--color-primary);
+}

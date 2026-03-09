@@ -1,0 +1,119 @@
+/**
+ * MainLayout styles — minimal overrides for AntD Layout.
+ * Most styling is handled by AntD's theme config in theme.config.ts.
+ */
+
+.main-layout {
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+
+.main-layout__header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.main-layout__logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.main-layout__logo-icon {
+  font-size: 22px;
+  color: var(--color-nav-accent);
+}
+
+.main-layout__logo-brand {
+  color: var(--color-nav-text-bold) !important;
+  font-size: 16px !important;
+}
+
+.main-layout__logo-sub {
+  color: var(--color-nav-text) !important;
+  font-size: 16px !important;
+}
+
+.main-layout__search {
+  flex: 1;
+  max-width: 480px;
+}
+
+.main-layout__search .ant-input-search,
+.main-layout__search .ant-input-wrapper,
+.main-layout__search .ant-input-group-addon,
+.main-layout__search .ant-input,
+.main-layout__search .ant-btn {
+  background-color: var(--color-nav-input-bg) !important;
+  border-color: var(--color-nav-input-border) !important;
+}
+
+.main-layout__search .ant-input-search {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.main-layout__search .ant-input {
+  color: var(--color-nav-text-bold) !important;
+  border: none !important;
+}
+
+.main-layout__search .ant-input::placeholder {
+  color: var(--color-nav-input-placeholder) !important;
+}
+
+.main-layout__search .ant-btn {
+  box-shadow: none !important;
+  border-left: 1px solid var(--color-nav-input-border) !important;
+}
+
+.main-layout__search .anticon-search {
+  color: var(--color-nav-input-placeholder) !important;
+}
+
+.main-layout__actions {
+  margin-left: auto;
+}
+
+.main-layout__env-badge {
+  padding: 4px 10px;
+  border-radius: 4px;
+  background-color: var(--color-nav-badge-bg);
+  color: var(--color-nav-badge-text);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.main-layout__user-icon {
+  font-size: 18px;
+  color: var(--color-nav-text);
+  cursor: pointer;
+}
+
+/* ── Sidebar ── */
+
+.main-layout__sidebar {
+  border-right: 1px solid var(--color-border);
+}
+
+.main-layout__sidebar .ant-menu-item {
+  font-weight: 500 !important;
+}
+
+.main-layout__sidebar .ant-menu-item .anticon {
+  stroke-width: 40px;
+  /* Makes AntD outlined icons bolder */
+}
+
+/* ── Content ── */
+
+.main-layout__content {
+  padding: 24px;
+  min-height: calc(100vh - 56px);
+}

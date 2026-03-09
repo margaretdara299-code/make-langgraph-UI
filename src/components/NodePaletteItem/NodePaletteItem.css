@@ -1,0 +1,57 @@
+/**
+ * NodePaletteItem styles.
+ */
+
+.node-palette-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    margin: 2px 0;
+    border-radius: 6px;
+    cursor: grab;
+    transition: background-color 0.15s ease;
+    user-select: none;
+}
+
+.node-palette-item:hover {
+    background-color: var(--color-bg-hover);
+}
+
+.node-palette-item:active {
+    cursor: grabbing;
+    background-color: var(--color-bg-active);
+}
+
+.node-palette-item__icon {
+    font-size: 18px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.node-palette-item__info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex: 1;
+}
+
+.node-palette-item__name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-nav-input-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.node-palette-item__badge {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+}

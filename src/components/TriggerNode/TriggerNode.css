@@ -1,0 +1,73 @@
+/**
+ * TriggerNode styles.
+ */
+
+.trigger-node {
+    background: var(--color-bg-white);
+    border: 2px solid var(--color-node-trigger);
+    /* Distinct purple border for triggers */
+    border-radius: 20px;
+    /* Pill shape */
+    min-width: 180px;
+    max-width: 220px;
+    box-shadow: var(--shadow-sm);
+    font-family: inherit;
+    overflow: hidden;
+    transition: box-shadow 0.15s ease;
+}
+
+.trigger-node:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.trigger-node__header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    background: var(--color-node-trigger-bg);
+    /* Light purple background for the top */
+}
+
+.trigger-node__icon {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.trigger-node__label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-node-trigger-text);
+    /* Deep purple text */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.trigger-node__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 16px 8px;
+    background: var(--color-bg-footer);
+}
+
+.trigger-node__badge {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--color-node-trigger);
+    letter-spacing: 0.5px;
+}
+
+.trigger-node__category {
+    font-size: 11px;
+    color: var(--color-nav-input-placeholder);
+}
+
+.trigger-node__handle {
+    width: 8px !important;
+    height: 8px !important;
+    background: var(--color-node-trigger) !important;
+    border: 2px solid var(--color-bg-white) !important;
+}

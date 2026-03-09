@@ -1,0 +1,54 @@
+/**
+ * CreateSkillModal styles.
+ * All colors use CSS variables.
+ */
+
+.create-skill__steps {
+    margin-bottom: 24px;
+}
+
+.create-skill__body {
+    min-height: 260px;
+}
+
+.create-skill__form {
+    max-width: 100%;
+}
+
+/* ── Creation Method Cards ── */
+
+.create-skill__methods {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.create-skill__method-card {
+    text-align: center;
+    padding: 24px 16px !important;
+    border: 2px solid var(--color-border) !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.create-skill__method-card--selected {
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.create-skill__method-icon {
+    font-size: 32px;
+    color: var(--color-primary);
+    margin-bottom: 12px;
+    display: block;
+}
+
+.create-skill__method-title {
+    display: block;
+    font-size: 15px;
+    margin-bottom: 6px;
+}
+
+.create-skill__method-desc {
+    font-size: 13px;
+    margin-bottom: 0 !important;
+}

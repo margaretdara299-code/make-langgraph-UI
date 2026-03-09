@@ -1,0 +1,119 @@
+/**
+ * Global application styles — CSS reset only.
+ * Design tokens are now managed by AntD's ConfigProvider in theme.config.ts.
+ * Only include overrides here that AntD cannot handle via its theme system.
+ */
+
+:root {
+  /* Colors – Dark Nav */
+  --color-nav-bg: #1a2332;
+  --color-nav-text: #e2e8f0;
+  --color-nav-text-bold: #ffffff;
+  --color-nav-accent: #60a5fa;
+  --color-nav-input-bg: #ffffff;
+  --color-nav-input-border: #334155;
+  --color-nav-input-text: #1e293b;
+  --color-nav-input-placeholder: #94a3b8;
+  --color-nav-badge-bg: #334155;
+  --color-nav-badge-text: #94a3b8;
+
+  /* Colors – Surfaces */
+  --color-bg-white: #ffffff;
+  --color-bg-hover: #f5f7fa;
+  --color-bg-active: #dbeafe;
+  --color-bg-footer: #fafbfc;
+  --color-bg-canvas: #f8fafc;
+
+  /* Colors - Text */
+  --color-text-white: #ffffff;
+
+  /* Colors – Brand */
+  --color-primary: #3b82f6;
+
+  /* Colors - Status */
+  --color-success: #10b981;
+  --color-success-text: #047857;
+  --color-error: #ef4444;
+  --color-error-text: #b91c1c;
+
+  /* Colors - Node Types */
+  --color-node-trigger: #8b5cf6;
+  --color-node-trigger-bg: #f3e8ff;
+  --color-node-trigger-text: #4c1d95;
+  --color-node-connector: #0ea5e9;
+  --color-node-connector-bg: #e0f2fe;
+  --color-node-connector-text: #0369a1;
+
+  /* Colors - Capability Badges */
+  --color-badge-bg-api: #e0f2fe;
+  --color-badge-text-api: #0369a1;
+  --color-badge-bg-ai: #f3e8ff;
+  --color-badge-text-ai: #6b21a8;
+  --color-badge-bg-rpa: #ffedd5;
+  --color-badge-text-rpa: #c2410c;
+  --color-badge-bg-human: #dcfce7;
+  --color-badge-text-human: #15803d;
+  --color-badge-bg-rules: #fef08a;
+  --color-badge-text-rules: #854d0e;
+  --color-badge-bg-default: #f1f5f9;
+  --color-badge-text-default: #475569;
+
+  /* Colors – Borders */
+  --color-border: #e2e8f0;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-sm-strong: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.14);
+}
+
+/* ── CSS Reset ── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+}
+
+/* ── Global Utilities ── */
+
+.badge-api {
+  background: var(--color-badge-bg-api);
+  color: var(--color-badge-text-api);
+}
+
+.badge-ai {
+  background: var(--color-badge-bg-ai);
+  color: var(--color-badge-text-ai);
+}
+
+.badge-rpa {
+  background: var(--color-badge-bg-rpa);
+  color: var(--color-badge-text-rpa);
+}
+
+.badge-human {
+  background: var(--color-badge-bg-human);
+  color: var(--color-badge-text-human);
+}
+
+.badge-rules {
+  background: var(--color-badge-bg-rules);
+  color: var(--color-badge-text-rules);
+}
+
+.badge-default {
+  background: var(--color-badge-bg-default);
+  color: var(--color-badge-text-default);
+}
