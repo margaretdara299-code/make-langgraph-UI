@@ -1,0 +1,28 @@
+/* CreateActionReviewStep — Step 7 styling */
+
+.action-review-step {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+}
+
+.action-review-step__section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.action-review-step__warnings {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.action-review-step__warnings li {
+    margin-bottom: 4px;
+}
+
+.action-review-step .ant-descriptions-title {
+    font-size: 13px;
+    font-weight: 600;
+}

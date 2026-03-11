@@ -1,0 +1,19 @@
+/* CreateActionPolicyStep — Step 6 styling */
+
+.action-policy-step {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.action-policy-step__header {
+    margin-bottom: 4px;
+}
+
+.action-policy-step__form {
+    max-width: 520px;
+}
+
+.action-policy-step__switches .ant-form-item {
+    margin-bottom: 12px;
+}

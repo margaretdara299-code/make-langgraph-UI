@@ -4,13 +4,18 @@
 
 import { useState } from 'react';
 import { Modal, Steps, Button, Space, message } from 'antd';
-import { ActionPreviewPanel, PlaceholderStep } from '@/components';
+import { ActionPreviewPanel } from '@/components';
 import { createAction } from '@/services';
 import type { ActionDefinition, CreateActionModalProps } from '@/interfaces';
 import './CreateActionModal.css';
 
-// We'll import step components here soon as we build them.
 import CreateActionOverview from '../CreateActionOverview/CreateActionOverview';
+import CreateActionInputsStep from '../CreateActionInputsStep/CreateActionInputsStep';
+import CreateActionExecutionStep from '../CreateActionExecutionStep/CreateActionExecutionStep';
+import CreateActionOutputsStep from '../CreateActionOutputsStep/CreateActionOutputsStep';
+import CreateActionUiFormStep from '../CreateActionUiFormStep/CreateActionUiFormStep';
+import CreateActionPolicyStep from '../CreateActionPolicyStep/CreateActionPolicyStep';
+import CreateActionReviewStep from '../CreateActionReviewStep/CreateActionReviewStep';
 
 export default function CreateActionModal({ isOpen, onClose, onCreated }: CreateActionModalProps) {
     const [currentStep, setCurrentStep] = useState(0);
@@ -69,12 +74,12 @@ export default function CreateActionModal({ isOpen, onClose, onCreated }: Create
             title: 'Overview',
             content: <CreateActionOverview draft={actionDraft} setDraft={setActionDraft} />,
         },
-        { title: 'Inputs', content: <PlaceholderStep stepName="Input Schema" /> },
-        { title: 'Execution', content: <PlaceholderStep stepName="Connector & Execution Options" /> },
-        { title: 'Outputs', content: <PlaceholderStep stepName="Output Schema" /> },
-        { title: 'UI Form', content: <PlaceholderStep stepName="Canvas Node Layout" /> },
-        { title: 'Policy', content: <PlaceholderStep stepName="PHI & Security Policy" /> },
-        { title: 'Publish', content: <PlaceholderStep stepName="Final Review" /> },
+        { title: 'Inputs', content: <CreateActionInputsStep draft={actionDraft} setDraft={setActionDraft} /> },
+        { title: 'Execution', content: <CreateActionExecutionStep draft={actionDraft} setDraft={setActionDraft} /> },
+        { title: 'Outputs', content: <CreateActionOutputsStep draft={actionDraft} setDraft={setActionDraft} /> },
+        { title: 'UI Form', content: <CreateActionUiFormStep draft={actionDraft} setDraft={setActionDraft} /> },
+        { title: 'Policy', content: <CreateActionPolicyStep draft={actionDraft} setDraft={setActionDraft} /> },
+        { title: 'Publish', content: <CreateActionReviewStep draft={actionDraft} setDraft={setActionDraft} /> },
     ];
 
     return (

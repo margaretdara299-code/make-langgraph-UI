@@ -121,6 +121,12 @@ export interface CreateActionOverviewProps {
     setDraft: import('react').Dispatch<import('react').SetStateAction<Partial<import('./action.interface').ActionDefinition>>>;
 }
 
+/** Shared props for wizard steps 2–7 (same shape as Overview) */
+export interface CreateActionStepProps {
+    draft: Partial<import('./action.interface').ActionDefinition>;
+    setDraft: import('react').Dispatch<import('react').SetStateAction<Partial<import('./action.interface').ActionDefinition>>>;
+}
+
 export interface PlaceholderStepProps {
     stepName: string;
 }
