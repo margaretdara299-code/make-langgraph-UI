@@ -23,6 +23,12 @@
   --color-bg-active: #dbeafe;
   --color-bg-footer: #fafbfc;
   --color-bg-canvas: #f8fafc;
+  
+  /* Semi-transparent surface layering */
+  --color-surface-element: rgba(0, 0, 0, 0.04);
+  --color-surface-element-hover: rgba(0, 0, 0, 0.08);
+  --color-surface-border: rgba(0, 0, 0, 0.05);
+  --color-surface-border-strong: rgba(0, 0, 0, 0.1);
 
   /* Colors - Text */
   --color-text-white: #ffffff;

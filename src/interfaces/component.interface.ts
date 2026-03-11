@@ -114,6 +114,7 @@ export interface CreateActionModalProps {
     isOpen: boolean;
     onClose: () => void;
     onCreated: () => void;
+    actionToEdit?: import('./action.interface').ActionDefinition;
 }
 
 export interface CreateActionOverviewProps {

@@ -2,7 +2,7 @@
  * CreateActionModal — The main state container and modal shell for the 7-step wizard.
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal, Steps, Button, Space, message } from 'antd';
 import { ActionPreviewPanel } from '@/components';
 import { createAction } from '@/services';
@@ -17,7 +17,7 @@ import CreateActionUiFormStep from '../CreateActionUiFormStep/CreateActionUiForm
 import CreateActionPolicyStep from '../CreateActionPolicyStep/CreateActionPolicyStep';
 import CreateActionReviewStep from '../CreateActionReviewStep/CreateActionReviewStep';
 
-export default function CreateActionModal({ isOpen, onClose, onCreated }: CreateActionModalProps) {
+export default function CreateActionModal({ isOpen, onClose, onCreated, actionToEdit }: CreateActionModalProps) {
     const [currentStep, setCurrentStep] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -28,6 +28,25 @@ export default function CreateActionModal({ isOpen, onClose, onCreated }: Create
         scope: 'global',
         icon: '🧩',
     });
+
+    // Populate draft when opening in Edit mode
+    useEffect(() => {
+        if (isOpen) {
+            if (actionToEdit) {
+                // Pre-fill existing action for editing
+                setActionDraft(actionToEdit);
+            } else {
+                // Reset for creating a new action
+                setActionDraft({
+                    category: 'Uncategorized',
+                    capability: 'api',
+                    scope: 'global',
+                    icon: '🧩',
+                });
+            }
+            setCurrentStep(0);
+        }
+    }, [isOpen, actionToEdit]);
 
     const handleNext = () => {
         // Validation could go here
@@ -58,13 +77,6 @@ export default function CreateActionModal({ isOpen, onClose, onCreated }: Create
     };
 
     const handleClose = () => {
-        setCurrentStep(0);
-        setActionDraft({
-            category: 'Uncategorized',
-            capability: 'api',
-            scope: 'global',
-            icon: '🧩',
-        });
         onClose();
     };
 
