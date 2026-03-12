@@ -2,11 +2,14 @@
  * Constants for reusable UI components.
  */
 
-export const STATUS_CONFIG = {
+export const STATUS_CONFIG: Record<string, { color: string; label: string }> = {
     draft: { color: 'warning', label: 'Draft' },
     published: { color: 'success', label: 'Published' },
     archived: { color: 'default', label: 'Archived' },
-} as const;
+    active: { color: 'success', label: 'Active' },
+    deprecated: { color: 'error', label: 'Deprecated' },
+    default: { color: 'default', label: 'Unknown' },
+};
 
 export const BADGE_VARIANT_COLOR_MAP = {
     default: 'default',

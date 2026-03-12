@@ -4,6 +4,7 @@
  */
 
 import { Handle, Position } from '@xyflow/react';
+import IconRenderer from '@/components/IconRenderer/IconRenderer';
 import type { NodeProps } from '@xyflow/react';
 import type { CanvasNodeData } from '@/interfaces';
 import './ConnectorNode.css';
@@ -16,8 +17,10 @@ export default function ConnectorNode({ data }: NodeProps) {
             <Handle type="target" position={Position.Top} className="connector-node__handle" />
 
             <div className="connector-node__header">
-                <span className="connector-node__icon">{nodeData.icon || '🔌'}</span>
-                <span className="connector-node__label">{nodeData.label}</span>
+                <span className="connector-node__icon">
+                    <IconRenderer iconName={nodeData.icon} size={16} fallback="🔌" />
+                </span>
+                <span className="connector-node__title">{nodeData.label}</span>
             </div>
 
             <div className="connector-node__footer">

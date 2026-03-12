@@ -1,0 +1,24 @@
+/* CreateActionExecutionStep — Step 3 styling */
+
+.action-execution-step {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.action-execution-step__header {
+    margin-bottom: 4px;
+}
+
+.action-execution-step__form {
+    max-width: 520px;
+}
+
+.action-execution-step__row {
+    display: flex;
+    gap: 16px;
+}
+
+.action-execution-step__field {
+    flex: 1;
+}

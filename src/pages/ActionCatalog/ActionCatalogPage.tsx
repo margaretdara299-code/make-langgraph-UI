@@ -9,7 +9,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { useActions } from '@/hooks';
 import { ActionCard, StatusFilterItem, CreateActionModal } from '@/components';
 import { STATUS_FILTER_OPTIONS, CARD_ACTION_KEYS, CAPABILITY_OPTIONS } from '@/constants';
-import type { ActionFilters } from '@/interfaces';
+import type { ActionFilters, ActionDefinition } from '@/interfaces';
 import './ActionCatalogPage.css';
 
 const { Title } = Typography;
@@ -18,42 +18,59 @@ export default function ActionCatalogPage() {
     const [searchValue, setSearchValue] = useState('');
     const [activeStatus, setActiveStatus] = useState<string>('all');
     const [activeCapability, setActiveCapability] = useState<string>('all');
+    const [activeCategory, setActiveCategory] = useState<string>('all');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [actionToEdit, setActionToEdit] = useState<ActionDefinition | undefined>(undefined);
 
     const { actions, statusCounts, categoryCounts, isLoading, setFilters, refetch } = useActions();
 
     /** Handle search input */
     const handleSearch = (value: string) => {
         setSearchValue(value);
-        updateFilters(value, activeStatus, activeCapability);
+        updateFilters(value, activeStatus, activeCapability, activeCategory);
     };
 
     /** Handle status filter click */
     const handleStatusFilter = (statusKey: string) => {
         setActiveStatus(statusKey);
-        updateFilters(searchValue, statusKey, activeCapability);
+        updateFilters(searchValue, statusKey, activeCapability, activeCategory);
     };
 
     /** Handle capability dropdown change */
     const handleCapabilityFilter = (capabilityValue: string) => {
         setActiveCapability(capabilityValue);
-        updateFilters(searchValue, activeStatus, capabilityValue);
+        updateFilters(searchValue, activeStatus, capabilityValue, activeCategory);
+    };
+
+    /** Handle category filter click */
+    const handleCategoryFilter = (categoryKey: string) => {
+        // Toggle off if clicking the already active category
+        const newCategory = activeCategory === categoryKey ? 'all' : categoryKey;
+        setActiveCategory(newCategory);
+        updateFilters(searchValue, activeStatus, activeCapability, newCategory);
     };
 
     /** Apply all filters to the hook */
-    const updateFilters = (search: string, status: string, capability: string) => {
+    const updateFilters = (search: string, status: string, capability: string, category: string) => {
         const newFilters: ActionFilters = {
             search: search || undefined,
             status: status !== 'all' ? status : undefined,
             capability: capability !== 'all' ? capability : undefined,
+            category: category !== 'all' ? category : undefined,
         };
         setFilters(newFilters);
     };
 
     /** Handle action menu selections */
-    const handleCardAction = (actionKey: string) => {
-        if (actionKey === CARD_ACTION_KEYS.EDIT || actionKey === CARD_ACTION_KEYS.DELETE) {
-            message.info('Coming in Phase 4.2...');
+    const handleCardAction = (actionKey: string, actionId: string) => {
+        if (actionKey === CARD_ACTION_KEYS.EDIT) {
+            const action = actions.find(a => a.id === actionId);
+            if (action) {
+                setActionToEdit(action);
+                setIsCreateModalOpen(true);
+            }
+        } else if (actionKey === CARD_ACTION_KEYS.DELETE) {
+            message.info('Delete coming soon...');
         } else {
             message.success('Action updated');
             refetch();
@@ -64,8 +81,9 @@ export default function ActionCatalogPage() {
         <div className="action-catalog">
             <CreateActionModal
                 isOpen={isCreateModalOpen}
-                onClose={() => setIsCreateModalOpen(false)}
+                onClose={() => { setIsCreateModalOpen(false); setActionToEdit(undefined); }}
                 onCreated={() => refetch()}
+                actionToEdit={actionToEdit}
             />
 
             {/* ── Page Header ── */}
@@ -121,8 +139,8 @@ export default function ActionCatalogPage() {
                                 filterKey={category}
                                 label={category}
                                 count={count}
-                                isActive={false} // Category filtering clicking is out of scope for MVP, just showing counts
-                                onClick={() => { }}
+                                isActive={activeCategory === category}
+                                onClick={() => handleCategoryFilter(category)}
                             />
                         ))}
                     </div>

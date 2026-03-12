@@ -2,17 +2,22 @@
  * CreateActionModal — The main state container and modal shell for the 7-step wizard.
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal, Steps, Button, Space, message } from 'antd';
-import { ActionPreviewPanel, PlaceholderStep } from '@/components';
+import { ActionPreviewPanel } from '@/components';
 import { createAction } from '@/services';
 import type { ActionDefinition, CreateActionModalProps } from '@/interfaces';
 import './CreateActionModal.css';
 
-// We'll import step components here soon as we build them.
 import CreateActionOverview from '../CreateActionOverview/CreateActionOverview';
+import CreateActionInputsStep from '../CreateActionInputsStep/CreateActionInputsStep';
+import CreateActionExecutionStep from '../CreateActionExecutionStep/CreateActionExecutionStep';
+import CreateActionOutputsStep from '../CreateActionOutputsStep/CreateActionOutputsStep';
+import CreateActionUiFormStep from '../CreateActionUiFormStep/CreateActionUiFormStep';
+import CreateActionPolicyStep from '../CreateActionPolicyStep/CreateActionPolicyStep';
+import CreateActionReviewStep from '../CreateActionReviewStep/CreateActionReviewStep';
 
-export default function CreateActionModal({ isOpen, onClose, onCreated }: CreateActionModalProps) {
+export default function CreateActionModal({ isOpen, onClose, onCreated, actionToEdit }: CreateActionModalProps) {
     const [currentStep, setCurrentStep] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -23,6 +28,25 @@ export default function CreateActionModal({ isOpen, onClose, onCreated }: Create
         scope: 'global',
         icon: '🧩',
     });
+
+    // Populate draft when opening in Edit mode
+    useEffect(() => {
+        if (isOpen) {
+            if (actionToEdit) {
+                // Pre-fill existing action for editing
+                setActionDraft(actionToEdit);
+            } else {
+                // Reset for creating a new action
+                setActionDraft({
+                    category: 'Uncategorized',
+                    capability: 'api',
+                    scope: 'global',
+                    icon: '🧩',
+                });
+            }
+            setCurrentStep(0);
+        }
+    }, [isOpen, actionToEdit]);
 
     const handleNext = () => {
         // Validation could go here
@@ -53,13 +77,6 @@ export default function CreateActionModal({ isOpen, onClose, onCreated }: Create
     };
 
     const handleClose = () => {
-        setCurrentStep(0);
-        setActionDraft({
-            category: 'Uncategorized',
-            capability: 'api',
-            scope: 'global',
-            icon: '🧩',
-        });
         onClose();
     };
 
@@ -69,12 +86,12 @@ export default function CreateActionModal({ isOpen, onClose, onCreated }: Create
             title: 'Overview',
             content: <CreateActionOverview draft={actionDraft} setDraft={setActionDraft} />,
         },
-        { title: 'Inputs', content: <PlaceholderStep stepName="Input Schema" /> },
-        { title: 'Execution', content: <PlaceholderStep stepName="Connector & Execution Options" /> },
-        { title: 'Outputs', content: <PlaceholderStep stepName="Output Schema" /> },
-        { title: 'UI Form', content: <PlaceholderStep stepName="Canvas Node Layout" /> },
-        { title: 'Policy', content: <PlaceholderStep stepName="PHI & Security Policy" /> },
-        { title: 'Publish', content: <PlaceholderStep stepName="Final Review" /> },
+        { title: 'Inputs', content: <CreateActionInputsStep draft={actionDraft} setDraft={setActionDraft} /> },
+        { title: 'Execution', content: <CreateActionExecutionStep draft={actionDraft} setDraft={setActionDraft} /> },
+        { title: 'Outputs', content: <CreateActionOutputsStep draft={actionDraft} setDraft={setActionDraft} /> },
+        { title: 'UI Form', content: <CreateActionUiFormStep draft={actionDraft} setDraft={setActionDraft} /> },
+        { title: 'Policy', content: <CreateActionPolicyStep draft={actionDraft} setDraft={setActionDraft} /> },
+        { title: 'Publish', content: <CreateActionReviewStep draft={actionDraft} setDraft={setActionDraft} /> },
     ];
 
     return (

@@ -1,0 +1,15 @@
+/* CreateActionUiFormStep — Step 5 styling */
+
+.action-ui-form-step {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.action-ui-form-step__header {
+    margin-bottom: 4px;
+}
+
+.action-ui-form-step__form {
+    max-width: 520px;
+}

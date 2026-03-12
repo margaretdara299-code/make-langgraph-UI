@@ -4,7 +4,7 @@
 
 import { useState } from 'react';
 import { Input, Collapse, Spin, Typography } from 'antd';
-import { useActions } from '@/hooks';
+import { useDesignerActions } from '@/hooks';
 import NodePaletteItem from '@/components/NodePaletteItem/NodePaletteItem';
 import type { NodePaletteProps } from '@/interfaces';
 import './NodePalette.css';
@@ -13,20 +13,20 @@ const { Text } = Typography;
 
 export default function NodePalette({ className = '' }: NodePaletteProps) {
     const [search, setSearch] = useState('');
-    // Hydrate the palette with all actions, ignoring default 12-item pagination
-    const { actionsByCategory, isLoading } = useActions({ pageSize: 1000 });
+    // Fetch designer-specific actions (which include input/output schemas)
+    const { actionsByCategory, isLoading } = useDesignerActions();
 
     /** Filter actions by search query */
     const getFilteredCategories = () => {
-        const q = search.toLowerCase();
+        const query = search.toLowerCase();
         const result: Record<string, typeof actionsByCategory[string]> = {};
 
         for (const [category, actions] of Object.entries(actionsByCategory)) {
-            const filtered = q
+            const filtered = query
                 ? actions.filter(
-                    (a) =>
-                        a.name.toLowerCase().includes(q) ||
-                        a.actionKey.toLowerCase().includes(q)
+                    (action) =>
+                        action.name.toLowerCase().includes(query) ||
+                        action.actionKey.toLowerCase().includes(query)
                 )
                 : actions;
 

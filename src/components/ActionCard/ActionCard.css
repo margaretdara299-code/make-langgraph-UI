@@ -9,14 +9,12 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    border: 1px solid var(--color-border);
-    background-color: var(--color-bg-container);
-    transition: all 0.2s ease;
+    /* border: 1px solid var(--color-border); */
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .action-card:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-    border-color: var(--color-nav-accent);
+    transform: translateY(-2px);
 }
 
 .action-card .ant-card-body {
@@ -42,15 +40,15 @@
     justify-content: center;
     width: 40px;
     height: 40px;
-    background-color: var(--color-sidebar-bg);
+    background-color: var(--color-surface-element);
     border-radius: 8px;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-surface-border);
 }
 
 .action-card__menu-trigger {
     cursor: pointer;
-    font-size: 20px;
-    color: var(--color-nav-text);
+    font-size: 24px;
+    color: inherit;
     padding: 4px;
     border-radius: 4px;
     transition: background-color 0.2s ease;
@@ -58,8 +56,7 @@
 }
 
 .action-card__menu-trigger:hover {
-    background-color: var(--color-nav-bg-hover);
-    color: var(--color-nav-text-bold);
+    background-color: var(--color-surface-element-hover);
 }
 
 /* ── Body ── */
@@ -80,9 +77,9 @@
 
 .action-card__key {
     font-size: 12px !important;
-    background-color: var(--color-sidebar-bg) !important;
-    color: var(--color-nav-text-bold) !important;
-    border: 1px solid var(--color-border) !important;
+    background-color: var(--color-surface-element) !important;
+    color: inherit !important;
+    border: 1px solid var(--color-surface-border-strong) !important;
     padding: 2px 6px;
     border-radius: 4px;
     margin-bottom: 4px;
@@ -119,12 +116,12 @@
 .action-card__category {
     margin: 0;
     border-radius: 12px;
-    background-color: var(--color-sidebar-bg);
-    border-color: var(--color-border);
-    color: var(--color-nav-text);
+    background-color: var(--color-surface-element);
+    border-color: var(--color-surface-border-strong);
+    color: inherit;
 }
 
 .action-card__date {
     font-size: 12px;
-    color: var(--color-nav-text);
+    color: GrayText;
 }

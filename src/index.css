@@ -23,6 +23,12 @@
   --color-bg-active: #dbeafe;
   --color-bg-footer: #fafbfc;
   --color-bg-canvas: #f8fafc;
+  
+  /* Semi-transparent surface layering */
+  --color-surface-element: rgba(0, 0, 0, 0.04);
+  --color-surface-element-hover: rgba(0, 0, 0, 0.08);
+  --color-surface-border: rgba(0, 0, 0, 0.05);
+  --color-surface-border-strong: rgba(0, 0, 0, 0.1);
 
   /* Colors - Text */
   --color-text-white: #ffffff;
@@ -55,6 +61,8 @@
   --color-badge-text-human: #15803d;
   --color-badge-bg-rules: #fef08a;
   --color-badge-text-rules: #854d0e;
+  --color-badge-bg-message: #ccfbf1;
+  --color-badge-text-message: #0f766e;
   --color-badge-bg-default: #f1f5f9;
   --color-badge-text-default: #475569;
 
@@ -111,6 +119,11 @@ body {
 .badge-rules {
   background: var(--color-badge-bg-rules);
   color: var(--color-badge-text-rules);
+}
+
+.badge-message {
+  background: var(--color-badge-bg-message);
+  color: var(--color-badge-text-message);
 }
 
 .badge-default {
