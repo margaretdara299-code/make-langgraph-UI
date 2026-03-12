@@ -6,18 +6,12 @@
 import { Button, Input, InputNumber, Select, Switch, Typography, Space, Table, Popconfirm, Tag } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import type { CreateActionStepProps } from '@/interfaces';
-import type { ActionConfigField, ActionConfigInputType } from '@/interfaces';
+import type { ActionConfigField } from '@/interfaces';
 import './CreateActionConfigStep.css';
 
-const { Title, Text } = Typography;
+import { ACTION_CONFIG_INPUT_TYPES } from '@/constants/component.constants';
 
-const INPUT_TYPE_OPTIONS: { value: ActionConfigInputType; label: string }[] = [
-    { value: 'text', label: 'Text' },
-    { value: 'number', label: 'Number' },
-    { value: 'boolean', label: 'Boolean (Toggle)' },
-    { value: 'select', label: 'Select (Dropdown)' },
-    { value: 'textarea', label: 'Text Area' },
-];
+const { Title, Text } = Typography;
 
 const createEmptyConfig = (): ActionConfigField => ({
     label: '',
@@ -146,7 +140,7 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
                 <Select
                     value={configs[index].inputType}
                     onChange={(val) => handleFieldChange(index, 'inputType', val)}
-                    options={INPUT_TYPE_OPTIONS}
+                    options={ACTION_CONFIG_INPUT_TYPES as any}
                     size="small"
                     style={{ width: '100%' }}
                 />

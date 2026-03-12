@@ -2,6 +2,7 @@
  * CreateActionExecutionStep — Step 3: Configure execution settings.
  */
 
+import { useEffect } from 'react';
 import { Form, Input, InputNumber, Select, Typography } from 'antd';
 import type { CreateActionStepProps } from '@/interfaces';
 import type { ActionExecutionConfig } from '@/interfaces';
@@ -12,6 +13,13 @@ const { Title, Text } = Typography;
 
 export default function CreateActionExecutionStep({ draft, setDraft }: CreateActionStepProps) {
     const config: ActionExecutionConfig = draft.executionJson ?? DEFAULT_EXECUTION_CONFIG;
+
+    // Seed draft with defaults on mount so the payload is never null
+    useEffect(() => {
+        if (!draft.executionJson) {
+            setDraft(prev => ({ ...prev, executionJson: DEFAULT_EXECUTION_CONFIG }));
+        }
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const updateConfig = (field: keyof ActionExecutionConfig, value: unknown) => {
         setDraft(prev => ({

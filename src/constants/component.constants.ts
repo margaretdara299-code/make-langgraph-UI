@@ -53,3 +53,12 @@ export const CREATE_ACTION_STEPS = [
     'Set Policy & Security',
     'Review & Publish',
 ];
+
+/** Options for dynamic runtime action configuration fields */
+export const ACTION_CONFIG_INPUT_TYPES = [
+    { value: 'text', label: 'Text' },
+    { value: 'number', label: 'Number' },
+    { value: 'boolean', label: 'Boolean (Toggle)' },
+    { value: 'select', label: 'Select (Dropdown)' },
+    { value: 'textarea', label: 'Text Area' },
+] as const;

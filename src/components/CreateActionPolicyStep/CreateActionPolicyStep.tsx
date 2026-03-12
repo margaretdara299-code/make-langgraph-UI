@@ -2,6 +2,7 @@
  * CreateActionPolicyStep — Step 6: Security, compliance, and data retention settings.
  */
 
+import { useEffect } from 'react';
 import { Form, InputNumber, Switch, Checkbox, Input, Typography } from 'antd';
 import type { CreateActionStepProps } from '@/interfaces';
 import type { ActionPolicyConfig } from '@/interfaces';
@@ -13,6 +14,13 @@ const { TextArea } = Input;
 
 export default function CreateActionPolicyStep({ draft, setDraft }: CreateActionStepProps) {
     const policy: ActionPolicyConfig = draft.policyJson ?? DEFAULT_POLICY_CONFIG;
+
+    // Seed draft with defaults on mount so the payload is never null
+    useEffect(() => {
+        if (!draft.policyJson) {
+            setDraft(prev => ({ ...prev, policyJson: DEFAULT_POLICY_CONFIG }));
+        }
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const updatePolicy = (field: keyof ActionPolicyConfig, value: unknown) => {
         setDraft(prev => ({

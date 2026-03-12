@@ -15,6 +15,5 @@ export const API_ENDPOINTS = {
     },
     ACTIONS: {
         BASE: '/api/actions',
-        DESIGNER: '/api/designer/actions',
     },
 } as const;

@@ -1,12 +1,8 @@
 import { Tag, Table } from 'antd';
 import { Typography } from 'antd';
-import type { CreateActionStepProps } from '@/interfaces';
+import type { ReviewConfigurationsProps } from '@/interfaces';
 
 const { Text } = Typography;
-
-interface ReviewConfigurationsProps {
-    configurations: NonNullable<CreateActionStepProps['draft']['configurationsJson']>;
-}
 
 export default function ReviewConfigurations({ configurations }: ReviewConfigurationsProps) {
     const columns = [

@@ -23,6 +23,14 @@ export async function createAction(
             icon: input.icon || '🧩',
             defaultNodeTitle: input.defaultNodeTitle || input.name || 'Untitled',
             scope: input.scope || 'global',
+
+            // ── Version-level JSON blobs (wizard steps 2–7) ──
+            inputsSchemaJson: input.inputsSchemaJson || [],
+            executionJson: input.executionJson || null,
+            outputsSchemaJson: input.outputsSchemaJson || [],
+            configurationsJson: input.configurationsJson || [],
+            uiFormJson: input.uiFormJson || null,
+            policyJson: input.policyJson || null,
         };
 
         await apiClient.post(API_ENDPOINTS.ACTIONS.BASE, payload);
@@ -149,7 +157,8 @@ export async function fetchDesignerActions(
     filters?: { capability?: string; category?: string; search?: string }
 ) {
     const params = new URLSearchParams();
-    params.set('client_id', clientId);
+    // params.set('client_id', clientId);
+    params.set('client_id', 'null');
     params.set('environment', environment);
     if (filters?.capability) params.set('capability', filters.capability.toUpperCase());
     if (filters?.category) params.set('category', filters.category);

@@ -140,6 +140,10 @@ export interface ReviewExecutionProps {
     execution: NonNullable<CreateActionStepProps['draft']['executionJson']>;
 }
 
+export interface ReviewConfigurationsProps {
+    configurations: NonNullable<CreateActionStepProps['draft']['configurationsJson']>;
+}
+
 export interface ReviewUiFormProps {
     uiForm: NonNullable<CreateActionStepProps['draft']['uiFormJson']>;
 }
