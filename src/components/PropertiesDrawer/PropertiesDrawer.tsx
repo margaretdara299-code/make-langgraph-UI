@@ -3,7 +3,7 @@
  * Slides out to show the properties of the currently selected React Flow node.
  */
 
-import { Drawer, Input, Form, Typography, Select, Button, theme } from 'antd';
+import { Drawer, Input, Form, Typography, Select, Switch, Button, theme } from 'antd';
 import { useReactFlow, useNodes, useEdges } from '@xyflow/react';
 import { useEffect } from 'react';
 import type { CanvasNodeData, CanvasEdgeData, PropertiesDrawerProps } from '@/interfaces';
@@ -80,56 +80,56 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
         }
     };
 
-    // Render configuration inputs based on capability type
+    // Render configuration inputs dynamically from the action's configurationsJson
     const renderNodeConfig = (nodeData: CanvasNodeData) => {
-        switch (nodeData.capability) {
-            case 'api':
-                return (
-                    <>
-                        <Form.Item label="HTTP Method" name="method" initialValue="POST">
-                            <Select
-                                options={[
-                                    { value: 'GET', label: 'GET' },
-                                    { value: 'POST', label: 'POST' },
-                                    { value: 'PUT', label: 'PUT' },
-                                ]}
-                            />
-                        </Form.Item>
-                        <Form.Item label="Endpoint URL" name="endpoint" initialValue="https://api.example.com/v1/">
-                            <Input />
-                        </Form.Item>
-                    </>
-                );
-            case 'ai':
-                return (
-                    <>
-                        <Form.Item label="Model" name="model" initialValue="gpt-4">
-                            <Select
-                                options={[
-                                    { value: 'gpt-4', label: 'GPT-4' },
-                                    { value: 'gpt-3.5', label: 'GPT-3.5-Turbo' },
-                                    { value: 'claude-3', label: 'Claude 3 Opus' },
-                                ]}
-                            />
-                        </Form.Item>
-                        <Form.Item label="System Prompt" name="system_prompt" initialValue="You are a helpful assistant.">
-                            <Input.TextArea rows={4} />
-                        </Form.Item>
-                    </>
-                );
-            case 'rules':
-                return (
-                    <Form.Item label="Rule Expression" name="expression">
-                        <Input.TextArea rows={3} placeholder="e.g. payload.status === 'success'" />
-                    </Form.Item>
-                );
-            default:
-                return (
-                    <div className="properties-drawer__empty-config">
-                        <Text type="secondary">No specific configuration available for this capability.</Text>
-                    </div>
-                );
+        const configs = nodeData.configurationsJson;
+
+        if (!configs || configs.length === 0) {
+            return (
+                <div className="properties-drawer__empty-config">
+                    <Text type="secondary">No configuration fields defined for this action.</Text>
+                </div>
+            );
         }
+
+        return configs.map((cfg) => {
+            switch (cfg.inputType) {
+                case 'number':
+                    return (
+                        <Form.Item key={cfg.inputKey} label={cfg.label} name={`config_${cfg.inputKey}`} initialValue={cfg.defaultValue}>
+                            <Input type="number" placeholder={`Enter ${cfg.label}`} />
+                        </Form.Item>
+                    );
+                case 'boolean':
+                    return (
+                        <Form.Item key={cfg.inputKey} label={cfg.label} name={`config_${cfg.inputKey}`} valuePropName="checked" initialValue={!!cfg.defaultValue}>
+                            <Switch />
+                        </Form.Item>
+                    );
+                case 'select':
+                    return (
+                        <Form.Item key={cfg.inputKey} label={cfg.label} name={`config_${cfg.inputKey}`} initialValue={cfg.defaultValue}>
+                            <Select
+                                placeholder={`Select ${cfg.label}`}
+                                options={(cfg.options || []).map(o => ({ value: o, label: o }))}
+                                allowClear
+                            />
+                        </Form.Item>
+                    );
+                case 'textarea':
+                    return (
+                        <Form.Item key={cfg.inputKey} label={cfg.label} name={`config_${cfg.inputKey}`} initialValue={cfg.defaultValue}>
+                            <Input.TextArea rows={3} placeholder={`Enter ${cfg.label}`} />
+                        </Form.Item>
+                    );
+                default: // 'text'
+                    return (
+                        <Form.Item key={cfg.inputKey} label={cfg.label} name={`config_${cfg.inputKey}`} initialValue={cfg.defaultValue}>
+                            <Input placeholder={`Enter ${cfg.label}`} />
+                        </Form.Item>
+                    );
+            }
+        });
     };
 
     // Drawer is open if exactly ONE node or exactly ONE edge is selected

@@ -30,6 +30,7 @@ export default function NodePaletteItem({ action }: NodePaletteItemProps) {
             category: action.category,
             capability: action.capability,
             icon: action.icon || '⚡',
+            configurationsJson: action.configurationsJson || [],
         });
         e.dataTransfer.setData('application/reactflow', dragData);
         e.dataTransfer.effectAllowed = 'move';

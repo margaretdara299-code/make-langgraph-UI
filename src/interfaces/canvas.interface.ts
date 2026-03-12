@@ -2,7 +2,7 @@
  * Canvas-related interfaces for the Skill Designer.
  */
 
-import type { ActionCapability } from './action.interface';
+import type { ActionCapability, ActionConfigField } from './action.interface';
 
 /** Data payload attached to each canvas node */
 export interface CanvasNodeData {
@@ -12,6 +12,7 @@ export interface CanvasNodeData {
     category: string;
     capability: ActionCapability;
     icon: string;
+    configurationsJson?: ActionConfigField[];
 }
 
 /** Data payload attached to each canvas edge */

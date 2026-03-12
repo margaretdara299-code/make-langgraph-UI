@@ -1,0 +1,49 @@
+/**
+ * CreateActionConfigStep styles.
+ */
+
+.action-config-step {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.action-config-step__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.action-config-step__empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 48px 24px;
+    background: var(--color-bg-hover, #f8fafc);
+    border: 1px dashed var(--color-border, #e2e8f0);
+    border-radius: 8px;
+}
+
+.action-config-step__table .ant-table-thead > tr > th {
+    background: var(--color-bg-hover, #f8fafc);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.action-config-step__options-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 12px;
+    margin-top: 4px;
+    background: #f0f5ff;
+    border: 1px solid #d6e4ff;
+    border-radius: 6px;
+}
+
+.action-config-step__options-label {
+    font-size: 12px;
+}

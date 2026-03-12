@@ -43,11 +43,12 @@ export const CAPABILITY_OPTIONS = [
     { value: 'rules', label: 'Rules Engines' },
 ];
 
-/** Create Action Wizard Steps (Steps 2-7 for Preview Panel) */
+/** Create Action Wizard Steps (Steps 2-8 for Preview Panel) */
 export const CREATE_ACTION_STEPS = [
     'Define Inputs',
     'Configure Execution',
     'Define Outputs',
+    'Configure Settings',
     'Configure UI Form',
     'Set Policy & Security',
     'Review & Publish',
