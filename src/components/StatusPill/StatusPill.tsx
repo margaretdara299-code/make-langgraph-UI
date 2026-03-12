@@ -7,6 +7,6 @@ import type { StatusPillProps } from '@/interfaces';
 import { STATUS_CONFIG } from '@/constants';
 
 export default function StatusPill({ status }: StatusPillProps) {
-    const config = STATUS_CONFIG[status];
+    const config = STATUS_CONFIG[status] || STATUS_CONFIG.default;
     return <Tag color={config.color}>{config.label}</Tag>;
 }

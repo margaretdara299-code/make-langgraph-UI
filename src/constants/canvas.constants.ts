@@ -9,4 +9,5 @@ export const CAPABILITY_LABELS: Record<string, string> = {
     rpa: 'RPA',
     human: 'Human',
     rules: 'Rules',
+    message: 'Message',
 };

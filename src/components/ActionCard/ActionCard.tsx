@@ -6,7 +6,9 @@ import { Card, Typography, Space, Dropdown, Tag, Tooltip } from 'antd';
 import type { MenuProps } from 'antd';
 import { EllipsisOutlined } from '@ant-design/icons';
 import StatusPill from '@/components/StatusPill/StatusPill';
+import IconRenderer from '@/components/IconRenderer/IconRenderer';
 import { CARD_ACTION_KEYS } from '@/constants';
+import { stringToColorParams } from '@/utils';
 import type { ActionCardProps } from '@/interfaces';
 import './ActionCard.css';
 
@@ -43,15 +45,33 @@ export default function ActionCard({ action, onAction }: ActionCardProps) {
         rpa: 'orange',
         human: 'cyan',
         rules: 'magenta',
+        message: 'green',
     };
+
+    const cap = (action.capability || 'default').toLowerCase();
+    
+    // Check if it's a known CSS capability class
+    const isKnown = !!capabilityColors[cap];
+    
+    // If unknown, generate a deterministic color palette
+    const dynamicTheme = isKnown ? null : stringToColorParams(cap);
+
+    const iconColor = isKnown ? `var(--color-badge-text-${cap})` : dynamicTheme?.text;
+    const tagBg = isKnown ? undefined : dynamicTheme?.bg;
+    const tagTextColor = isKnown ? undefined : dynamicTheme?.text;
 
     return (
         <Card className="action-card" hoverable>
             {/* Header: Icon, Capability Tag, and Actions Menu */}
             <div className="action-card__header">
                 <Space size="middle">
-                    <div className="action-card__icon">{action.icon}</div>
-                    <Tag color={capabilityColors[action.capability] || 'default'}>
+                    <div className="action-card__icon" style={{ color: iconColor }}>
+                        <IconRenderer iconName={action.icon} size={20} />
+                    </div>
+                    <Tag 
+                         color={isKnown ? capabilityColors[cap] : undefined}
+                         style={!isKnown ? { backgroundColor: tagBg, color: tagTextColor, borderColor: tagTextColor } : undefined}
+                    >
                         {action.capability.toUpperCase()}
                     </Tag>
                 </Space>

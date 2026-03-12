@@ -131,3 +131,19 @@ export interface CreateActionStepProps {
 export interface PlaceholderStepProps {
     stepName: string;
 }
+
+export interface ReviewOverviewProps {
+    draft: CreateActionStepProps['draft'];
+}
+
+export interface ReviewExecutionProps {
+    execution: NonNullable<CreateActionStepProps['draft']['executionJson']>;
+}
+
+export interface ReviewUiFormProps {
+    uiForm: NonNullable<CreateActionStepProps['draft']['uiFormJson']>;
+}
+
+export interface ReviewPolicyProps {
+    policy: NonNullable<CreateActionStepProps['draft']['policyJson']>;
+}

@@ -2,11 +2,15 @@
  * CreateActionReviewStep — Step 7: Read-only summary of all configured steps.
  */
 
-import { Typography, Descriptions, Tag, Table, Alert, Space } from 'antd';
+import { Typography, Tag, Table, Alert, Space } from 'antd';
 import {
     CheckCircleOutlined,
     WarningOutlined,
 } from '@ant-design/icons';
+import ReviewOverview from './sections/ReviewOverview';
+import ReviewExecution from './sections/ReviewExecution';
+import ReviewUiForm from './sections/ReviewUiForm';
+import ReviewPolicy from './sections/ReviewPolicy';
 import type { CreateActionStepProps } from '@/interfaces';
 import './CreateActionReviewStep.css';
 
@@ -67,19 +71,7 @@ export default function CreateActionReviewStep({ draft }: CreateActionStepProps)
             )}
 
             {/* Overview */}
-            <Descriptions title="Overview" bordered size="small" column={2}>
-                <Descriptions.Item label="Name">{draft.name || '—'}</Descriptions.Item>
-                <Descriptions.Item label="Action Key">{draft.actionKey || '—'}</Descriptions.Item>
-                <Descriptions.Item label="Category">{draft.category || '—'}</Descriptions.Item>
-                <Descriptions.Item label="Capability">
-                    <Tag color="blue">{draft.capability?.toUpperCase() || '—'}</Tag>
-                </Descriptions.Item>
-                <Descriptions.Item label="Scope">{draft.scope || '—'}</Descriptions.Item>
-                <Descriptions.Item label="Icon">{draft.icon || '🧩'}</Descriptions.Item>
-                <Descriptions.Item label="Description" span={2}>
-                    {draft.description || '—'}
-                </Descriptions.Item>
-            </Descriptions>
+            <ReviewOverview draft={draft} />
 
             {/* Inputs */}
             <div className="action-review-step__section">
@@ -98,23 +90,7 @@ export default function CreateActionReviewStep({ draft }: CreateActionStepProps)
             </div>
 
             {/* Execution */}
-            {execution && (
-                <Descriptions title="Execution" bordered size="small" column={2}>
-                    <Descriptions.Item label="Connector">
-                        <Tag>{execution.connectorType.toUpperCase()}</Tag>
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Method">
-                        <Tag color="geekblue">{execution.httpMethod}</Tag>
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Endpoint" span={2}>
-                        {execution.endpointUrl || '—'}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Timeout">{execution.timeoutMs}ms</Descriptions.Item>
-                    <Descriptions.Item label="Retries">
-                        {execution.retryCount} × {execution.retryDelayMs}ms
-                    </Descriptions.Item>
-                </Descriptions>
-            )}
+            {execution && <ReviewExecution execution={execution} />}
 
             {/* Outputs */}
             <div className="action-review-step__section">
@@ -124,7 +100,7 @@ export default function CreateActionReviewStep({ draft }: CreateActionStepProps)
                 </Space>
                 {outputs.length > 0 && (
                     <Table
-                        dataSource={outputs.map((f, i) => ({ ...f, key: i }))}
+                        dataSource={outputs.map((field, index) => ({ ...field, key: index }))}
                         columns={fieldColumns}
                         pagination={false}
                         size="small"
@@ -133,50 +109,10 @@ export default function CreateActionReviewStep({ draft }: CreateActionStepProps)
             </div>
 
             {/* UI Form */}
-            {uiForm && (
-                <Descriptions title="UI Form" bordered size="small" column={2}>
-                    <Descriptions.Item label="Display Mode">
-                        <Tag>{uiForm.displayMode}</Tag>
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Show Advanced">
-                        {uiForm.showAdvanced ? 'Yes' : 'No'}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Group Label">{uiForm.groupLabel || '—'}</Descriptions.Item>
-                    <Descriptions.Item label="Help Text">{uiForm.helpText || '—'}</Descriptions.Item>
-                </Descriptions>
-            )}
+            {uiForm && <ReviewUiForm uiForm={uiForm} />}
 
             {/* Policy */}
-            {policy && (
-                <Descriptions title="Security & Policy" bordered size="small" column={2}>
-                    <Descriptions.Item label="Contains PHI">
-                        <Tag color={policy.containsPhi ? 'red' : 'green'}>
-                            {policy.containsPhi ? 'Yes' : 'No'}
-                        </Tag>
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Contains PII">
-                        <Tag color={policy.containsPii ? 'red' : 'green'}>
-                            {policy.containsPii ? 'Yes' : 'No'}
-                        </Tag>
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Audit Logging">
-                        {policy.requiresAuditLogging ? 'Enabled' : 'Disabled'}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Retention">
-                        {policy.dataRetentionDays} days
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Environments" span={2}>
-                        {policy.allowedEnvironments.map(env => (
-                            <Tag key={env}>{env.toUpperCase()}</Tag>
-                        ))}
-                    </Descriptions.Item>
-                    {policy.notes && (
-                        <Descriptions.Item label="Notes" span={2}>
-                            {policy.notes}
-                        </Descriptions.Item>
-                    )}
-                </Descriptions>
-            )}
+            {policy && <ReviewPolicy policy={policy} />}
         </div>
     );
 }

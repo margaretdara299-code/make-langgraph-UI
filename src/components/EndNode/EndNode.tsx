@@ -4,6 +4,7 @@
  */
 
 import { Handle, Position } from '@xyflow/react';
+import IconRenderer from '@/components/IconRenderer/IconRenderer';
 import type { NodeProps } from '@xyflow/react';
 import type { CanvasNodeData } from '@/interfaces';
 import './EndNode.css';
@@ -19,9 +20,11 @@ export default function EndNode({ data }: NodeProps) {
         <div className={`end-node ${colorClass}`}>
             <Handle type="target" position={Position.Top} className="end-node__handle" />
 
-            <div className="end-node__content">
-                <span className="end-node__icon">{nodeData.icon || '🛑'}</span>
-                <span className="end-node__label">{nodeData.label}</span>
+            <div className="end-node__header">
+                <span className="end-node__icon">
+                    <IconRenderer iconName={nodeData.icon} size={16} fallback="🛑" />
+                </span>
+                <span className="end-node__title">{nodeData.label}</span>
             </div>
         </div>
     );

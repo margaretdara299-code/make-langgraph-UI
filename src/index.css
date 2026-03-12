@@ -61,6 +61,8 @@
   --color-badge-text-human: #15803d;
   --color-badge-bg-rules: #fef08a;
   --color-badge-text-rules: #854d0e;
+  --color-badge-bg-message: #ccfbf1;
+  --color-badge-text-message: #0f766e;
   --color-badge-bg-default: #f1f5f9;
   --color-badge-text-default: #475569;
 
@@ -117,6 +119,11 @@ body {
 .badge-rules {
   background: var(--color-badge-bg-rules);
   color: var(--color-badge-text-rules);
+}
+
+.badge-message {
+  background: var(--color-badge-bg-message);
+  color: var(--color-badge-text-message);
 }
 
 .badge-default {
