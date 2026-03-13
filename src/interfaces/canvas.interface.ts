@@ -2,16 +2,20 @@
  * Canvas-related interfaces for the Skill Designer.
  */
 
-import type { ActionCapability, ActionConfigField } from './action.interface';
+import type { ActionCapability, ActionConfigField, ActionInputField, ActionOutputField, ActionExecutionConfig } from './action.interface';
 
 /** Data payload attached to each canvas node */
 export interface CanvasNodeData {
     label: string;
     actionId: string;
     actionKey: string;
+    actionVersionId?: string;
     category: string;
     capability: ActionCapability;
     icon: string;
+    inputsSchemaJson?: ActionInputField[];
+    outputsSchemaJson?: ActionOutputField[];
+    executionJson?: ActionExecutionConfig;
     configurationsJson?: ActionConfigField[];
 }
 

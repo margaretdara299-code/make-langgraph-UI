@@ -168,15 +168,69 @@ export async function fetchDesignerActions(
     return apiClient.get<{ items: unknown[]; total: number }>(`${API_ENDPOINTS.ACTIONS.DESIGNER}?${queryString}`);
 }
 
-// ── Mock Fallbacks ──
-
 /**
- * MOCK: Retrieves a single action by its ID from the local cache.
- * @param id The unique identifier of the action definition.
+ * Fetches a single action definition with all its versions from the backend.
+ * The active version's JSON blobs are merged onto the top-level ActionDefinition.
+ * @param id The action_definition_id.
  */
 export async function fetchActionById(id: string): Promise<ApiResponse<ActionDefinition>> {
-    const cached = cachedActions ?? [];
-    const action = cached.find((a) => a.id === id);
-    if (!action) return { success: false, error: 'Action not found.' };
-    return { success: true, data: action };
+    try {
+        const result = await apiClient.get<any>(API_ENDPOINTS.ACTIONS.BY_ID(id));
+
+        // The backend returns { ...definition, versions: [ { ...versionData } ] }
+        // Find the active version (is_active=1) or fall back to the first version
+        const versions = result.versions || [];
+        const activeVersion = versions.find((v: any) => v.isActive === 1 || v.isActive === true) || versions[0] || {};
+
+        const action: ActionDefinition = {
+            id: result.actionDefinitionId || result.id || id,
+            actionKey: result.actionKey || '',
+            name: result.name || '',
+            description: result.description || '',
+            category: result.category || 'Uncategorized',
+            capability: (result.capability || 'api').toLowerCase() as ActionDefinition['capability'],
+            scope: result.scope || 'global',
+            icon: result.icon || '🧩',
+            defaultNodeTitle: result.defaultNodeTitle || result.name || '',
+            status: activeVersion.status || result.status || 'draft',
+            createdAt: result.createdAt || '',
+            updatedAt: result.updatedAt || '',
+
+            // Version-level JSON blobs from the active version
+            inputsSchemaJson: activeVersion.inputsSchemaJson || [],
+            executionJson: activeVersion.executionJson || null,
+            outputsSchemaJson: activeVersion.outputsSchemaJson || [],
+            configurationsJson: activeVersion.configurationsJson || [],
+            uiFormJson: activeVersion.uiFormJson || null,
+            policyJson: activeVersion.policyJson || null,
+        };
+
+        // Attach the version ID for later PUT calls
+        (action as any).actionVersionId = activeVersion.actionVersionId || activeVersion.id || '';
+
+        return { success: true, data: action };
+    } catch (error) {
+        console.error('fetchActionById API error:', error);
+        // Fallback to cache if API fails
+        const cached = cachedActions ?? [];
+        const action = cached.find((a) => a.id === id);
+        if (action) return { success: true, data: action };
+        return { success: false, error: error instanceof Error ? error.message : 'Action not found.' };
+    }
+}
+
+/**
+ * Updates an existing action definition via PUT /api/actions/{id}
+ * Used by CreateActionModal when editing existing actions.
+ */
+export async function updateActionDefinition(
+    actionDefinitionId: string, 
+    payload: Partial<ActionDefinition>
+): Promise<ApiResponse<ActionDefinition>> {
+    try {
+        const result = await apiClient.put(API_ENDPOINTS.ACTIONS.UPDATE(actionDefinitionId), payload);
+        return { success: true, data: result as ActionDefinition };
+    } catch (error) {
+        return { success: false, error: error instanceof Error ? error.message : 'Failed to update action definition' };
+    }
 }
