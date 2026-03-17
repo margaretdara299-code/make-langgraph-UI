@@ -1,49 +1,64 @@
 /**
  * ActionNode — custom React Flow node renderer for action nodes on the canvas.
- * Shows an icon, label, and capability-colored indicator.
+ * Reduced to Top/Bottom connectivity as per user request.
  */
 
 import { Handle, Position } from '@xyflow/react';
 import IconRenderer from '@/components/IconRenderer/IconRenderer';
 import { stringToColorParams } from '@/utils';
 import type { NodeProps } from '@xyflow/react';
-import type { CanvasNodeData } from '@/interfaces';
+import type { CanvasNode } from '@/interfaces';
 import { CAPABILITY_LABELS } from '@/constants';
 import './ActionNode.css';
 
-export default function ActionNode({ data }: NodeProps) {
-    const nodeData = data as unknown as CanvasNodeData;
+export default function ActionNode({ data }: NodeProps<CanvasNode>) {
+    const nodeData = data;
 
     const cap = (nodeData.capability || 'default').toLowerCase();
     const isKnown = !!CAPABILITY_LABELS[cap];
     const dynamicTheme = isKnown ? null : stringToColorParams(cap);
 
-    const iconAndTextColor = isKnown ? `var(--color-badge-text-${cap})` : dynamicTheme?.text;
-    const badgeBg = isKnown ? undefined : dynamicTheme?.bg;
-    const badgeBorder = isKnown ? undefined : dynamicTheme?.text;
+    const glowColor = isKnown ? `var(--color-badge-text-${cap})` : dynamicTheme?.text;
 
     return (
-        <div className="action-node">
-            <Handle type="target" position={Position.Top} className="action-node__handle" />
+        <div 
+            className="action-node action-node--glow" 
+            style={{ '--node-accent-glow': glowColor } as any}
+        >
+            <Handle 
+                type="target" 
+                position={Position.Top} 
+                className="action-node__handle action-node__handle-target-top" 
+            />
 
-            <div className="action-node__header" style={{ borderTopColor: iconAndTextColor }}>
-                <span className="action-node__icon" style={{ color: iconAndTextColor }}>
-                    <IconRenderer iconName={nodeData.icon} size={16} fallback="⚙️" />
-                </span>
-                <span className="action-node__title" style={{ color: iconAndTextColor }}>{nodeData.label}</span>
+            <div className="action-node__border-wrapper">
+                <div className="action-node__content">
+                    <div 
+                        className="action-node__header" 
+                        style={{ 
+                            background: isKnown ? `linear-gradient(90deg, var(--color-badge-bg-${cap}), transparent)` : 'rgba(255, 255, 255, 0.02)'
+                        }}
+                    >
+                        <span className="action-node__icon" style={{ color: glowColor }}>
+                            <IconRenderer iconName={nodeData.icon} size={18} fallback="⚙️" />
+                        </span>
+                        <span className="action-node__title">{nodeData.label}</span>
+                    </div>
+
+                    <div className="action-node__footer">
+                        <span className="action-node__capability-badge">
+                            {CAPABILITY_LABELS[cap] || nodeData.capability}
+                        </span>
+                        <span className="action-node__category">{nodeData.category}</span>
+                    </div>
+                </div>
             </div>
 
-            <div className="action-node__footer">
-                <span
-                    className={`action-node__capability-badge ${isKnown ? `badge-${cap}` : ''}`}
-                    style={!isKnown ? { backgroundColor: badgeBg, color: iconAndTextColor, border: `1px solid ${badgeBorder}` } : undefined}
-                >
-                    {CAPABILITY_LABELS[cap] || nodeData.capability}
-                </span>
-                <span className="action-node__category">{nodeData.category}</span>
-            </div>
-
-            <Handle type="source" position={Position.Bottom} className="action-node__handle" />
+            <Handle 
+                type="source" 
+                position={Position.Bottom} 
+                className="action-node__handle action-node__handle-source-bottom" 
+            />
         </div>
     );
 }

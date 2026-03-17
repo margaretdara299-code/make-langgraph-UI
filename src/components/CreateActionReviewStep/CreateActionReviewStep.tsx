@@ -1,5 +1,5 @@
 /**
- * CreateActionReviewStep — Step 7: Read-only summary of all configured steps.
+ * CreateActionReviewStep — Step 8: Read-only summary of all configured steps.
  */
 
 import { Typography, Tag, Table, Alert, Space } from 'antd';
@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons';
 import ReviewOverview from './sections/ReviewOverview';
 import ReviewExecution from './sections/ReviewExecution';
+import ReviewConfigurations from './sections/ReviewConfigurations';
 import ReviewUiForm from './sections/ReviewUiForm';
 import ReviewPolicy from './sections/ReviewPolicy';
 import type { CreateActionStepProps } from '@/interfaces';
@@ -20,6 +21,7 @@ export default function CreateActionReviewStep({ draft }: CreateActionStepProps)
     const inputs = draft.inputsSchemaJson ?? [];
     const outputs = draft.outputsSchemaJson ?? [];
     const execution = draft.executionJson;
+    const configurations = draft.configurationsJson ?? [];
     const uiForm = draft.uiFormJson;
     const policy = draft.policyJson;
 
@@ -107,6 +109,9 @@ export default function CreateActionReviewStep({ draft }: CreateActionStepProps)
                     />
                 )}
             </div>
+
+            {/* Configurations */}
+            {configurations.length > 0 && <ReviewConfigurations configurations={configurations} />}
 
             {/* UI Form */}
             {uiForm && <ReviewUiForm uiForm={uiForm} />}

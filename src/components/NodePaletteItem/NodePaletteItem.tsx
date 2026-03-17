@@ -26,10 +26,15 @@ export default function NodePaletteItem({ action }: NodePaletteItemProps) {
         const dragData = JSON.stringify({
             actionId: action.id,
             actionKey: action.actionKey,
+            actionVersionId: (action as any).actionVersionId || (action as any).latestVersionId || '',
             label: action.defaultNodeTitle,
             category: action.category,
             capability: action.capability,
             icon: action.icon || '⚡',
+            inputsSchemaJson: action.inputsSchemaJson || [],
+            outputsSchemaJson: action.outputsSchemaJson || [],
+            executionJson: action.executionJson || null,
+            configurationsJson: action.configurationsJson || [],
         });
         e.dataTransfer.setData('application/reactflow', dragData);
         e.dataTransfer.effectAllowed = 'move';

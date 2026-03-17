@@ -1,73 +1,143 @@
 /**
- * TriggerNode styles.
+ * TriggerNode Color-Themed Turbo Style.
  */
 
 .trigger-node {
-    background: var(--color-bg-white);
-    border: 2px solid var(--color-node-trigger);
-    /* Distinct purple border for triggers */
-    border-radius: 20px;
-    /* Pill shape */
+    background: transparent;
+    border-radius: var(--turbo-border-radius);
     min-width: 180px;
     max-width: 220px;
-    box-shadow: var(--shadow-sm);
-    font-family: inherit;
+    font-family: var(--turbo-font-mono);
+    position: relative;
+    padding: 0;
+    overflow: visible; 
+    transition: all 0.3s ease;
+}
+
+/* Border Wrapper */
+.trigger-node__border-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--turbo-border-radius);
     overflow: hidden;
-    transition: box-shadow 0.15s ease;
+    padding: 1px;
+    background: var(--color-bg-white);
+    z-index: 1;
+}
+
+/* Animated Border */
+.trigger-node__border-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200%;
+    height: 200%;
+    aspect-ratio: 1;
+    background: conic-gradient(
+        from 0deg,
+        transparent 0 300deg,
+        var(--color-node-trigger) 360deg
+    );
+    animation: spin 3s linear infinite;
+    z-index: 0;
+}
+
+/* Content Wrapper - Tinted */
+.trigger-node__content {
+    background: color-mix(in srgb, var(--color-node-trigger), var(--color-bg-white) 95%);
+    border: 1px solid color-mix(in srgb, var(--color-node-trigger), transparent 70%);
+    border-radius: calc(var(--turbo-border-radius) - 1px);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
 }
 
 .trigger-node:hover {
-    box-shadow: var(--shadow-md);
+    box-shadow: 
+        0 8px 25px var(--color-node-shadow),
+        0 0 15px -2px var(--color-node-trigger);
 }
 
+/* ── Header ── */
 .trigger-node__header {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px;
-    background: var(--color-node-trigger-bg);
-    /* Light purple background for the top */
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--color-surface-border);
+    background: var(--color-surface-white-glass);
 }
 
 .trigger-node__icon {
-    font-size: 18px;
+    font-size: 20px;
     line-height: 1;
+    color: var(--color-node-trigger);
 }
 
-.trigger-node__label {
+.trigger-node__title {
     font-size: 14px;
     font-weight: 700;
-    color: var(--color-node-trigger-text);
-    /* Deep purple text */
+    color: color-mix(in srgb, var(--color-node-trigger), var(--color-base-black) 60%);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
+/* ── Footer ── */
 .trigger-node__footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 6px 16px 8px;
-    background: var(--color-bg-footer);
+    padding: 8px 14px 10px;
 }
 
 .trigger-node__badge {
     font-size: 10px;
     font-weight: 800;
     color: var(--color-node-trigger);
+    background: color-mix(in srgb, var(--color-node-trigger), transparent 90%);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid color-mix(in srgb, var(--color-node-trigger), transparent 70%);
     letter-spacing: 0.5px;
 }
 
 .trigger-node__category {
     font-size: 11px;
-    color: var(--color-nav-input-placeholder);
+    color: color-mix(in srgb, var(--color-node-trigger), var(--color-base-black) 50%);
+    opacity: 0.7;
 }
 
+/* ── Handles ── */
 .trigger-node__handle {
-    width: 8px !important;
+    width: 14px !important;
     height: 8px !important;
+    border-radius: 4px !important;
     background: var(--color-node-trigger) !important;
     border: 2px solid var(--color-bg-white) !important;
+    z-index: 10 !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 0 10px var(--color-node-trigger) !important;
+}
+
+.trigger-node__handle-target-top {
+    top: -4px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+}
+
+.trigger-node__handle-source-bottom {
+    bottom: -4px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+}
+
+.trigger-node__handle:hover {
+    transform: translateX(-50%) scale(1.2) !important;
+    animation: handle-pulse-turbo 1.5s infinite;
 }

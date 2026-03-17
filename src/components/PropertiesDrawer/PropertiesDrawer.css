@@ -80,3 +80,26 @@
     font-weight: 500;
     font-size: 13px;
 }
+
+/* ── Schema Tables (Inputs / Outputs) ── */
+.properties-drawer__schema-table {
+    margin-bottom: 8px;
+}
+
+.properties-drawer__schema-table .ant-table-thead > tr > th {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 6px 8px;
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.properties-drawer__schema-table .ant-table-tbody > tr > td {
+    font-size: 12px;
+    padding: 5px 8px;
+}
+
+.properties-drawer__schema-table .ant-table-tbody > tr:last-child > td {
+    border-bottom: none;
+}

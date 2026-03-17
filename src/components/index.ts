@@ -33,3 +33,4 @@ export { default as CreateActionOutputsStep } from './CreateActionOutputsStep/Cr
 export { default as CreateActionUiFormStep } from './CreateActionUiFormStep/CreateActionUiFormStep';
 export { default as CreateActionPolicyStep } from './CreateActionPolicyStep/CreateActionPolicyStep';
 export { default as CreateActionReviewStep } from './CreateActionReviewStep/CreateActionReviewStep';
+export { default as SubFlowNode } from './SubFlowNode/SubFlowNode';

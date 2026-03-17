@@ -9,6 +9,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { useActions } from '@/hooks';
 import { ActionCard, StatusFilterItem, CreateActionModal } from '@/components';
 import { STATUS_FILTER_OPTIONS, CARD_ACTION_KEYS, CAPABILITY_OPTIONS } from '@/constants';
+import { fetchActionById } from '@/services/action.service';
 import type { ActionFilters, ActionDefinition } from '@/interfaces';
 import './ActionCatalogPage.css';
 
@@ -64,11 +65,17 @@ export default function ActionCatalogPage() {
     /** Handle action menu selections */
     const handleCardAction = (actionKey: string, actionId: string) => {
         if (actionKey === CARD_ACTION_KEYS.EDIT) {
-            const action = actions.find(a => a.id === actionId);
-            if (action) {
-                setActionToEdit(action);
-                setIsCreateModalOpen(true);
-            }
+            // Fetch full action data with JSON blobs
+            fetchActionById(actionId).then((result: Awaited<ReturnType<typeof fetchActionById>>) => {
+                if (result.success) {
+                    setActionToEdit(result.data);
+                    setIsCreateModalOpen(true);
+                } else {
+                    message.error(result.error || 'Failed to load action for editing');
+                }
+            }).catch(() => {
+                message.error('Failed to load action for editing');
+            });
         } else if (actionKey === CARD_ACTION_KEYS.DELETE) {
             message.info('Delete coming soon...');
         } else {

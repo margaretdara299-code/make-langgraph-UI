@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react';
 import { Modal, Steps, Button, Space, message } from 'antd';
 import { ActionPreviewPanel } from '@/components';
-import { createAction } from '@/services';
+import { createAction, updateActionDefinition } from '@/services';
 import type { ActionDefinition, CreateActionModalProps } from '@/interfaces';
 import './CreateActionModal.css';
 
@@ -13,6 +13,7 @@ import CreateActionOverview from '../CreateActionOverview/CreateActionOverview';
 import CreateActionInputsStep from '../CreateActionInputsStep/CreateActionInputsStep';
 import CreateActionExecutionStep from '../CreateActionExecutionStep/CreateActionExecutionStep';
 import CreateActionOutputsStep from '../CreateActionOutputsStep/CreateActionOutputsStep';
+import CreateActionConfigStep from '../CreateActionConfigStep/CreateActionConfigStep';
 import CreateActionUiFormStep from '../CreateActionUiFormStep/CreateActionUiFormStep';
 import CreateActionPolicyStep from '../CreateActionPolicyStep/CreateActionPolicyStep';
 import CreateActionReviewStep from '../CreateActionReviewStep/CreateActionReviewStep';
@@ -60,16 +61,25 @@ export default function CreateActionModal({ isOpen, onClose, onCreated, actionTo
     const handlePublish = async () => {
         setIsSubmitting(true);
         try {
-            const res = await createAction(actionDraft);
+            let res;
+            if (actionToEdit) {
+                // Edit: PUT /api/actions/{id}
+                res = await updateActionDefinition(actionToEdit.id, actionDraft);
+                message.success('Action updated successfully!');
+            } else {
+                // Create: POST /api/actions
+                res = await createAction(actionDraft);
+                message.success('Action created successfully!');
+            }
+            
             if (res.success) {
-                message.success('Action published successfully!');
                 onCreated(); // Triggers a refetch in the parent table
                 handleClose();
             } else {
-                message.error(res.error || 'Failed to publish action.');
+                message.error(res.error || 'Failed to save action.');
             }
         } catch (error) {
-            console.error('Error publishing action:', error);
+            console.error('Error saving action:', error);
             message.error('An unexpected error occurred.');
         } finally {
             setIsSubmitting(false);
@@ -82,13 +92,11 @@ export default function CreateActionModal({ isOpen, onClose, onCreated, actionTo
 
     // Form steps configuration
     const steps = [
-        {
-            title: 'Overview',
-            content: <CreateActionOverview draft={actionDraft} setDraft={setActionDraft} />,
-        },
+        { title: 'Overview', content: <CreateActionOverview draft={actionDraft} setDraft={setActionDraft} /> },
         { title: 'Inputs', content: <CreateActionInputsStep draft={actionDraft} setDraft={setActionDraft} /> },
         { title: 'Execution', content: <CreateActionExecutionStep draft={actionDraft} setDraft={setActionDraft} /> },
         { title: 'Outputs', content: <CreateActionOutputsStep draft={actionDraft} setDraft={setActionDraft} /> },
+        { title: 'Config', content: <CreateActionConfigStep draft={actionDraft} setDraft={setActionDraft} /> },
         { title: 'UI Form', content: <CreateActionUiFormStep draft={actionDraft} setDraft={setActionDraft} /> },
         { title: 'Policy', content: <CreateActionPolicyStep draft={actionDraft} setDraft={setActionDraft} /> },
         { title: 'Publish', content: <CreateActionReviewStep draft={actionDraft} setDraft={setActionDraft} /> },
@@ -96,7 +104,7 @@ export default function CreateActionModal({ isOpen, onClose, onCreated, actionTo
 
     return (
         <Modal
-            title="Create New Action"
+            title={actionToEdit ? "Edit Action" : "Create New Action"}
             open={isOpen}
             onCancel={handleClose}
             width={1280}
@@ -133,9 +141,9 @@ export default function CreateActionModal({ isOpen, onClose, onCreated, actionTo
                                 </Button>
                             )}
                             {currentStep === steps.length - 1 && (
-                                <Button type="primary" onClick={handlePublish} loading={isSubmitting}>
-                                    Publish Action
-                                </Button>
+                                    <Button type="primary" onClick={handlePublish} loading={isSubmitting}>
+                                        {actionToEdit ? 'Publish Updates' : 'Publish Action'}
+                                    </Button>
                             )}
                         </Space>
                     </div>

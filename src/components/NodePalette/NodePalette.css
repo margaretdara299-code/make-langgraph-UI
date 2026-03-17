@@ -64,6 +64,28 @@
     line-height: 18px;
 }
 
+.node-palette__structure-header {
+    padding: 8px 16px;
+}
+
+.node-palette__structure-body {
+    padding: 0 8px;
+}
+
+.node-palette-item__icon--primary {
+    color: var(--color-primary);
+}
+
+.node-palette-item__name--primary {
+    color: var(--color-primary);
+}
+
+.node-palette-item__badge--group {
+    background-color: var(--color-primary-bg);
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+}
+
 /* Tighten AntD Collapse spacing */
 .node-palette .ant-collapse-header {
     padding: 8px 16px !important;

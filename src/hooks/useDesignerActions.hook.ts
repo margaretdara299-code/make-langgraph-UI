@@ -3,28 +3,29 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { fetchDesignerActions } from '@/services';
+import { fetchActions } from '@/services';
+import type { ActionDefinition } from '@/interfaces';
 
-export default function useDesignerActions(clientId = 'c_demo', environment = 'dev') {
-    // We type this as any to align with the current node data structures without refactoring all interfaces yet
-    const [actionsByCategory, setActionsByCategory] = useState<Record<string, any[]>>({});
+export default function useDesignerActions() {
+    // Grouped actions for the accordion in NodePalette
+    const [actionsByCategory, setActionsByCategory] = useState<Record<string, ActionDefinition[]>>({});
     const [isLoading, setIsLoading] = useState(true);
 
     const loadActions = useCallback(async () => {
         setIsLoading(true);
         try {
-            const result = await fetchDesignerActions(clientId, environment);
-            const items = result.items || [];
+            // Fetch all published actions for the palette
+            const result = await fetchActions({ status: 'published', pageSize: 100 });
+            const items = result.data || [];
 
             // Group by category for the NodePalette accordion
-            const grouped: Record<string, any[]> = {};
+            const grouped: Record<string, ActionDefinition[]> = {};
             for (const action of items) {
-                const anyAction = action as any;
-                const cat = anyAction.category || 'Uncategorized';
+                const cat = action.category || 'Uncategorized';
                 if (!grouped[cat]) {
                     grouped[cat] = [];
                 }
-                grouped[cat].push(anyAction);
+                grouped[cat].push(action);
             }
             setActionsByCategory(grouped);
         } catch (error) {
@@ -32,7 +33,7 @@ export default function useDesignerActions(clientId = 'c_demo', environment = 'd
         } finally {
             setIsLoading(false);
         }
-    }, [clientId, environment]);
+    }, []);
 
     useEffect(() => {
         loadActions();

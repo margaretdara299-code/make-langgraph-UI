@@ -42,11 +42,11 @@ export default function ActionPreviewPanel({ actionDef, currentStep }: ActionPre
                 <div className="action-preview-panel__stats">
                     <Space size="large">
                         <div className="action-preview-panel__stat">
-                            <Text className="action-preview-panel__stat-val">0</Text>
+                            <Text className="action-preview-panel__stat-val">{(actionDef.inputsSchemaJson || []).length}</Text>
                             <Text type="secondary" className="action-preview-panel__stat-lbl">Input fields</Text>
                         </div>
                         <div className="action-preview-panel__stat">
-                            <Text className="action-preview-panel__stat-val">0</Text>
+                            <Text className="action-preview-panel__stat-val">{(actionDef.outputsSchemaJson || []).length}</Text>
                             <Text type="secondary" className="action-preview-panel__stat-lbl">Output fields</Text>
                         </div>
                     </Space>

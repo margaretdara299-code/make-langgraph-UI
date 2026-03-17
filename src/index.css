@@ -73,6 +73,49 @@
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
   --shadow-sm-strong: 0 2px 8px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.14);
+  /* ── Turbo Mode Theme (Adaptive) ── */
+  --turbo-bg-tint: rgba(255, 255, 255, 0.95);
+  --turbo-border-radius: 10px;
+  --turbo-font-mono: 'Fira Code', 'Fira Mono', monospace;
+  --turbo-glow-primary: rgba(42, 138, 246, 0.4);
+  --turbo-glow-secondary: rgba(233, 42, 103, 0.4);
+
+  /* Base Colors */
+  --color-base-black: #000000;
+  --color-base-white: #ffffff;
+  --color-base-black-rgb: 0, 0, 0;
+  --color-base-white-rgb: 255, 255, 255;
+
+  /* Semantic Node Tokens */
+  --color-surface-white-glass: rgba(var(--color-base-white-rgb), 0.4);
+  --color-surface-white-glass-less: rgba(var(--color-base-white-rgb), 0.3);
+  --color-surface-white-subtle: rgba(var(--color-base-white-rgb), 0.1);
+  --color-node-shadow: rgba(var(--color-base-black-rgb), 0.05);
+  --color-node-shadow-strong: rgba(var(--color-base-black-rgb), 0.1);
+  --color-node-shadow-hover: rgba(var(--color-base-black-rgb), 0.12);
+  --color-node-shadow-glow: rgba(var(--color-base-black-rgb), 0.08);
+}
+
+/* ── Animations ── */
+@keyframes spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes handle-pulse-turbo {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(0, 0, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
 }
 
 /* ── CSS Reset ── */

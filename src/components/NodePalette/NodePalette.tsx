@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Input, Collapse, Spin, Typography } from 'antd';
 import { useDesignerActions } from '@/hooks';
 import NodePaletteItem from '@/components/NodePaletteItem/NodePaletteItem';
+import StructureSection from './StructureSection';
 import type { NodePaletteProps } from '@/interfaces';
 import './NodePalette.css';
 
@@ -59,31 +60,39 @@ export default function NodePalette({ className = '' }: NodePaletteProps) {
                     <div className="node-palette__loading">
                         <Spin size="small" />
                     </div>
-                ) : categoryKeys.length === 0 ? (
-                    <div className="node-palette__empty">
-                        <Text type="secondary">No actions found</Text>
-                    </div>
                 ) : (
-                    <Collapse
-                        ghost
-                        defaultActiveKey={categoryKeys}
-                        items={categoryKeys.map((category) => ({
-                            key: category,
-                            label: (
-                                <span className="node-palette__category-label">
-                                    {category}
-                                    <span className="node-palette__category-count">
-                                        {filteredCategories[category].length}
-                                    </span>
-                                </span>
-                            ),
-                            children: filteredCategories[category].map((action) => (
-                                <NodePaletteItem key={action.id} action={action} />
-                            )),
-                        }))}
-                    />
+                    <>
+                        <StructureSection search={search} />
+
+                        {/* ── API-driven Action Categories ── */}
+                        {categoryKeys.length === 0 && !(!search || 'sub-flow'.includes(search.toLowerCase())) ? (
+                            <div className="node-palette__empty">
+                                <Text type="secondary">No actions found</Text>
+                            </div>
+                        ) : (
+                            <Collapse
+                                ghost
+                                defaultActiveKey={categoryKeys}
+                                items={categoryKeys.map((category) => ({
+                                    key: category,
+                                    label: (
+                                        <span className="node-palette__category-label">
+                                            {category}
+                                            <span className="node-palette__category-count">
+                                                {filteredCategories[category].length}
+                                            </span>
+                                        </span>
+                                    ),
+                                    children: filteredCategories[category].map((action) => (
+                                        <NodePaletteItem key={action.id} action={action} />
+                                    )),
+                                }))}
+                            />
+                        )}
+                    </>
                 )}
             </div>
         </aside>
     );
 }
+

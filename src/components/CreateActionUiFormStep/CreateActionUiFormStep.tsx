@@ -2,6 +2,7 @@
  * CreateActionUiFormStep — Step 5: Configure how the action renders on the canvas.
  */
 
+import { useEffect } from 'react';
 import { Form, Input, Select, Switch, Typography } from 'antd';
 import type { CreateActionStepProps } from '@/interfaces';
 import type { ActionUiFormConfig } from '@/interfaces';
@@ -13,6 +14,13 @@ const { TextArea } = Input;
 
 export default function CreateActionUiFormStep({ draft, setDraft }: CreateActionStepProps) {
     const config: ActionUiFormConfig = draft.uiFormJson ?? DEFAULT_UI_FORM_CONFIG;
+
+    // Seed draft with defaults on mount so the payload is never null
+    useEffect(() => {
+        if (!draft.uiFormJson) {
+            setDraft(prev => ({ ...prev, uiFormJson: DEFAULT_UI_FORM_CONFIG }));
+        }
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const updateConfig = (field: keyof ActionUiFormConfig, value: unknown) => {
         setDraft(prev => ({

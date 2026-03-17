@@ -43,12 +43,31 @@ export const CAPABILITY_OPTIONS = [
     { value: 'rules', label: 'Rules Engines' },
 ];
 
-/** Create Action Wizard Steps (Steps 2-7 for Preview Panel) */
+/** Human-readable labels for individual action capabilities */
+export const CAPABILITY_LABELS: Record<string, string> = {
+    api: 'API Connector',
+    ai: 'AI Model',
+    rpa: 'RPA Bot',
+    human: 'Human Task',
+    rules: 'Rules Engine',
+};
+
+/** Create Action Wizard Steps (Steps 2-8 for Preview Panel) */
 export const CREATE_ACTION_STEPS = [
     'Define Inputs',
     'Configure Execution',
     'Define Outputs',
+    'Configure Settings',
     'Configure UI Form',
     'Set Policy & Security',
     'Review & Publish',
 ];
+
+/** Options for dynamic runtime action configuration fields */
+export const ACTION_CONFIG_INPUT_TYPES = [
+    { value: 'text', label: 'Text' },
+    { value: 'number', label: 'Number' },
+    { value: 'boolean', label: 'Boolean (Toggle)' },
+    { value: 'select', label: 'Select (Dropdown)' },
+    { value: 'textarea', label: 'Text Area' },
+] as const;

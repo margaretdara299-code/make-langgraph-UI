@@ -1,21 +1,47 @@
-/**
- * Hook to handle drag and drop events from the Node Palette to the React Flow canvas.
- */
-
 import { useCallback } from 'react';
 import type { ReactFlowInstance, Node } from '@xyflow/react';
 import type { CanvasNodeData } from '@/interfaces';
 import { getNextNodeId } from '@/utils';
+import { SUBFLOW_DEFAULT_WIDTH, SUBFLOW_DEFAULT_HEIGHT } from '@/constants';
 
 export default function useCanvasDragDrop(
     reactFlowInstance: ReactFlowInstance | null,
-    setNodes: React.Dispatch<React.SetStateAction<Node[]>>
+    setNodes: React.Dispatch<React.SetStateAction<Node[]>>,
+    nodes: Node[]
 ) {
     /** Allow drop on canvas */
     const onDragOver = useCallback((event: React.DragEvent) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'move';
     }, []);
+
+    /**
+     * Given a flow-space position, find the first sub-flow node whose bounds contain that point.
+     */
+    const findSubFlowAtPosition = useCallback(
+        (x: number, y: number): Node | undefined => {
+            // Iterate in reverse so the topmost (last-rendered) sub-flow wins
+            for (let i = nodes.length - 1; i >= 0; i--) {
+                const n = nodes[i];
+                if (n.type !== 'subflow') continue;
+
+                // Respect actual measured/style dimensions first, fallback to defaults
+                const w = (n.measured?.width ?? n.style?.width ?? SUBFLOW_DEFAULT_WIDTH) as number;
+                const h = (n.measured?.height ?? n.style?.height ?? SUBFLOW_DEFAULT_HEIGHT) as number;
+
+                if (
+                    x >= n.position.x &&
+                    x <= n.position.x + w &&
+                    y >= n.position.y &&
+                    y <= n.position.y + h
+                ) {
+                    return n;
+                }
+            }
+            return undefined;
+        },
+        [nodes]
+    );
 
     /** Handle drop from palette */
     const onDrop = useCallback(
@@ -25,29 +51,68 @@ export default function useCanvasDragDrop(
             const dataStr = event.dataTransfer.getData('application/reactflow');
             if (!dataStr || !reactFlowInstance) return;
 
-            const data: CanvasNodeData = JSON.parse(dataStr);
+            const data = JSON.parse(dataStr);
 
             const position = reactFlowInstance.screenToFlowPosition({
                 x: event.clientX,
                 y: event.clientY,
             });
 
+            // ── Handle Sub-Flow node drop ──
+            if (data.nodeType === 'subflow') {
+                const newNode: Node = {
+                    id: getNextNodeId(),
+                    type: 'subflow',
+                    position,
+                    data: {
+                        label: data.label || 'Sub-Flow',
+                        description: data.description || '',
+                        color: data.color || undefined,
+                    },
+                    style: {
+                        width: SUBFLOW_DEFAULT_WIDTH,
+                        height: SUBFLOW_DEFAULT_HEIGHT,
+                    },
+                };
+                setNodes((nds) => [...nds, newNode]);
+                return;
+            }
+
+            // ── Handle regular action node drop ──
+            const nodeData: CanvasNodeData = data;
+
             let nodeType = 'action';
-            if (data.category.toLowerCase() === 'triggers') nodeType = 'trigger';
-            else if (data.category.toLowerCase() === 'connectors') nodeType = 'connector';
-            else if (data.category.toLowerCase() === 'ends') nodeType = 'end';
+            if (nodeData.category.toLowerCase() === 'triggers') nodeType = 'trigger';
+            else if (nodeData.category.toLowerCase() === 'connectors') nodeType = 'connector';
+            else if (nodeData.category.toLowerCase() === 'ends') nodeType = 'end';
+
+            // Check whether it landed inside a sub-flow
+            const parentSubFlow = findSubFlowAtPosition(position.x, position.y);
 
             const newNode: Node = {
                 id: getNextNodeId(),
                 type: nodeType,
-                position,
-                data: data as any,
+                position: parentSubFlow
+                    ? {
+                          // Make position relative to the sub-flow's top-left
+                          x: position.x - parentSubFlow.position.x,
+                          y: position.y - parentSubFlow.position.y,
+                      }
+                    : position,
+                data: nodeData as any,
+                ...(parentSubFlow
+                    ? {
+                          parentId: parentSubFlow.id,
+                          extent: 'parent' as const,
+                      }
+                    : {}),
             };
 
             setNodes((nds) => [...nds, newNode]);
         },
-        [reactFlowInstance, setNodes]
+        [reactFlowInstance, setNodes, findSubFlowAtPosition]
     );
 
     return { onDragOver, onDrop };
 }
+

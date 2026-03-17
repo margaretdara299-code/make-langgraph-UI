@@ -21,10 +21,11 @@ export interface ActionDefinition {
     createdAt: string;
     updatedAt: string;
 
-    // ── Version-level JSON blobs (populated by wizard steps 2–6) ──
+    // ── Version-level JSON blobs (populated by wizard steps 2–7) ──
     inputsSchemaJson?: ActionInputField[];
     executionJson?: ActionExecutionConfig;
     outputsSchemaJson?: ActionOutputField[];
+    configurationsJson?: ActionConfigField[];
     uiFormJson?: ActionUiFormConfig;
     policyJson?: ActionPolicyConfig;
 }
@@ -96,4 +97,16 @@ export interface ActionFilters {
     search?: string;
     page?: number;
     pageSize?: number;
+}
+
+// ── Configurations step sub-types ────────────────────────────────────────────
+
+export type ActionConfigInputType = 'text' | 'number' | 'boolean' | 'select' | 'textarea';
+
+export interface ActionConfigField {
+    label: string;
+    inputKey: string;
+    inputType: ActionConfigInputType;
+    options?: string[];
+    defaultValue?: string | number | boolean;
 }
