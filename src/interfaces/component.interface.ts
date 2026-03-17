@@ -151,3 +151,7 @@ export interface ReviewUiFormProps {
 export interface ReviewPolicyProps {
     policy: NonNullable<CreateActionStepProps['draft']['policyJson']>;
 }
+
+export interface StructureSectionProps {
+    search: string;
+}

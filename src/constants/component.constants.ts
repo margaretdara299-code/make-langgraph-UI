@@ -43,6 +43,15 @@ export const CAPABILITY_OPTIONS = [
     { value: 'rules', label: 'Rules Engines' },
 ];
 
+/** Human-readable labels for individual action capabilities */
+export const CAPABILITY_LABELS: Record<string, string> = {
+    api: 'API Connector',
+    ai: 'AI Model',
+    rpa: 'RPA Bot',
+    human: 'Human Task',
+    rules: 'Rules Engine',
+};
+
 /** Create Action Wizard Steps (Steps 2-8 for Preview Panel) */
 export const CREATE_ACTION_STEPS = [
     'Define Inputs',

@@ -1,13 +1,9 @@
 /**
- * Constants for the Skill Designer canvas.
+ * General canvas-related constants.
  */
 
-/** Label map for capability badges */
-export const CAPABILITY_LABELS: Record<string, string> = {
-    api: 'API',
-    ai: 'AI',
-    rpa: 'RPA',
-    human: 'Human',
-    rules: 'Rules',
-    message: 'Message',
-};
+/** Default initial width for a new sub-flow container node */
+export const SUBFLOW_DEFAULT_WIDTH = 500;
+
+/** Default initial height for a new sub-flow container node */
+export const SUBFLOW_DEFAULT_HEIGHT = 400;

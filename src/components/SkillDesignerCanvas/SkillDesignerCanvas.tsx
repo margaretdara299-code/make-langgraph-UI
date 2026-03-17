@@ -36,7 +36,7 @@ export default function SkillDesignerCanvas() {
     const [drawerEdgeId, setDrawerEdgeId] = useState<string | null>(null);
 
     // Call our extracted drag & drop hook
-    const { onDragOver, onDrop } = useCanvasDragDrop(reactFlowInstance, setNodes);
+    const { onDragOver, onDrop } = useCanvasDragDrop(reactFlowInstance, setNodes, nodes);
 
     /** Connect two nodes */
     const onConnect: OnConnect = useCallback(

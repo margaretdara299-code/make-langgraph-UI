@@ -1,0 +1,147 @@
+/**
+ * SubFlowNode Color-Themed Turbo Style.
+ */
+
+.subflow-node {
+    background: transparent;
+    border-radius: var(--turbo-border-radius);
+    min-width: 250px;
+    min-height: 180px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--turbo-font-mono);
+    position: relative;
+    padding: 0;
+    overflow: visible; 
+    transition: all 0.3s ease;
+}
+
+/* Border Wrapper */
+.subflow-node__border-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--turbo-border-radius);
+    overflow: hidden;
+    padding: 1px;
+    background: var(--color-bg-white);
+    z-index: 1;
+}
+
+/* Animated Border Layer */
+.subflow-node__border-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200%;
+    height: 200%;
+    aspect-ratio: 1;
+    background: conic-gradient(
+        from 0deg,
+        transparent 0 300deg,
+        var(--node-accent-glow) 360deg
+    );
+    animation: spin 5s linear infinite;
+    z-index: 0;
+}
+
+/* Content Wrapper - Tinted */
+.subflow-node__content {
+    background: color-mix(in srgb, var(--node-accent-glow), var(--color-bg-white) 95%);
+    border: 1px solid color-mix(in srgb, var(--node-accent-glow), transparent 70%);
+    border-radius: calc(var(--turbo-border-radius) - 1px);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+}
+
+.subflow-node--glow {
+    box-shadow: 
+        0 8px 32px var(--color-node-shadow),
+        0 0 30px -10px var(--node-accent-glow);
+}
+
+/* ── Header ── */
+.subflow-node__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--color-surface-border);
+    background: var(--color-surface-white-glass-less);
+}
+
+.subflow-node__icon {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.subflow-node__title {
+    font-size: 15px;
+    font-weight: 800;
+    color: color-mix(in srgb, var(--node-accent-glow), var(--color-base-black) 70%);
+    text-shadow: 0 1px 1px var(--color-surface-white-glass);
+}
+
+/* ── Body ── */
+.subflow-node__body {
+    flex: 1;
+    padding: 16px;
+    position: relative;
+    background: var(--color-surface-white-subtle);
+}
+
+.subflow-node__description {
+    font-size: 11px;
+    color: color-mix(in srgb, var(--node-accent-glow), var(--color-base-black) 40%);
+    opacity: 0.7;
+    line-height: 1.5;
+}
+
+/* ── Handles ── */
+.subflow-node__handle {
+    width: 16px !important;
+    height: 10px !important;
+    border-radius: 4px !important;
+    background: var(--node-accent-glow) !important;
+    border: 2px solid var(--color-bg-white) !important;
+    z-index: 10 !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 0 12px var(--node-accent-glow) !important;
+}
+
+.subflow-node__handle-target-top {
+    top: -5px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+}
+
+.subflow-node__handle-source-bottom {
+    bottom: -5px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+}
+
+.subflow-node__handle:hover {
+    transform: translateX(-50%) scale(1.2) !important;
+    box-shadow: 0 0 18px var(--node-accent-glow) !important;
+}
+
+/* ── Resize Controls ── */
+.subflow-node__resize-handle {
+    background: var(--color-bg-white) !important;
+    border: 2px solid var(--node-accent-glow) !important;
+    width: 10px !important;
+    height: 10px !important;
+}
+
+.subflow-node__resize-line {
+    border-color: var(--node-accent-glow) !important;
+    opacity: 0.3;
+}

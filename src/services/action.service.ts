@@ -152,7 +152,7 @@ export async function fetchActionStatusCounts(): Promise<Record<string, number>>
  * @param filters Optional filtering applied from the Node Palette search.
  */
 export async function fetchDesignerActions(
-    clientId = 'c_demo',
+    _clientId = 'c_demo',
     environment = 'dev',
     filters?: { capability?: string; category?: string; search?: string }
 ) {

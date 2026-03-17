@@ -39,7 +39,6 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     const [fetchedOutputs, setFetchedOutputs] = useState<ActionOutputField[]>([]);
     const [fetchedExecution, setFetchedExecution] = useState<ActionExecutionConfig | null>(null);
     const [fetchedConfigs, setFetchedConfigs] = useState<ActionConfigField[]>([]);
-    const [fetchedVersionId, setFetchedVersionId] = useState<string>('');
 
     // Track which actionId we last fetched to avoid re-fetching
     const lastFetchedActionId = useRef<string | null>(null);
@@ -57,7 +56,12 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             setFetchedOutputs([]);
             setFetchedExecution(null);
             setFetchedConfigs([]);
-            setFetchedVersionId('');
+            return;
+        }
+
+        // ── Skip fetching for non-action nodes (e.g. subflow) ──
+        if (selectedNode.type !== 'action' && selectedNode.type !== 'trigger') {
+            lastFetchedActionId.current = null;
             return;
         }
 
@@ -127,7 +131,6 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                 setFetchedOutputs(outputs);
                 setFetchedExecution(execution);
                 setFetchedConfigs(configs);
-                setFetchedVersionId(versionId);
 
                 // Also update the React Flow node data so it carries the full data
                 setNodes((nds) =>
@@ -159,10 +162,23 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     // Re-surface the correct node/edge title onto the form fields when data is ready
     useEffect(() => {
         if (selectedNode) {
+            const isSubFlow = selectedNode.type === 'subflow';
+            const nodeLabel = selectedNode.data.label;
+
+            if (isSubFlow) {
+                const sd = selectedNode.data as any; // SubFlowNodeData
+                form.setFieldsValue({
+                    label: nodeLabel,
+                    description: sd.description || '',
+                });
+                return;
+            }
+
+            // Normal Action Node
             const nd = selectedNode.data as unknown as CanvasNodeData;
             const exec = fetchedExecution || nd.executionJson;
             form.setFieldsValue({
-                label: nd.label,
+                label: nodeLabel,
                 // Execution fields
                 exec_connectorType: exec?.connectorType || 'rest',
                 exec_endpointUrl: exec?.endpointUrl || '',
@@ -192,7 +208,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
 
     // When the form values change we instantly update the React Flow instance
     const handleValuesChange = (changedValues: any) => {
-        if (selectedNode && changedValues.label !== undefined) {
+        if (selectedNode && (changedValues.label !== undefined || changedValues.description !== undefined)) {
             setNodes((nodes) =>
                 nodes.map((node) => {
                     if (node.id === selectedNode.id) {
@@ -200,7 +216,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                             ...node,
                             data: {
                                 ...node.data,
-                                label: changedValues.label,
+                                ...changedValues,
                             },
                         };
                     }
@@ -234,8 +250,29 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     /** Collect form values and apply changes locally to the React Flow node */
     const handleApply = () => {
         if (!selectedNode) return;
-        const nd = selectedNode.data as unknown as CanvasNodeData;
         const allValues = form.getFieldsValue();
+
+        if (selectedNode.type === 'subflow') {
+            setNodes((nodes) =>
+                nodes.map((node) => {
+                    if (node.id === selectedNode.id) {
+                        return {
+                            ...node,
+                            data: {
+                                ...node.data,
+                                label: allValues.label,
+                                description: allValues.description,
+                            },
+                        };
+                    }
+                    return node;
+                })
+            );
+            message.success('Group properties applied');
+            return;
+        }
+
+        const nd = selectedNode.data as unknown as CanvasNodeData;
 
         // Build updated execution config from form
         const updatedExecution = {
@@ -416,10 +453,8 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
 
     // Render forms based on what is selected
     const renderContent = () => {
-        if (selectedNode && nodeData) {
-            // Use fetched data if available, otherwise fall back to node data
-            const displayInputs = fetchedInputs.length > 0 ? fetchedInputs : (nodeData.inputsSchemaJson || []);
-            const displayOutputs = fetchedOutputs.length > 0 ? fetchedOutputs : (nodeData.outputsSchemaJson || []);
+        if (selectedNode) {
+            const isSubFlow = selectedNode.type === 'subflow';
 
             if (isLoadingAction) {
                 return (
@@ -435,19 +470,21 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                     <div className="properties-drawer__meta" style={{ background: token.colorBgContainer, borderColor: token.colorBorderSecondary }}>
                         <div className="properties-drawer__meta-item">
                             <Text type="secondary">Type</Text>
-                            <Text strong>{nodeData.category}</Text>
+                            <Text strong>{isSubFlow ? 'Structure Group' : (nodeData?.category || 'Node')}</Text>
                         </div>
                         <div className="properties-drawer__meta-item">
                             <Text type="secondary">Capability</Text>
-                            <div className={`properties-drawer__capability-badge badge-${nodeData.capability}`}>
-                                {nodeData.capability.toUpperCase()}
+                            <div className={`properties-drawer__capability-badge badge-${isSubFlow ? 'default' : nodeData?.capability}`}>
+                                {isSubFlow ? 'GROUP' : (nodeData?.capability || 'DEFAULT').toUpperCase()}
                             </div>
                         </div>
-                        <div className="properties-drawer__meta-item">
-                            <Text type="secondary">Action ID</Text>
-                            <Text code>{nodeData.actionKey}</Text>
-                        </div>
-                        {nodeData.actionVersionId && (
+                        {!isSubFlow && nodeData?.actionKey && (
+                            <div className="properties-drawer__meta-item">
+                                <Text type="secondary">Action ID</Text>
+                                <Text code>{nodeData.actionKey}</Text>
+                            </div>
+                        )}
+                        {!isSubFlow && nodeData?.actionVersionId && (
                             <div className="properties-drawer__meta-item">
                                 <Text type="secondary">Version ID</Text>
                                 <Text code style={{ fontSize: 11 }}>{nodeData.actionVersionId}</Text>
@@ -473,25 +510,38 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                             <Input />
                         </Form.Item>
 
-                        {/* ── Inputs Section ── */}
-                        <div className="properties-drawer__divider" />
-                        <Title level={5} className="properties-drawer__section-title">Inputs</Title>
-                        {renderInputsSection(displayInputs)}
+                        {isSubFlow && (
+                            <Form.Item
+                                label="Description"
+                                name="description"
+                            >
+                                <Input.TextArea rows={4} placeholder="What does this group do?" />
+                            </Form.Item>
+                        )}
 
-                        {/* ── Outputs Section ── */}
-                        <div className="properties-drawer__divider" />
-                        <Title level={5} className="properties-drawer__section-title">Outputs</Title>
-                        {renderOutputsSection(displayOutputs)}
+                        {!isSubFlow && nodeData && (
+                            <>
+                                {/* ── Inputs Section ── */}
+                                <div className="properties-drawer__divider" />
+                                <Title level={5} className="properties-drawer__section-title">Inputs</Title>
+                                {renderInputsSection(fetchedInputs.length > 0 ? fetchedInputs : (nodeData.inputsSchemaJson || []))}
 
-                        {/* ── Execution Section ── */}
-                        <div className="properties-drawer__divider" />
-                        <Title level={5} className="properties-drawer__section-title">Execution</Title>
-                        {renderExecutionSection()}
+                                {/* ── Outputs Section ── */}
+                                <div className="properties-drawer__divider" />
+                                <Title level={5} className="properties-drawer__section-title">Outputs</Title>
+                                {renderOutputsSection(fetchedOutputs.length > 0 ? fetchedOutputs : (nodeData.outputsSchemaJson || []))}
 
-                        {/* ── Configurations Section ── */}
-                        <div className="properties-drawer__divider" />
-                        <Title level={5} className="properties-drawer__section-title">Configuration</Title>
-                        {renderNodeConfig(nodeData)}
+                                {/* ── Execution Section ── */}
+                                <div className="properties-drawer__divider" />
+                                <Title level={5} className="properties-drawer__section-title">Execution</Title>
+                                {renderExecutionSection()}
+
+                                {/* ── Configurations Section ── */}
+                                <div className="properties-drawer__divider" />
+                                <Title level={5} className="properties-drawer__section-title">Configuration</Title>
+                                {renderNodeConfig(nodeData)}
+                            </>
+                        )}
                     </Form>
 
                     <div style={{ marginTop: '32px', display: 'flex', gap: '8px' }}>
@@ -502,7 +552,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                             setNodes((nds) => nds.filter(n => n.id !== selectedNode.id));
                             onClose();
                         }}>
-                            Delete Node
+                            Delete {isSubFlow ? 'Group' : 'Node'}
                         </Button>
                     </div>
                 </div>
