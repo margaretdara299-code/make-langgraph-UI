@@ -4,11 +4,11 @@
  */
 
 import { useState } from 'react';
-import { Input, Select, Button, Typography, Spin, Empty, message } from 'antd';
+import { Input, Select, Button, Typography, Spin, Empty, message, Tabs, Badge, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useActions } from '@/hooks';
-import { ActionCard, StatusFilterItem, CreateActionModal } from '@/components';
-import { STATUS_FILTER_OPTIONS, CARD_ACTION_KEYS, CAPABILITY_OPTIONS } from '@/constants';
+import { ActionCard, CreateActionModal } from '@/components';
+import { ACTION_STATUS_FILTER_OPTIONS, CARD_ACTION_KEYS, CAPABILITY_OPTIONS } from '@/constants';
 import { fetchActionById } from '@/services/action.service';
 import type { ActionFilters, ActionDefinition } from '@/interfaces';
 import './ActionCatalogPage.css';
@@ -23,7 +23,7 @@ export default function ActionCatalogPage() {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [actionToEdit, setActionToEdit] = useState<ActionDefinition | undefined>(undefined);
 
-    const { actions, statusCounts, categoryCounts, isLoading, setFilters, refetch } = useActions();
+    const { actions, statusCounts, categoryCounts, capabilityCounts, isLoading, setFilters, refetch } = useActions();
 
     /** Handle search input */
     const handleSearch = (value: string) => {
@@ -102,56 +102,78 @@ export default function ActionCatalogPage() {
             </div>
 
             {/* ── Search Bar & Quick Filters ── */}
-            <div className="action-catalog__search-bar">
-                <Input.Search
-                    placeholder="Search actions by name, key, or description..."
-                    size="large"
-                    allowClear
-                    value={searchValue}
-                    onChange={(e) => handleSearch(e.target.value)}
-                    className="action-catalog__search-input"
-                />
-                <Select
-                    size="large"
-                    value={activeCapability}
-                    options={CAPABILITY_OPTIONS}
-                    onChange={handleCapabilityFilter}
-                    className="action-catalog__dropdown"
-                />
+            <div className="action-catalog__toolbar">
+                <div className="action-catalog__search-row">
+                    <Input.Search
+                        placeholder="Search actions by name, key, or description..."
+                        size="large"
+                        allowClear
+                        value={searchValue}
+                        onChange={(e) => handleSearch(e.target.value)}
+                        className="action-catalog__search-input"
+                    />
+                    
+                    <div className="action-catalog__toolbar-selects">
+                        <Select
+                            size="large"
+                            value={activeCapability}
+                            onChange={handleCapabilityFilter}
+                            className="action-catalog__dropdown"
+                            placeholder="All Capabilities"
+                            options={CAPABILITY_OPTIONS.map(opt => ({
+                                ...opt,
+                                label: (
+                                    <Space>
+                                        <opt.icon />
+                                        <span>{opt.label} ({opt.value === 'all' ? (statusCounts['all'] || 0) : (capabilityCounts[opt.value] || 0)})</span>
+                                    </Space>
+                                )
+                            }))}
+                        />
+
+                        <Select
+                            size="large"
+                            value={activeCategory}
+                            onChange={handleCategoryFilter}
+                            className="action-catalog__dropdown"
+                            placeholder="All Categories"
+                            options={[
+                                { value: 'all', label: `All Categories (${Object.values(categoryCounts).reduce((a, b) => a + b, 0)})` },
+                                ...Object.entries(categoryCounts).map(([cat, count]) => ({
+                                    value: cat,
+                                    label: `${cat} (${count})`
+                                }))
+                            ]}
+                        />
+                    </div>
+                </div>
+
+                <div className="action-catalog__filter-bar">
+                    <Tabs
+                        activeKey={activeStatus}
+                        onChange={handleStatusFilter}
+                        className="action-catalog__tabs"
+                        items={ACTION_STATUS_FILTER_OPTIONS.map((option) => ({
+                            key: option.key,
+                            label: (
+                                <Space>
+                                    <option.icon />
+                                    <span>{option.label}</span>
+                                    <Badge 
+                                        count={statusCounts[option.key] ?? 0} 
+                                        showZero 
+                                        color={activeStatus === option.key ? 'var(--color-primary)' : '#d9d9d9'}
+                                        style={{ fontSize: '10px' }}
+                                    />
+                                </Space>
+                            ),
+                        }))}
+                    />
+                </div>
             </div>
 
             {/* ── Main Content Area ── */}
             <div className="action-catalog__body">
-                {/* ── Sidebar Filters ── */}
-                <aside className="action-catalog__sidebar">
-                    <div className="action-catalog__sidebar-section">
-                        <div className="action-catalog__filter-title">Status</div>
-                        {STATUS_FILTER_OPTIONS.map((option) => (
-                            <StatusFilterItem
-                                key={option.key}
-                                filterKey={option.key}
-                                label={option.label}
-                                count={statusCounts[option.key] ?? 0}
-                                isActive={activeStatus === option.key}
-                                onClick={() => handleStatusFilter(option.key)}
-                            />
-                        ))}
-                    </div>
-
-                    <div className="action-catalog__sidebar-section">
-                        <div className="action-catalog__filter-title">Categories</div>
-                        {Object.entries(categoryCounts).map(([category, count]) => (
-                            <StatusFilterItem
-                                key={category}
-                                filterKey={category}
-                                label={category}
-                                count={count}
-                                isActive={activeCategory === category}
-                                onClick={() => handleCategoryFilter(category)}
-                            />
-                        ))}
-                    </div>
-                </aside>
 
                 {/* ── Card Grid ── */}
                 <main className="action-catalog__grid-area">

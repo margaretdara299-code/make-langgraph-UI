@@ -3,28 +3,28 @@
  */
 
 import {
-    AppstoreOutlined,
     EditOutlined,
     CheckCircleOutlined,
     InboxOutlined,
     FileAddOutlined,
     CopyOutlined,
     RobotOutlined,
+    BulbOutlined,
 } from '@ant-design/icons';
 
 export const STATUS_FILTER_OPTIONS = [
-    { key: 'all', label: 'All Skills' },
-    { key: 'draft', label: 'Draft' },
-    { key: 'published', label: 'Published' },
-    { key: 'archived', label: 'Archived' },
+    { key: 'all', label: 'All Skills', icon: BulbOutlined },
+    { key: 'draft', label: 'Draft', icon: EditOutlined },
+    { key: 'published', label: 'Published', icon: CheckCircleOutlined },
+    { key: 'archived', label: 'Archived', icon: InboxOutlined },
 ] as const;
 
 /** Icon mapping for sidebar status filter items */
-export const STATUS_ICONS: Record<string, React.ReactNode> = {
-    all: <AppstoreOutlined />,
-    draft: <EditOutlined />,
-    published: <CheckCircleOutlined />,
-    archived: <InboxOutlined />,
+export const STATUS_ICONS = {
+    all: BulbOutlined,
+    draft: EditOutlined,
+    published: CheckCircleOutlined,
+    archived: InboxOutlined,
 };
 
 export const SKILLS_PAGE_SIZE = 12;
@@ -67,10 +67,10 @@ export const WIZARD_STEPS = [
 ];
 
 /** Icon mapping for creation method cards */
-export const METHOD_ICONS: Record<string, React.ReactNode> = {
-    scratch: <FileAddOutlined className="create-skill__method-icon" />,
-    template: <CopyOutlined className="create-skill__method-icon" />,
-    ai: <RobotOutlined className="create-skill__method-icon" />,
+export const METHOD_ICONS = {
+    scratch: FileAddOutlined,
+    template: CopyOutlined,
+    ai: RobotOutlined,
 };
 
 /** Action keys for SkillCard dropdown menu */

@@ -4,11 +4,11 @@
  */
 
 import { useState } from 'react';
-import { Input, Spin, Empty, Button, Typography, Modal, message } from 'antd';
+import { Input, Spin, Empty, Button, Typography, Modal, message, Tabs, Badge, Space } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useSkills } from '@/hooks';
-import { SkillCard, StatusFilterItem, CreateSkillModal } from '@/components';
+import { SkillCard, CreateSkillModal } from '@/components';
 import { STATUS_FILTER_OPTIONS, CARD_ACTION_KEYS } from '@/constants';
 import { deleteSkill, updateSkillStatus } from '@/services';
 import { ROUTES } from '@/routes';
@@ -119,33 +119,41 @@ export default function SkillsLibraryPage() {
                 </Button>
             </div>
 
-            {/* ── Search Bar ── */}
-            <Input.Search
-                placeholder="Search skills by name, key, or description..."
-                size="large"
-                allowClear
-                value={searchValue}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="skills-library__search"
-            />
+            {/* ── Search Bar & Horizontal Filters ── */}
+            <div className="skills-library__toolbar">
+                <Input.Search
+                    placeholder="Search skills by name, key, or description..."
+                    size="large"
+                    allowClear
+                    value={searchValue}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    className="skills-library__search"
+                />
+
+                <Tabs
+                    activeKey={activeStatus}
+                    onChange={handleStatusFilter}
+                    className="skills-library__tabs"
+                    items={STATUS_FILTER_OPTIONS.map((option) => ({
+                        key: option.key,
+                        label: (
+                            <Space>
+                                <option.icon />
+                                <span>{option.label}</span>
+                                <Badge 
+                                    count={statusCounts[option.key] ?? 0} 
+                                    showZero 
+                                    color={activeStatus === option.key ? 'var(--color-primary)' : '#d9d9d9'}
+                                    style={{ fontSize: '10px' }}
+                                />
+                            </Space>
+                        ),
+                    }))}
+                />
+            </div>
 
             {/* ── Main Content Area ── */}
             <div className="skills-library__body">
-                {/* ── Sidebar Filters ── */}
-                <aside className="skills-library__sidebar">
-                    <div className="skills-library__filter-title">Status</div>
-                    {STATUS_FILTER_OPTIONS.map((option) => (
-                        <StatusFilterItem
-                            key={option.key}
-                            filterKey={option.key}
-                            label={option.label}
-                            count={statusCounts[option.key] ?? 0}
-                            isActive={activeStatus === option.key}
-                            onClick={() => handleStatusFilter(option.key)}
-                        />
-                    ))}
-                </aside>
-
                 {/* ── Card Grid ── */}
                 <main className="skills-library__grid-area">
                     {isLoading ? (

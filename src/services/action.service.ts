@@ -145,6 +145,26 @@ export async function fetchActionStatusCounts(): Promise<Record<string, number>>
 }
 
 /**
+ * Retrieves aggregate counts of actions broken down by their Capability (api, ai, rpa, etc.).
+ * Useful for the Capability dropdown in the Action Catalog.
+ * @returns A promise resolving to a record mapping capability strings to counts.
+ */
+export async function fetchActionCapabilityCounts(): Promise<Record<string, number>> {
+    try {
+        const result = await apiClient.get<{ items: ActionDefinition[]; total: number }>(API_ENDPOINTS.ACTIONS.BASE);
+        const items = result.items || [];
+        const counts: Record<string, number> = {};
+        for (const a of items) {
+            const cap = (a.capability || 'api').toLowerCase();
+            counts[cap] = (counts[cap] ?? 0) + 1;
+        }
+        return counts;
+    } catch {
+        return {};
+    }
+}
+
+/**
  * Fetches explicitly the actions available to be placed on a designer canvas for a specific client.
  * Returns slightly different payload structures that include inputsSchemaJson and outputsSchemaJson.
  * @param clientId The tenant/client ID context.

@@ -33,14 +33,23 @@ export const MODAL_SIZE_MAP = {
     lg: 720,
 } as const;
 
+import {
+    ApiOutlined,
+    DeploymentUnitOutlined,
+    RobotOutlined,
+    UserOutlined,
+    NodeIndexOutlined,
+    BulbOutlined,
+} from '@ant-design/icons';
+
 /** Action Catalog Capability Filter Options */
 export const CAPABILITY_OPTIONS = [
-    { value: 'all', label: 'All Capabilities' },
-    { value: 'api', label: 'API Connectors' },
-    { value: 'ai', label: 'AI Models' },
-    { value: 'rpa', label: 'RPA Bots' },
-    { value: 'human', label: 'Human Tasks' },
-    { value: 'rules', label: 'Rules Engines' },
+    { value: 'all', label: 'All Capabilities', icon: BulbOutlined },
+    { value: 'api', label: 'API Connectors', icon: ApiOutlined },
+    { value: 'ai', label: 'AI Models', icon: RobotOutlined },
+    { value: 'rpa', label: 'RPA Bots', icon: DeploymentUnitOutlined },
+    { value: 'human', label: 'Human Tasks', icon: UserOutlined },
+    { value: 'rules', label: 'Rules Engines', icon: NodeIndexOutlined },
 ];
 
 /** Human-readable labels for individual action capabilities */
