@@ -25,10 +25,17 @@
 
 /* ── Search & Filters ── */
 
-.action-catalog__search-bar {
+.action-catalog__toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.action-catalog__search-row {
     display: flex;
     gap: 16px;
-    flex-wrap: wrap;
+    align-items: center;
 }
 
 .action-catalog__search-input {
@@ -37,29 +44,42 @@
     max-width: 480px;
 }
 
+.action-catalog__toolbar-selects {
+    display: flex;
+    gap: 12px;
+}
+
 .action-catalog__dropdown {
-    width: 160px;
+    width: 220px !important;
+}
+
+.action-catalog__filter-bar {
+    display: flex;
+    flex-direction: column;
+}
+
+.action-catalog__select-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.action-catalog__select-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-nav-input-placeholder);
+}
+
+.action-catalog__dropdown {
+    min-width: 220px;
 }
 
 /* ── Body (sidebar + grid) ── */
 
 .action-catalog__body {
     display: flex;
-    gap: 24px;
     flex: 1;
     min-height: 0;
-}
-
-/* ── Sidebar Filters ── */
-
-.action-catalog__sidebar {
-    flex-shrink: 0;
-    width: 200px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    overflow-y: auto;
-    padding-right: 8px;
 }
 
 .action-catalog__sidebar-section {

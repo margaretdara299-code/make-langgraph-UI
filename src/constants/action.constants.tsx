@@ -1,7 +1,9 @@
-/**
- * Constants related to Actions and the Action Catalog logic.
- */
-
+import { 
+    BulbOutlined, 
+    EditOutlined, 
+    CheckCircleOutlined, 
+    InboxOutlined 
+} from '@ant-design/icons';
 import type { ActionFieldType, ConnectorType, HttpMethod } from '@/interfaces';
 
 export const FIELD_TYPE_OPTIONS: { label: string; value: ActionFieldType }[] = [
@@ -57,4 +59,19 @@ export const DEFAULT_POLICY_CONFIG: import('@/interfaces').ActionPolicyConfig = 
     dataRetentionDays: 90,
     allowedEnvironments: ['dev', 'staging', 'prod'],
     notes: '',
+};
+
+export const ACTION_STATUS_FILTER_OPTIONS = [
+    { key: 'all', label: 'All Actions', icon: BulbOutlined },
+    { key: 'draft', label: 'Draft', icon: EditOutlined },
+    { key: 'published', label: 'Published', icon: CheckCircleOutlined },
+    { key: 'archived', label: 'Archived', icon: InboxOutlined },
+] as const;
+
+/** Icon map for Action statuses */
+export const ACTION_STATUS_ICONS = {
+    all: BulbOutlined,
+    draft: EditOutlined,
+    published: CheckCircleOutlined,
+    archived: InboxOutlined,
 };

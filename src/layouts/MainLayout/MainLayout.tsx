@@ -2,6 +2,7 @@
  * Main application layout using AntD Layout, Menu, and Input.
  */
 
+import { useState } from 'react';
 import { Layout, Menu, Input, Typography, Space } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -16,17 +17,29 @@ const { Text } = Typography;
 export default function MainLayout({ children }: MainLayoutProps) {
     const location = useLocation();
     const navigate = useNavigate();
+    const [collapsed, setCollapsed] = useState(false);
+    const [openKeys, setOpenKeys] = useState<string[]>([]);
 
     // Determine active menu key
     const selectedKey = SIDEBAR_MENU_ITEMS.find((item) =>
         location.pathname.startsWith(item.key)
     )?.key ?? ROUTES.SKILLS_LIBRARY;
 
+    /** Ensure only one sub-menu is open at a time */
+    const handleOpenChange = (keys: string[]) => {
+        const latestOpenKey = keys.find(key => !openKeys.includes(key));
+        if (latestOpenKey) {
+            setOpenKeys([latestOpenKey]);
+        } else {
+            setOpenKeys([]);
+        }
+    };
+
     return (
         <Layout className="main-layout">
             <Header className="main-layout__header">
                 <div className="main-layout__logo" onClick={() => navigate(ROUTES.SKILLS_LIBRARY)}>
-                    <span className="main-layout__logo-icon">⬡</span>
+                    <img src="/tensawLogo.jpg" alt="Tensaw Logo" className="main-layout__logo-image" />
                     <Text strong className="main-layout__logo-brand">Tensaw</Text>
                     <Text className="main-layout__logo-sub">Skills Studio</Text>
                 </div>
@@ -44,11 +57,22 @@ export default function MainLayout({ children }: MainLayoutProps) {
             </Header>
 
             <Layout>
-                <Sider width={220} className="main-layout__sidebar">
+                <Sider
+                    width={220}
+                    className="main-layout__sidebar"
+                    collapsible
+                    collapsed={collapsed}
+                    onCollapse={(value) => setCollapsed(value)}
+                >
                     <Menu
                         mode="inline"
                         selectedKeys={[selectedKey]}
-                        items={SIDEBAR_MENU_ITEMS}
+                        openKeys={openKeys}
+                        onOpenChange={handleOpenChange}
+                        items={SIDEBAR_MENU_ITEMS.map(item => ({
+                            ...item,
+                            icon: <item.icon />
+                        }))}
                         onClick={({ key }) => navigate(key)}
                         style={{ borderRight: 'none', paddingTop: 8 }}
                     />

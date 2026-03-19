@@ -24,38 +24,35 @@
     margin: 0 !important;
 }
 
-/* ── Search ── */
-
-.skills-library__search {
-    max-width: 480px;
-}
-
-/* ── Body (sidebar + grid) ── */
-
-.skills-library__body {
-    display: flex;
-    gap: 24px;
-    flex: 1;
-    min-height: 0;
-    /* Prevents flex flex-basis blowout */
-}
-
-/* ── Sidebar Filters ── */
-
-.skills-library__sidebar {
-    flex-shrink: 0;
-    width: 200px;
-}
-
-.skills-library__filter-title {
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--color-nav-input-placeholder);
-    margin-bottom: 8px;
-    padding: 0 12px;
-}
+/* ── Search & Filters ── */
+ 
+ .skills-library__toolbar {
+     display: flex;
+     flex-direction: column;
+     gap: 16px;
+     margin-bottom: 8px;
+ }
+ 
+ .skills-library__search {
+     max-width: 480px;
+ }
+ 
+ .skills-library__filter-bar {
+     display: flex;
+     gap: 12px;
+     flex-wrap: wrap;
+     padding: 4px 0;
+ }
+ 
+ /* ── Body (sidebar + grid) ── */
+ 
+ .skills-library__body {
+     display: flex;
+     flex: 1;
+     min-height: 0;
+ }
+ 
+ /* ── Sidebar Filters (REMOVED) ── */
 
 /* ── Grid ── */
 
