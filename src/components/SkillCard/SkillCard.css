@@ -49,11 +49,22 @@
     margin-bottom: 2px;
 }
 
-.skill-card__key {
-    display: block;
-    font-size: 12px;
+.skill-card__identifiers {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     margin-bottom: 8px;
+}
+
+.skill-card__key {
+    font-size: 12px;
     letter-spacing: 0.5px;
+}
+
+.skill-card__version-tag {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+    font-weight: 600;
+    letter-spacing: 0px;
 }
 
 .skill-card__description {
@@ -97,4 +108,10 @@
 .skill-card__tag {
     font-size: 11px !important;
     margin: 0 !important;
+}
+
+/* Highlighted "Build Skill" dropdown item thematic hover */
+li.skill-card__menu-item-build:hover,
+.skill-card__menu-item-build:hover {
+    background-color: var(--color-node-connector-bg) !important;
 }

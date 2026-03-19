@@ -6,3 +6,5 @@ export * from './action.service';
 export * from './graph.service';
 export * from './connector.service';
 export * from './http.service';
+export * from './category.service';
+export * from './capability.service';

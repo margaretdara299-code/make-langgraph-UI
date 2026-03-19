@@ -7,10 +7,10 @@ import { useState } from 'react';
 import { Input, Spin, Empty, Button, Typography, Modal, message, Tabs, Badge, Space } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { useSkills } from '@/hooks';
-import { SkillCard, CreateSkillModal } from '@/components';
+import { useSkills, useCategories } from '@/hooks';
+import { SkillCard, CreateSkillModal, EditSkillModal } from '@/components';
 import { STATUS_FILTER_OPTIONS, CARD_ACTION_KEYS } from '@/constants';
-import { deleteSkill, updateSkillStatus } from '@/services';
+import { deleteSkill, updateSkillVersionStatus, SkillVersionStatusValue } from '@/services';
 import { ROUTES } from '@/routes';
 import type { UseSkillsFilters } from '@/interfaces';
 import './SkillsLibraryPage.css';
@@ -21,9 +21,12 @@ export default function SkillsLibraryPage() {
     const [activeStatus, setActiveStatus] = useState<string>('all');
     const [searchValue, setSearchValue] = useState('');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editingSkill, setEditingSkill] = useState<any>(null);
     const navigate = useNavigate();
 
     const { skills, isLoading, statusCounts, setFilters, refetch } = useSkills();
+    const { categories } = useCategories();
 
     /** Handle status filter click */
     const handleStatusFilter = (statusKey: string) => {
@@ -50,7 +53,7 @@ export default function SkillsLibraryPage() {
     };
 
     /** Handle card action menu clicks */
-    const handleCardAction = (actionKey: string, skillId: string) => {
+    const handleCardAction = async (actionKey: string, skillId: string) => {
         switch (actionKey) {
             case CARD_ACTION_KEYS.DELETE:
                 Modal.confirm({
@@ -72,19 +75,36 @@ export default function SkillsLibraryPage() {
                 break;
 
             case CARD_ACTION_KEYS.PUBLISH:
-                handleStatusChange(skillId, 'published', 'Skill published successfully');
+            case CARD_ACTION_KEYS.UNPUBLISH: {
+                const skillToPublish = skills.find((skill) => skill.id === skillId);
+                if (skillToPublish?.latestVersionId) {
+                    const targetStatus = actionKey === CARD_ACTION_KEYS.PUBLISH
+                        ? SkillVersionStatusValue.PUBLISHED
+                        : SkillVersionStatusValue.UNPUBLISHED;
+                    const result = await updateSkillVersionStatus(skillToPublish.latestVersionId, targetStatus);
+                    if (result.success) {
+                        message.success(actionKey === CARD_ACTION_KEYS.PUBLISH ? 'Published successfully' : 'Unpublished successfully');
+                        refetch();
+                    } else {
+                        message.error(result.error || 'Failed to update version status');
+                    }
+                } else {
+                    message.warning('Cannot update status: No valid version ID found.');
+                }
                 break;
+            }
 
-            case CARD_ACTION_KEYS.UNPUBLISH:
-                handleStatusChange(skillId, 'draft', 'Skill moved back to Draft');
-                break;
 
-            case CARD_ACTION_KEYS.ARCHIVE:
-                handleStatusChange(skillId, 'archived', 'Skill archived successfully');
-                break;
-
-            case CARD_ACTION_KEYS.EDIT:
+            case CARD_ACTION_KEYS.BUILD_SKILL:
                 navigate(ROUTES.SKILL_DESIGNER.replace(':skillId', skillId).replace(':versionId', 'v1'));
+                break;
+
+            case CARD_ACTION_KEYS.EDIT_SETTINGS:
+                const skillToEdit = skills.find((skill) => skill.id === skillId);
+                if (skillToEdit) {
+                    setEditingSkill(skillToEdit);
+                    setIsEditModalOpen(true);
+                }
                 break;
 
             case CARD_ACTION_KEYS.TEST:
@@ -93,16 +113,6 @@ export default function SkillsLibraryPage() {
         }
     };
 
-    /** Helper to update skill status */
-    const handleStatusChange = async (skillId: string, status: 'draft' | 'published' | 'archived', successMsg: string) => {
-        const result = await updateSkillStatus(skillId, status);
-        if (result.success) {
-            message.success(successMsg);
-            refetch();
-        } else {
-            message.error(result.error || 'Failed to update skill');
-        }
-    };
 
     return (
         <div className="skills-library">
@@ -140,9 +150,9 @@ export default function SkillsLibraryPage() {
                             <Space>
                                 <option.icon />
                                 <span>{option.label}</span>
-                                <Badge 
-                                    count={statusCounts[option.key] ?? 0} 
-                                    showZero 
+                                <Badge
+                                    count={statusCounts[option.key] ?? 0}
+                                    showZero
                                     color={activeStatus === option.key ? 'var(--color-primary)' : '#d9d9d9'}
                                     style={{ fontSize: '10px' }}
                                 />
@@ -166,13 +176,16 @@ export default function SkillsLibraryPage() {
                         </div>
                     ) : (
                         <div className="skills-library__grid">
-                            {skills.map((skill) => (
-                                <SkillCard
-                                    key={skill.id}
-                                    skill={skill}
-                                    onAction={handleCardAction}
-                                />
-                            ))}
+                            {skills.map((skill) => {
+                                const categoryName = categories.find((category) => category.categoryId === skill.categoryId)?.name || 'Unknown';
+                                return (
+                                    <SkillCard
+                                        key={skill.id}
+                                        skill={{ ...skill, category: categoryName }}
+                                        onAction={handleCardAction}
+                                    />
+                                );
+                            })}
                         </div>
                     )}
                 </main>
@@ -183,6 +196,14 @@ export default function SkillsLibraryPage() {
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
                 onCreated={refetch}
+            />
+
+            {/* ── Edit Skill Modal ── */}
+            <EditSkillModal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                onUpdated={refetch}
+                skill={editingSkill}
             />
         </div>
     );

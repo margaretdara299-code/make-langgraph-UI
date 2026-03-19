@@ -34,3 +34,4 @@ export { default as CreateActionUiFormStep } from './CreateActionUiFormStep/Crea
 export { default as CreateActionPolicyStep } from './CreateActionPolicyStep/CreateActionPolicyStep';
 export { default as CreateActionReviewStep } from './CreateActionReviewStep/CreateActionReviewStep';
 export { default as SubFlowNode } from './SubFlowNode/SubFlowNode';
+export { default as EditSkillModal } from './EditSkillModal/EditSkillModal';

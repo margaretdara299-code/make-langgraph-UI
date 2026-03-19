@@ -6,9 +6,9 @@
 import { useState } from 'react';
 import { Input, Select, Button, Typography, Spin, Empty, message, Tabs, Badge, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { useActions } from '@/hooks';
+import { useActions, useCategories, useCapabilities } from '@/hooks';
 import { ActionCard, CreateActionModal } from '@/components';
-import { ACTION_STATUS_FILTER_OPTIONS, CARD_ACTION_KEYS, CAPABILITY_OPTIONS } from '@/constants';
+import { ACTION_STATUS_FILTER_OPTIONS, CARD_ACTION_KEYS } from '@/constants';
 import { fetchActionById } from '@/services/action.service';
 import type { ActionFilters, ActionDefinition } from '@/interfaces';
 import './ActionCatalogPage.css';
@@ -23,7 +23,9 @@ export default function ActionCatalogPage() {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [actionToEdit, setActionToEdit] = useState<ActionDefinition | undefined>(undefined);
 
-    const { actions, statusCounts, categoryCounts, capabilityCounts, isLoading, setFilters, refetch } = useActions();
+    const { actions, statusCounts, categoryCounts, capabilityCounts, isLoading: isActionsLoading, setFilters, refetch } = useActions();
+    const { categories, isLoading: isCategoriesLoading } = useCategories();
+    const { capabilities, isLoading: isCapabilitiesLoading } = useCapabilities();
 
     /** Handle search input */
     const handleSearch = (value: string) => {
@@ -64,7 +66,7 @@ export default function ActionCatalogPage() {
 
     /** Handle action menu selections */
     const handleCardAction = (actionKey: string, actionId: string) => {
-        if (actionKey === CARD_ACTION_KEYS.EDIT) {
+        if (actionKey === CARD_ACTION_KEYS.EDIT_SETTINGS) {
             // Fetch full action data with JSON blobs
             fetchActionById(actionId).then((result: Awaited<ReturnType<typeof fetchActionById>>) => {
                 if (result.success) {
@@ -112,7 +114,7 @@ export default function ActionCatalogPage() {
                         onChange={(e) => handleSearch(e.target.value)}
                         className="action-catalog__search-input"
                     />
-                    
+
                     <div className="action-catalog__toolbar-selects">
                         <Select
                             size="large"
@@ -120,15 +122,14 @@ export default function ActionCatalogPage() {
                             onChange={handleCapabilityFilter}
                             className="action-catalog__dropdown"
                             placeholder="All Capabilities"
-                            options={CAPABILITY_OPTIONS.map(opt => ({
-                                ...opt,
-                                label: (
-                                    <Space>
-                                        <opt.icon />
-                                        <span>{opt.label} ({opt.value === 'all' ? (statusCounts['all'] || 0) : (capabilityCounts[opt.value] || 0)})</span>
-                                    </Space>
-                                )
-                            }))}
+                            loading={isCapabilitiesLoading}
+                            options={[
+                                { value: 'all', label: `All Capabilities (${statusCounts['all'] || 0})` },
+                                ...capabilities.map(capability => ({
+                                    value: capability.capabilityId.toString(),
+                                    label: `${capability.name} (${capabilityCounts[capability.capabilityId.toString()] || 0})`
+                                }))
+                            ]}
                         />
 
                         <Select
@@ -137,11 +138,12 @@ export default function ActionCatalogPage() {
                             onChange={handleCategoryFilter}
                             className="action-catalog__dropdown"
                             placeholder="All Categories"
+                            loading={isCategoriesLoading}
                             options={[
                                 { value: 'all', label: `All Categories (${Object.values(categoryCounts).reduce((a, b) => a + b, 0)})` },
-                                ...Object.entries(categoryCounts).map(([cat, count]) => ({
-                                    value: cat,
-                                    label: `${cat} (${count})`
+                                ...categories.map(category => ({
+                                    value: (category.categoryId ?? category.id ?? 0).toString(),
+                                    label: `${category.name} (${categoryCounts[(category.categoryId ?? category.id ?? 0).toString()] || 0})`
                                 }))
                             ]}
                         />
@@ -159,9 +161,9 @@ export default function ActionCatalogPage() {
                                 <Space>
                                     <option.icon />
                                     <span>{option.label}</span>
-                                    <Badge 
-                                        count={statusCounts[option.key] ?? 0} 
-                                        showZero 
+                                    <Badge
+                                        count={statusCounts[option.key] ?? 0}
+                                        showZero
                                         color={activeStatus === option.key ? 'var(--color-primary)' : '#d9d9d9'}
                                         style={{ fontSize: '10px' }}
                                     />
@@ -177,7 +179,7 @@ export default function ActionCatalogPage() {
 
                 {/* ── Card Grid ── */}
                 <main className="action-catalog__grid-area">
-                    {isLoading ? (
+                    {isActionsLoading ? (
                         <div className="action-catalog__loading">
                             <Spin size="large" />
                         </div>

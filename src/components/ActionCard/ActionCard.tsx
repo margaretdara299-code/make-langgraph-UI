@@ -17,17 +17,8 @@ const { Text, Title } = Typography;
 export default function ActionCard({ action, onAction }: ActionCardProps) {
     // Dropdown menu items
     const menuItems: MenuProps['items'] = [
-        { key: CARD_ACTION_KEYS.EDIT, label: 'Edit' },
-        ...(action.status === 'draft'
-            ? [{ key: CARD_ACTION_KEYS.PUBLISH, label: 'Publish' }]
-            : []),
-        ...(action.status === 'published'
-            ? [{ key: CARD_ACTION_KEYS.UNPUBLISH, label: 'Unpublish (Draft)' }]
-            : []),
+        { key: CARD_ACTION_KEYS.EDIT_SETTINGS, label: 'Edit' },
         { type: 'divider' },
-        ...(action.status !== 'archived'
-            ? [{ key: CARD_ACTION_KEYS.ARCHIVE, label: 'Archive' }]
-            : []),
         { key: CARD_ACTION_KEYS.DELETE, label: 'Delete', danger: true },
     ];
 

@@ -7,7 +7,7 @@
 import type { ReactNode } from 'react';
 
 export interface StatusPillProps {
-    status: 'draft' | 'published' | 'archived';
+    status: 'draft' | 'published';
 }
 
 export interface ButtonProps {
@@ -65,11 +65,18 @@ export interface CreateSkillModalProps {
     onCreated: () => void;
 }
 
+export interface EditSkillModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onUpdated: () => void;
+    skill: import('./skill.interface').Skill | null;
+}
+
 export interface CreateSkillFormData {
     name: string;
     skillKey: string;
     description: string;
-    category: string;
+    categoryId: number;
     tags: string[];
     creationMethod: string;
 }

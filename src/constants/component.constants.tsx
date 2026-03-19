@@ -5,9 +5,6 @@
 export const STATUS_CONFIG: Record<string, { color: string; label: string }> = {
     draft: { color: 'warning', label: 'Draft' },
     published: { color: 'success', label: 'Published' },
-    archived: { color: 'default', label: 'Archived' },
-    active: { color: 'success', label: 'Active' },
-    deprecated: { color: 'error', label: 'Deprecated' },
     default: { color: 'default', label: 'Unknown' },
 };
 

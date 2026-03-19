@@ -7,8 +7,11 @@ export interface Skill {
     id: string;
     name: string;
     skillKey: string;
+    version?: string;
+    latestVersionId?: string;
     description: string;
-    category: string;
+    categoryId: number;
+    category?: string;
     clientId: string;
     payerId?: string;
     owner: string;
@@ -32,8 +35,8 @@ export interface SkillVersion {
     updatedAt: string;
 }
 
-export type SkillStatus = 'draft' | 'published' | 'archived';
-export type SkillVersionStatus = 'draft' | 'published' | 'archived';
+export type SkillStatus = 'draft' | 'published';
+export type SkillVersionStatus = 'draft' | 'published';
 export type Environment = 'dev' | 'staging' | 'prod';
 
 export interface UseSkillsFilters {

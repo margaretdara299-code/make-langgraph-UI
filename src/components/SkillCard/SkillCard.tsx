@@ -7,7 +7,7 @@ import { Card, Tag, Typography, Space, Tooltip, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import {
     ClockCircleOutlined,
-    UserOutlined,
+    BranchesOutlined,
     TagOutlined,
     MoreOutlined,
 } from '@ant-design/icons';
@@ -70,8 +70,10 @@ export default function SkillCard({ skill, onClick, onAction }: SkillCardProps) 
                     <Text type="secondary">{skill.category}</Text>
                 </Space>
                 <Space size={4}>
-                    <UserOutlined className="skill-card__meta-icon" />
-                    <Text type="secondary">{skill.owner}</Text>
+                    <BranchesOutlined className="skill-card__meta-icon" />
+                    <Tag color="geekblue" bordered={false} className="skill-card__version-tag">
+                        v{skill.version || '1.0.0'}
+                    </Tag>
                 </Space>
             </div>
 

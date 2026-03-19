@@ -15,13 +15,15 @@ export default function CreationMethodCard({
     isSelected,
     onClick,
 }: CreationMethodCardProps) {
+    const IconComponent = METHOD_ICONS[methodKey as keyof typeof METHOD_ICONS];
+
     return (
         <Card
             hoverable
             className={`create-skill__method-card ${isSelected ? 'create-skill__method-card--selected' : ''}`}
             onClick={onClick}
         >
-            {METHOD_ICONS[methodKey]}
+            <IconComponent className="create-skill__method-icon" />
             <Text strong className="create-skill__method-title">{title}</Text>
             <Paragraph type="secondary" className="create-skill__method-desc">
                 {description}
