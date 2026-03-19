@@ -133,14 +133,14 @@ export async function fetchActionStatusCounts(): Promise<Record<string, number>>
     try {
         const result = await apiClient.get<{ items: ActionDefinition[]; total: number }>(API_ENDPOINTS.ACTIONS.BASE);
         const items = result.items || [];
-        const counts: Record<string, number> = { all: items.length, published: 0, draft: 0, archived: 0 };
+        const counts: Record<string, number> = { all: items.length, published: 0, draft: 0 };
         for (const a of items) {
             const st = (a as unknown as Record<string, unknown>).versionStatus as string || a.status || 'draft';
             counts[st] = (counts[st] ?? 0) + 1;
         }
         return counts;
     } catch {
-        return { all: 0, published: 0, draft: 0, archived: 0 };
+        return { all: 0, published: 0, draft: 0 };
     }
 }
 

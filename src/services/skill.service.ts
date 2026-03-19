@@ -1,6 +1,6 @@
 import { apiClient } from './http.service';
 import { API_ENDPOINTS } from './api.endpoints';
-import type { Skill, PaginatedResponse, ApiResponse, UseSkillsFilters } from '@/interfaces';
+import type { Skill, PaginatedResponse, ApiResponse, UseSkillsFilters, CreateSkillFormData } from '@/interfaces';
 
 // Cache for mock fallback functions
 let localSkills: Skill[] | null = null;
@@ -68,7 +68,7 @@ export async function createSkill(
             name: input.name,
             skillKey: input.skillKey || null,
             description: input.description || '',
-            category: input.category || 'General',
+            category_id: input.categoryId || null,
             tags: input.tags || [],
             ownerUserId: input.owner || 'system',
         };
@@ -81,8 +81,10 @@ export async function createSkill(
         const newSkill: Skill = {
             id: result.skill?.id || '',
             name: input.name,
+            version: result.skill?.version || '1.0.0',
             skillKey: result.skill?.skillKey || input.skillKey || '',
             description: input.description || '',
+            categoryId: input.categoryId || 1,
             category: input.category || 'General',
             clientId: input.clientId || 'c_demo',
             owner: input.owner || 'system',
@@ -108,14 +110,14 @@ export async function fetchSkillStatusCounts(): Promise<Record<string, number>> 
     try {
         const result = await apiClient.get<{ items: Skill[]; total: number }>(API_ENDPOINTS.SKILLS.BASE);
         const items = result.items || [];
-        const counts: Record<string, number> = { all: items.length, published: 0, draft: 0, archived: 0 };
+        const counts: Record<string, number> = { all: items.length, published: 0, draft: 0 };
         for (const s of items) {
             const st = s.status || 'draft';
             counts[st] = (counts[st] ?? 0) + 1;
         }
         return counts;
     } catch {
-        return { all: 0, published: 0, draft: 0, archived: 0 };
+        return { all: 0, published: 0, draft: 0 };
     }
 }
 
@@ -127,22 +129,74 @@ export async function fetchSkillStatusCounts(): Promise<Record<string, number>> 
  */
 export async function fetchSkillById(id: string): Promise<ApiResponse<Skill>> {
     const cached = localSkills ?? [];
-    const skill = cached.find((s) => s.id === id);
+    const skill = cached.find((skill) => skill.id === id);
     if (!skill) return { success: false, error: 'Skill not found.' };
     return { success: true, data: skill };
 }
 
 /**
- * MOCK: Deletes a skill from the local memory cache by its ID.
+ * Deletes a skill permanently from the backend by its ID.
  * @param id The unique identifier of the skill to delete.
  */
 export async function deleteSkill(id: string): Promise<ApiResponse<null>> {
-    if (localSkills) {
-        const index = localSkills.findIndex((s) => s.id === id);
-        if (index === -1) return { success: false, error: 'Skill not found.' };
-        localSkills.splice(index, 1);
+    try {
+        await apiClient.delete(API_ENDPOINTS.SKILLS.BY_ID(id));
+
+        // Optimistically remove from local cache if it exists
+        if (localSkills) {
+            const index = localSkills.findIndex((skill) => skill.id === id);
+            if (index !== -1) localSkills.splice(index, 1);
+        }
+
+        return { success: true, data: null };
+    } catch (error) {
+        return { success: false, error: error instanceof Error ? error.message : 'Failed to delete skill.' };
     }
-    return { success: true, data: null };
+}
+
+/**
+ * Updates an existing skill's basic metadata via PATCH.
+ */
+export async function updateSkill(
+    skillId: string,
+    input: Partial<CreateSkillFormData>
+): Promise<ApiResponse<Skill>> {
+    try {
+        const payload = {
+            name: input.name,
+            skill_key: input.skillKey,
+            description: input.description,
+            category_id: input.categoryId,
+            tags: input.tags,
+        };
+
+        await apiClient.patch<{ id: string }>(
+            API_ENDPOINTS.SKILLS.UPDATE(skillId),
+            payload
+        );
+
+        let updatedSkill: Skill | undefined;
+
+        if (localSkills) {
+            const index = localSkills.findIndex((skill) => skill.id === skillId);
+            if (index !== -1) {
+                const current = localSkills[index];
+                const updates = {
+                    name: payload.name ?? current.name,
+                    skillKey: payload.skill_key ?? current.skillKey,
+                    description: payload.description ?? current.description,
+                    categoryId: payload.category_id ?? current.categoryId,
+                    tags: payload.tags ?? current.tags,
+                };
+                localSkills[index] = { ...current, ...updates };
+                updatedSkill = localSkills[index];
+            }
+        }
+
+        return { success: true, data: updatedSkill as Skill };
+    } catch (error) {
+        return { success: false, error: error instanceof Error ? error.message : 'Failed to update skill.' };
+    }
 }
 
 /**
@@ -150,13 +204,53 @@ export async function deleteSkill(id: string): Promise<ApiResponse<null>> {
  * @param id The unique identifier of the skill to update.
  * @param status The target lifecycle status.
  */
-export async function updateSkillStatus(id: string, status: 'draft' | 'published' | 'archived'): Promise<ApiResponse<Skill>> {
+export async function updateSkillStatus(id: string, status: 'draft' | 'published'): Promise<ApiResponse<Skill>> {
     if (localSkills) {
-        const skill = localSkills.find((s) => s.id === id);
+        const skill = localSkills.find((skill) => skill.id === id);
         if (!skill) return { success: false, error: 'Skill not found.' };
         skill.status = status;
         skill.updatedAt = new Date().toISOString();
         return { success: true, data: skill };
     }
     return { success: false, error: 'Skill not found.' };
+}
+
+/** Possible statuses for a skill version (matches backend enum) */
+export const SkillVersionStatusValue = {
+    PUBLISHED: 'published',
+    UNPUBLISHED: 'unpublished',
+    DRAFT: 'draft',
+} as const;
+
+export type SkillVersionStatusValue = (typeof SkillVersionStatusValue)[keyof typeof SkillVersionStatusValue];
+
+/**
+ * Updates a skill version's status via PUT /api/skills/versions/{versionId}/status
+ * @param versionId The specific version ID to update.
+ * @param status The target status: 'published' | 'unpublished' | 'draft'
+ */
+export async function updateSkillVersionStatus(
+    versionId: string,
+    status: SkillVersionStatusValue
+): Promise<ApiResponse<null>> {
+    try {
+        await apiClient.put(
+            API_ENDPOINTS.SKILLS.VERSION_STATUS(versionId),
+            { status }
+        );
+
+        // Optimistically update the local cache
+        if (localSkills) {
+            const mappedStatus = status === 'published' ? 'published' : 'draft';
+            const skill = localSkills.find((skill) => skill.latestVersionId === versionId);
+            if (skill) {
+                skill.status = mappedStatus;
+                skill.updatedAt = new Date().toISOString();
+            }
+        }
+
+        return { success: true, data: null };
+    } catch (error) {
+        return { success: false, error: error instanceof Error ? error.message : 'Failed to update version status.' };
+    }
 }

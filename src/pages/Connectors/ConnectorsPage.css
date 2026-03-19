@@ -1,0 +1,69 @@
+/**
+ * Connectors page styles.
+ * Mirrors the Skills Library layout for consistency.
+ */
+
+.connectors-page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: calc(100vh - 112px);
+}
+
+/* ── Page Header ── */
+
+.connectors-page__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.connectors-page__title {
+    margin: 0 !important;
+}
+
+/* ── Search & Filters ── */
+
+.connectors-page__toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.connectors-page__search {
+    max-width: 480px;
+}
+
+/* ── Body ── */
+
+.connectors-page__body {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+}
+
+/* ── Grid ── */
+
+.connectors-page__grid-area {
+    flex: 1;
+    min-width: 0;
+    overflow-y: auto;
+    padding-right: 12px;
+}
+
+.connectors-page__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+/* ── Loading / Empty ── */
+
+.connectors-page__loading,
+.connectors-page__empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+}

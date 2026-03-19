@@ -4,11 +4,11 @@
 
 import type { MenuProps } from 'antd';
 import {
-    EditOutlined,
+    SettingOutlined,
+    PartitionOutlined,
     PlayCircleOutlined,
     CheckCircleOutlined,
     UndoOutlined,
-    InboxOutlined,
     DeleteOutlined,
 } from '@ant-design/icons';
 import { CARD_ACTION_KEYS } from '@/constants';
@@ -16,19 +16,26 @@ import { CARD_ACTION_KEYS } from '@/constants';
 /** Build menu items based on skill status */
 export function getMenuItems(status: string): MenuProps['items'] {
     const items: MenuProps['items'] = [
-        { key: CARD_ACTION_KEYS.EDIT, icon: <EditOutlined />, label: 'Edit' },
+        { 
+            key: CARD_ACTION_KEYS.BUILD_SKILL, 
+            icon: <PartitionOutlined />, 
+            label: 'Build Skill',
+            className: 'skill-card__menu-item-build',
+            style: { color: 'var(--color-primary)', fontWeight: 600 }
+        },
+        { 
+            key: CARD_ACTION_KEYS.EDIT_SETTINGS, 
+            icon: <SettingOutlined />, 
+            label: 'Edit' 
+        },
         { key: CARD_ACTION_KEYS.TEST, icon: <PlayCircleOutlined />, label: 'Test' },
         { type: 'divider' },
     ];
 
     if (status === 'draft') {
         items.push({ key: CARD_ACTION_KEYS.PUBLISH, icon: <CheckCircleOutlined />, label: 'Publish' });
-        items.push({ key: CARD_ACTION_KEYS.ARCHIVE, icon: <InboxOutlined />, label: 'Archive' });
     } else if (status === 'published') {
         items.push({ key: CARD_ACTION_KEYS.UNPUBLISH, icon: <UndoOutlined />, label: 'Unpublish' });
-        items.push({ key: CARD_ACTION_KEYS.ARCHIVE, icon: <InboxOutlined />, label: 'Archive' });
-    } else if (status === 'archived') {
-        items.push({ key: CARD_ACTION_KEYS.UNPUBLISH, icon: <UndoOutlined />, label: 'Restore to Draft' });
     }
 
     items.push({ type: 'divider' });

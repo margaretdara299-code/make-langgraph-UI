@@ -48,7 +48,7 @@ export default function CreateSkillModal({ isOpen, onClose, onCreated }: CreateS
                 name: formData.name || '',
                 skillKey: formData.skillKey || '',
                 description: formData.description || '',
-                category: formData.category || 'Eligibility', // default fallback
+                categoryId: formData.categoryId || 1, // default internal fallback
                 tags: formData.tags || [],
                 clientId: 'client-acme',
                 owner: 'Current User',
@@ -72,7 +72,7 @@ export default function CreateSkillModal({ isOpen, onClose, onCreated }: CreateS
             onCancel={handleClose}
             title="Create New Skill"
             width={640}
-            destroyOnClose
+            destroyOnHidden
             footer={
                 <CreateSkillFooter
                     currentStep={currentStep}

@@ -1,8 +1,6 @@
 import { 
     BulbOutlined, 
-    EditOutlined, 
-    CheckCircleOutlined, 
-    InboxOutlined 
+    EditOutlined
 } from '@ant-design/icons';
 import type { ActionFieldType, ConnectorType, HttpMethod } from '@/interfaces';
 
@@ -64,14 +62,10 @@ export const DEFAULT_POLICY_CONFIG: import('@/interfaces').ActionPolicyConfig = 
 export const ACTION_STATUS_FILTER_OPTIONS = [
     { key: 'all', label: 'All Actions', icon: BulbOutlined },
     { key: 'draft', label: 'Draft', icon: EditOutlined },
-    { key: 'published', label: 'Published', icon: CheckCircleOutlined },
-    { key: 'archived', label: 'Archived', icon: InboxOutlined },
 ] as const;
 
 /** Icon map for Action statuses */
 export const ACTION_STATUS_ICONS = {
     all: BulbOutlined,
     draft: EditOutlined,
-    published: CheckCircleOutlined,
-    archived: InboxOutlined,
 };

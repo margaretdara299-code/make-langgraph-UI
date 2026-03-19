@@ -20,7 +20,6 @@ export function useSkills(initialFilters?: UseSkillsFilters): UseSkillsReturn & 
         all: 0,
         draft: 0,
         published: 0,
-        archived: 0,
     });
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);

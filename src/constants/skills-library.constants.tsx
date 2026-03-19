@@ -5,7 +5,6 @@
 import {
     EditOutlined,
     CheckCircleOutlined,
-    InboxOutlined,
     FileAddOutlined,
     CopyOutlined,
     RobotOutlined,
@@ -16,7 +15,6 @@ export const STATUS_FILTER_OPTIONS = [
     { key: 'all', label: 'All Skills', icon: BulbOutlined },
     { key: 'draft', label: 'Draft', icon: EditOutlined },
     { key: 'published', label: 'Published', icon: CheckCircleOutlined },
-    { key: 'archived', label: 'Archived', icon: InboxOutlined },
 ] as const;
 
 /** Icon mapping for sidebar status filter items */
@@ -24,22 +22,10 @@ export const STATUS_ICONS = {
     all: BulbOutlined,
     draft: EditOutlined,
     published: CheckCircleOutlined,
-    archived: InboxOutlined,
 };
 
 export const SKILLS_PAGE_SIZE = 12;
 
-/** Category options for the Create Skill form */
-export const SKILL_CATEGORIES = [
-    { value: 'Denials', label: 'Denials' },
-    { value: 'Eligibility', label: 'Eligibility' },
-    { value: 'Auth', label: 'Auth' },
-    { value: 'Payments', label: 'Payments' },
-    { value: 'Coding', label: 'Coding' },
-    { value: 'Documents', label: 'Documents' },
-    { value: 'Messaging', label: 'Messaging' },
-    { value: 'RPA', label: 'RPA' },
-] as const;
 
 /** Creation method cards for Step 2 of the wizard */
 export const CREATION_METHODS = [
@@ -73,12 +59,11 @@ export const METHOD_ICONS = {
     ai: RobotOutlined,
 };
 
-/** Action keys for SkillCard dropdown menu */
 export const CARD_ACTION_KEYS = {
-    EDIT: 'edit',
+    BUILD_SKILL: 'build_skill',
+    EDIT_SETTINGS: 'edit_settings',
     TEST: 'test',
     PUBLISH: 'publish',
     UNPUBLISH: 'unpublish',
-    ARCHIVE: 'archive',
     DELETE: 'delete',
 } as const;

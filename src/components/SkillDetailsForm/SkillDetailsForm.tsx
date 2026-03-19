@@ -3,12 +3,13 @@
  */
 
 import { Form, Input, Select } from 'antd';
-import { SKILL_CATEGORIES } from '@/constants';
+import { useCategories } from '@/hooks';
 import type { SkillDetailsFormProps } from '@/interfaces';
 
 const { TextArea } = Input;
 
 export default function SkillDetailsForm({ form }: SkillDetailsFormProps) {
+    const { categories, isLoading } = useCategories();
     return (
         <Form
             form={form}
@@ -43,13 +44,15 @@ export default function SkillDetailsForm({ form }: SkillDetailsFormProps) {
             </Form.Item>
 
             <Form.Item
-                name="category"
+                name="categoryId"
                 label="Category"
                 rules={[{ required: true, message: 'Please select a category' }]}
             >
                 <Select
                     placeholder="Select a category"
-                    options={[...SKILL_CATEGORIES]}
+                    loading={isLoading}
+                    disabled={isLoading}
+                    options={categories.map((category) => ({ value: category.categoryId, label: category.name }))}
                 />
             </Form.Item>
 

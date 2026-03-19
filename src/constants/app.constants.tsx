@@ -15,7 +15,7 @@ export const ACTION_KEY_PATTERN = /^[a-z][a-z0-9.]*$/;
 export const ACTION_DESCRIPTION_MAX_LENGTH = 400;
 
 /** Skill statuses */
-export const SKILL_STATUSES = ['draft', 'published', 'archived'] as const;
+export const SKILL_STATUSES = ['draft', 'published'] as const;
 
 /** Action capabilities */
 export const ACTION_CAPABILITIES = ['api', 'ai', 'rpa', 'human', 'rules'] as const;

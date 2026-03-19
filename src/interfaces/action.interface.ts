@@ -5,7 +5,7 @@
 
 export type ActionCapability = 'api' | 'ai' | 'rpa' | 'human' | 'rules';
 export type ActionScope = 'global' | 'client';
-export type ActionVersionStatus = 'draft' | 'published' | 'archived';
+export type ActionVersionStatus = 'draft' | 'published';
 
 export interface ActionDefinition {
     id: string;
