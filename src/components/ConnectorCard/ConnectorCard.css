@@ -1,0 +1,147 @@
+/**
+ * ConnectorCard styles.
+ * Mirrors ActionCard layout for visual consistency.
+ */
+
+.connector-card {
+    border-radius: 12px;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.connector-card:hover {
+    transform: translateY(-2px);
+}
+
+.connector-card .ant-card-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+/* ── Header ── */
+
+.connector-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.connector-card__icon {
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: var(--color-surface-element);
+    border-radius: 8px;
+    border: 1px solid var(--color-surface-border);
+}
+
+.connector-card__menu-trigger {
+    cursor: pointer;
+    font-size: 24px;
+    color: inherit;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    line-height: 1;
+}
+
+.connector-card__menu-trigger:hover {
+    background-color: var(--color-surface-element-hover);
+}
+
+/* ── Body ── */
+
+.connector-card__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.connector-card__title {
+    margin: 0 !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+}
+
+.connector-card__description {
+    min-height: 22px;
+}
+
+.connector-card__description .ant-typography {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* ── Config summary ── */
+
+.connector-card__config {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+.connector-card__config-item {
+    font-size: 12px !important;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    background-color: var(--color-surface-element) !important;
+    border: 1px solid var(--color-surface-border-strong) !important;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.connector-card__engine {
+    margin: 0;
+    border-radius: 4px;
+    text-transform: capitalize;
+}
+
+.connector-card__host {
+    font-size: 12px;
+}
+
+/* ── Footer ── */
+
+.connector-card__footer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-border);
+    margin-top: auto;
+}
+
+.connector-card__footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.connector-card__type-tag {
+    margin: 0;
+    border-radius: 12px;
+    background-color: var(--color-surface-element);
+    border-color: var(--color-surface-border-strong);
+    color: inherit;
+}
+
+.connector-card__date {
+    font-size: 12px;
+    color: GrayText;
+}

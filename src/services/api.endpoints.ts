@@ -29,4 +29,8 @@ export const API_ENDPOINTS = {
         UPDATE: (actionDefinitionId: string) => `/api/actions/${actionDefinitionId}`,
         DESIGNER: '/api/designer/actions',
     },
+    CONNECTORS: {
+        BASE: '/api/v1/connectors',
+        BY_ID: (connectorId: number) => `/api/v1/connectors/${connectorId}`,
+    },
 } as const;
