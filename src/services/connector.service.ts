@@ -1,25 +1,40 @@
-import type { ConnectorInstance } from '@/interfaces';
-import { MOCK_CONNECTORS } from './mock-data';
+/**
+ * Connector service — API calls for connector CRUD operations.
+ */
 
-const connectors: ConnectorInstance[] = [...MOCK_CONNECTORS];
+import type { CreateConnectorPayload, ConnectorResponse } from '@/interfaces';
+import { API_ENDPOINTS } from './api.endpoints';
+import { apiClient } from './http.service';
 
 /**
- * Fetches a list of fully authenticated Connector Environments (e.g., Salesforce Prod, Salesforce Dev)
- * that the user has permission to attach to Action nodes.
- * @param filters Filters by clientId and environment.
+ * Fetch all connectors from the backend.
+ * apiClient.get already unwraps the envelope { status, message, data } → data.
  */
-export async function fetchConnectors(filters?: {
-    clientId?: string;
-    environment?: string;
-}): Promise<ConnectorInstance[]> {
-    let filtered = [...connectors];
+export async function fetchConnectors(): Promise<ConnectorResponse[]> {
+    const result = await apiClient.get<ConnectorResponse[]>(API_ENDPOINTS.CONNECTORS.BASE);
+    return (result as ConnectorResponse[]) ?? [];
+}
 
-    if (filters?.clientId) {
-        filtered = filtered.filter((c) => c.clientId === filters.clientId);
-    }
-    if (filters?.environment) {
-        filtered = filtered.filter((c) => c.environment === filters.environment);
-    }
+/**
+ * Create a new connector (API or Database).
+ */
+export async function createConnector(payload: CreateConnectorPayload): Promise<any> {
+    return apiClient.post(API_ENDPOINTS.CONNECTORS.BASE, payload);
+}
 
-    return filtered;
+/**
+ * Update an existing connector.
+ */
+export async function updateConnector(
+    connectorId: number,
+    payload: Partial<CreateConnectorPayload>
+): Promise<any> {
+    return apiClient.patch(API_ENDPOINTS.CONNECTORS.BY_ID(connectorId), payload);
+}
+
+/**
+ * Delete a connector by ID.
+ */
+export async function deleteConnector(connectorId: number): Promise<any> {
+    return apiClient.delete(API_ENDPOINTS.CONNECTORS.BY_ID(connectorId));
 }

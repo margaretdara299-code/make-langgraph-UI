@@ -35,3 +35,5 @@ export { default as CreateActionPolicyStep } from './CreateActionPolicyStep/Crea
 export { default as CreateActionReviewStep } from './CreateActionReviewStep/CreateActionReviewStep';
 export { default as SubFlowNode } from './SubFlowNode/SubFlowNode';
 export { default as EditSkillModal } from './EditSkillModal/EditSkillModal';
+export { default as CreateConnectorModal } from './CreateConnectorModal/CreateConnectorModal';
+export { default as ConnectorCard } from './ConnectorCard/ConnectorCard';
