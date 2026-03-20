@@ -24,6 +24,7 @@ export const API_ENDPOINTS = {
     },
     ACTIONS: {
         BASE: '/api/actions',
+        GROUPED: '/api/actions/grouped',
         BY_ID: (actionDefinitionId: string) => `/api/actions/${actionDefinitionId}`,
         UPDATE: (actionDefinitionId: string) => `/api/actions/${actionDefinitionId}`,
         DESIGNER: '/api/designer/actions',

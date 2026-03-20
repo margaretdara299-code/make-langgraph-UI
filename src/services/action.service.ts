@@ -19,7 +19,9 @@ export async function createAction(
             actionKey: input.actionKey || 'new.action.key',
             description: input.description || '',
             category: input.category || 'Uncategorized',
+            categoryId: input.categoryId || 1,
             capability: (input.capability || 'api').toUpperCase(),
+            capabilityId: input.capabilityId || 1,
             icon: input.icon || '🧩',
             defaultNodeTitle: input.defaultNodeTitle || input.name || 'Untitled',
             scope: input.scope || 'global',
@@ -56,6 +58,43 @@ export async function createAction(
 }
 
 /**
+ * Fetches actions pre-grouped by category name from the backend.
+ * Uses GET /api/actions/grouped which JOINs with the category table.
+ * Ideal for the Node Library / Designer palette.
+ */
+export async function fetchGroupedActions(): Promise<Record<string, ActionDefinition[]>> {
+    try {
+        const result = await apiClient.get<any>(API_ENDPOINTS.ACTIONS.GROUPED);
+
+        // The backend wraps the response in { data: { "CategoryName": [...], ... } }
+        const grouped: Record<string, any[]> = result || {};
+        const mapped: Record<string, ActionDefinition[]> = {};
+
+        for (const [category, actions] of Object.entries(grouped)) {
+            mapped[category] = (actions as any[]).map((a: any) => ({
+                id: a.actionDefinitionId || a.id,
+                actionKey: a.actionKey || '',
+                name: a.name || '',
+                description: a.description || '',
+                category: category,
+                capability: (a.capability || 'api').toLowerCase(),
+                scope: a.scope || 'global',
+                icon: a.icon || '🧩',
+                defaultNodeTitle: a.defaultNodeTitle || a.name || '',
+                status: a.status || 'published',
+                createdAt: a.createdAt || '',
+                updatedAt: a.updatedAt || '',
+            } as ActionDefinition));
+        }
+
+        return mapped;
+    } catch (error) {
+        console.error('fetchGroupedActions API error:', error);
+        return {};
+    }
+}
+
+/**
  * Fetches a paginated list of catalog Actions from the backend.
  * Validates and maps custom capability enums safely.
  * @param filters Optional filtering criteria (status, capability, category, search phrase).
@@ -81,6 +120,8 @@ export async function fetchActions(
             return {
                 ...a,
                 id: anyA.actionDefinitionId || anyA.id,
+                categoryId: anyA.categoryId || anyA.category_id,
+                capabilityId: anyA.capabilityId || anyA.capability_id,
                 capability: (a.capability || 'api').toLowerCase() as ActionDefinition['capability'],
             };
         });
@@ -208,7 +249,9 @@ export async function fetchActionById(id: string): Promise<ApiResponse<ActionDef
             name: result.name || '',
             description: result.description || '',
             category: result.category || 'Uncategorized',
+            categoryId: result.categoryId || result.category_id,
             capability: (result.capability || 'api').toLowerCase() as ActionDefinition['capability'],
+            capabilityId: result.capabilityId || result.capability_id,
             scope: result.scope || 'global',
             icon: result.icon || '🧩',
             defaultNodeTitle: result.defaultNodeTitle || result.name || '',

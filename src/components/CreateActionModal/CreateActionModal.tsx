@@ -3,7 +3,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Modal, Steps, Button, Space, message } from 'antd';
+import { Modal, Steps, Button, Space, message, Form } from 'antd';
 import { ActionPreviewPanel } from '@/components';
 import { createAction, updateActionDefinition } from '@/services';
 import type { ActionDefinition, CreateActionModalProps } from '@/interfaces';
@@ -30,27 +30,40 @@ export default function CreateActionModal({ isOpen, onClose, onCreated, actionTo
         icon: '🧩',
     });
 
+    // Form instance for step 0 (Overview) — used for validation before advancing
+    const [overviewForm] = Form.useForm();
+
     // Populate draft when opening in Edit mode
     useEffect(() => {
         if (isOpen) {
             if (actionToEdit) {
                 // Pre-fill existing action for editing
                 setActionDraft(actionToEdit);
+                setTimeout(() => overviewForm.setFieldsValue(actionToEdit), 0);
             } else {
                 // Reset for creating a new action
                 setActionDraft({
                     category: 'Uncategorized',
                     capability: 'api',
-                    scope: 'global',
+                    scope: 'global' as const,
                     icon: '🧩',
                 });
+                // Clear all form fields so no stale data remains
+                setTimeout(() => overviewForm.resetFields(), 0);
             }
             setCurrentStep(0);
         }
-    }, [isOpen, actionToEdit]);
+    }, [isOpen, actionToEdit, overviewForm]);
 
-    const handleNext = () => {
-        // Validation could go here
+    const handleNext = async () => {
+        // Validate the Overview form before allowing step advancement
+        if (currentStep === 0) {
+            try {
+                await overviewForm.validateFields();
+            } catch {
+                return; // Validation failed — don't advance
+            }
+        }
         setCurrentStep(prev => prev + 1);
     };
 
@@ -92,7 +105,7 @@ export default function CreateActionModal({ isOpen, onClose, onCreated, actionTo
 
     // Form steps configuration
     const steps = [
-        { title: 'Overview', content: <CreateActionOverview draft={actionDraft} setDraft={setActionDraft} /> },
+        { title: 'Overview', content: <CreateActionOverview draft={actionDraft} setDraft={setActionDraft} form={overviewForm} /> },
         { title: 'Inputs', content: <CreateActionInputsStep draft={actionDraft} setDraft={setActionDraft} /> },
         { title: 'Execution', content: <CreateActionExecutionStep draft={actionDraft} setDraft={setActionDraft} /> },
         { title: 'Outputs', content: <CreateActionOutputsStep draft={actionDraft} setDraft={setActionDraft} /> },

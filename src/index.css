@@ -94,6 +94,15 @@
   --color-node-shadow-strong: rgba(var(--color-base-black-rgb), 0.1);
   --color-node-shadow-hover: rgba(var(--color-base-black-rgb), 0.12);
   --color-node-shadow-glow: rgba(var(--color-base-black-rgb), 0.08);
+
+  /* Node Palette Design Tokens */
+  --node-palette-root-bg: #e8edf3;
+  --node-palette-child-bg: #f3f5f8;
+  --node-palette-content-bg: #ffffff;
+  --node-palette-border-subtle: rgba(0, 0, 0, 0.05);
+  --node-palette-common-color: #722ed1;
+  --node-palette-actions-color: #fa8c16;
+  --node-palette-connectors-color: #1890ff;
 }
 
 /* ── Animations ── */

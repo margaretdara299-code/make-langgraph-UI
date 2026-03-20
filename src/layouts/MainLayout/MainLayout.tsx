@@ -2,7 +2,7 @@
  * Main application layout using AntD Layout, Menu, and Input.
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Layout, Menu, Input, Typography, Space } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -19,6 +19,15 @@ export default function MainLayout({ children }: MainLayoutProps) {
     const navigate = useNavigate();
     const [collapsed, setCollapsed] = useState(false);
     const [openKeys, setOpenKeys] = useState<string[]>([]);
+
+    // Auto-collapse sidebar on design canvas, auto-expand on other pages
+    useEffect(() => {
+        if (location.pathname.includes('/design')) {
+            setCollapsed(true);
+        } else {
+            setCollapsed(false);
+        }
+    }, [location.pathname]);
 
     // Determine active menu key
     const selectedKey = SIDEBAR_MENU_ITEMS.find((item) =>
