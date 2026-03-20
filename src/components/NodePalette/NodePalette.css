@@ -31,7 +31,7 @@
 .node-palette__body {
     flex: 1;
     overflow-y: auto;
-    padding: 8px 0;
+    padding: 12px 10px;
 }
 
 .node-palette__loading,
@@ -40,6 +40,18 @@
     align-items: center;
     justify-content: center;
     padding: 40px 0;
+}
+
+/* ── Top-level Section Headers (Actions / Connectors) ── */
+
+.node-palette__section-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 /* ── Category Groups ── */
@@ -86,11 +98,49 @@
     border: 1px solid var(--color-primary);
 }
 
-/* Tighten AntD Collapse spacing */
-.node-palette .ant-collapse-header {
-    padding: 8px 16px !important;
+/* ── Root Collapse (Common / Actions / Connectors) ── */
+
+.node-palette__root-collapse .ant-collapse-item {
+    margin-bottom: 12px;
+    border: none !important;
+    background: var(--node-palette-root-bg);
+    border-radius: 12px !important;
+    overflow: hidden;
 }
 
-.node-palette .ant-collapse-content-box {
-    padding: 0 8px !important;
+.node-palette__root-collapse .ant-collapse-header {
+    padding: 12px 16px !important;
+    background: var(--node-palette-root-bg) !important;
+    border-bottom: none !important;
+    font-size: 13px;
+    border-radius: 12px !important;
 }
+
+.node-palette__root-collapse .ant-collapse-item-active > .ant-collapse-header {
+    border-radius: 12px 12px 0 0 !important;
+}
+
+.node-palette__root-collapse .ant-collapse-content {
+    background: var(--node-palette-content-bg) !important;
+    border-top: 1px solid var(--node-palette-border-subtle);
+}
+
+.node-palette__root-collapse .ant-collapse-content-box {
+    padding: 4px 0 !important;
+}
+
+/* ── Child Collapse (Category groupings inside Actions) ── */
+
+.node-palette__child-collapse > .ant-collapse-item > .ant-collapse-header {
+    padding: 6px 16px 6px 24px !important;
+    font-size: 11px;
+    background: var(--node-palette-child-bg);
+}
+
+.node-palette__child-collapse > .ant-collapse-item > .ant-collapse-content {
+    background: var(--node-palette-content-bg);
+}
+
+.node-palette__child-collapse > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
+    padding: 0 8px 0 16px !important;
+}

@@ -127,6 +127,7 @@ export interface CreateActionModalProps {
 export interface CreateActionOverviewProps {
     draft: Partial<import('./action.interface').ActionDefinition>;
     setDraft: import('react').Dispatch<import('react').SetStateAction<Partial<import('./action.interface').ActionDefinition>>>;
+    form?: import('antd').FormInstance;
 }
 
 /** Shared props for wizard steps 2–7 (same shape as Overview) */

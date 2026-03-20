@@ -82,9 +82,10 @@ export default function useCanvasDragDrop(
             const nodeData: CanvasNodeData = data;
 
             let nodeType = 'action';
-            if (nodeData.category.toLowerCase() === 'triggers') nodeType = 'trigger';
-            else if (nodeData.category.toLowerCase() === 'connectors') nodeType = 'connector';
-            else if (nodeData.category.toLowerCase() === 'ends') nodeType = 'end';
+            const categoryLower = (nodeData.category || '').toLowerCase();
+            if (categoryLower === 'triggers') nodeType = 'trigger';
+            else if (categoryLower === 'connectors') nodeType = 'connector';
+            else if (categoryLower === 'ends') nodeType = 'end';
 
             // Check whether it landed inside a sub-flow
             const parentSubFlow = findSubFlowAtPosition(position.x, position.y);

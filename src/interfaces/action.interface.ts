@@ -3,7 +3,7 @@
  * Defines ActionDefinition, ActionVersion, and related schema types.
  */
 
-export type ActionCapability = 'api' | 'ai' | 'rpa' | 'human' | 'rules';
+export type ActionCapability = 'api' | 'ai' | 'rpa' | 'human' | 'rules' | string;
 export type ActionScope = 'global' | 'client';
 export type ActionVersionStatus = 'draft' | 'published';
 
@@ -13,7 +13,9 @@ export interface ActionDefinition {
     name: string;
     description: string;
     category: string;
+    categoryId?: number;
     capability: ActionCapability;
+    capabilityId?: number;
     scope: ActionScope;
     icon?: string;
     defaultNodeTitle: string;

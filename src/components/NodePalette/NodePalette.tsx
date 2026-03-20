@@ -2,8 +2,8 @@
  * NodePalette — left panel with categorized, searchable, draggable action items.
  */
 
-import { useState } from 'react';
-import { Input, Collapse, Spin, Typography } from 'antd';
+import { Collapse, Spin, Typography } from 'antd';
+import { ThunderboltFilled, ApiFilled, AppstoreFilled } from '@ant-design/icons';
 import { useDesignerActions } from '@/hooks';
 import NodePaletteItem from '@/components/NodePaletteItem/NodePaletteItem';
 import StructureSection from './StructureSection';
@@ -13,46 +13,22 @@ import './NodePalette.css';
 const { Text } = Typography;
 
 export default function NodePalette({ className = '' }: NodePaletteProps) {
-    const [search, setSearch] = useState('');
-    // Fetch designer-specific actions (which include input/output schemas)
     const { actionsByCategory, isLoading } = useDesignerActions();
 
-    /** Filter actions by search query */
+    /** Get categories (no filtering needed since search is removed) */
     const getFilteredCategories = () => {
-        const query = search.toLowerCase();
-        const result: Record<string, typeof actionsByCategory[string]> = {};
-
-        for (const [category, actions] of Object.entries(actionsByCategory)) {
-            const filtered = query
-                ? actions.filter(
-                    (action) =>
-                        action.name.toLowerCase().includes(query) ||
-                        action.actionKey.toLowerCase().includes(query)
-                )
-                : actions;
-
-            if (filtered.length > 0) {
-                result[category] = filtered;
-            }
-        }
-        return result;
+        return actionsByCategory;
     };
 
     const filteredCategories = getFilteredCategories();
     const categoryKeys = Object.keys(filteredCategories);
 
+    const totalActions = Object.values(filteredCategories).reduce((sum, arr) => sum + arr.length, 0);
+
     return (
         <aside className={`node-palette ${className}`}>
             <div className="node-palette__header">
                 <Text strong className="node-palette__title">Node Library</Text>
-                <Input.Search
-                    placeholder="Search actions..."
-                    size="small"
-                    allowClear
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="node-palette__search"
-                />
             </div>
 
             <div className="node-palette__body">
@@ -62,37 +38,77 @@ export default function NodePalette({ className = '' }: NodePaletteProps) {
                     </div>
                 ) : (
                     <>
-                        <StructureSection search={search} />
-
-                        {/* ── API-driven Action Categories ── */}
-                        {categoryKeys.length === 0 && !(!search || 'sub-flow'.includes(search.toLowerCase())) ? (
-                            <div className="node-palette__empty">
-                                <Text type="secondary">No actions found</Text>
-                            </div>
-                        ) : (
-                            <Collapse
-                                ghost
-                                defaultActiveKey={categoryKeys}
-                                items={categoryKeys.map((category) => ({
-                                    key: category,
+                        {/* ── Top-level Sections: Common, Actions & Connectors ── */}
+                        <Collapse
+                            accordion
+                            ghost
+                            defaultActiveKey={undefined}
+                            className="node-palette__root-collapse"
+                            items={[
+                                {
+                                    key: 'common',
                                     label: (
-                                        <span className="node-palette__category-label">
-                                            {category}
-                                            <span className="node-palette__category-count">
-                                                {filteredCategories[category].length}
-                                            </span>
+                                        <span className="node-palette__section-label">
+                                            <AppstoreFilled style={{ color: 'var(--node-palette-common-color)' }} /> Common
+                                            <span className="node-palette__category-count">1</span>
                                         </span>
                                     ),
-                                    children: filteredCategories[category].map((action) => (
-                                        <NodePaletteItem key={action.id} action={action} />
-                                    )),
-                                }))}
-                            />
-                        )}
+                                    children: <StructureSection search="" />,
+                                },
+                                {
+                                    key: 'actions',
+                                    label: (
+                                        <span className="node-palette__section-label">
+                                            <ThunderboltFilled style={{ color: 'var(--node-palette-actions-color)' }} /> Actions
+                                            <span className="node-palette__category-count">{totalActions}</span>
+                                        </span>
+                                    ),
+                                    children: categoryKeys.length === 0 ? (
+                                        <div className="node-palette__empty">
+                                            <Text type="secondary">No actions found</Text>
+                                        </div>
+                                    ) : (
+                                        <Collapse
+                                            accordion
+                                            ghost
+                                            defaultActiveKey={undefined}
+                                            className="node-palette__child-collapse"
+                                            items={categoryKeys.map((category) => ({
+                                                key: category,
+                                                label: (
+                                                    <span className="node-palette__category-label">
+                                                        {category}
+                                                        <span className="node-palette__category-count">
+                                                            {filteredCategories[category].length}
+                                                        </span>
+                                                    </span>
+                                                ),
+                                                children: filteredCategories[category].map((action) => (
+                                                    <NodePaletteItem key={action.id} action={action} />
+                                                )),
+                                            }))}
+                                        />
+                                    ),
+                                },
+                                {
+                                    key: 'connectors',
+                                    label: (
+                                        <span className="node-palette__section-label">
+                                            <ApiFilled style={{ color: 'var(--node-palette-connectors-color)' }} /> Connectors
+                                            <span className="node-palette__category-count">0</span>
+                                        </span>
+                                    ),
+                                    children: (
+                                        <div className="node-palette__empty">
+                                            <Text type="secondary">No connectors available</Text>
+                                        </div>
+                                    ),
+                                },
+                            ]}
+                        />
                     </>
                 )}
             </div>
         </aside>
     );
 }
-
