@@ -51,7 +51,8 @@ export const CAPABILITY_OPTIONS = [
 
 /** Human-readable labels for individual action capabilities */
 export const CAPABILITY_LABELS: Record<string, string> = {
-    api: 'API Connector',
+    api: 'API',
+    database: 'Database',
     ai: 'AI Model',
     rpa: 'RPA Bot',
     human: 'Human Task',

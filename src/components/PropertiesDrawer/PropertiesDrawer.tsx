@@ -7,6 +7,8 @@ import { Drawer, Input, Form, Typography, Select, Switch, Button, Table, Spin, t
 import { useReactFlow, useNodes, useEdges } from '@xyflow/react';
 import { useEffect, useState, useRef } from 'react';
 import IconRenderer from '@/components/IconRenderer/IconRenderer';
+import ApiConnectorFields from '@/components/CreateConnectorModal/ApiConnectorFields';
+import DatabaseConnectorFields from '@/components/CreateConnectorModal/DatabaseConnectorFields';
 import { fetchActionById } from '@/services';
 import type { CanvasNodeData, CanvasEdgeData, PropertiesDrawerProps } from '@/interfaces';
 import type { ActionInputField, ActionOutputField, ActionExecutionConfig, ActionConfigField } from '@/interfaces';
@@ -59,9 +61,19 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             return;
         }
 
-        // ── Skip fetching for non-action nodes (e.g. subflow) ──
+        // ── Skip fetching for non-action nodes (e.g. subflow, connector) ──
         if (selectedNode.type !== 'action' && selectedNode.type !== 'trigger') {
             lastFetchedActionId.current = null;
+
+            // For connectors, we already have configJson in node.data
+            if (selectedNode.type === 'connector') {
+                const nd = selectedNode.data as any;
+                form.setFieldsValue({
+                    name: nd.label,
+                    description: nd.description || '',
+                    configJson: nd.configJson || {},
+                });
+            }
             return;
         }
 
@@ -208,16 +220,18 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
 
     // When the form values change we instantly update the React Flow instance
     const handleValuesChange = (changedValues: any) => {
-        if (selectedNode && (changedValues.label !== undefined || changedValues.description !== undefined)) {
+        if (selectedNode && (changedValues.label !== undefined || changedValues.name !== undefined || changedValues.description !== undefined)) {
             setNodes((nodes) =>
                 nodes.map((node) => {
                     if (node.id === selectedNode.id) {
+                        const nextData = { ...node.data, ...changedValues };
+                        // Sync 'name' to 'label' if it was the one that changed
+                        if (changedValues.name !== undefined) {
+                            nextData.label = changedValues.name;
+                        }
                         return {
                             ...node,
-                            data: {
-                                ...node.data,
-                                ...changedValues,
-                            },
+                            data: nextData,
                         };
                     }
                     return node;
@@ -272,6 +286,27 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             return;
         }
 
+        if (selectedNode.type === 'connector') {
+            setNodes((nds) =>
+                nds.map((node) => {
+                    if (node.id === selectedNode.id) {
+                        return {
+                            ...node,
+                            data: {
+                                ...node.data,
+                                label: allValues.name || allValues.label,
+                                description: allValues.description,
+                                configJson: allValues.configJson,
+                            },
+                        };
+                    }
+                    return node;
+                })
+            );
+            message.success('Connector properties applied locally');
+            return;
+        }
+
         const nd = selectedNode.data as unknown as CanvasNodeData;
 
         // Build updated execution config from form
@@ -310,6 +345,21 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
         );
 
         message.success('Changes applied locally');
+    };
+
+    /** Render the Connector-specific fields */
+    const renderConnectorSection = (nodeData: any) => {
+        const type = nodeData.connectorType || 'api';
+        const isApi = type === 'api';
+
+        return (
+            <div className="properties-drawer__connector-fields">
+                <Title level={5} className="properties-drawer__section-title">
+                    {isApi ? 'API Configuration' : 'Database Configuration'}
+                </Title>
+                {isApi ? <ApiConnectorFields /> : <DatabaseConnectorFields />}
+            </div>
+        );
     };
 
     // Render configuration inputs dynamically from the action's configurationsJson
@@ -455,6 +505,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     const renderContent = () => {
         if (selectedNode) {
             const isSubFlow = selectedNode.type === 'subflow';
+            const isConnector = selectedNode.type === 'connector';
 
             if (isLoadingAction) {
                 return (
@@ -501,14 +552,18 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                         onValuesChange={handleValuesChange}
                         className="properties-drawer__form"
                     >
-                        <Title level={5} className="properties-drawer__section-title">General</Title>
-                        <Form.Item
-                            label="Node Label"
-                            name="label"
-                            rules={[{ required: true, message: 'Label is required' }]}
-                        >
-                            <Input />
-                        </Form.Item>
+                        {!isConnector && (
+                            <>
+                                <Title level={5} className="properties-drawer__section-title">General</Title>
+                                <Form.Item
+                                    label="Node Label"
+                                    name="label"
+                                    rules={[{ required: true, message: 'Label is required' }]}
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </>
+                        )}
 
                         {isSubFlow && (
                             <Form.Item
@@ -519,7 +574,9 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                             </Form.Item>
                         )}
 
-                        {!isSubFlow && nodeData && (
+                        {isConnector && renderConnectorSection(nodeData)}
+
+                        {!isSubFlow && !isConnector && nodeData && (
                             <>
                                 {/* ── Inputs Section ── */}
                                 <div className="properties-drawer__divider" />
@@ -552,7 +609,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                             setNodes((nds) => nds.filter(n => n.id !== selectedNode.id));
                             onClose();
                         }}>
-                            Delete {isSubFlow ? 'Group' : 'Node'}
+                            Delete {isSubFlow ? 'Group' : isConnector ? 'Connector' : 'Node'}
                         </Button>
                     </div>
                 </div>
