@@ -130,8 +130,15 @@ export async function fetchSkillStatusCounts(): Promise<Record<string, number>> 
 export async function fetchSkillById(id: string): Promise<ApiResponse<Skill>> {
     const cached = localSkills ?? [];
     const skill = cached.find((skill) => skill.id === id);
-    if (!skill) return { success: false, error: 'Skill not found.' };
-    return { success: true, data: skill };
+    if (skill) return { success: true, data: skill };
+
+    try {
+        const result = await apiClient.get<Skill>(API_ENDPOINTS.SKILLS.BY_ID(id));
+        return { success: true, data: result };
+    } catch (error: any) {
+        console.error('fetchSkillById API error:', error);
+        return { success: false, error: error.message || 'Skill not found.' };
+    }
 }
 
 /**

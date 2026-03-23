@@ -38,3 +38,17 @@ export async function updateConnector(
 export async function deleteConnector(connectorId: number): Promise<any> {
     return apiClient.delete(API_ENDPOINTS.CONNECTORS.BY_ID(connectorId));
 }
+
+/**
+ * Fetch connectors grouped by type (e.g., { "API": [...], "DATABASE": [...] }).
+ * Used by the Node Library to populate the Connectors accordion.
+ */
+export async function fetchGroupedConnectors(): Promise<Record<string, ConnectorResponse[]>> {
+    try {
+        const result = await apiClient.get<any>(API_ENDPOINTS.CONNECTORS.GROUPED);
+        return (result as Record<string, ConnectorResponse[]>) ?? {};
+    } catch (error) {
+        console.error('fetchGroupedConnectors API error:', error);
+        return {};
+    }
+}

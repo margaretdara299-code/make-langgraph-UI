@@ -9,3 +9,4 @@ export { default as useCanvasDragDrop } from './useCanvasDragDrop.hook';
 export * from './useSkillGraph.hook';
 export * from './useCategories.hook';
 export * from './useCapabilities.hook';
+export { default as useDesignerConnectors } from './useDesignerConnectors.hook';

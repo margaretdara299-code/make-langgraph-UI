@@ -47,7 +47,11 @@ export default function ActionNode({ data }: NodeProps<CanvasNode>) {
 
                     <div className="action-node__footer">
                         <span className="action-node__capability-badge">
-                            {CAPABILITY_LABELS[cap] || nodeData.capability}
+                            {(nodeData as any).connectorId
+                                ? ((nodeData as any).connectorType || cap) === 'database'
+                                    ? 'DB Connector'
+                                    : 'Api Connector'
+                                : 'Action'}
                         </span>
                         <span className="action-node__category">{nodeData.category}</span>
                     </div>

@@ -114,7 +114,7 @@ export default function ConnectorCard({ connector, onAction }: ConnectorCardProp
                     <Tag color={connector.isActive ? 'success' : 'default'}>
                         {connector.isActive ? 'Active' : 'Inactive'}
                     </Tag>
-                    <Tag className="connector-card__type-tag">{typeLabel} Connector</Tag>
+                    <Tag className="connector-card__type-tag">{typeLabel}</Tag>
                 </div>
                 <div className="connector-card__date">
                     Edited {formatDate(connector.updatedAt)}

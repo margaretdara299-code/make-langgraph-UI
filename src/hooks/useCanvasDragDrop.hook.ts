@@ -78,6 +78,38 @@ export default function useCanvasDragDrop(
                 return;
             }
 
+            // ── Handle Connector node drop ──
+            if (data.nodeType === 'connector') {
+                const parentSubFlow = findSubFlowAtPosition(position.x, position.y);
+                const newNode: Node = {
+                    id: getNextNodeId(),
+                    type: 'action',
+                    position: parentSubFlow
+                        ? {
+                              x: position.x - parentSubFlow.position.x,
+                              y: position.y - parentSubFlow.position.y,
+                          }
+                        : position,
+                    data: {
+                        label: data.label || 'Connector',
+                        category: data.category || 'Connectors',
+                        capability: data.capability || 'api',
+                        icon: data.icon || 'ApiOutlined',
+                        connectorId: data.connectorId,
+                        connectorType: data.connectorType,
+                        configJson: data.configJson,
+                    } as any,
+                    ...(parentSubFlow
+                        ? {
+                              parentId: parentSubFlow.id,
+                              extent: 'parent' as const,
+                          }
+                        : {}),
+                };
+                setNodes((nds) => [...nds, newNode]);
+                return;
+            }
+
             // ── Handle regular action node drop ──
             const nodeData: CanvasNodeData = data;
 

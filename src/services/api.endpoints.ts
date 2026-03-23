@@ -31,6 +31,7 @@ export const API_ENDPOINTS = {
     },
     CONNECTORS: {
         BASE: '/api/v1/connectors',
+        GROUPED: '/api/v1/connectors/grouped',
         BY_ID: (connectorId: number) => `/api/v1/connectors/${connectorId}`,
     },
 } as const;

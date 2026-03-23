@@ -7,8 +7,6 @@
 import { useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { type Node, type Edge } from '@xyflow/react';
-import { MOCK_INITIAL_NODES, MOCK_INITIAL_EDGES } from '@/services/mock-data/graph.mock';
-
 export function useSkillGraph() {
     const { skillId } = useParams<{ skillId: string }>();
     const storageKey = `tensaw_skill_graph_${skillId || 'unknown'}`;
@@ -19,20 +17,20 @@ export function useSkillGraph() {
             if (saved) {
                 const parsed = JSON.parse(saved);
                 return {
-                    initialNodes: parsed.nodes || MOCK_INITIAL_NODES,
-                    initialEdges: parsed.edges || MOCK_INITIAL_EDGES
+                    initialNodes: parsed.nodes || [],
+                    initialEdges: parsed.edges || []
                 };
             }
         } catch (e) {
             console.error('Failed to parse graph from local storage', e);
         }
 
-        // Fallback to mock data
+        // Fallback to empty state
         return {
-            initialNodes: MOCK_INITIAL_NODES,
-            initialEdges: MOCK_INITIAL_EDGES
+            initialNodes: [],
+            initialEdges: []
         };
-    }, []);
+    }, [storageKey]);
 
     const [initialGraph] = useState(loadInitialState);
 
