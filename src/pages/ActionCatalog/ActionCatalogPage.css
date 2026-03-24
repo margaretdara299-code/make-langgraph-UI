@@ -121,3 +121,7 @@
     justify-content: center;
     min-height: 300px;
 }
+
+.action-catalog__count-tag {
+    font-size: 10px !important;
+}

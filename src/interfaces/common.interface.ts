@@ -24,7 +24,18 @@ export interface ApiResponse<T> {
     success: boolean;
     data?: T;
     error?: string;
+    message?: string;
 }
+
+/**
+ * Standard envelope for all API client responses.
+ * Matches the backend's { data: T, message: string } structure.
+ */
+export interface ApiClientResponse<T> {
+    data: T;
+    message: string;
+}
+
 
 export interface SelectOption {
     value: string;

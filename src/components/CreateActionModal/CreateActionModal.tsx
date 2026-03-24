@@ -10,12 +10,7 @@ import type { ActionDefinition, CreateActionModalProps } from '@/interfaces';
 import './CreateActionModal.css';
 
 import CreateActionOverview from '../CreateActionOverview/CreateActionOverview';
-import CreateActionInputsStep from '../CreateActionInputsStep/CreateActionInputsStep';
-import CreateActionExecutionStep from '../CreateActionExecutionStep/CreateActionExecutionStep';
-import CreateActionOutputsStep from '../CreateActionOutputsStep/CreateActionOutputsStep';
 import CreateActionConfigStep from '../CreateActionConfigStep/CreateActionConfigStep';
-import CreateActionUiFormStep from '../CreateActionUiFormStep/CreateActionUiFormStep';
-import CreateActionPolicyStep from '../CreateActionPolicyStep/CreateActionPolicyStep';
 import CreateActionReviewStep from '../CreateActionReviewStep/CreateActionReviewStep';
 
 export default function CreateActionModal({ isOpen, onClose, onCreated, actionToEdit }: CreateActionModalProps) {
@@ -78,11 +73,15 @@ export default function CreateActionModal({ isOpen, onClose, onCreated, actionTo
             if (actionToEdit) {
                 // Edit: PUT /api/actions/{id}
                 res = await updateActionDefinition(actionToEdit.id, actionDraft);
-                message.success('Action updated successfully!');
+                if (res.success) {
+                    message.success(res.message || 'Action updated successfully!');
+                }
             } else {
                 // Create: POST /api/actions
                 res = await createAction(actionDraft);
-                message.success('Action created successfully!');
+                if (res.success) {
+                    message.success(res.message || 'Action created successfully!');
+                }
             }
             
             if (res.success) {
@@ -106,12 +105,7 @@ export default function CreateActionModal({ isOpen, onClose, onCreated, actionTo
     // Form steps configuration
     const steps = [
         { title: 'Overview', content: <CreateActionOverview draft={actionDraft} setDraft={setActionDraft} form={overviewForm} /> },
-        { title: 'Inputs', content: <CreateActionInputsStep draft={actionDraft} setDraft={setActionDraft} /> },
-        { title: 'Execution', content: <CreateActionExecutionStep draft={actionDraft} setDraft={setActionDraft} /> },
-        { title: 'Outputs', content: <CreateActionOutputsStep draft={actionDraft} setDraft={setActionDraft} /> },
-        { title: 'Config', content: <CreateActionConfigStep draft={actionDraft} setDraft={setActionDraft} /> },
-        { title: 'UI Form', content: <CreateActionUiFormStep draft={actionDraft} setDraft={setActionDraft} /> },
-        { title: 'Policy', content: <CreateActionPolicyStep draft={actionDraft} setDraft={setActionDraft} /> },
+        { title: 'Configuration', content: <CreateActionConfigStep draft={actionDraft} setDraft={setActionDraft} /> },
         { title: 'Publish', content: <CreateActionReviewStep draft={actionDraft} setDraft={setActionDraft} /> },
     ];
 

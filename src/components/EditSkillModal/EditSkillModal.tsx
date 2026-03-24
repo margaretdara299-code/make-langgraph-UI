@@ -35,7 +35,7 @@ export default function EditSkillModal({ isOpen, onClose, onUpdated, skill }: Ed
 
             const result = await updateSkill(skill.id, values);
             if (result.success) {
-                message.success('Skill updated successfully');
+                message.success(result.message || 'Skill updated successfully');
                 onUpdated();
                 handleClose();
             } else {

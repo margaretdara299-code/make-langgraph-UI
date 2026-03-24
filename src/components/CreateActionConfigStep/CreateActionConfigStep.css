@@ -9,10 +9,11 @@
 }
 
 .action-config-step__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.action-config-step__header-title {
+    margin: 0 !important;
 }
 
 .action-config-step__empty {
@@ -47,3 +48,41 @@
 .action-config-step__options-label {
     font-size: 12px;
 }
+
+.action-config-step__section-title {
+    margin-top: 24px !important;
+    margin-bottom: 16px !important;
+}
+
+.action-config-step__monospace-textarea .ant-input {
+    font-family: 'JetBrains Mono', 'Menlo', 'Monaco', 'Courier New', monospace !important;
+    font-size: 13px !important;
+}
+
+.action-config-step__monospace-input .ant-input {
+    font-family: 'JetBrains Mono', 'Menlo', 'Monaco', 'Courier New', monospace !important;
+    font-size: 13px !important;
+}
+
+.action-config-step__flex-row {
+    display: flex;
+    gap: 16px;
+}
+
+.action-config-step__flex-item {
+    flex: 1;
+}
+
+.action-config-step__width-100 {
+    width: 100px;
+}
+
+.action-config-step__width-120 {
+    width: 120px;
+}
+
+.action-config-step__empty-state {
+    padding: 40px;
+    text-align: center;
+}
+

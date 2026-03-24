@@ -23,7 +23,7 @@ export async function fetchSkills(
         const url = `${API_ENDPOINTS.SKILLS.BASE}${queryString ? `?${queryString}` : ''}`;
 
         const result = await apiClient.get<{ items: Skill[]; total: number }>(url);
-        const items = result.items || [];
+        const items = result.data.items || [];
         localSkills = items;
 
         const page = filters?.page ?? 1;
@@ -79,10 +79,10 @@ export async function createSkill(
         );
 
         const newSkill: Skill = {
-            id: result.skill?.id || '',
+            id: result.data.skill?.id || '',
             name: input.name,
-            version: result.skill?.version || '1.0.0',
-            skillKey: result.skill?.skillKey || input.skillKey || '',
+            version: result.data.skill?.version || '1.0.0',
+            skillKey: result.data.skill?.skillKey || input.skillKey || '',
             description: input.description || '',
             categoryId: input.categoryId || 1,
             category: input.category || 'General',
@@ -96,7 +96,7 @@ export async function createSkill(
             updatedBy: 'system',
         };
 
-        return { success: true, data: newSkill };
+        return { success: true, data: newSkill, message: result.message };
     } catch (error) {
         return { success: false, error: error instanceof Error ? error.message : 'Failed to create skill' };
     }
@@ -109,7 +109,7 @@ export async function createSkill(
 export async function fetchSkillStatusCounts(): Promise<Record<string, number>> {
     try {
         const result = await apiClient.get<{ items: Skill[]; total: number }>(API_ENDPOINTS.SKILLS.BASE);
-        const items = result.items || [];
+        const items = result.data.items || [];
         const counts: Record<string, number> = { all: items.length, published: 0, draft: 0 };
         for (const s of items) {
             const st = s.status || 'draft';
@@ -134,7 +134,7 @@ export async function fetchSkillById(id: string): Promise<ApiResponse<Skill>> {
 
     try {
         const result = await apiClient.get<Skill>(API_ENDPOINTS.SKILLS.BY_ID(id));
-        return { success: true, data: result };
+        return { success: true, data: result.data, message: result.message };
     } catch (error: any) {
         console.error('fetchSkillById API error:', error);
         return { success: false, error: error.message || 'Skill not found.' };
@@ -147,7 +147,7 @@ export async function fetchSkillById(id: string): Promise<ApiResponse<Skill>> {
  */
 export async function deleteSkill(id: string): Promise<ApiResponse<null>> {
     try {
-        await apiClient.delete(API_ENDPOINTS.SKILLS.BY_ID(id));
+        const result = await apiClient.delete(API_ENDPOINTS.SKILLS.BY_ID(id));
 
         // Optimistically remove from local cache if it exists
         if (localSkills) {
@@ -155,7 +155,7 @@ export async function deleteSkill(id: string): Promise<ApiResponse<null>> {
             if (index !== -1) localSkills.splice(index, 1);
         }
 
-        return { success: true, data: null };
+        return { success: true, data: null, message: result.message };
     } catch (error) {
         return { success: false, error: error instanceof Error ? error.message : 'Failed to delete skill.' };
     }
@@ -177,7 +177,7 @@ export async function updateSkill(
             tags: input.tags,
         };
 
-        await apiClient.patch<{ id: string }>(
+        const result = await apiClient.patch<{ id: string }>(
             API_ENDPOINTS.SKILLS.UPDATE(skillId),
             payload
         );
@@ -200,7 +200,7 @@ export async function updateSkill(
             }
         }
 
-        return { success: true, data: updatedSkill as Skill };
+        return { success: true, data: updatedSkill as Skill, message: result.message };
     } catch (error) {
         return { success: false, error: error instanceof Error ? error.message : 'Failed to update skill.' };
     }
@@ -241,7 +241,7 @@ export async function updateSkillVersionStatus(
     status: SkillVersionStatusValue
 ): Promise<ApiResponse<null>> {
     try {
-        await apiClient.put(
+        const result = await apiClient.put(
             API_ENDPOINTS.SKILLS.VERSION_STATUS(versionId),
             { status }
         );
@@ -256,7 +256,7 @@ export async function updateSkillVersionStatus(
             }
         }
 
-        return { success: true, data: null };
+        return { success: true, data: null, message: result.message };
     } catch (error) {
         return { success: false, error: error instanceof Error ? error.message : 'Failed to update version status.' };
     }

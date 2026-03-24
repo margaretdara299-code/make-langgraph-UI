@@ -83,7 +83,7 @@ export default function useCanvasDragDrop(
                 const parentSubFlow = findSubFlowAtPosition(position.x, position.y);
                 const newNode: Node = {
                     id: getNextNodeId(),
-                    type: 'action',
+                    type: 'connector',
                     position: parentSubFlow
                         ? {
                               x: position.x - parentSubFlow.position.x,

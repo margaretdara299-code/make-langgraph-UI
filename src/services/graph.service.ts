@@ -15,7 +15,7 @@ export async function loadSkillGraph(skillVersionId: string) {
         status: string;
         nodes: unknown[];
         connections: Record<string, unknown>;
-    }>(API_ENDPOINTS.SKILL_GRAPH.GRAPH(skillVersionId));
+    }>(API_ENDPOINTS.SKILL_GRAPH.GRAPH(skillVersionId)).then(res => res.data);
 }
 
 /**
@@ -43,7 +43,7 @@ export async function saveSkillGraph(
 export async function validateSkillGraph(skillVersionId: string) {
     return apiClient.post<{ valid: boolean; errors: string[]; warnings: string[] }>(
         API_ENDPOINTS.SKILL_GRAPH.VALIDATE(skillVersionId)
-    );
+    ).then(res => res.data);
 }
 
 /**
@@ -54,7 +54,7 @@ export async function validateSkillGraph(skillVersionId: string) {
 export async function compileSkillGraph(skillVersionId: string) {
     return apiClient.post<{ compileHash: string; compiledSkillJson: unknown }>(
         API_ENDPOINTS.SKILL_GRAPH.COMPILE(skillVersionId)
-    );
+    ).then(res => res.data);
 }
 
 /**
@@ -89,5 +89,5 @@ export async function runSkillVersion(
     }>(API_ENDPOINTS.SKILL_GRAPH.RUN(skillVersionId), {
         inputContext,
         maxSteps,
-    });
+    }).then(res => res.data);
 }

@@ -79,9 +79,13 @@ export default function ConnectorsPage() {
                 cancelText: 'Cancel',
                 onOk: async () => {
                     try {
-                        await deleteConnector(connectorId);
-                        message.success('Connector deleted successfully');
-                        loadConnectors();
+                        const result = await deleteConnector(connectorId);
+                        if (result.success) {
+                            message.success(result.message || 'Connector deleted successfully');
+                            loadConnectors();
+                        } else {
+                            message.error(result.error || 'Failed to delete connector');
+                        }
                     } catch (error: any) {
                         message.error(error?.message || 'Failed to delete connector');
                     }

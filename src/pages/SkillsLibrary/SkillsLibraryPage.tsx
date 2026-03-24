@@ -6,12 +6,16 @@
 import { useState } from 'react';
 import { Input, Spin, Empty, Button, Typography, Modal, message, Tabs, Badge, Space } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
 import { useSkills, useCategories } from '@/hooks';
 import { SkillCard, CreateSkillModal, EditSkillModal } from '@/components';
 import { STATUS_FILTER_OPTIONS, CARD_ACTION_KEYS } from '@/constants';
-import { deleteSkill, updateSkillVersionStatus, SkillVersionStatusValue } from '@/services';
-import { ROUTES } from '@/routes';
+import { 
+    deleteSkill, 
+    updateSkillVersionStatus, 
+    SkillVersionStatusValue,
+    loadSkillGraph,
+    saveSkillGraph
+} from '@/services';
 import type { UseSkillsFilters } from '@/interfaces';
 import './SkillsLibraryPage.css';
 
@@ -23,7 +27,6 @@ export default function SkillsLibraryPage() {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingSkill, setEditingSkill] = useState<any>(null);
-    const navigate = useNavigate();
 
     const { skills, isLoading, statusCounts, setFilters, refetch } = useSkills();
     const { categories } = useCategories();
@@ -65,7 +68,7 @@ export default function SkillsLibraryPage() {
                     onOk: async () => {
                         const result = await deleteSkill(skillId);
                         if (result.success) {
-                            message.success('Skill deleted successfully');
+                            message.success(result.message || 'Skill deleted successfully');
                             refetch();
                         } else {
                             message.error(result.error || 'Failed to delete skill');
@@ -83,7 +86,7 @@ export default function SkillsLibraryPage() {
                         : SkillVersionStatusValue.UNPUBLISHED;
                     const result = await updateSkillVersionStatus(skillToPublish.latestVersionId, targetStatus);
                     if (result.success) {
-                        message.success(actionKey === CARD_ACTION_KEYS.PUBLISH ? 'Published successfully' : 'Unpublished successfully');
+                        message.success(result.message || (actionKey === CARD_ACTION_KEYS.PUBLISH ? 'Published successfully' : 'Unpublished successfully'));
                         refetch();
                     } else {
                         message.error(result.error || 'Failed to update version status');
@@ -95,9 +98,26 @@ export default function SkillsLibraryPage() {
             }
 
 
-            case CARD_ACTION_KEYS.BUILD_SKILL:
-                navigate(ROUTES.SKILL_DESIGNER.replace(':skillId', skillId).replace(':versionId', 'v1'));
+            case CARD_ACTION_KEYS.BUILD_SKILL: {
+                const pubSkill = skills.find((s) => s.id === skillId);
+                if (pubSkill?.latestVersionId) {
+                    message.loading({ content: 'Building skill...', key: 'build' });
+                    loadSkillGraph(pubSkill.latestVersionId).then((res: any) => {
+                        saveSkillGraph(pubSkill.latestVersionId!, res.nodes || [], res.connections || {})
+                            .then((saveRes: any) => {
+                                message.success({ content: saveRes.message || 'Skill Built successfully!', key: 'build' });
+                            })
+                            .catch(() => {
+                                message.error({ content: 'Failed to build skill', key: 'build' });
+                            });
+                    }).catch(() => {
+                        message.error({ content: 'Failed to load skill for building', key: 'build' });
+                    });
+                } else {
+                    message.warning('Cannot build: No valid version ID found.');
+                }
                 break;
+            }
 
             case CARD_ACTION_KEYS.EDIT_SETTINGS:
                 const skillToEdit = skills.find((skill) => skill.id === skillId);
@@ -154,7 +174,7 @@ export default function SkillsLibraryPage() {
                                     count={statusCounts[option.key] ?? 0}
                                     showZero
                                     color={activeStatus === option.key ? 'var(--color-primary)' : '#d9d9d9'}
-                                    style={{ fontSize: '10px' }}
+                                    className="skills-library__count-tag"
                                 />
                             </Space>
                         ),

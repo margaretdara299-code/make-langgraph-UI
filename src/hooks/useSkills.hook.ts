@@ -3,56 +3,37 @@
  * Encapsulates all data fetching logic, filtering, pagination, and status counts.
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import type { Skill, PaginatedResponse, UseSkillsFilters, UseSkillsReturn } from '@/interfaces';
 import { fetchSkills, fetchSkillStatusCounts } from '@/services';
 
 export function useSkills(initialFilters?: UseSkillsFilters): UseSkillsReturn & { statusCounts: Record<string, number> } {
     const [filters, setFilters] = useState<UseSkillsFilters>(initialFilters ?? {});
-    const [data, setData] = useState<PaginatedResponse<Skill>>({
-        data: [],
-        total: 0,
-        page: 1,
-        pageSize: 12,
-        totalPages: 0,
-    });
-    const [statusCounts, setStatusCounts] = useState<Record<string, number>>({
-        all: 0,
-        draft: 0,
-        published: 0,
-    });
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
 
-    const loadSkills = useCallback(async () => {
-        setIsLoading(true);
-        setError(null);
-        try {
+    const { data, isLoading, error, refetch } = useQuery({
+        queryKey: ['skills', filters],
+        queryFn: async () => {
             const [result, counts] = await Promise.all([
                 fetchSkills(filters),
                 fetchSkillStatusCounts(),
             ]);
-            setData(result);
-            setStatusCounts(counts);
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Failed to load skills.');
-        } finally {
-            setIsLoading(false);
+            return { result, counts };
         }
-    }, [filters]);
+    });
 
-    useEffect(() => {
-        loadSkills();
-    }, [loadSkills]);
+    const fallbackData: PaginatedResponse<Skill> = { data: [], total: 0, page: 1, pageSize: 12, totalPages: 0 };
+    const skillsData = data?.result || fallbackData;
+    const statusCounts = data?.counts || { all: 0, draft: 0, published: 0 };
 
     return {
-        skills: data.data,
-        total: data.total,
-        page: data.page,
-        totalPages: data.totalPages,
+        skills: skillsData.data,
+        total: skillsData.total,
+        page: skillsData.page,
+        totalPages: skillsData.totalPages,
         isLoading,
-        error,
-        refetch: loadSkills,
+        error: error instanceof Error ? error.message : error ? String(error) : null,
+        refetch,
         setFilters,
         statusCounts,
     };

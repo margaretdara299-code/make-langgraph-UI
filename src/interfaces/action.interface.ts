@@ -23,13 +23,13 @@ export interface ActionDefinition {
     createdAt: string;
     updatedAt: string;
 
-    // ── Version-level JSON blobs (populated by wizard steps 2–7) ──
-    inputsSchemaJson?: ActionInputField[];
-    executionJson?: ActionExecutionConfig;
-    outputsSchemaJson?: ActionOutputField[];
-    configurationsJson?: ActionConfigField[];
-    uiFormJson?: ActionUiFormConfig;
-    policyJson?: ActionPolicyConfig;
+    // ── Version-level Configuration Blob ──
+    configurationsJson?: Record<string, any>;
+    inputsSchemaJson?: any;
+    executionJson?: any;
+    outputsSchemaJson?: any;
+    uiFormJson?: any;
+    policyJson?: any;
 }
 
 export interface ActionVersion {
@@ -37,59 +37,14 @@ export interface ActionVersion {
     actionDefinitionId: string;
     version: string;
     status: ActionVersionStatus;
-    inputsSchemaJson: Record<string, unknown>;
-    executionJson: Record<string, unknown>;
-    outputsSchemaJson: Record<string, unknown>;
-    uiFormJson: Record<string, unknown>;
-    policyJson: Record<string, unknown>;
+    configurationsJson: Record<string, any>;
+    inputsSchemaJson?: any;
+    executionJson?: any;
+    outputsSchemaJson?: any;
+    uiFormJson?: any;
+    policyJson?: any;
     createdAt: string;
     updatedAt: string;
-}
-
-// ── Wizard step sub-types ──────────────────────────────────────────
-
-export type ActionFieldType = 'string' | 'number' | 'boolean' | 'object' | 'array';
-
-export interface ActionInputField {
-    name: string;
-    type: ActionFieldType;
-    required: boolean;
-    description: string;
-}
-
-export interface ActionOutputField {
-    name: string;
-    type: ActionFieldType;
-    required: boolean;
-    description: string;
-}
-
-export type ConnectorType = 'rest' | 'graphql' | 'grpc' | 'internal' | 'none';
-export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-
-export interface ActionExecutionConfig {
-    connectorType: ConnectorType;
-    endpointUrl: string;
-    httpMethod: HttpMethod;
-    timeoutMs: number;
-    retryCount: number;
-    retryDelayMs: number;
-}
-
-export interface ActionUiFormConfig {
-    displayMode: 'auto' | 'custom';
-    groupLabel: string;
-    helpText: string;
-    showAdvanced: boolean;
-}
-
-export interface ActionPolicyConfig {
-    containsPhi: boolean;
-    containsPii: boolean;
-    requiresAuditLogging: boolean;
-    dataRetentionDays: number;
-    allowedEnvironments: string[];
-    notes: string;
 }
 
 export interface ActionFilters {
@@ -99,16 +54,4 @@ export interface ActionFilters {
     search?: string;
     page?: number;
     pageSize?: number;
-}
-
-// ── Configurations step sub-types ────────────────────────────────────────────
-
-export type ActionConfigInputType = 'text' | 'number' | 'boolean' | 'select' | 'textarea';
-
-export interface ActionConfigField {
-    label: string;
-    inputKey: string;
-    inputType: ActionConfigInputType;
-    options?: string[];
-    defaultValue?: string | number | boolean;
 }

@@ -1,0 +1,27 @@
+.create-action-overview__title {
+    margin-bottom: 24px !important;
+}
+
+.create-action-overview__row {
+    display: flex;
+    gap: 24px;
+}
+
+.create-action-overview__flex-1 {
+    flex: 1;
+}
+
+.create-action-overview__footer-row {
+    display: flex;
+    gap: 24px;
+    margin-top: 12px;
+}
+
+.create-action-overview__icon-input {
+    width: 120px;
+    text-align: center;
+}
+
+.create-action-overview__scope-select {
+    width: 200px;
+}

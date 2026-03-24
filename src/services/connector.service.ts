@@ -2,7 +2,7 @@
  * Connector service — API calls for connector CRUD operations.
  */
 
-import type { CreateConnectorPayload, ConnectorResponse } from '@/interfaces';
+import type { CreateConnectorPayload, ConnectorResponse, ApiResponse } from '@/interfaces';
 import { API_ENDPOINTS } from './api.endpoints';
 import { apiClient } from './http.service';
 
@@ -12,14 +12,19 @@ import { apiClient } from './http.service';
  */
 export async function fetchConnectors(): Promise<ConnectorResponse[]> {
     const result = await apiClient.get<ConnectorResponse[]>(API_ENDPOINTS.CONNECTORS.BASE);
-    return (result as ConnectorResponse[]) ?? [];
+    return (result.data as ConnectorResponse[]) ?? [];
 }
 
 /**
  * Create a new connector (API or Database).
  */
-export async function createConnector(payload: CreateConnectorPayload): Promise<any> {
-    return apiClient.post(API_ENDPOINTS.CONNECTORS.BASE, payload);
+export async function createConnector(payload: CreateConnectorPayload): Promise<ApiResponse<any>> {
+    try {
+        const result = await apiClient.post(API_ENDPOINTS.CONNECTORS.BASE, payload);
+        return { success: true, data: result.data, message: result.message };
+    } catch (error) {
+        return { success: false, error: error instanceof Error ? error.message : 'Failed to create connector' };
+    }
 }
 
 /**
@@ -28,15 +33,25 @@ export async function createConnector(payload: CreateConnectorPayload): Promise<
 export async function updateConnector(
     connectorId: number,
     payload: Partial<CreateConnectorPayload>
-): Promise<any> {
-    return apiClient.patch(API_ENDPOINTS.CONNECTORS.BY_ID(connectorId), payload);
+): Promise<ApiResponse<any>> {
+    try {
+        const result = await apiClient.patch(API_ENDPOINTS.CONNECTORS.BY_ID(connectorId), payload);
+        return { success: true, data: result.data, message: result.message };
+    } catch (error) {
+        return { success: false, error: error instanceof Error ? error.message : 'Failed to update connector' };
+    }
 }
 
 /**
  * Delete a connector by ID.
  */
-export async function deleteConnector(connectorId: number): Promise<any> {
-    return apiClient.delete(API_ENDPOINTS.CONNECTORS.BY_ID(connectorId));
+export async function deleteConnector(connectorId: number): Promise<ApiResponse<any>> {
+    try {
+        const result = await apiClient.delete(API_ENDPOINTS.CONNECTORS.BY_ID(connectorId));
+        return { success: true, data: result.data, message: result.message };
+    } catch (error) {
+        return { success: false, error: error instanceof Error ? error.message : 'Failed to delete connector' };
+    }
 }
 
 /**
@@ -46,7 +61,7 @@ export async function deleteConnector(connectorId: number): Promise<any> {
 export async function fetchGroupedConnectors(): Promise<Record<string, ConnectorResponse[]>> {
     try {
         const result = await apiClient.get<any>(API_ENDPOINTS.CONNECTORS.GROUPED);
-        return (result as Record<string, ConnectorResponse[]>) ?? {};
+        return (result.data as Record<string, ConnectorResponse[]>) ?? {};
     } catch (error) {
         console.error('fetchGroupedConnectors API error:', error);
         return {};
