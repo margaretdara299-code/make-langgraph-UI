@@ -31,6 +31,8 @@ export default function SkillDesignerHeader() {
         fetchSkillById(skillId).then((res) => {
             if (res.success && res.data) {
                 setSkill(res.data);
+            } else if (!res.success) {
+                message.error(res.error || 'Failed to load skill details');
             }
             setIsLoading(false);
         });
@@ -38,10 +40,10 @@ export default function SkillDesignerHeader() {
 
     const handleSave = async () => {
         try {
-            await saveGraph(getNodes(), getEdges());
-            message.success('Draft saved successfully');
-        } catch (error) {
-            message.error('Failed to save draft');
+            const res: any = await saveGraph(getNodes(), getEdges());
+            message.success(res.message || 'Draft saved successfully');
+        } catch (error: any) {
+            message.error(error?.message || 'Failed to save draft');
         }
     };
 

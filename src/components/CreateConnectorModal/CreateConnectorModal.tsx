@@ -48,21 +48,29 @@ export default function CreateConnectorModal({
             setIsSubmitting(true);
 
             if (isEditMode) {
-                await updateConnector(connectorToEdit!.connectorId, {
+                const result = await updateConnector(connectorToEdit!.connectorId, {
                     name: values.name,
                     connectorType,
                     description: values.description,
                     configJson: values.configJson,
                 });
-                message.success(`${isApi ? 'API' : 'Database'} connector updated successfully`);
+                if (result.success) {
+                    message.success(result.message || `${isApi ? 'API' : 'Database'} connector updated successfully`);
+                } else {
+                    throw new Error(result.error);
+                }
             } else {
-                await createConnector({
+                const result = await createConnector({
                     name: values.name,
                     connectorType,
                     description: values.description,
                     configJson: values.configJson,
                 });
-                message.success(`${isApi ? 'API' : 'Database'} connector created successfully`);
+                if (result.success) {
+                    message.success(result.message || `${isApi ? 'API' : 'Database'} connector created successfully`);
+                } else {
+                    throw new Error(result.error);
+                }
             }
 
             form.resetFields();
@@ -72,7 +80,7 @@ export default function CreateConnectorModal({
             if (error?.errorFields) {
                 return;
             }
-            message.error(`Failed to ${isEditMode ? 'update' : 'create'} connector. Please try again.`);
+            message.error(error?.message || `Failed to ${isEditMode ? 'update' : 'create'} connector. Please try again.`);
         } finally {
             setIsSubmitting(false);
         }

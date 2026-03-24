@@ -35,7 +35,7 @@ export async function createAction(
             policyJson: input.policyJson || null,
         };
 
-        await apiClient.post(API_ENDPOINTS.ACTIONS.BASE, payload);
+        const res = await apiClient.post<ActionDefinition>(API_ENDPOINTS.ACTIONS.BASE, payload);
 
         const newAction: ActionDefinition = {
             id: 'pending-refresh',
@@ -51,7 +51,7 @@ export async function createAction(
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
         };
-        return { success: true, data: newAction };
+        return { success: true, data: newAction, message: res.message };
     } catch (error) {
         return { success: false, error: error instanceof Error ? error.message : 'Failed to create action' };
     }
@@ -67,7 +67,7 @@ export async function fetchGroupedActions(): Promise<Record<string, ActionDefini
         const result = await apiClient.get<any>(API_ENDPOINTS.ACTIONS.GROUPED);
 
         // The backend wraps the response in { data: { "CategoryName": [...], ... } }
-        const grouped: Record<string, any[]> = result || {};
+        const grouped: Record<string, any[]> = result.data || {};
         const mapped: Record<string, ActionDefinition[]> = {};
 
         for (const [category, actions] of Object.entries(grouped)) {
@@ -115,7 +115,7 @@ export async function fetchActions(
 
         const result = await apiClient.get<{ items: ActionDefinition[]; total: number }>(url);
 
-        const items: ActionDefinition[] = (result.items || []).map((a) => {
+        const items: ActionDefinition[] = (result.data.items || []).map((a) => {
             const anyA = a as any;
             return {
                 ...a,
@@ -153,7 +153,7 @@ export async function fetchActions(
 export async function fetchActionCategoryCounts(): Promise<Record<string, number>> {
     try {
         const result = await apiClient.get<{ items: ActionDefinition[]; total: number }>(API_ENDPOINTS.ACTIONS.BASE);
-        const items = result.items || [];
+        const items = result.data.items || [];
         const counts: Record<string, number> = {};
         for (const a of items) {
             const cat = a.category || 'Uncategorized';
@@ -173,7 +173,7 @@ export async function fetchActionCategoryCounts(): Promise<Record<string, number
 export async function fetchActionStatusCounts(): Promise<Record<string, number>> {
     try {
         const result = await apiClient.get<{ items: ActionDefinition[]; total: number }>(API_ENDPOINTS.ACTIONS.BASE);
-        const items = result.items || [];
+        const items = result.data.items || [];
         const counts: Record<string, number> = { all: items.length, published: 0, draft: 0 };
         for (const a of items) {
             const st = (a as unknown as Record<string, unknown>).versionStatus as string || a.status || 'draft';
@@ -193,7 +193,7 @@ export async function fetchActionStatusCounts(): Promise<Record<string, number>>
 export async function fetchActionCapabilityCounts(): Promise<Record<string, number>> {
     try {
         const result = await apiClient.get<{ items: ActionDefinition[]; total: number }>(API_ENDPOINTS.ACTIONS.BASE);
-        const items = result.items || [];
+        const items = result.data.items || [];
         const counts: Record<string, number> = {};
         for (const a of items) {
             const cap = (a.capability || 'api').toLowerCase();
@@ -226,7 +226,7 @@ export async function fetchDesignerActions(
     if (filters?.search) params.set('q', filters.search);
 
     const queryString = params.toString();
-    return apiClient.get<{ items: unknown[]; total: number }>(`${API_ENDPOINTS.ACTIONS.DESIGNER}?${queryString}`);
+    return apiClient.get<{ items: unknown[]; total: number }>(`${API_ENDPOINTS.ACTIONS.DESIGNER}?${queryString}`).then(res => res.data);
 }
 
 /**
@@ -237,27 +237,28 @@ export async function fetchDesignerActions(
 export async function fetchActionById(id: string): Promise<ApiResponse<ActionDefinition>> {
     try {
         const result = await apiClient.get<any>(API_ENDPOINTS.ACTIONS.BY_ID(id));
+        const data = result.data;
 
         // The backend returns { ...definition, versions: [ { ...versionData } ] }
         // Find the active version (is_active=1) or fall back to the first version
-        const versions = result.versions || [];
+        const versions = data.versions || [];
         const activeVersion = versions.find((v: any) => v.isActive === 1 || v.isActive === true) || versions[0] || {};
 
         const action: ActionDefinition = {
-            id: result.actionDefinitionId || result.id || id,
-            actionKey: result.actionKey || '',
-            name: result.name || '',
-            description: result.description || '',
-            category: result.category || 'Uncategorized',
-            categoryId: result.categoryId || result.category_id,
-            capability: (result.capability || 'api').toLowerCase() as ActionDefinition['capability'],
-            capabilityId: result.capabilityId || result.capability_id,
-            scope: result.scope || 'global',
-            icon: result.icon || '🧩',
-            defaultNodeTitle: result.defaultNodeTitle || result.name || '',
-            status: activeVersion.status || result.status || 'draft',
-            createdAt: result.createdAt || '',
-            updatedAt: result.updatedAt || '',
+            id: data.actionDefinitionId || data.id || id,
+            actionKey: data.actionKey || '',
+            name: data.name || '',
+            description: data.description || '',
+            category: data.category || 'Uncategorized',
+            categoryId: data.categoryId || data.category_id,
+            capability: (data.capability || 'api').toLowerCase() as ActionDefinition['capability'],
+            capabilityId: data.capabilityId || data.capability_id,
+            scope: data.scope || 'global',
+            icon: data.icon || '🧩',
+            defaultNodeTitle: data.defaultNodeTitle || data.name || '',
+            status: activeVersion.status || data.status || 'draft',
+            createdAt: data.createdAt || '',
+            updatedAt: data.updatedAt || '',
 
             // Version-level JSON blobs from the active version
             inputsSchemaJson: activeVersion.inputsSchemaJson || [],
@@ -291,8 +292,8 @@ export async function updateActionDefinition(
     payload: Partial<ActionDefinition>
 ): Promise<ApiResponse<ActionDefinition>> {
     try {
-        const result = await apiClient.put(API_ENDPOINTS.ACTIONS.UPDATE(actionDefinitionId), payload);
-        return { success: true, data: result as ActionDefinition };
+        const result = await apiClient.put<ActionDefinition>(API_ENDPOINTS.ACTIONS.UPDATE(actionDefinitionId), payload);
+        return { success: true, data: result.data, message: result.message };
     } catch (error) {
         return { success: false, error: error instanceof Error ? error.message : 'Failed to update action definition' };
     }

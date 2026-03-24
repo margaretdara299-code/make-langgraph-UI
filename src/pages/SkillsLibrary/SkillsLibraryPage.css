@@ -80,3 +80,7 @@
     justify-content: center;
     min-height: 300px;
 }
+
+.skills-library__count-tag {
+    font-size: 10px !important;
+}

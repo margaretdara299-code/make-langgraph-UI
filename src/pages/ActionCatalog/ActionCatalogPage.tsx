@@ -81,7 +81,6 @@ export default function ActionCatalogPage() {
         } else if (actionKey === CARD_ACTION_KEYS.DELETE) {
             message.info('Delete coming soon...');
         } else {
-            message.success('Action updated');
             refetch();
         }
     };
@@ -127,7 +126,7 @@ export default function ActionCatalogPage() {
                                 { value: 'all', label: `All Capabilities (${statusCounts['all'] || 0})` },
                                 ...capabilities.map(capability => ({
                                     value: capability.capabilityId.toString(),
-                                    label: `${capability.name} (${capabilityCounts[capability.capabilityId.toString()] || 0})`
+                                    label: `${capability.description || capability.name} (${capabilityCounts[capability.capabilityId.toString()] || 0})`
                                 }))
                             ]}
                         />
@@ -161,12 +160,12 @@ export default function ActionCatalogPage() {
                                 <Space>
                                     <option.icon />
                                     <span>{option.label}</span>
-                                    <Badge
-                                        count={statusCounts[option.key] ?? 0}
-                                        showZero
-                                        color={activeStatus === option.key ? 'var(--color-primary)' : '#d9d9d9'}
-                                        style={{ fontSize: '10px' }}
-                                    />
+                                        <Badge
+                                            count={statusCounts[option.key] ?? 0}
+                                            showZero
+                                            color={activeStatus === option.key ? 'var(--color-primary)' : '#d9d9d9'}
+                                            className="action-catalog__count-tag"
+                                        />
                                 </Space>
                             ),
                         }))}

@@ -11,6 +11,7 @@
 
 import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig } from 'axios';
+import type { ApiClientResponse } from '@/interfaces';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000';
 
 // ══════════════════════════════════════════════════
@@ -77,7 +78,8 @@ axiosInstance.interceptors.response.use(
                 return Promise.reject(new Error(envelope.message || 'API request failed'));
             }
             // Unwrap and transform the data payload
-            response.data = snakeToCamel(envelope.data);
+            const transformedData = snakeToCamel(envelope.data);
+            response.data = { data: transformedData, message: envelope.message || 'Success' };
         }
         return response;
     },
@@ -105,9 +107,14 @@ axiosInstance.interceptors.request.use((config) => {
 // ══════════════════════════════════════════════════
 
 export const apiClient = {
-    get: <T>(path: string, config?: AxiosRequestConfig) => axiosInstance.get<T>(path, config).then((r) => r.data),
-    post: <T>(path: string, body?: unknown, config?: AxiosRequestConfig) => axiosInstance.post<T>(path, body, config).then((r) => r.data),
-    put: <T>(path: string, body?: unknown, config?: AxiosRequestConfig) => axiosInstance.put<T>(path, body, config).then((r) => r.data),
-    patch: <T>(path: string, body?: unknown, config?: AxiosRequestConfig) => axiosInstance.patch<T>(path, body, config).then((r) => r.data),
-    delete: <T>(path: string, config?: AxiosRequestConfig) => axiosInstance.delete<T>(path, config).then((r) => r.data),
+    get: <T>(path: string, config?: AxiosRequestConfig): Promise<ApiClientResponse<T>> => 
+        axiosInstance.get(path, config).then((r) => r.data),
+    post: <T>(path: string, body?: unknown, config?: AxiosRequestConfig): Promise<ApiClientResponse<T>> => 
+        axiosInstance.post(path, body, config).then((r) => r.data),
+    put: <T>(path: string, body?: unknown, config?: AxiosRequestConfig): Promise<ApiClientResponse<T>> => 
+        axiosInstance.put(path, body, config).then((r) => r.data),
+    patch: <T>(path: string, body?: unknown, config?: AxiosRequestConfig): Promise<ApiClientResponse<T>> => 
+        axiosInstance.patch(path, body, config).then((r) => r.data),
+    delete: <T>(path: string, config?: AxiosRequestConfig): Promise<ApiClientResponse<T>> => 
+        axiosInstance.delete(path, config).then((r) => r.data),
 };

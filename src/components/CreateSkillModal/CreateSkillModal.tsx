@@ -44,7 +44,7 @@ export default function CreateSkillModal({ isOpen, onClose, onCreated }: CreateS
     const handleCreate = async () => {
         setIsSubmitting(true);
         try {
-            await createSkill({
+            const result = await createSkill({
                 name: formData.name || '',
                 skillKey: formData.skillKey || '',
                 description: formData.description || '',
@@ -56,9 +56,13 @@ export default function CreateSkillModal({ isOpen, onClose, onCreated }: CreateS
                 status: 'draft',
                 environment: 'dev',
             });
-            message.success('Skill created successfully!');
-            handleClose();
-            onCreated();
+            if (result.success) {
+                message.success(result.message || 'Skill created successfully!');
+                handleClose();
+                onCreated();
+            } else {
+                message.error(result.error || 'Failed to create skill. Please try again.');
+            }
         } catch {
             message.error('Failed to create skill. Please try again.');
         } finally {

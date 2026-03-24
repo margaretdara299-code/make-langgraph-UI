@@ -4,6 +4,7 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { useCategories, useCapabilities } from '@/hooks';
 import { ACTION_KEY_PATTERN, ACTION_DESCRIPTION_MAX_LENGTH } from '@/constants';
 import type { ActionCapability, CreateActionOverviewProps } from '@/interfaces';
+import './CreateActionOverview.css';
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -66,7 +67,7 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
 
     return (
         <div className="create-action-overview">
-            <Title level={4} style={{ marginBottom: 24 }}>Action Overview</Title>
+            <Title level={4} className="create-action-overview__title">Action Overview</Title>
 
             <Form
                 form={form}
@@ -75,12 +76,12 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                 onValuesChange={handleValuesChange}
                 requiredMark
             >
-                <div style={{ display: 'flex', gap: 24 }}>
+                <div className="create-action-overview__row">
                     <Form.Item
                         name="name"
                         label="Action Name"
                         rules={[{ required: true, message: 'Name is required' }]}
-                        style={{ flex: 1 }}
+                        className="create-action-overview__flex-1"
                     >
                         <Input placeholder="e.g., Verify Eligibility" size="large" />
                     </Form.Item>
@@ -92,14 +93,14 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                             { required: true, message: 'Key is required' },
                             { pattern: ACTION_KEY_PATTERN, message: 'Use lowercase dot notation (e.g. api.eligibility)' }
                         ]}
-                        style={{ flex: 1 }}
+                        className="create-action-overview__flex-1"
                     >
                         <Input placeholder="e.g., api.eligibility.verify" size="large" />
                     </Form.Item>
                 </div>
 
-                <div style={{ display: 'flex', gap: 24 }}>
-                    <Form.Item name="categoryId" label="Category" rules={[{ required: true, message: 'Category is required' }]} style={{ flex: 1 }}>
+                <div className="create-action-overview__row">
+                    <Form.Item name="categoryId" label="Category" rules={[{ required: true, message: 'Category is required' }]} className="create-action-overview__flex-1">
                         <Select size="large" placeholder="Select a category" loading={isCategoriesLoading}>
                             {categories.map(cat => (
                                 <Select.Option key={cat.categoryId ?? cat.id} value={cat.categoryId ?? cat.id}>
@@ -109,11 +110,11 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                         </Select>
                     </Form.Item>
 
-                    <Form.Item name="capabilityId" label="Capability" rules={[{ required: true, message: 'Capability is required' }]} style={{ flex: 1 }}>
+                    <Form.Item name="capabilityId" label="Capability" rules={[{ required: true, message: 'Capability is required' }]} className="create-action-overview__flex-1">
                         <Select size="large" placeholder="Select a capability" loading={isCapabilitiesLoading}>
                             {capabilities.map(cap => (
                                 <Select.Option key={cap.capabilityId} value={cap.capabilityId}>
-                                    {cap.name}
+                                    {cap.description || cap.name}
                                 </Select.Option>
                             ))}
                         </Select>
@@ -132,13 +133,13 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                     />
                 </Form.Item>
 
-                <div style={{ display: 'flex', gap: 24, marginTop: 12 }}>
+                <div className="create-action-overview__footer-row">
                     <Form.Item name="icon" label="Icon Reference">
-                        <Input size="large" style={{ width: 120, textAlign: 'center' }} />
+                        <Input size="large" className="create-action-overview__icon-input" />
                     </Form.Item>
 
                     <Form.Item name="scope" label="Deployment Scope">
-                        <Select size="large" style={{ width: 200 }}>
+                        <Select size="large" className="create-action-overview__scope-select">
                             <Select.Option value="global">
                                 <Space>Global <Tooltip title="Visible to all clients"><InfoCircleOutlined /></Tooltip></Space>
                             </Select.Option>

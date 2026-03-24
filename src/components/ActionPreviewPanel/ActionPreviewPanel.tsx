@@ -2,9 +2,8 @@
  * ActionPreviewPanel — a real-time card preview of the Action being drafted.
  */
 
-import { Typography, Space, Divider, Switch, Card } from 'antd';
+import { Typography, Space, Divider, Card } from 'antd';
 import { ActionCard } from '@/components';
-import { CREATE_ACTION_STEPS } from '@/constants';
 import type { ActionDefinition, ActionPreviewPanelProps } from '@/interfaces';
 import './ActionPreviewPanel.css';
 
@@ -26,6 +25,7 @@ export default function ActionPreviewPanel({ actionDef, currentStep }: ActionPre
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
     };
+    const configKeysCount = Object.keys(actionDef.configurationsJson || {}).length;
 
     return (
         <div className="action-preview-panel">
@@ -38,39 +38,22 @@ export default function ActionPreviewPanel({ actionDef, currentStep }: ActionPre
 
                 <Divider />
 
-                <Title level={5}>This action will require:</Title>
+                <Title level={5}>Configuration Info</Title>
                 <div className="action-preview-panel__stats">
                     <Space size="large">
                         <div className="action-preview-panel__stat">
-                            <Text className="action-preview-panel__stat-val">{(actionDef.inputsSchemaJson || []).length}</Text>
-                            <Text type="secondary" className="action-preview-panel__stat-lbl">Input fields</Text>
-                        </div>
-                        <div className="action-preview-panel__stat">
-                            <Text className="action-preview-panel__stat-val">{(actionDef.outputsSchemaJson || []).length}</Text>
-                            <Text type="secondary" className="action-preview-panel__stat-lbl">Output fields</Text>
-                        </div>
-                    </Space>
-                </div>
-
-                <div className="action-preview-panel__toggles">
-                    <Space direction="vertical" style={{ width: '100%' }}>
-                        <div className="action-preview-panel__toggle-row">
-                            <Text>Execution config defined</Text>
-                            <Switch size="small" checked={currentStep > 2} disabled />
-                        </div>
-                        <div className="action-preview-panel__toggle-row">
-                            <Text>UI Form layout defined</Text>
-                            <Switch size="small" checked={currentStep > 4} disabled />
+                            <Text className="action-preview-panel__stat-val">{configKeysCount}</Text>
+                            <Text type="secondary" className="action-preview-panel__stat-lbl">Settings Configured</Text>
                         </div>
                     </Space>
                 </div>
 
                 <Divider />
 
-                <Title level={5}>Next Steps</Title>
+                <Title level={5}>Progress</Title>
                 <div className="action-preview-panel__steps">
-                    {CREATE_ACTION_STEPS.map((step, idx) => {
-                        const stepNum = idx + 2; // Steps 2-7
+                    {['Overview', 'Configuration', 'Publish'].map((step, idx) => {
+                        const stepNum = idx + 1;
                         const isPast = currentStep > stepNum;
                         const isCurrent = currentStep === stepNum;
 
