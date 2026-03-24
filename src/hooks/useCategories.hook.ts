@@ -1,27 +1,19 @@
-import { useState, useEffect, useCallback } from 'react';
-import type { Category } from '@/interfaces';
+import { useQuery } from '@tanstack/react-query';
 import { fetchCategories } from '@/services';
 
 export function useCategories() {
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    const loadCategories = useCallback(async () => {
-        setIsLoading(true);
-        try {
+    const {
+        data: categories = [],
+        isLoading,
+        refetch,
+    } = useQuery({
+        queryKey: ['categories'],
+        queryFn: async () => {
             const result = await fetchCategories();
-            const items = Array.isArray(result) ? result : [];
-            setCategories(items);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setIsLoading(false);
-        }
-    }, []);
+            return Array.isArray(result) ? result : [];
+        },
+    });
 
-    useEffect(() => {
-        loadCategories();
-    }, [loadCategories]);
-
-    return { categories, isLoading, refetch: loadCategories };
+    return { categories, isLoading, refetch };
 }
+

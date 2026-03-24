@@ -2,37 +2,24 @@
  * useActions — fetches action definitions and groups them by category.
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import type { ActionDefinition, ActionFilters } from '@/interfaces';
 import { fetchActions, fetchActionStatusCounts, fetchActionCategoryCounts, fetchActionCapabilityCounts } from '@/services';
 
 export default function useActions(initialFilters?: ActionFilters) {
     const defaultFilters: ActionFilters = initialFilters || { page: 1, pageSize: 12 };
-
-    const [actions, setActions] = useState<ActionDefinition[]>([]);
-    const [actionsByCategory, setActionsByCategory] = useState<Record<string, ActionDefinition[]>>({});
-    const [statusCounts, setStatusCounts] = useState<Record<string, number>>({});
-    const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
-    const [capabilityCounts, setCapabilityCounts] = useState<Record<string, number>>({});
-    const [totalActions, setTotalActions] = useState(0);
-    const [isLoading, setIsLoading] = useState(true);
     const [filters, setFilters] = useState<ActionFilters>(defaultFilters);
 
-    const loadActions = useCallback(async (currentFilters: ActionFilters = filters) => {
-        setIsLoading(true);
-        try {
+    const { data, isLoading, refetch } = useQuery({
+        queryKey: ['actions', filters],
+        queryFn: async () => {
             const [result, sCounts, cCounts, capCounts] = await Promise.all([
-                fetchActions(currentFilters),
+                fetchActions(filters),
                 fetchActionStatusCounts(),
                 fetchActionCategoryCounts(),
                 fetchActionCapabilityCounts()
             ]);
-
-            setActions(result.data || []);
-            setTotalActions(result.total || 0);
-            setStatusCounts(sCounts);
-            setCategoryCounts(cCounts);
-            setCapabilityCounts(capCounts);
 
             // Group by category (primarily for NodePalette)
             const grouped: Record<string, ActionDefinition[]> = {};
@@ -42,26 +29,29 @@ export default function useActions(initialFilters?: ActionFilters) {
                 }
                 grouped[action.category].push(action);
             }
-            setActionsByCategory(grouped);
-        } finally {
-            setIsLoading(false);
-        }
-    }, [filters]);
 
-    useEffect(() => {
-        loadActions(filters);
-    }, [filters, loadActions]);
+            return {
+                actions: result.data || [],
+                actionsByCategory: grouped,
+                totalActions: result.total || 0,
+                statusCounts: sCounts,
+                categoryCounts: cCounts,
+                capabilityCounts: capCounts
+            };
+        }
+    });
 
     return {
-        actions,
-        actionsByCategory,
-        statusCounts,
-        categoryCounts,
-        capabilityCounts,
-        totalActions,
+        actions: data?.actions || [],
+        actionsByCategory: data?.actionsByCategory || {},
+        statusCounts: data?.statusCounts || {},
+        categoryCounts: data?.categoryCounts || {},
+        capabilityCounts: data?.capabilityCounts || {},
+        totalActions: data?.totalActions || 0,
         filters,
         setFilters,
         isLoading,
-        refetch: loadActions
+        refetch
     };
 }
+

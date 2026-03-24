@@ -3,33 +3,23 @@
  * Uses the /api/v1/connectors/grouped endpoint which returns connectors pre-grouped by type.
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { fetchGroupedConnectors } from '@/services';
-import type { ConnectorResponse } from '@/interfaces';
 
 export default function useDesignerConnectors() {
-    const [connectorsByType, setConnectorsByType] = useState<Record<string, ConnectorResponse[]>>({});
-    const [isLoading, setIsLoading] = useState(true);
-
-    const loadConnectors = useCallback(async () => {
-        setIsLoading(true);
-        try {
-            const grouped = await fetchGroupedConnectors();
-            setConnectorsByType(grouped);
-        } catch (error) {
-            console.error('Failed to load designer connectors:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    }, []);
-
-    useEffect(() => {
-        loadConnectors();
-    }, [loadConnectors]);
+    const {
+        data: connectorsByType = {},
+        isLoading,
+        refetch,
+    } = useQuery({
+        queryKey: ['designerConnectors'],
+        queryFn: fetchGroupedConnectors,
+    });
 
     return {
         connectorsByType,
         isLoading,
-        refetch: loadConnectors,
+        refetch,
     };
 }
+
