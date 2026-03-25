@@ -181,26 +181,68 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     }, [selectedNodeId, selectedEdgeId, fetchedExecution, fetchedConfigs, form]);
 
     // When the form values change we instantly update the React Flow instance
-    const handleValuesChange = (changedValues: any) => {
-        if (selectedNode && (changedValues.label !== undefined || changedValues.name !== undefined || changedValues.description !== undefined)) {
-            setNodes((nodes) =>
-                nodes.map((node) => {
-                    if (node.id === selectedNode.id) {
-                        const nextData = { ...node.data, ...changedValues };
-                        // Sync 'name' to 'label' if it was the one that changed
-                        if (changedValues.name !== undefined) {
-                            nextData.label = changedValues.name;
+    const handleValuesChange = (changedValues: any, allValues: any) => {
+        if (selectedNode) {
+            if (selectedNode.type === 'subflow') {
+                setNodes((nodes) =>
+                    nodes.map((node) => {
+                        if (node.id === selectedNode.id) {
+                            return {
+                                ...node,
+                                data: {
+                                    ...node.data,
+                                    label: allValues.label,
+                                    description: allValues.description,
+                                },
+                            };
                         }
+                        return node;
+                    })
+                );
+                return;
+            }
+
+            if (selectedNode.type === 'connector') {
+                setNodes((nds) =>
+                    nds.map((node) => {
+                        if (node.id === selectedNode.id) {
+                            return {
+                                ...node,
+                                data: {
+                                    ...node.data,
+                                    label: allValues.name || allValues.label,
+                                    description: allValues.description,
+                                    configJson: allValues.configJson,
+                                },
+                            };
+                        }
+                        return node;
+                    })
+                );
+                return;
+            }
+
+            // Extract configurations (all fields except native node properties)
+            const { label, name, description, ...configurations } = allValues;
+
+            // Update the React Flow node data in-place
+            setNodes((nds) =>
+                nds.map((node) => {
+                    if (node.id === selectedNode.id) {
                         return {
                             ...node,
-                            data: nextData,
+                            data: {
+                                ...node.data,
+                                label: label || name || node.data.label,
+                                description: description || node.data.description,
+                                configurationsJson: configurations,
+                            },
                         };
                     }
                     return node;
                 })
             );
         } else if (selectedEdge) {
-            const allValues = form.getFieldsValue();
             setEdges((edges) =>
                 edges.map((edge) => {
                     if (edge.id === selectedEdge.id) {
@@ -221,78 +263,6 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                 })
             );
         }
-    };
-
-    /** Collect form values and apply changes locally to the React Flow node */
-    const handleApply = () => {
-        if (!selectedNode) return;
-        const allValues = form.getFieldsValue();
-
-        if (selectedNode.type === 'subflow') {
-            setNodes((nodes) =>
-                nodes.map((node) => {
-                    if (node.id === selectedNode.id) {
-                        return {
-                            ...node,
-                            data: {
-                                ...node.data,
-                                label: allValues.label,
-                                description: allValues.description,
-                            },
-                        };
-                    }
-                    return node;
-                })
-            );
-            message.success('Group properties applied');
-            return;
-        }
-
-        if (selectedNode.type === 'connector') {
-            setNodes((nds) =>
-                nds.map((node) => {
-                    if (node.id === selectedNode.id) {
-                        return {
-                            ...node,
-                            data: {
-                                ...node.data,
-                                label: allValues.name || allValues.label,
-                                description: allValues.description,
-                                configJson: allValues.configJson,
-                            },
-                        };
-                    }
-                    return node;
-                })
-            );
-            message.success('Connector properties applied locally');
-            return;
-        }
-
-
-
-        // Extract configurations (all fields except native node properties)
-        const { label, name, description, ...configurations } = allValues;
-
-        // Update the React Flow node data in-place (local only)
-        setNodes((nds) =>
-            nds.map((node) => {
-                if (node.id === selectedNode.id) {
-                    return {
-                        ...node,
-                        data: {
-                            ...node.data,
-                            label: label || name || node.data.label,
-                            description: description || node.data.description,
-                            configurationsJson: configurations,
-                        },
-                    };
-                }
-                return node;
-            })
-        );
-
-        message.success('Changes applied locally');
     };
 
     /** Render the Connector-specific fields */
@@ -665,17 +635,6 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                         {isConnector && nodeData && renderNodeConfig(nodeData)}
                     </Form>
 
-                    <div style={{ marginTop: '32px', display: 'flex', gap: '8px' }}>
-                        <Button type="primary" block onClick={handleApply}>
-                            Apply
-                        </Button>
-                        <Button danger variant="outlined" block onClick={() => {
-                            setNodes((nds) => nds.filter(n => n.id !== selectedNode.id));
-                            onClose();
-                        }}>
-                            Delete {isSubFlow ? 'Group' : isConnector ? 'Connector' : 'Node'}
-                        </Button>
-                    </div>
                 </div>
             );
         }
