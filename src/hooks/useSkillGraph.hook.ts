@@ -32,6 +32,7 @@ export function useSkillGraph() {
                     source: conn.source,
                     target: conn.target,
                     type: 'default',
+                    animated: true,
                 }));
                 setInitialEdges(edges);
             })

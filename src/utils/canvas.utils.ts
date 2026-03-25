@@ -2,11 +2,9 @@
  * Utility functions for the visual orchestrator canvas.
  */
 
-let nodeIdCounter = 0;
-
 /**
- * Generates a unique sequential ID for new canvas nodes.
+ * Generates a truly unique ID for new canvas nodes, avoiding collisions with saved graphs.
  */
 export function getNextNodeId(): string {
-    return `node-${++nodeIdCounter}`;
+    return `node-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 }

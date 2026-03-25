@@ -76,6 +76,7 @@ export default function SkillDesignerCanvas() {
                     onDragOver={onDragOver}
                     nodeTypes={nodeTypes}
                     fitView
+                    fitViewOptions={{ maxZoom: 1 }}
                     deleteKeyCode={['Backspace', 'Delete']}
                     onNodeClick={(_, node) => {
                         setDrawerNodeId(node.id);
