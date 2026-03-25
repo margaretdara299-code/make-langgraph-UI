@@ -234,11 +234,6 @@ export async function fetchActionById(id: string): Promise<ApiResponse<ActionDef
         const result = await apiClient.get<any>(API_ENDPOINTS.ACTIONS.BY_ID(id));
         const data = result.data;
 
-        // The backend returns { ...definition, versions: [ { ...versionData } ] }
-        // Find the active version (is_active=1) or fall back to the first version
-        const versions = data.versions || [];
-        const activeVersion = versions.find((v: any) => v.isActive === 1 || v.isActive === true) || versions[0] || {};
-
         const action: ActionDefinition = {
             id: data.actionDefinitionId || data.id || id,
             actionKey: data.actionKey || '',
@@ -251,21 +246,14 @@ export async function fetchActionById(id: string): Promise<ApiResponse<ActionDef
             scope: data.scope || 'global',
             icon: data.icon || '🧩',
             defaultNodeTitle: data.defaultNodeTitle || data.name || '',
-            status: activeVersion.status || data.status || 'draft',
+            status: data.status || 'draft',
             createdAt: data.createdAt || '',
             updatedAt: data.updatedAt || '',
-
-            // Version-level JSON blobs from the active version
-            inputsSchemaJson: activeVersion.inputsSchemaJson || [],
-            executionJson: activeVersion.executionJson || null,
-            outputsSchemaJson: activeVersion.outputsSchemaJson || [],
-            configurationsJson: activeVersion.configurationsJson || [],
-            uiFormJson: activeVersion.uiFormJson || null,
-            policyJson: activeVersion.policyJson || null,
+            configurationsJson: data.configurationsJson || {},
         };
 
         // Attach the version ID for later PUT calls
-        (action as any).actionVersionId = activeVersion.actionVersionId || activeVersion.id || '';
+        (action as any).actionVersionId = data.actionVersionId || data.id || '';
 
         return { success: true, data: action };
     } catch (error) {
