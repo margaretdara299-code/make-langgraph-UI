@@ -107,6 +107,28 @@
   --node-palette-connectors-color: #1890ff;
 }
 
+* {
+    scrollbar-color: #a6a6a6;
+    scrollbar-width: auto;
+    scrollbar-color: beige !important;
+}
+
+::-webkit-scrollbar {
+    height: 4px !important;
+    width: 4px;
+    width: 4px !important;
+}
+
+::-webkit-scrollbar-track {
+    background: #fff;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #cac9c9;
+    border: 1px solid #e4e2e2;
+    border-radius: 10px;
+}
+
 /* ── Animations ── */
 @keyframes spin {
   from {

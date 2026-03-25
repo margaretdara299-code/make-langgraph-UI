@@ -2,6 +2,7 @@
  * Utilities for the SkillCard component.
  */
 
+import { Link } from 'react-router-dom';
 import type { MenuProps } from 'antd';
 import {
     SettingOutlined,
@@ -14,12 +15,16 @@ import {
 import { CARD_ACTION_KEYS } from '@/constants';
 
 /** Build menu items based on skill status */
-export function getMenuItems(status: string): MenuProps['items'] {
+export function getMenuItems(status: string, skillId: string, versionId?: string): MenuProps['items'] {
     const items: MenuProps['items'] = [
         { 
             key: CARD_ACTION_KEYS.BUILD_SKILL, 
             icon: <PartitionOutlined />, 
-            label: 'Build Skill',
+            label: versionId ? (
+                <Link to={`/skills/${skillId}/versions/${versionId}/design`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                    Build Skill
+                </Link>
+            ) : 'Build Skill',
             className: 'skill-card__menu-item-build',
             style: { color: 'var(--color-primary)', fontWeight: 600 }
         },

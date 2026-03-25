@@ -3,7 +3,7 @@
  * Extracted from the page wrapper to maintain separate component responsibilities.
  */
 
-import { useCallback, useRef, useState, useMemo } from 'react';
+import { useCallback, useRef, useState, useMemo, useEffect } from 'react';
 import {
     ReactFlow,
     Background,
@@ -30,6 +30,16 @@ export default function SkillDesignerCanvas() {
     const [nodes, setNodes, onNodesChange] = useNodesState<Node>(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initialEdges);
     const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
+
+    // Sync nodes/edges when loaded asynchronously
+    useEffect(() => {
+        if (initialNodes && initialNodes.length > 0) {
+            setNodes(initialNodes);
+        }
+        if (initialEdges && initialEdges.length > 0) {
+            setEdges(initialEdges);
+        }
+    }, [initialNodes, initialEdges, setNodes, setEdges]);
 
     // Track which node or edge is actively opened in the properties drawer
     const [drawerNodeId, setDrawerNodeId] = useState<string | null>(null);

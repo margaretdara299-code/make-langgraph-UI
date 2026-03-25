@@ -9,7 +9,7 @@ const SectionTitle = ({ children }: { children: React.ReactNode }) => (
     <Title level={5} className="action-config-step__section-title">{children}</Title>
 );
 
-const InputOutputMapping = ({ outputKeyName = 'outputKey', showInput = true }) => (
+const InputOutputMapping = ({ outputKeyName = 'output_key', showInput = true }) => (
     <>
         {showInput && (
             <>
@@ -43,8 +43,12 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
     };
 
     const renderCapabilityForm = () => {
-        switch (capability) {
-            case 'rules': // Condition
+        // Use the capability name as the primary key (lowercased)
+        const capName = (draft.capability || capability).toLowerCase();
+
+        switch (capName) {
+            case 'condition':
+            case 'rules':
                 return (
                     <>
                         <SectionTitle>Condition Settings</SectionTitle>
@@ -62,6 +66,7 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
                     </>
                 );
 
+            case 'human input':
             case 'human':
                 return (
                     <>
@@ -85,6 +90,7 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
                     </>
                 );
 
+            case 'agent':
             case 'ai':
                 return (
                     <>
@@ -105,19 +111,21 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
                         </div>
                         <Divider />
                         <SectionTitle>Prompts</SectionTitle>
-                        <Form.Item label="System Prompt" name="ai_systemPrompt">
+                        <Form.Item label="System Prompt" name="ai_system_prompt">
                             <Input.TextArea rows={4} placeholder="You are an expert specialist..." />
                         </Form.Item>
-                        <Form.Item label="User Prompt Template" name="ai_userPrompt" tooltip="Use {{state.variableName}} to dynamically inject values from the global state into your prompt.">
+                        <Form.Item label="User Prompt Template" name="ai_user_prompt" tooltip="Use {{state.variableName}} to dynamically inject values from the global state into your prompt.">
                             <Input.TextArea rows={6} placeholder="Summarize the input: {{state.details}}" />
                         </Form.Item>
-                        <Form.Item label="Max Tokens" name="ai_maxTokens">
+                        <Form.Item label="Max Tokens" name="ai_max_tokens">
                             <Input type="number" placeholder="1024" />
                         </Form.Item>
-                        <InputOutputMapping outputKeyName="ai_outputKey" />
+                        <InputOutputMapping outputKeyName="ai_output_key" />
                     </>
                 );
 
+            case 'http request':
+            case 'http':
             case 'api':
                 return (
                     <>
@@ -147,11 +155,13 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
                         <Form.Item label="Body (JSON)" name="http_body">
                             <Input.TextArea rows={4} className="action-config-step__monospace-textarea" placeholder={'{\n  "id": "{{state.id}}"\n}'} />
                         </Form.Item>
-                        <InputOutputMapping outputKeyName="http_outputKey" showInput={false} />
+                        <InputOutputMapping outputKeyName="http_output_key" showInput={false} />
                     </>
                 );
 
-            case 'rpa': // Custom Function
+            case 'custom function':
+            case 'function':
+            case 'rpa':
                 return (
                     <>
                         <SectionTitle>Custom Function Settings</SectionTitle>
@@ -165,11 +175,11 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
                                 placeholder={`def process_data(state):\n    state['status'] = 'PROCESSED'\n    return state`}
                             />
                         </Form.Item>
-                        <InputOutputMapping outputKeyName="func_outputKey" />
+                        <InputOutputMapping outputKeyName="func_output_key" />
                     </>
                 );
 
-            case 'loop': // Extracted loop logic
+            case 'loop':
                 return (
                     <>
                         <SectionTitle>Loop Settings</SectionTitle>
@@ -180,16 +190,16 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
                                 { value: 'times',    label: '🔢 N Times (Fixed count)' },
                             ]} />
                         </Form.Item>
-                        <Form.Item label="Iterate Over (State Key)" name="loop_iterateOver">
+                        <Form.Item label="Iterate Over (State Key)" name="loop_iterate_over">
                             <Input placeholder="e.g. state.items_list" style={{ fontFamily: 'monospace' }} />
                         </Form.Item>
-                        <Form.Item label="Item Alias" name="loop_itemAlias">
+                        <Form.Item label="Item Alias" name="loop_item_alias">
                             <Input placeholder="e.g. item (accessed as state.item)" />
                         </Form.Item>
-                        <Form.Item label="Max Iterations" name="loop_maxIterations">
+                        <Form.Item label="Max Iterations" name="loop_max_iterations">
                             <Input type="number" placeholder="100" />
                         </Form.Item>
-                        <Form.Item label="Break Condition" name="loop_breakCondition">
+                        <Form.Item label="Break Condition" name="loop_break_condition">
                             <Input placeholder="e.g. state.is_done == True" className="action-config-step__monospace-input" />
                         </Form.Item>
                     </>
@@ -212,11 +222,13 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
                                 placeholder={'{\n  "query": {"type": "string"}\n}'}
                             />
                         </Form.Item>
-                        <InputOutputMapping outputKeyName="tool_returnKey" showInput={false} />
+                        <InputOutputMapping outputKeyName="tool_return_key" showInput={false} />
                     </>
                 );
 
-            case 'message': // Direct Reply
+            case 'direct reply':
+            case 'reply':
+            case 'message':
                 return (
                     <>
                         <SectionTitle>Direct Reply Settings</SectionTitle>
@@ -242,11 +254,12 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
                     </>
                 );
 
+            case 'database operation':
             case 'database':
                 return (
                     <>
                         <SectionTitle>Database Query Settings</SectionTitle>
-                        <Form.Item label="Connection" name="db_connectionId">
+                        <Form.Item label="Connection" name="db_connection_id">
                             <Select placeholder="Select a connection..." options={[
                                 { value: 'primary-db',          label: '🗄️ Primary SQLite' },
                                 { value: 'postgres-rcm',         label: '🐘 RCM Postgres' },
@@ -274,13 +287,13 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
                                 placeholder={'{\n  "id": "{{state.id}}"\n}'}
                             />
                         </Form.Item>
-                        <Form.Item label="Return Mode" name="db_returnMode">
+                        <Form.Item label="Return Mode" name="db_return_mode">
                             <Select options={[
                                 { value: 'first', label: 'First Row Only' },
                                 { value: 'all',   label: 'All Rows (List)' },
                             ]} />
                         </Form.Item>
-                        <InputOutputMapping outputKeyName="db_outputKey" showInput={false} />
+                        <InputOutputMapping outputKeyName="db_output_key" showInput={false} />
                     </>
                 );
 

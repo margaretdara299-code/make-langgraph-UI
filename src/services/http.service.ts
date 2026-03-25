@@ -12,6 +12,7 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig } from 'axios';
 import type { ApiClientResponse } from '@/interfaces';
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000';
 
 // ══════════════════════════════════════════════════
@@ -28,7 +29,10 @@ function camelKeyToSnake(key: string): string {
     return key.replace(/[A-Z]/g, (char) => `_${char.toLowerCase()}`);
 }
 
-/** Recursively transform all keys of an object/array from snake_case to camelCase. */
+/** 
+ * Recursively transform all keys of an object/array from snake_case to camelCase.
+ * Skips recursion for JSON blob fields to preserve internal schemas.
+ */
 export function snakeToCamel<T>(data: unknown): T {
     if (Array.isArray(data)) {
         return data.map((item) => snakeToCamel(item)) as T;
@@ -36,14 +40,20 @@ export function snakeToCamel<T>(data: unknown): T {
     if (data !== null && typeof data === 'object' && !(data instanceof Date)) {
         const transformed: Record<string, unknown> = {};
         for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
-            transformed[snakeKeyToCamel(key)] = snakeToCamel(value);
+            const newKey = snakeKeyToCamel(key);
+            // Skip recursion if the key indicates it's a JSON blob (configurations_json, nodes, edges, etc.)
+            const isJsonBlob = key.endsWith('_json') || key === 'nodes' || key === 'edges';
+            transformed[newKey] = isJsonBlob ? value : snakeToCamel(value);
         }
         return transformed as T;
     }
     return data as T;
 }
 
-/** Recursively transform all keys of an object/array from camelCase to snake_case. */
+/** 
+ * Recursively transform all keys of an object/array from camelCase to snake_case.
+ * Skips recursion for JSON blob fields to preserve internal schemas.
+ */
 export function camelToSnake<T>(data: unknown): T {
     if (Array.isArray(data)) {
         return data.map((item) => camelToSnake(item)) as T;
@@ -51,7 +61,10 @@ export function camelToSnake<T>(data: unknown): T {
     if (data !== null && typeof data === 'object' && !(data instanceof Date)) {
         const transformed: Record<string, unknown> = {};
         for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
-            transformed[camelKeyToSnake(key)] = camelToSnake(value);
+            const newKey = camelKeyToSnake(key);
+            // Skip recursion if the key indicates it's a JSON blob (configurationsJson, nodes, edges, etc.)
+            const isJsonBlob = key.endsWith('Json') || key === 'nodes' || key === 'edges';
+            transformed[newKey] = isJsonBlob ? value : camelToSnake(value);
         }
         return transformed as T;
     }

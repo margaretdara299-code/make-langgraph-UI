@@ -6,15 +6,15 @@
 import { useState } from 'react';
 import { Input, Spin, Empty, Button, Typography, Modal, message, Tabs, Badge, Space } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import { useSkills, useCategories } from '@/hooks';
 import { SkillCard, CreateSkillModal, EditSkillModal } from '@/components';
 import { STATUS_FILTER_OPTIONS, CARD_ACTION_KEYS } from '@/constants';
-import { 
-    deleteSkill, 
-    updateSkillVersionStatus, 
+
+import {
+    deleteSkill,
+    updateSkillVersionStatus,
     SkillVersionStatusValue,
-    loadSkillGraph,
-    saveSkillGraph
 } from '@/services';
 import type { UseSkillsFilters } from '@/interfaces';
 import './SkillsLibraryPage.css';
@@ -27,6 +27,8 @@ export default function SkillsLibraryPage() {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingSkill, setEditingSkill] = useState<any>(null);
+    const navigate = useNavigate();
+
 
     const { skills, isLoading, statusCounts, setFilters, refetch } = useSkills();
     const { categories } = useCategories();
@@ -101,23 +103,13 @@ export default function SkillsLibraryPage() {
             case CARD_ACTION_KEYS.BUILD_SKILL: {
                 const pubSkill = skills.find((s) => s.id === skillId);
                 if (pubSkill?.latestVersionId) {
-                    message.loading({ content: 'Building skill...', key: 'build' });
-                    loadSkillGraph(pubSkill.latestVersionId).then((res: any) => {
-                        saveSkillGraph(pubSkill.latestVersionId!, res.nodes || [], res.connections || {})
-                            .then((saveRes: any) => {
-                                message.success({ content: saveRes.message || 'Skill Built successfully!', key: 'build' });
-                            })
-                            .catch(() => {
-                                message.error({ content: 'Failed to build skill', key: 'build' });
-                            });
-                    }).catch(() => {
-                        message.error({ content: 'Failed to load skill for building', key: 'build' });
-                    });
+                    navigate(`/skills/${skillId}/versions/${pubSkill.latestVersionId}/design`);
                 } else {
-                    message.warning('Cannot build: No valid version ID found.');
+                    message.warning('Cannot open designer: No valid version ID found.');
                 }
                 break;
             }
+
 
             case CARD_ACTION_KEYS.EDIT_SETTINGS:
                 const skillToEdit = skills.find((skill) => skill.id === skillId);

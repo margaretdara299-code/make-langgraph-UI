@@ -63,9 +63,9 @@ export async function compileSkillGraph(skillVersionId: string) {
  * @param notes Optional changelog notes describing the publish intent.
  */
 export async function publishSkillVersion(skillVersionId: string, notes?: string) {
-    return apiClient.post(
+    return apiClient.put(
         API_ENDPOINTS.SKILL_GRAPH.PUBLISH(skillVersionId),
-        notes ? { notes } : undefined,
+        { status: 'published', notes },
     );
 }
 

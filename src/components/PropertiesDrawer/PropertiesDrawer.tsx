@@ -3,31 +3,19 @@
  * Slides out to show the properties of the currently selected React Flow node.
  */
 
-import { Drawer, Input, Form, Typography, Select, Switch, Button, Table, Spin, theme, message } from 'antd';
+import { Drawer, Input, Form, Typography, Select, Button, Spin, theme, message } from 'antd';
 import { useReactFlow, useNodes, useEdges } from '@xyflow/react';
 import { useEffect, useState, useRef } from 'react';
 import IconRenderer from '@/components/IconRenderer/IconRenderer';
 import ApiConnectorFields from '@/components/CreateConnectorModal/ApiConnectorFields';
 import DatabaseConnectorFields from '@/components/CreateConnectorModal/DatabaseConnectorFields';
 import { fetchActionById } from '@/services';
-import type { CanvasNodeData, CanvasEdgeData, PropertiesDrawerProps } from '@/interfaces';
-import type { ActionInputField, ActionOutputField, ActionExecutionConfig, ActionConfigField } from '@/interfaces';
+import type { CanvasNodeData, CanvasEdgeData, PropertiesDrawerProps, ActionExecutionConfig, ActionDefinition, ActionCapability } from '@/interfaces';
+import { useCategories, useCapabilities } from '@/hooks';
 import './PropertiesDrawer.css';
 
 const { Title, Text } = Typography;
 
-/** Columns for the Inputs / Outputs mini-tables */
-const fieldColumns = [
-    { title: 'Name', dataIndex: 'name', key: 'name', width: '40%' },
-    { title: 'Type', dataIndex: 'type', key: 'type', width: '30%' },
-    {
-        title: 'Required',
-        dataIndex: 'required',
-        key: 'required',
-        width: '30%',
-        render: (val: boolean) => (val ? '✓' : '—'),
-    },
-];
 
 export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClose }: PropertiesDrawerProps) {
     const { token } = theme.useToken();
@@ -35,12 +23,19 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     const nodes = useNodes();
     const edges = useEdges();
     const [isLoadingAction, setIsLoadingAction] = useState(false);
+    const { categories } = useCategories();
+    const categoryMap: Record<number, string> = Object.fromEntries(
+        categories.map((category: any) => [category.categoryId ?? category.id ?? category.category_id, category.name])
+    );
+
+    const { capabilities } = useCapabilities();
+    const capabilitiesMap: Record<number, string> = Object.fromEntries(
+        capabilities.map((capability: any) => [capability.capabilityId ?? capability.capability_id, (capability.name || '').toLowerCase()])
+    );
 
     // Fetched action data (enriched with JSON blobs from GET /api/actions/{id})
-    const [fetchedInputs, setFetchedInputs] = useState<ActionInputField[]>([]);
-    const [fetchedOutputs, setFetchedOutputs] = useState<ActionOutputField[]>([]);
     const [fetchedExecution, setFetchedExecution] = useState<ActionExecutionConfig | null>(null);
-    const [fetchedConfigs, setFetchedConfigs] = useState<ActionConfigField[]>([]);
+    const [fetchedConfigs, setFetchedConfigs] = useState<any>({});
 
     // Track which actionId we last fetched to avoid re-fetching
     const lastFetchedActionId = useRef<string | null>(null);
@@ -54,8 +49,6 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     useEffect(() => {
         if (!selectedNode) {
             lastFetchedActionId.current = null;
-            setFetchedInputs([]);
-            setFetchedOutputs([]);
             setFetchedExecution(null);
             setFetchedConfigs([]);
             return;
@@ -89,62 +82,46 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
 
         fetchActionById(actionId).then((result) => {
             if (result.success && result.data) {
-                const action = result.data;
-                const versionId = (action as any).actionVersionId || nd.actionVersionId || '';
+                const rawAction = result.data as any; // cast to any to access both snake_case and camelCase fields
+                const versionId = rawAction.action_version_id || rawAction.actionVersionId || nd.actionVersionId || '';
 
-                // Parse inputs — handle both array and object-with-fields formats
-                let inputs: ActionInputField[] = [];
-                if (Array.isArray(action.inputsSchemaJson)) {
-                    inputs = action.inputsSchemaJson;
-                } else if (action.inputsSchemaJson && typeof action.inputsSchemaJson === 'object') {
-                    const raw = action.inputsSchemaJson as any;
-                    if (Array.isArray(raw.fields)) {
-                        inputs = raw.fields;
-                    }
-                }
-
-                // Parse outputs — same logic
-                let outputs: ActionOutputField[] = [];
-                if (Array.isArray(action.outputsSchemaJson)) {
-                    outputs = action.outputsSchemaJson;
-                } else if (action.outputsSchemaJson && typeof action.outputsSchemaJson === 'object') {
-                    const raw = action.outputsSchemaJson as any;
-                    if (Array.isArray(raw.fields)) {
-                        outputs = raw.fields;
-                    }
-                }
+                // Map backend fields to frontend interface
+                const action: ActionDefinition = {
+                    ...rawAction,
+                    capability: capabilitiesMap[rawAction.capabilityId ?? rawAction.capability_id] || rawAction.capability || 'api', // ID → name
+                    category: rawAction.category || 'Uncategorized',
+                    configurationsJson: rawAction.configurations_json || rawAction.configurationsJson || {},
+                };
 
                 // Parse execution config
                 let execution: ActionExecutionConfig | null = null;
-                if (action.executionJson && typeof action.executionJson === 'object') {
-                    const raw = action.executionJson as any;
+                if (rawAction.execution_json || rawAction.executionJson) {
+                    const raw = rawAction.execution_json || rawAction.executionJson;
                     execution = {
                         connectorType: raw.connectorType || raw.connector_type || 'rest',
                         endpointUrl: raw.endpointUrl || raw.endpoint_url || '',
                         httpMethod: raw.httpMethod || raw.http_method || 'POST',
-                        timeoutMs: raw.timeoutMs || raw.timeout_ms || 30000,
-                        retryCount: raw.retryCount || raw.retry_count || 0,
-                        retryDelayMs: raw.retryDelayMs || raw.retry_delay_ms || 1000,
+                        timeoutMs: Number(raw.timeoutMs) || Number(raw.timeout_ms) || 30000,
+                        retryCount: Number(raw.retryCount) || Number(raw.retry_count) || 0,
+                        retryDelayMs: Number(raw.retryDelayMs) || Number(raw.retry_delay_ms) || 1000,
                     };
                 }
 
-                // Parse configurations
-                let configs: ActionConfigField[] = [];
-                if (Array.isArray(action.configurationsJson)) {
-                    configs = action.configurationsJson;
-                } else if (action.configurationsJson && typeof action.configurationsJson === 'object') {
-                    const raw = action.configurationsJson as any;
-                    if (Array.isArray(raw.fields)) {
-                        configs = raw.fields;
-                    }
+                // Parse configurations - handle both array (legacy) and flat object (new)
+                let configs: Record<string, any> = {};
+                const configJson = rawAction.configurations_json || rawAction.configurationsJson;
+                if (configJson && typeof configJson === 'object' && !Array.isArray(configJson)) {
+                    configs = configJson;
+                } else if (Array.isArray(configJson)) {
+                    configJson.forEach((c: any) => {
+                        configs[c.inputKey || c.key] = c.defaultValue;
+                    });
                 }
 
-                setFetchedInputs(inputs);
-                setFetchedOutputs(outputs);
                 setFetchedExecution(execution);
                 setFetchedConfigs(configs);
 
-                // Also update the React Flow node data so it carries the full data
+                // Update React Flow node with full data + capability
                 setNodes((nds) =>
                     nds.map((node) => {
                         if (node.id === selectedNode.id) {
@@ -152,8 +129,9 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                 ...node,
                                 data: {
                                     ...node.data,
-                                    inputsSchemaJson: inputs,
-                                    outputsSchemaJson: outputs,
+                                    capability: action.capability.toLowerCase() as ActionCapability,
+                                    categoryId: rawAction.category_id || rawAction.categoryId,
+                                    category: categoryMap[rawAction.category_id || rawAction.categoryId] || (node.data as any).category || action.category,
                                     executionJson: execution,
                                     configurationsJson: configs,
                                     actionVersionId: versionId,
@@ -186,27 +164,11 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                 return;
             }
 
-            // Normal Action Node
-            const nd = selectedNode.data as unknown as CanvasNodeData;
-            const exec = fetchedExecution || nd.executionJson;
+
             form.setFieldsValue({
                 label: nodeLabel,
-                // Execution fields
-                exec_connectorType: exec?.connectorType || 'rest',
-                exec_endpointUrl: exec?.endpointUrl || '',
-                exec_httpMethod: exec?.httpMethod || 'POST',
-                exec_timeoutMs: exec?.timeoutMs ?? 30000,
-                exec_retryCount: exec?.retryCount ?? 0,
-                exec_retryDelayMs: exec?.retryDelayMs ?? 1000,
+                ...fetchedConfigs, // fetchedConfigs is now an object
             });
-
-            // Prefill configuration fields
-            const configs = fetchedConfigs.length > 0 ? fetchedConfigs : (nd.configurationsJson || []);
-            const configValues: Record<string, unknown> = {};
-            configs.forEach((cfg) => {
-                configValues[`config_${cfg.inputKey}`] = cfg.defaultValue;
-            });
-            form.setFieldsValue(configValues);
         } else if (selectedEdge) {
             const edgeData = selectedEdge.data as unknown as CanvasEdgeData | undefined;
             form.setFieldsValue({
@@ -307,24 +269,10 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             return;
         }
 
-        const nd = selectedNode.data as unknown as CanvasNodeData;
 
-        // Build updated execution config from form
-        const updatedExecution = {
-            connectorType: allValues.exec_connectorType,
-            endpointUrl: allValues.exec_endpointUrl,
-            httpMethod: allValues.exec_httpMethod,
-            timeoutMs: Number(allValues.exec_timeoutMs) || 30000,
-            retryCount: Number(allValues.exec_retryCount) || 0,
-            retryDelayMs: Number(allValues.exec_retryDelayMs) || 1000,
-        };
 
-        // Build updated configurations from form
-        const currentConfigs = fetchedConfigs.length > 0 ? fetchedConfigs : (nd.configurationsJson || []);
-        const updatedConfigs = currentConfigs.map((cfg) => ({
-            ...cfg,
-            defaultValue: allValues[`config_${cfg.inputKey}`] ?? cfg.defaultValue,
-        }));
+        // Extract configurations (all fields except native node properties)
+        const { label, name, description, ...configurations } = allValues;
 
         // Update the React Flow node data in-place (local only)
         setNodes((nds) =>
@@ -334,9 +282,9 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                         ...node,
                         data: {
                             ...node.data,
-                            label: allValues.label,
-                            executionJson: updatedExecution,
-                            configurationsJson: updatedConfigs,
+                            label: label || name || node.data.label,
+                            description: description || node.data.description,
+                            configurationsJson: configurations,
                         },
                     };
                 }
@@ -348,153 +296,285 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     };
 
     /** Render the Connector-specific fields */
-    const renderConnectorSection = (nodeData: any) => {
-        const type = nodeData.connectorType || 'api';
-        const isApi = type === 'api';
-
-        return (
-            <div className="properties-drawer__connector-fields">
-                <Title level={5} className="properties-drawer__section-title">
-                    {isApi ? 'API Configuration' : 'Database Configuration'}
-                </Title>
-                {isApi ? <ApiConnectorFields /> : <DatabaseConnectorFields />}
-            </div>
-        );
-    };
-
-    // Render configuration inputs dynamically from the action's configurationsJson
     const renderNodeConfig = (nodeData: CanvasNodeData) => {
-        const configs = fetchedConfigs.length > 0 ? fetchedConfigs : nodeData.configurationsJson;
+        const capability = (nodeData.capability || 'api').toLowerCase();
 
-        if (!configs || configs.length === 0) {
-            return (
-                <div className="properties-drawer__empty-config">
-                    <Text type="secondary">No configuration fields defined for this action.</Text>
-                </div>
-            );
-        }
+        switch (capability) {
+            case 'condition':
+            case 'rules':
+                return (
+                    <>
+                        <Form.Item label="Branch Expression" name="condition_expression">
+                            <Input.TextArea rows={3} placeholder="state['status'] == 'denied'" style={{ fontFamily: 'monospace' }} />
+                        </Form.Item>
+                        <Title level={5} className="properties-drawer__section-subtitle">Branch Labels</Title>
+                        <Form.Item label="✅ True Label" name="condition_true_label">
+                            <Input />
+                        </Form.Item>
+                        <Form.Item label="❌ False Label" name="condition_false_label">
+                            <Input />
+                        </Form.Item>
+                    </>
+                );
 
-        return configs.map((cfg) => {
-            switch (cfg.inputType) {
-                case 'number':
-                    return (
-                        <Form.Item key={cfg.inputKey} label={cfg.label} name={`config_${cfg.inputKey}`} initialValue={cfg.defaultValue}>
-                            <Input type="number" placeholder={`Enter ${cfg.label}`} />
+            case 'human input':
+            case 'human':
+                return (
+                    <>
+                        <Form.Item label="Prompt / Question" name="human_prompt">
+                            <Input.TextArea rows={3} />
                         </Form.Item>
-                    );
-                case 'boolean':
-                    return (
-                        <Form.Item key={cfg.inputKey} label={cfg.label} name={`config_${cfg.inputKey}`} valuePropName="checked" initialValue={!!cfg.defaultValue}>
-                            <Switch />
+                        <Form.Item label="Assignee / Queue" name="human_assignee">
+                            <Input />
                         </Form.Item>
-                    );
-                case 'select':
-                    return (
-                        <Form.Item key={cfg.inputKey} label={cfg.label} name={`config_${cfg.inputKey}`} initialValue={cfg.defaultValue}>
-                            <Select
-                                placeholder={`Select ${cfg.label}`}
-                                options={(cfg.options || []).map(o => ({ value: o, label: o }))}
-                                allowClear
+                        <Form.Item label="Timeout (min)" name="human_timeout_min">
+                            <Input type="number" />
+                        </Form.Item>
+                        <Form.Item label="Action" name="human_action">
+                            <Select options={[
+                                { value: 'approve_reject', label: 'Approve / Reject' },
+                                { value: 'input_form', label: 'Fill in a Form' },
+                                { value: 'free_text', label: 'Free Text' },
+                            ]} />
+                        </Form.Item>
+                    </>
+                );
+
+            case 'agent':
+            case 'ai':
+                return (
+                    <>
+                        <Form.Item label="AI Model" name="ai_model">
+                            <Select options={[
+                                { value: 'gpt-4o', label: '🤖 GPT-4o' },
+                                { value: 'gpt-4o-mini', label: '🤖 GPT-4o Mini' },
+                                { value: 'claude-3-5-sonnet', label: '🤖 Claude 3.5' },
+                                { value: 'gemini-1.5-pro', label: '🤖 Gemini 1.5 Pro' },
+                                { value: 'llama-3-70b', label: '🤖 LLaMA 3 70B' },
+                            ]} />
+                        </Form.Item>
+                        <Form.Item label="Temp" name="ai_temperature">
+                            <Input type="number" step={0.1} min={0} max={2} />
+                        </Form.Item>
+                        <div className="properties-drawer__divider" />
+                        <Title level={5} className="properties-drawer__section-subtitle">Prompts</Title>
+                        <Form.Item label="System Prompt" name="ai_system_prompt">
+                            <Input.TextArea rows={4} placeholder="You are an expert specialist..." />
+                        </Form.Item>
+                        <Form.Item label="User Prompt Template" name="ai_user_prompt">
+                            <Input.TextArea rows={6} placeholder="Summarize the input: {{state.details}}" />
+                        </Form.Item>
+                        <Form.Item label="Max Tokens" name="ai_max_tokens">
+                            <Input type="number" placeholder="1024" />
+                        </Form.Item>
+                        <div className="properties-drawer__divider" />
+                        <Title level={5} className="properties-drawer__section-subtitle">Output Mapping</Title>
+                        <Form.Item label="Save output to state variable" name="ai_output_key">
+                            <Input placeholder="e.g. analysis_result" style={{ fontFamily: 'monospace' }} />
+                        </Form.Item>
+                    </>
+                );
+
+            case 'http request':
+            case 'http':
+            case 'api':
+                return (
+                    <>
+                        <Form.Item label="URL" name="http_url">
+                            <Input placeholder="https://api.example.com/v1/resource/{{state.id}}" />
+                        </Form.Item>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <Form.Item label="Method" name="http_method" style={{ flex: 1 }}>
+                                <Select options={[
+                                    { value: 'GET', label: 'GET' },
+                                    { value: 'POST', label: 'POST' },
+                                    { value: 'PUT', label: 'PUT' },
+                                    { value: 'PATCH', label: 'PATCH' },
+                                    { value: 'DELETE', label: 'DELETE' },
+                                ]} />
+                            </Form.Item>
+                            <Form.Item label="Timeout (ms)" name="http_timeout" style={{ width: '120px' }}>
+                                <Input type="number" placeholder="30000" />
+                            </Form.Item>
+                        </div>
+                        <div className="properties-drawer__divider" />
+                        <Title level={5} className="properties-drawer__section-subtitle">Request</Title>
+                        <Form.Item label="Headers (JSON)" name="http_headers">
+                            <Input.TextArea rows={3} style={{ fontFamily: 'monospace' }} placeholder={'{\n  "Authorization": "Bearer {{env.API_TOKEN}}"\n}'} />
+                        </Form.Item>
+                        <Form.Item label="Body (JSON)" name="http_body">
+                            <Input.TextArea rows={4} style={{ fontFamily: 'monospace' }} placeholder={'{\n  "id": "{{state.id}}"\n}'} />
+                        </Form.Item>
+                        <div className="properties-drawer__divider" />
+                        <Title level={5} className="properties-drawer__section-subtitle">Output Mapping</Title>
+                        <Form.Item label="Save output to state variable" name="http_output_key">
+                            <Input placeholder="e.g. api_result" style={{ fontFamily: 'monospace' }} />
+                        </Form.Item>
+                    </>
+                );
+
+            case 'database':
+            case 'database operation':
+                return (
+                    <>
+                        <Form.Item label="Connection" name="db_connection_id">
+                            <Select placeholder="Select a connection..." options={[
+                                { value: 'primary-db', label: '🗄️ Primary SQLite' },
+                                { value: 'postgres-rcm', label: '🐘 RCM Postgres' },
+                                { value: 'snowflake-analytics', label: '❄️ Snowflake Analytics' },
+                                { value: 'mysql-emr', label: '🐬 MySQL EMR' },
+                            ]} />
+                        </Form.Item>
+                        <Form.Item label="Operation Type" name="db_operation">
+                            <Select options={[
+                                { value: 'select', label: '🔍 Select (Read)' },
+                                { value: 'insert', label: '➕ Insert (Create)' },
+                                { value: 'update', label: '✏️ Update' },
+                                { value: 'delete', label: '🗑️ Delete' },
+                            ]} />
+                        </Form.Item>
+                        <div className="properties-drawer__divider" />
+                        <Title level={5} className="properties-drawer__section-subtitle">Query</Title>
+                        <Form.Item label="SQL Query" name="db_sql">
+                            <Input.TextArea rows={6} style={{ fontFamily: 'monospace' }} placeholder="SELECT * FROM table WHERE id = :id;" />
+                        </Form.Item>
+                        <Form.Item label="Parameter Bindings (JSON)" name="db_params">
+                            <Input.TextArea rows={4} style={{ fontFamily: 'monospace' }} placeholder={'{\n  "id": "{{state.id}}"\n}'} />
+                        </Form.Item>
+                        <Form.Item label="Return Mode" name="db_return_mode">
+                            <Select options={[
+                                { value: 'first', label: 'First Row Only' },
+                                { value: 'all', label: 'All Rows (List)' },
+                            ]} />
+                        </Form.Item>
+                        <div className="properties-drawer__divider" />
+                        <Title level={5} className="properties-drawer__section-subtitle">Output Mapping</Title>
+                        <Form.Item label="Save output to state variable" name="db_output_key">
+                            <Input placeholder="e.g. db_result" style={{ fontFamily: 'monospace' }} />
+                        </Form.Item>
+                    </>
+                );
+
+            case 'custom function':
+            case 'function':
+            case 'rpa':
+                return (
+                    <>
+                        <Form.Item label="Function Name" name="func_name">
+                            <Input placeholder="e.g. process_data" style={{ fontFamily: 'monospace' }} />
+                        </Form.Item>
+                        <div className="properties-drawer__divider" />
+                        <Title level={5} className="properties-drawer__section-subtitle">Implementation</Title>
+                        <Form.Item label="Python Code" name="func_code">
+                            <Input.TextArea rows={10} style={{ fontFamily: 'monospace' }}
+                                placeholder={`def process_data(state):\n    state['status'] = 'PROCESSED'\n    return state`}
                             />
                         </Form.Item>
-                    );
-                case 'textarea':
-                    return (
-                        <Form.Item key={cfg.inputKey} label={cfg.label} name={`config_${cfg.inputKey}`} initialValue={cfg.defaultValue}>
-                            <Input.TextArea rows={3} placeholder={`Enter ${cfg.label}`} />
+                        <div className="properties-drawer__divider" />
+                        <Title level={5} className="properties-drawer__section-subtitle">Output Mapping</Title>
+                        <Form.Item label="Save output to state variable" name="func_output_key">
+                            <Input placeholder="e.g. func_result" style={{ fontFamily: 'monospace' }} />
                         </Form.Item>
-                    );
-                default: // 'text'
-                    return (
-                        <Form.Item key={cfg.inputKey} label={cfg.label} name={`config_${cfg.inputKey}`} initialValue={cfg.defaultValue}>
-                            <Input placeholder={`Enter ${cfg.label}`} />
+                    </>
+                );
+
+            case 'loop':
+                return (
+                    <>
+                        <Form.Item label="Loop Type" name="loop_type">
+                            <Select options={[
+                                { value: 'for_each', label: '🔁 For Each (Iterates a list)' },
+                                { value: 'while', label: '🔄 While (Condition-based)' },
+                                { value: 'times', label: '🔢 N Times (Fixed count)' },
+                            ]} />
                         </Form.Item>
-                    );
-            }
-        });
-    };
+                        <Form.Item label="Iterate Over (State Key)" name="loop_iterate_over">
+                            <Input placeholder="e.g. state.items_list" style={{ fontFamily: 'monospace' }} />
+                        </Form.Item>
+                        <Form.Item label="Item Alias" name="loop_item_alias">
+                            <Input placeholder="e.g. item" />
+                        </Form.Item>
+                        <Form.Item label="Max Iterations" name="loop_max_iterations">
+                            <Input type="number" placeholder="100" />
+                        </Form.Item>
+                        <Form.Item label="Break Condition" name="loop_break_condition">
+                            <Input placeholder="e.g. state.is_done == True" style={{ fontFamily: 'monospace' }} />
+                        </Form.Item>
+                    </>
+                );
 
-    /** Render the Inputs schema as a read-only mini-table */
-    const renderInputsSection = (inputs: ActionInputField[]) => {
-        if (!inputs || inputs.length === 0) {
-            return (
-                <div className="properties-drawer__empty-config">
-                    <Text type="secondary">No input fields defined.</Text>
-                </div>
-            );
+            case 'tool':
+                return (
+                    <>
+                        <Form.Item label="Tool Name (LangGraph)" name="tool_name">
+                            <Input placeholder="e.g. run_calculation" style={{ fontFamily: 'monospace' }} />
+                        </Form.Item>
+                        <Form.Item label="Description (for AI planner)" name="tool_description">
+                            <Input.TextArea rows={3} placeholder="Describes what this tool does to the AI agent." />
+                        </Form.Item>
+                        <div className="properties-drawer__divider" />
+                        <Title level={5} className="properties-drawer__section-subtitle">Parameters Schema</Title>
+                        <Form.Item label="Parameters Schema (JSON)" name="tool_params">
+                            <Input.TextArea rows={5} style={{ fontFamily: 'monospace' }}
+                                placeholder={'{\n  "query": {"type": "string"}\n}'}
+                            />
+                        </Form.Item>
+                        <div className="properties-drawer__divider" />
+                        <Title level={5} className="properties-drawer__section-subtitle">Output Mapping</Title>
+                        <Form.Item label="Save output to state variable" name="tool_return_key">
+                            <Input placeholder="e.g. tool_result" style={{ fontFamily: 'monospace' }} />
+                        </Form.Item>
+                    </>
+                );
+
+            case 'direct reply':
+            case 'reply':
+            case 'message':
+                return (
+                    <>
+                        <Form.Item label="Message Template" name="reply_message">
+                            <Input.TextArea rows={6} placeholder="Your request has been processed.\n\n{{state.summary}}" />
+                        </Form.Item>
+                        <Form.Item label="Format" name="reply_format">
+                            <Select options={[
+                                { value: 'text', label: '📝 Plain Text' },
+                                { value: 'markdown', label: '📋 Markdown' },
+                                { value: 'html', label: '🌐 HTML' },
+                                { value: 'json', label: '{ } JSON' },
+                            ]} />
+                        </Form.Item>
+                        <Form.Item label="Channel" name="reply_channel">
+                            <Select options={[
+                                { value: 'api', label: '🔌 API Response' },
+                                { value: 'email', label: '📧 Email' },
+                                { value: 'slack', label: '💬 Slack' },
+                                { value: 'teams', label: '💬 MS Teams' },
+                            ]} />
+                        </Form.Item>
+                    </>
+                );
+
+            case 'connector':
+                const type = nodeData.connectorType || 'api';
+                const isApi = type === 'api';
+                return (
+                    <div className="properties-drawer__connector-fields">
+                        <Title level={5} className="properties-drawer__section-title">
+                            {isApi ? 'API Configuration' : 'Database Configuration'}
+                        </Title>
+                        {isApi ? <ApiConnectorFields /> : <DatabaseConnectorFields />}
+                    </div>
+                );
+
+            default:
+                return (
+                    <div className="properties-drawer__empty-config">
+                        <Text type="secondary">Configuration fields for '{capability}' are coming soon.</Text>
+                    </div>
+                );
         }
-        return (
-            <Table
-                dataSource={inputs.map((f, i) => ({ ...f, key: f.name || i }))}
-                columns={fieldColumns}
-                pagination={false}
-                size="small"
-                className="properties-drawer__schema-table"
-            />
-        );
     };
 
-    /** Render the Outputs schema as a read-only mini-table */
-    const renderOutputsSection = (outputs: ActionOutputField[]) => {
-        if (!outputs || outputs.length === 0) {
-            return (
-                <div className="properties-drawer__empty-config">
-                    <Text type="secondary">No output fields defined.</Text>
-                </div>
-            );
-        }
-        return (
-            <Table
-                dataSource={outputs.map((f, i) => ({ ...f, key: f.name || i }))}
-                columns={fieldColumns}
-                pagination={false}
-                size="small"
-                className="properties-drawer__schema-table"
-            />
-        );
-    };
-
-    /** Render the Execution config as editable form fields */
-    const renderExecutionSection = () => {
-        return (
-            <>
-                <Form.Item label="Connector Type" name="exec_connectorType">
-                    <Select
-                        options={[
-                            { value: 'rest', label: 'REST' },
-                            { value: 'graphql', label: 'GraphQL' },
-                            { value: 'grpc', label: 'gRPC' },
-                            { value: 'internal', label: 'Internal' },
-                            { value: 'none', label: 'None' },
-                        ]}
-                    />
-                </Form.Item>
-                <Form.Item label="Endpoint URL" name="exec_endpointUrl">
-                    <Input placeholder="https://api.example.com/v1/action" />
-                </Form.Item>
-                <Form.Item label="HTTP Method" name="exec_httpMethod">
-                    <Select
-                        options={[
-                            { value: 'GET', label: 'GET' },
-                            { value: 'POST', label: 'POST' },
-                            { value: 'PUT', label: 'PUT' },
-                            { value: 'PATCH', label: 'PATCH' },
-                            { value: 'DELETE', label: 'DELETE' },
-                        ]}
-                    />
-                </Form.Item>
-                <Form.Item label="Timeout (ms)" name="exec_timeoutMs">
-                    <Input type="number" placeholder="30000" />
-                </Form.Item>
-                <Form.Item label="Retry Count" name="exec_retryCount">
-                    <Input type="number" placeholder="0" />
-                </Form.Item>
-                <Form.Item label="Retry Delay (ms)" name="exec_retryDelayMs">
-                    <Input type="number" placeholder="1000" />
-                </Form.Item>
-            </>
-        );
-    };
 
     // Drawer is open if exactly ONE node or exactly ONE edge is selected
     const isOpen = selectedNode !== null || selectedEdge !== null;
@@ -521,7 +601,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                     <div className="properties-drawer__meta" style={{ background: token.colorBgContainer, borderColor: token.colorBorderSecondary }}>
                         <div className="properties-drawer__meta-item">
                             <Text type="secondary">Type</Text>
-                            <Text strong>{isSubFlow ? 'Structure Group' : (nodeData?.category || 'Node')}</Text>
+                            <Text strong>{isSubFlow ? 'Structure Group' : (nodeData?.categoryId ? (categoryMap[nodeData.categoryId] || 'Uncategorized') : (nodeData?.category || 'Uncategorized'))}</Text>
                         </div>
                         <div className="properties-drawer__meta-item">
                             <Text type="secondary">Capability</Text>
@@ -574,31 +654,15 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                             </Form.Item>
                         )}
 
-                        {isConnector && renderConnectorSection(nodeData)}
-
                         {!isSubFlow && !isConnector && nodeData && (
                             <>
-                                {/* ── Inputs Section ── */}
-                                <div className="properties-drawer__divider" />
-                                <Title level={5} className="properties-drawer__section-title">Inputs</Title>
-                                {renderInputsSection(fetchedInputs.length > 0 ? fetchedInputs : (nodeData.inputsSchemaJson || []))}
-
-                                {/* ── Outputs Section ── */}
-                                <div className="properties-drawer__divider" />
-                                <Title level={5} className="properties-drawer__section-title">Outputs</Title>
-                                {renderOutputsSection(fetchedOutputs.length > 0 ? fetchedOutputs : (nodeData.outputsSchemaJson || []))}
-
-                                {/* ── Execution Section ── */}
-                                <div className="properties-drawer__divider" />
-                                <Title level={5} className="properties-drawer__section-title">Execution</Title>
-                                {renderExecutionSection()}
-
                                 {/* ── Configurations Section ── */}
                                 <div className="properties-drawer__divider" />
                                 <Title level={5} className="properties-drawer__section-title">Configuration</Title>
-                                {renderNodeConfig(nodeData)}
+                                {renderNodeConfig(nodeData as CanvasNodeData)}
                             </>
                         )}
+                        {isConnector && nodeData && renderNodeConfig(nodeData)}
                     </Form>
 
                     <div style={{ marginTop: '32px', display: 'flex', gap: '8px' }}>

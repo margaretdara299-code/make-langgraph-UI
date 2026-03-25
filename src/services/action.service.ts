@@ -26,13 +26,8 @@ export async function createAction(
             defaultNodeTitle: input.defaultNodeTitle || input.name || 'Untitled',
             scope: input.scope || 'global',
 
-            // ── Version-level JSON blobs (wizard steps 2–7) ──
-            inputsSchemaJson: input.inputsSchemaJson || [],
-            executionJson: input.executionJson || null,
-            outputsSchemaJson: input.outputsSchemaJson || [],
-            configurationsJson: input.configurationsJson || [],
-            uiFormJson: input.uiFormJson || null,
-            policyJson: input.policyJson || null,
+            // ── Version-level JSON blobs (wizard step 2: Configuration) ──
+            configurationsJson: input.configurationsJson || {},
         };
 
         const res = await apiClient.post<ActionDefinition>(API_ENDPOINTS.ACTIONS.BASE, payload);
@@ -239,43 +234,34 @@ export async function fetchActionById(id: string): Promise<ApiResponse<ActionDef
         const result = await apiClient.get<any>(API_ENDPOINTS.ACTIONS.BY_ID(id));
         const data = result.data;
 
-        // The backend returns { ...definition, versions: [ { ...versionData } ] }
-        // Find the active version (is_active=1) or fall back to the first version
-        const versions = data.versions || [];
-        const activeVersion = versions.find((v: any) => v.isActive === 1 || v.isActive === true) || versions[0] || {};
-
         const action: ActionDefinition = {
-            id: data.actionDefinitionId || data.id || id,
-            actionKey: data.actionKey || '',
+            id: data.action_definition_id || data.actionDefinitionId || data.id || id,
+            actionKey: data.action_key || data.actionKey || '',
             name: data.name || '',
             description: data.description || '',
             category: data.category || 'Uncategorized',
-            categoryId: data.categoryId || data.category_id,
-            capability: (data.capability || 'api').toLowerCase() as ActionDefinition['capability'],
-            capabilityId: data.capabilityId || data.capability_id,
+            categoryId: data.category_id || data.categoryId,
+            capability: data.capability || 'api',
+            capabilityId: data.capability_id || data.capabilityId,
             scope: data.scope || 'global',
             icon: data.icon || '🧩',
-            defaultNodeTitle: data.defaultNodeTitle || data.name || '',
-            status: activeVersion.status || data.status || 'draft',
-            createdAt: data.createdAt || '',
-            updatedAt: data.updatedAt || '',
-
-            // Version-level JSON blobs from the active version
-            inputsSchemaJson: activeVersion.inputsSchemaJson || [],
-            executionJson: activeVersion.executionJson || null,
-            outputsSchemaJson: activeVersion.outputsSchemaJson || [],
-            configurationsJson: activeVersion.configurationsJson || [],
-            uiFormJson: activeVersion.uiFormJson || null,
-            policyJson: activeVersion.policyJson || null,
+            defaultNodeTitle: data.default_node_title || data.name || '',
+            status: data.status || 'draft',
+            createdAt: data.created_at || data.createdAt || '',
+            updatedAt: data.updated_at || data.updatedAt || '',
+            configurationsJson: data.configurations_json || data.configurationsJson || {},
+            executionJson: data.execution_json || data.executionJson,
+            inputsSchemaJson: data.inputs_schema_json || data.inputsSchemaJson,
+            outputsSchemaJson: data.outputs_schema_json || data.outputsSchemaJson,
         };
 
-        // Attach the version ID for later PUT calls
-        (action as any).actionVersionId = activeVersion.actionVersionId || activeVersion.id || '';
+        // Attach backend version IDs
+        (action as any).actionVersionId = data.action_version_id || data.actionVersionId || '';
 
         return { success: true, data: action };
     } catch (error) {
         console.error('fetchActionById API error:', error);
-        // Fallback to cache if API fails
+        // Fallback to cache
         const cached = cachedActions ?? [];
         const action = cached.find((a) => a.id === id);
         if (action) return { success: true, data: action };
@@ -288,11 +274,21 @@ export async function fetchActionById(id: string): Promise<ApiResponse<ActionDef
  * Used by CreateActionModal when editing existing actions.
  */
 export async function updateActionDefinition(
-    actionDefinitionId: string, 
+    actionDefinitionId: string,
     payload: Partial<ActionDefinition>
 ): Promise<ApiResponse<ActionDefinition>> {
     try {
-        const result = await apiClient.put<ActionDefinition>(API_ENDPOINTS.ACTIONS.UPDATE(actionDefinitionId), payload);
+        // Sanitize payload: remove unused and replace null with {}
+        const sanitized: any = { ...payload };
+        delete sanitized.executionJson;
+        delete sanitized.uiFormJson;
+        delete sanitized.policyJson;
+        delete sanitized.inputsSchemaJson;
+        delete sanitized.outputsSchemaJson;
+
+        if (sanitized.configurationsJson === null || sanitized.configurationsJson === undefined) sanitized.configurationsJson = {};
+
+        const result = await apiClient.put<ActionDefinition>(API_ENDPOINTS.ACTIONS.UPDATE(actionDefinitionId), sanitized);
         return { success: true, data: result.data, message: result.message };
     } catch (error) {
         return { success: false, error: error instanceof Error ? error.message : 'Failed to update action definition' };
