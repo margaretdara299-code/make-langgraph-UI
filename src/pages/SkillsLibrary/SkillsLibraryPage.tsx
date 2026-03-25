@@ -4,18 +4,17 @@
  */
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Input, Spin, Empty, Button, Typography, Modal, message, Tabs, Badge, Space } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import { useSkills, useCategories } from '@/hooks';
 import { SkillCard, CreateSkillModal, EditSkillModal } from '@/components';
 import { STATUS_FILTER_OPTIONS, CARD_ACTION_KEYS } from '@/constants';
-import { 
-    deleteSkill, 
-    updateSkillVersionStatus, 
+
+import {
+    deleteSkill,
+    updateSkillVersionStatus,
     SkillVersionStatusValue,
-    loadSkillGraph,
-    saveSkillGraph
 } from '@/services';
 import type { UseSkillsFilters } from '@/interfaces';
 import './SkillsLibraryPage.css';
@@ -23,12 +22,13 @@ import './SkillsLibraryPage.css';
 const { Title } = Typography;
 
 export default function SkillsLibraryPage() {
-    const navigate = useNavigate();
     const [activeStatus, setActiveStatus] = useState<string>('all');
     const [searchValue, setSearchValue] = useState('');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingSkill, setEditingSkill] = useState<any>(null);
+    const navigate = useNavigate();
+
 
     const { skills, isLoading, statusCounts, setFilters, refetch } = useSkills();
     const { categories } = useCategories();
@@ -105,10 +105,11 @@ export default function SkillsLibraryPage() {
                 if (pubSkill?.latestVersionId) {
                     navigate(`/skills/${skillId}/versions/${pubSkill.latestVersionId}/design`);
                 } else {
-                    message.warning('Cannot build: No valid version ID found.');
+                    message.warning('Cannot open designer: No valid version ID found.');
                 }
                 break;
             }
+
 
             case CARD_ACTION_KEYS.EDIT_SETTINGS:
                 const skillToEdit = skills.find((skill) => skill.id === skillId);

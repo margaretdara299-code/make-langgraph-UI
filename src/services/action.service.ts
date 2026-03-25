@@ -26,8 +26,8 @@ export async function createAction(
             defaultNodeTitle: input.defaultNodeTitle || input.name || 'Untitled',
             scope: input.scope || 'global',
 
-            // ── Version-level JSON blobs (wizard steps 2–7) ──
-            configurationsJson: input.configurationsJson || [],
+            // ── Version-level JSON blobs (wizard step 2: Configuration) ──
+            configurationsJson: input.configurationsJson || {},
         };
 
         const res = await apiClient.post<ActionDefinition>(API_ENDPOINTS.ACTIONS.BASE, payload);
@@ -283,12 +283,21 @@ export async function fetchActionById(id: string): Promise<ApiResponse<ActionDef
  * Used by CreateActionModal when editing existing actions.
  */
 export async function updateActionDefinition(
-    actionDefinitionId: string, 
+    actionDefinitionId: string,
     payload: Partial<ActionDefinition>
 ): Promise<ApiResponse<ActionDefinition>> {
     try {
-        const { inputsSchemaJson, executionJson, outputsSchemaJson, uiFormJson, policyJson, ...cleanPayload } = payload;
-        const result = await apiClient.put<ActionDefinition>(API_ENDPOINTS.ACTIONS.UPDATE(actionDefinitionId), cleanPayload);
+        // Sanitize payload: remove unused and replace null with {}
+        const sanitized: any = { ...payload };
+        delete sanitized.executionJson;
+        delete sanitized.uiFormJson;
+        delete sanitized.policyJson;
+        delete sanitized.inputsSchemaJson;
+        delete sanitized.outputsSchemaJson;
+
+        if (sanitized.configurationsJson === null || sanitized.configurationsJson === undefined) sanitized.configurationsJson = {};
+
+        const result = await apiClient.put<ActionDefinition>(API_ENDPOINTS.ACTIONS.UPDATE(actionDefinitionId), sanitized);
         return { success: true, data: result.data, message: result.message };
     } catch (error) {
         return { success: false, error: error instanceof Error ? error.message : 'Failed to update action definition' };

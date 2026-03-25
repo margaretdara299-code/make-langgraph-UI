@@ -2,7 +2,7 @@
  * Constants for layout components.
  */
 
-import { BulbOutlined, SettingOutlined, ApiOutlined } from '@ant-design/icons';
+import { BulbOutlined, SettingOutlined } from '@ant-design/icons';
 import { ROUTES } from '@/routes';
 
 export const SIDEBAR_MENU_ITEMS = [
@@ -15,10 +15,5 @@ export const SIDEBAR_MENU_ITEMS = [
         key: ROUTES.ACTION_CATALOG,
         icon: SettingOutlined,
         label: 'Action Catalog',
-    },
-    {
-        key: ROUTES.CONNECTORS,
-        icon: ApiOutlined,
-        label: 'Connectors',
     },
 ];
