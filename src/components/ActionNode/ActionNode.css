@@ -99,6 +99,27 @@
     word-break: break-word;
 }
 
+.action-node__delete {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-danger, #ff4d4f);
+    opacity: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.action-node__header:hover .action-node__delete {
+    opacity: 0.7;
+}
+
+.action-node__delete:hover {
+    opacity: 1 !important;
+    background: rgba(255, 77, 79, 0.1);
+}
+
 /* ── Footer ── */
 .action-node__footer {
     display: flex;
@@ -118,7 +139,10 @@
     border: 1px solid color-mix(in srgb, var(--node-accent-glow), transparent 70%);
     letter-spacing: 0.5px;
     white-space: nowrap;
-    flex-shrink: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 0 1 auto;
+    max-width: 60%;
 }
 
 .action-node__category {
@@ -130,6 +154,7 @@
     text-overflow: ellipsis;
     text-align: right;
     min-width: 0;
+    flex: 1 1 auto;
 }
 
 /* ── Handles (Turbo Style) ── */
