@@ -17,7 +17,7 @@ export interface CanvasNodeData {
     inputsSchemaJson?: ActionInputField[];
     outputsSchemaJson?: ActionOutputField[];
     executionJson?: ActionExecutionConfig;
-    configurationsJson?: ActionConfigField[];
+    configurationsJson?: Record<string, any> | ActionConfigField[];
     color?: string;
     description?: string;
     // Index signature to satisfy React Flow's Record<string, unknown> constraint

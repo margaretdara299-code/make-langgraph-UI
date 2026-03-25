@@ -235,30 +235,33 @@ export async function fetchActionById(id: string): Promise<ApiResponse<ActionDef
         const data = result.data;
 
         const action: ActionDefinition = {
-            id: data.actionDefinitionId || data.id || id,
-            actionKey: data.actionKey || '',
+            id: data.action_definition_id || data.actionDefinitionId || data.id || id,
+            actionKey: data.action_key || data.actionKey || '',
             name: data.name || '',
             description: data.description || '',
             category: data.category || 'Uncategorized',
-            categoryId: data.categoryId || data.category_id,
-            capability: (data.capability || 'api').toLowerCase() as ActionDefinition['capability'],
-            capabilityId: data.capabilityId || data.capability_id,
+            categoryId: data.category_id || data.categoryId,
+            capability: data.capability || 'api',
+            capabilityId: data.capability_id || data.capabilityId,
             scope: data.scope || 'global',
             icon: data.icon || '🧩',
-            defaultNodeTitle: data.defaultNodeTitle || data.name || '',
+            defaultNodeTitle: data.default_node_title || data.name || '',
             status: data.status || 'draft',
-            createdAt: data.createdAt || '',
-            updatedAt: data.updatedAt || '',
-            configurationsJson: data.configurationsJson || {},
+            createdAt: data.created_at || data.createdAt || '',
+            updatedAt: data.updated_at || data.updatedAt || '',
+            configurationsJson: data.configurations_json || data.configurationsJson || {},
+            executionJson: data.execution_json || data.executionJson,
+            inputsSchemaJson: data.inputs_schema_json || data.inputsSchemaJson,
+            outputsSchemaJson: data.outputs_schema_json || data.outputsSchemaJson,
         };
 
-        // Attach the version ID for later PUT calls
-        (action as any).actionVersionId = data.actionVersionId || data.id || '';
+        // Attach backend version IDs
+        (action as any).actionVersionId = data.action_version_id || data.actionVersionId || '';
 
         return { success: true, data: action };
     } catch (error) {
         console.error('fetchActionById API error:', error);
-        // Fallback to cache if API fails
+        // Fallback to cache
         const cached = cachedActions ?? [];
         const action = cached.find((a) => a.id === id);
         if (action) return { success: true, data: action };

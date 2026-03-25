@@ -55,3 +55,38 @@ export interface ActionFilters {
     page?: number;
     pageSize?: number;
 }
+
+// ── Schema Type Interfaces ──
+
+export interface ActionInputField {
+    name: string;
+    type: string;
+    description?: string;
+    required: boolean;
+    defaultValue?: any;
+}
+
+export interface ActionOutputField {
+    name: string;
+    type: string;
+    description?: string;
+}
+
+export interface ActionExecutionConfig {
+    connectorType: 'rest' | 'graphql' | 'grpc' | 'internal' | 'none' | string;
+    endpointUrl: string;
+    httpMethod: string;
+    timeoutMs: number;
+    retryCount: number;
+    retryDelayMs: number;
+}
+
+export interface ActionConfigField {
+    inputKey: string;
+    label: string;
+    inputType: 'text' | 'number' | 'boolean' | 'select' | 'textarea' | string;
+    defaultValue?: any;
+    options?: string[];
+    description?: string;
+}
+
