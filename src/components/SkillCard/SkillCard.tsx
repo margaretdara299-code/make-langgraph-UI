@@ -42,7 +42,7 @@ export default function SkillCard({ skill, onClick, onAction }: SkillCardProps) 
                     <Tag color="blue">{skill.environment.toUpperCase()}</Tag>
                 </div>
                 <Dropdown
-                    menu={{ items: getMenuItems(skill.status), onClick: handleMenuClick }}
+                    menu={{ items: getMenuItems(skill.status, skill.id, skill.latestVersionId), onClick: handleMenuClick }}
                     trigger={['click']}
                     placement="bottomRight"
                 >

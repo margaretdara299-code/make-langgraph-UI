@@ -16,11 +16,11 @@ export const API_ENDPOINTS = {
         BASE: '/api/v1/capabilities',
     },
     SKILL_GRAPH: {
-        GRAPH: (versionId: string) => `/api/skill-versions/${versionId}/graph`,
-        VALIDATE: (versionId: string) => `/api/skill-versions/${versionId}/validate`,
-        COMPILE: (versionId: string) => `/api/skill-versions/${versionId}/compile`,
-        PUBLISH: (versionId: string) => `/api/skill-versions/${versionId}/publish`,
-        RUN: (versionId: string) => `/api/skill-versions/${versionId}/run`,
+        GRAPH: (versionId: string) => `/api/skills/versions/${versionId}/graph`,
+        VALIDATE: (versionId: string) => `/api/skills/versions/${versionId}/validate`,
+        COMPILE: (versionId: string) => `/api/skills/versions/${versionId}/compile`,
+        PUBLISH: (versionId: string) => `/api/skills/versions/${versionId}/status`,
+        RUN: (versionId: string) => `/api/skills/versions/${versionId}/run`,
     },
     ACTIONS: {
         BASE: '/api/actions',

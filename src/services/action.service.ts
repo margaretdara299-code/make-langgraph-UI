@@ -27,12 +27,7 @@ export async function createAction(
             scope: input.scope || 'global',
 
             // ── Version-level JSON blobs (wizard steps 2–7) ──
-            inputsSchemaJson: input.inputsSchemaJson || [],
-            executionJson: input.executionJson || null,
-            outputsSchemaJson: input.outputsSchemaJson || [],
             configurationsJson: input.configurationsJson || [],
-            uiFormJson: input.uiFormJson || null,
-            policyJson: input.policyJson || null,
         };
 
         const res = await apiClient.post<ActionDefinition>(API_ENDPOINTS.ACTIONS.BASE, payload);
@@ -292,7 +287,8 @@ export async function updateActionDefinition(
     payload: Partial<ActionDefinition>
 ): Promise<ApiResponse<ActionDefinition>> {
     try {
-        const result = await apiClient.put<ActionDefinition>(API_ENDPOINTS.ACTIONS.UPDATE(actionDefinitionId), payload);
+        const { inputsSchemaJson, executionJson, outputsSchemaJson, uiFormJson, policyJson, ...cleanPayload } = payload;
+        const result = await apiClient.put<ActionDefinition>(API_ENDPOINTS.ACTIONS.UPDATE(actionDefinitionId), cleanPayload);
         return { success: true, data: result.data, message: result.message };
     } catch (error) {
         return { success: false, error: error instanceof Error ? error.message : 'Failed to update action definition' };

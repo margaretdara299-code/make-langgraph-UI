@@ -43,8 +43,12 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
     };
 
     const renderCapabilityForm = () => {
-        switch (capability) {
-            case 'rules': // Condition
+        // Use the capability name as the primary key (lowercased)
+        const capName = (draft.capability || capability).toLowerCase();
+
+        switch (capName) {
+            case 'condition':
+            case 'rules':
                 return (
                     <>
                         <SectionTitle>Condition Settings</SectionTitle>
@@ -62,6 +66,7 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
                     </>
                 );
 
+            case 'human input':
             case 'human':
                 return (
                     <>
@@ -85,6 +90,7 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
                     </>
                 );
 
+            case 'agent':
             case 'ai':
                 return (
                     <>
@@ -118,6 +124,8 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
                     </>
                 );
 
+            case 'http request':
+            case 'http':
             case 'api':
                 return (
                     <>
@@ -151,7 +159,9 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
                     </>
                 );
 
-            case 'rpa': // Custom Function
+            case 'custom function':
+            case 'function':
+            case 'rpa':
                 return (
                     <>
                         <SectionTitle>Custom Function Settings</SectionTitle>
@@ -169,7 +179,7 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
                     </>
                 );
 
-            case 'loop': // Extracted loop logic
+            case 'loop':
                 return (
                     <>
                         <SectionTitle>Loop Settings</SectionTitle>
@@ -216,7 +226,9 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
                     </>
                 );
 
-            case 'message': // Direct Reply
+            case 'direct reply':
+            case 'reply':
+            case 'message':
                 return (
                     <>
                         <SectionTitle>Direct Reply Settings</SectionTitle>
@@ -242,6 +254,7 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
                     </>
                 );
 
+            case 'database operation':
             case 'database':
                 return (
                     <>

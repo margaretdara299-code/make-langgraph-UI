@@ -4,6 +4,7 @@
  */
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Input, Spin, Empty, Button, Typography, Modal, message, Tabs, Badge, Space } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useSkills, useCategories } from '@/hooks';
@@ -22,6 +23,7 @@ import './SkillsLibraryPage.css';
 const { Title } = Typography;
 
 export default function SkillsLibraryPage() {
+    const navigate = useNavigate();
     const [activeStatus, setActiveStatus] = useState<string>('all');
     const [searchValue, setSearchValue] = useState('');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -101,18 +103,7 @@ export default function SkillsLibraryPage() {
             case CARD_ACTION_KEYS.BUILD_SKILL: {
                 const pubSkill = skills.find((s) => s.id === skillId);
                 if (pubSkill?.latestVersionId) {
-                    message.loading({ content: 'Building skill...', key: 'build' });
-                    loadSkillGraph(pubSkill.latestVersionId).then((res: any) => {
-                        saveSkillGraph(pubSkill.latestVersionId!, res.nodes || [], res.connections || {})
-                            .then((saveRes: any) => {
-                                message.success({ content: saveRes.message || 'Skill Built successfully!', key: 'build' });
-                            })
-                            .catch(() => {
-                                message.error({ content: 'Failed to build skill', key: 'build' });
-                            });
-                    }).catch(() => {
-                        message.error({ content: 'Failed to load skill for building', key: 'build' });
-                    });
+                    navigate(`/skills/${skillId}/versions/${pubSkill.latestVersionId}/design`);
                 } else {
                     message.warning('Cannot build: No valid version ID found.');
                 }

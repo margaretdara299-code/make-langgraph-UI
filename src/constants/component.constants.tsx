@@ -37,26 +37,38 @@ import {
     UserOutlined,
     NodeIndexOutlined,
     BulbOutlined,
+    FunctionOutlined,
+    SyncOutlined,
+    ToolOutlined,
+    MessageOutlined,
+    DatabaseOutlined,
 } from '@ant-design/icons';
 
 /** Action Catalog Capability Filter Options */
 export const CAPABILITY_OPTIONS = [
     { value: 'all', label: 'All Capabilities', icon: BulbOutlined },
-    { value: 'api', label: 'API Connectors', icon: ApiOutlined },
-    { value: 'ai', label: 'AI Models', icon: RobotOutlined },
-    { value: 'rpa', label: 'RPA Bots', icon: DeploymentUnitOutlined },
-    { value: 'human', label: 'Human Tasks', icon: UserOutlined },
-    { value: 'rules', label: 'Rules Engines', icon: NodeIndexOutlined },
+    { value: 1, label: 'Condition', icon: NodeIndexOutlined },
+    { value: 2, label: 'Human Input', icon: UserOutlined },
+    { value: 3, label: 'Agent', icon: RobotOutlined },
+    { value: 4, label: 'HTTP Request', icon: ApiOutlined },
+    { value: 5, label: 'Custom Function', icon: FunctionOutlined },
+    { value: 6, label: 'Loop', icon: SyncOutlined },
+    { value: 7, label: 'Tool', icon: ToolOutlined },
+    { value: 8, label: 'Direct Reply', icon: MessageOutlined },
+    { value: 9, label: 'Database Operation', icon: DatabaseOutlined },
 ];
 
 /** Human-readable labels for individual action capabilities */
-export const CAPABILITY_LABELS: Record<string, string> = {
-    api: 'API',
-    database: 'Database',
-    ai: 'AI Model',
-    rpa: 'RPA Bot',
-    human: 'Human Task',
-    rules: 'Rules Engine',
+export const CAPABILITY_LABELS: Record<string | number, string> = {
+    1: 'Condition',
+    2: 'Human Input',
+    3: 'Agent',
+    4: 'HTTP Request',
+    5: 'Custom Function',
+    6: 'Loop',
+    7: 'Tool',
+    8: 'Direct Reply',
+    9: 'Database Operation',
 };
 
 /** Create Action Wizard Steps (Steps 2-8 for Preview Panel) */

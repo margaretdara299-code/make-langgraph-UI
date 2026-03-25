@@ -49,13 +49,11 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
             if (cat) updates.category = cat.name;
         }
 
-        // If capabilityId changed, find and include the capability name & key label
+        // If capabilityId changed, find and include the capability name for the preview
         if (changedValues.capabilityId) {
             const cap = capabilities.find(capability => capability.capabilityId === changedValues.capabilityId);
             if (cap) {
-                updates.capability = cap.name.toLowerCase() as ActionCapability;
-                // Some logic might expect the name or a specific key, 
-                // but ActionCapability is an enum like 'api', 'ai', etc.
+                updates.capability = cap.name;
             }
         }
 
@@ -114,7 +112,7 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                         <Select size="large" placeholder="Select a capability" loading={isCapabilitiesLoading}>
                             {capabilities.map(cap => (
                                 <Select.Option key={cap.capabilityId} value={cap.capabilityId}>
-                                    {cap.description || cap.name}
+                                    {cap.name}
                                 </Select.Option>
                             ))}
                         </Select>

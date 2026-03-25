@@ -66,7 +66,7 @@ export default function SkillDesignerHeader() {
                             <Title level={4} style={{ margin: 0 }}>{skill?.name || 'Unknown Skill'}</Title>
                             <Space size="small" className="skill-designer-header__meta">
                                 <Text type="secondary" code>{skill?.skillKey || 'unknown'}</Text>
-                                <Text type="secondary">Version {versionId}</Text>
+                                {/* <Text type="secondary">Version {versionId}</Text> */}
                                 {skill && <StatusPill status={skill.status} />}
                             </Space>
                         </>

@@ -115,21 +115,7 @@ export default function ActionCatalogPage() {
                     />
 
                     <div className="action-catalog__toolbar-selects">
-                        <Select
-                            size="large"
-                            value={activeCapability}
-                            onChange={handleCapabilityFilter}
-                            className="action-catalog__dropdown"
-                            placeholder="All Capabilities"
-                            loading={isCapabilitiesLoading}
-                            options={[
-                                { value: 'all', label: `All Capabilities (${statusCounts['all'] || 0})` },
-                                ...capabilities.map(capability => ({
-                                    value: capability.capabilityId.toString(),
-                                    label: `${capability.description || capability.name} (${capabilityCounts[capability.capabilityId.toString()] || 0})`
-                                }))
-                            ]}
-                        />
+                         
 
                         <Select
                             size="large"
@@ -140,9 +126,24 @@ export default function ActionCatalogPage() {
                             loading={isCategoriesLoading}
                             options={[
                                 { value: 'all', label: `All Categories (${Object.values(categoryCounts).reduce((a, b) => a + b, 0)})` },
-                                ...categories.map(category => ({
+                                ...categories.map((category:any) => ({
                                     value: (category.categoryId ?? category.id ?? 0).toString(),
-                                    label: `${category.name} (${categoryCounts[(category.categoryId ?? category.id ?? 0).toString()] || 0})`
+                                    label: `${category.name}`
+                                }))
+                            ]}
+                        />
+                        <Select
+                            size="large"
+                            value={activeCapability}
+                            onChange={handleCapabilityFilter}
+                            className="action-catalog__dropdown"
+                            placeholder="All Capabilities"
+                            loading={isCapabilitiesLoading}
+                            options={[
+                                { value: 'all', label: `All Capabilities (${statusCounts['all'] || 0})` },
+                                ...capabilities.map((capability:any) => ({
+                                    value: capability.capabilityId.toString(),
+                                    label: `${capability.name}`
                                 }))
                             ]}
                         />
