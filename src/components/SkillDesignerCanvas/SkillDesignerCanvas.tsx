@@ -20,13 +20,19 @@ import {
 import '@xyflow/react/dist/style.css';
 import NodePalette from '@/components/NodePalette/NodePalette';
 import PropertiesDrawer from '@/components/PropertiesDrawer/PropertiesDrawer';
-import { NODE_TYPES } from '@/constants';
+import { NODE_TYPES, EDGE_TYPES } from '@/constants';
 import { useCanvasDragDrop, useSkillGraph } from '@/hooks';
+import {
+    upsertNodeInStorage,
+    upsertConnectionInStorage,
+    removeNodeFromStorage,
+    removeConnectionFromStorage,
+} from '@/services/skillGraphStorage.service';
 import './SkillDesignerCanvas.css';
 
 export default function SkillDesignerCanvas() {
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
-    const { initialNodes, initialEdges } = useSkillGraph();
+    const { initialNodes, initialEdges, versionId } = useSkillGraph();
     const [nodes, setNodes, onNodesChange] = useNodesState<Node>(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initialEdges);
     const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
@@ -50,16 +56,29 @@ export default function SkillDesignerCanvas() {
 
     /** Connect two nodes */
     const onConnect: OnConnect = useCallback(
-        (params) => setEdges((eds) => addEdge({
-            ...params,
-            animated: true,
-            data: { routeType: 'unconditional' },
-        }, eds)),
-        [setEdges]
+        (params) => {
+            const edgeId = `xy-edge__${params.source}-${params.target}`;
+            setEdges((eds) => addEdge({
+                ...params,
+                id: edgeId,
+                animated: true,
+            }, eds));
+
+            // Sync to localStorage
+            if (versionId) {
+                upsertConnectionInStorage(versionId, edgeId, {
+                    id: edgeId,
+                    source: params.source,
+                    target: params.target,
+                });
+            }
+        },
+        [setEdges, versionId]
     );
 
-    /** Memoize node types to avoid re-renders */
+    /** Memoize node/edge types to avoid re-renders */
     const nodeTypes = useMemo(() => NODE_TYPES, []);
+    const edgeTypes = useMemo(() => EDGE_TYPES, []);
 
     return (
         <div className="skill-designer" ref={reactFlowWrapper}>
@@ -75,12 +94,20 @@ export default function SkillDesignerCanvas() {
                     onDrop={onDrop}
                     onDragOver={onDragOver}
                     nodeTypes={nodeTypes}
+                    edgeTypes={edgeTypes}
                     fitView
                     fitViewOptions={{ maxZoom: 1 }}
                     deleteKeyCode={['Backspace', 'Delete']}
                     onNodeClick={(_, node) => {
                         setDrawerNodeId(node.id);
                         setDrawerEdgeId(null);
+                    }}
+                    onNodeDragStop={(_, node) => {
+                        if (versionId) {
+                            // Find the latest state of this node (including data) to upsert
+                            const latestNode = nodes.find(n => n.id === node.id) || node;
+                            upsertNodeInStorage(versionId, node.id, latestNode);
+                        }
                     }}
                     onEdgeClick={(_, edge) => {
                         setDrawerEdgeId(edge.id);
@@ -94,10 +121,18 @@ export default function SkillDesignerCanvas() {
                         if (deleted.some(node => node.id === drawerNodeId)) {
                             setDrawerNodeId(null);
                         }
+                        // Sync deletions to localStorage
+                        if (versionId) {
+                            deleted.forEach((node) => removeNodeFromStorage(versionId, node.id));
+                        }
                     }}
                     onEdgesDelete={(deleted) => {
                         if (deleted.some(edge => edge.id === drawerEdgeId)) {
                             setDrawerEdgeId(null);
+                        }
+                        // Sync deletions to localStorage
+                        if (versionId) {
+                            deleted.forEach((edge) => removeConnectionFromStorage(versionId, edge.id));
                         }
                     }}
                 >

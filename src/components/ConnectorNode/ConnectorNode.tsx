@@ -3,14 +3,25 @@
  * Standardized for Top/Bottom connectivity.
  */
 
-import { Handle, Position } from '@xyflow/react';
+import { Handle, Position, useReactFlow } from '@xyflow/react';
+import { DeleteOutlined } from '@ant-design/icons';
+import { useParams } from 'react-router-dom';
 import IconRenderer from '@/components/IconRenderer/IconRenderer';
+import { removeNodeFromStorage } from '@/services/skillGraphStorage.service';
 import type { NodeProps } from '@xyflow/react';
 import type { CanvasNode } from '@/interfaces';
 import './ConnectorNode.css';
 
-export default function ConnectorNode({ data }: NodeProps<CanvasNode>) {
+export default function ConnectorNode({ id, data }: NodeProps<CanvasNode>) {
     const nodeData = data;
+    const { setNodes } = useReactFlow();
+    const { versionId } = useParams<{ versionId: string }>();
+
+    const handleDelete = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setNodes((nodes) => nodes.filter((node) => node.id !== id));
+        if (versionId) removeNodeFromStorage(versionId, id);
+    };
 
     return (
         <div className="connector-node">
@@ -26,7 +37,17 @@ export default function ConnectorNode({ data }: NodeProps<CanvasNode>) {
                         <span className="connector-node__icon">
                             <IconRenderer iconName={nodeData.icon} size={18} fallback="🔌" />
                         </span>
-                        <span className="connector-node__title">{nodeData.label}</span>
+                        <span className="connector-node__title" style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {nodeData.label}
+                        </span>
+                        <span
+                            className="connector-node__delete"
+                            onClick={handleDelete}
+                            title="Delete Node"
+                            style={{ cursor: 'pointer', paddingLeft: '8px', opacity: 0.6, fontSize: '13px' }}
+                        >
+                            <DeleteOutlined />
+                        </span>
                     </div>
 
                     <div className="connector-node__footer">

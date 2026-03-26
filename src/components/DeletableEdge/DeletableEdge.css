@@ -1,0 +1,40 @@
+.deletable-edge__container {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    position: absolute;
+    pointer-events: all;
+    z-index: 1000;
+}
+
+/* Make it visible when edge is hovered, but also allow the button to be hovered easily */
+.react-flow__edge:hover + .react-flow__edgelabel-renderer .deletable-edge__container,
+.deletable-edge__container:hover {
+    opacity: 1;
+}
+
+/* Always show it if selected (optional) */
+.react-flow__edge.selected + .react-flow__edgelabel-renderer .deletable-edge__container {
+    opacity: 1;
+}
+
+.deletable-edge__btn {
+    width: 24px;
+    height: 24px;
+    background: var(--color-error);
+    color: var(--color-background, #fff);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.deletable-edge__btn:hover {
+    background: var(--color-error-hover, #ff7875);
+    transform: scale(1.1);
+}

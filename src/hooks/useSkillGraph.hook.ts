@@ -1,13 +1,17 @@
 /**
  * useSkillGraph hook
- * Loads initial state from localStorage or falls back to MOCK_INITIAL_GRAPH.
- * Provides a save function to commit current React Flow state to localStorage.
+ * Loads graph from backend API (always the source of truth on load),
+ * seeds localStorage, and provides a save function that reads from localStorage.
  */
 
 import { useState, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { type Node, type Edge } from '@xyflow/react';
 import { loadSkillGraph, saveSkillGraph } from '@/services/graph.service';
+import {
+    loadGraphFromStorage,
+    saveGraphToStorage,
+} from '@/services/skillGraphStorage.service';
 import { message } from 'antd';
 
 export function useSkillGraph() {
@@ -16,25 +20,45 @@ export function useSkillGraph() {
     const [initialEdges, setInitialEdges] = useState<Edge[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
-    // Load graph from backend on mount
+    // Load graph from backend on mount — always replaces localStorage
     useEffect(() => {
         if (!versionId) return;
         setIsLoading(true);
         loadSkillGraph(versionId)
             .then((data: any) => {
-                // Nodes come ready from the backend
-                setInitialNodes(data.nodes || []);
+                const apiNodes: any[] = data.nodes || [];
+                const connectionsObj: Record<string, any> = data.connections || {};
 
-                // Connections come as a keyed object — transform to React Flow edge array
-                const connectionsObj = data.connections || {};
-                const edges: Edge[] = Object.entries(connectionsObj).map(([key, conn]: [string, any]) => ({
-                    id: conn.id || key,
-                    source: conn.source,
-                    target: conn.target,
-                    type: 'default',
-                    animated: true,
-                }));
-                setInitialEdges(edges);
+                // Build the localStorage-compatible node map (keyed by nodeId)
+                const nodesMap: Record<string, any> = {};
+                const reactFlowNodes: Node[] = apiNodes.map((node: any) => {
+                    nodesMap[node.id] = node;
+                    return node;
+                });
+
+                // Build React Flow edges from connections + store connections as-is
+                const connectionsMap: Record<string, any> = {};
+                const reactFlowEdges: Edge[] = Object.entries(connectionsObj).map(([key, conn]: [string, any]) => {
+                    const edgeId = conn.id || key;
+                    connectionsMap[edgeId] = {
+                        id: edgeId,
+                        source: conn.source,
+                        target: conn.target,
+                    };
+                    return {
+                        id: edgeId,
+                        source: conn.source,
+                        target: conn.target,
+                        type: 'default',
+                        animated: true,
+                    };
+                });
+
+                // Seed localStorage (replaces any stale data)
+                saveGraphToStorage(versionId, nodesMap, connectionsMap);
+
+                setInitialNodes(reactFlowNodes);
+                setInitialEdges(reactFlowEdges);
             })
             .catch((err) => {
                 console.error('Failed to load skill graph:', err);
@@ -43,33 +67,27 @@ export function useSkillGraph() {
             .finally(() => setIsLoading(false));
     }, [versionId]);
 
-    // Save current state to backend
-    const saveGraph = useCallback(async (nodes: Node[], edges: Edge[]) => {
+    // Save current state to backend — reads from localStorage
+    const saveGraph = useCallback(async () => {
         if (!versionId) return { success: false, error: 'No version ID' };
 
-        // Strip internal-only fields from node data before sending to backend
-        const cleanNodes = nodes.map(node => {
-            const { inputsSchemaJson, outputsSchemaJson, executionJson, ...cleanData } = (node.data as any) || {};
+        const stored = loadGraphFromStorage(versionId);
+        if (!stored) return { success: false, error: 'No graph data in localStorage' };
+
+        // Convert nodes map to array, strip internal-only fields
+        const cleanNodes = Object.values(stored.nodes).map((node: any) => {
+            const { inputsSchemaJson, outputsSchemaJson, executionJson, ...cleanData } = node.data || {};
             return { ...node, data: cleanData };
         });
 
-        // Convert edges to simplified connections format
-        const connections: Record<string, any> = {};
-        edges.forEach(edge => {
-            connections[edge.id] = {
-                id: edge.id,
-                source: edge.source,
-                target: edge.target,
-            };
-        });
-
-        return saveSkillGraph(versionId, cleanNodes, connections);
+        return saveSkillGraph(versionId, cleanNodes, stored.connections);
     }, [versionId]);
 
     return {
         initialNodes,
         initialEdges,
         saveGraph,
-        isLoading
+        isLoading,
+        versionId: versionId || '',
     };
 }

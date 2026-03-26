@@ -3,15 +3,16 @@
  * Slides out to show the properties of the currently selected React Flow node.
  */
 
-import { Drawer, Input, Form, Typography, Select, Button, Spin, theme, message } from 'antd';
+import { Drawer, Input, Form, Typography, Select, Spin, theme } from 'antd';
 import { useReactFlow, useNodes, useEdges } from '@xyflow/react';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import IconRenderer from '@/components/IconRenderer/IconRenderer';
 import ApiConnectorFields from '@/components/CreateConnectorModal/ApiConnectorFields';
 import DatabaseConnectorFields from '@/components/CreateConnectorModal/DatabaseConnectorFields';
-import { fetchActionById } from '@/services';
-import type { CanvasNodeData, CanvasEdgeData, PropertiesDrawerProps, ActionExecutionConfig, ActionDefinition, ActionCapability } from '@/interfaces';
+import type { CanvasNodeData, CanvasEdgeData, PropertiesDrawerProps } from '@/interfaces';
 import { useCategories, useCapabilities } from '@/hooks';
+import { loadGraphFromStorage, upsertNodeInStorage, upsertConnectionInStorage } from '@/services/skillGraphStorage.service';
 import './PropertiesDrawer.css';
 
 const { Title, Text } = Typography;
@@ -22,233 +23,150 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     const { setNodes, setEdges } = useReactFlow();
     const nodes = useNodes();
     const edges = useEdges();
-    const [isLoadingAction, setIsLoadingAction] = useState(false);
+    const { versionId } = useParams<{ versionId: string }>();
+    const [isLoadingAction] = useState(false);
     const { categories } = useCategories();
     const categoryMap: Record<number, string> = Object.fromEntries(
         categories.map((category: any) => [category.categoryId ?? category.id ?? category.category_id, category.name])
     );
 
-    const { capabilities } = useCapabilities();
-    const capabilitiesMap: Record<number, string> = Object.fromEntries(
-        capabilities.map((capability: any) => [capability.capabilityId ?? capability.capability_id, (capability.name || '').toLowerCase()])
-    );
-
-    // Fetched action data (enriched with JSON blobs from GET /api/actions/{id})
-    const [fetchedExecution, setFetchedExecution] = useState<ActionExecutionConfig | null>(null);
-    const [fetchedConfigs, setFetchedConfigs] = useState<any>({});
-
-    // Track which actionId we last fetched to avoid re-fetching
-    const lastFetchedActionId = useRef<string | null>(null);
+    const { capabilities: _capabilities } = useCapabilities();
 
     // Find the reactive node or edge instance based on the explicit click ID
     const selectedNode = selectedNodeId ? nodes.find(node => node.id === selectedNodeId) || null : null;
     const selectedEdge = selectedEdgeId ? edges.find(edge => edge.id === selectedEdgeId) || null : null;
     const [form] = Form.useForm();
 
-    // When a node is selected, fetch full action data from the backend
+    // When a node is selected, populate the form from localStorage
     useEffect(() => {
         if (!selectedNode) {
-            lastFetchedActionId.current = null;
-            setFetchedExecution(null);
-            setFetchedConfigs([]);
+            form.resetFields();
             return;
         }
 
-        // ── Skip fetching for non-action nodes (e.g. subflow, connector) ──
-        if (selectedNode.type !== 'action' && selectedNode.type !== 'trigger') {
-            lastFetchedActionId.current = null;
-
-            // For connectors, we already have configJson in node.data
-            if (selectedNode.type === 'connector') {
-                const nd = selectedNode.data as any;
-                form.setFieldsValue({
-                    name: nd.label,
-                    description: nd.description || '',
-                    configJson: nd.configJson || {},
-                });
-            }
-            return;
-        }
-
-        const nd = selectedNode.data as unknown as CanvasNodeData;
-        const actionId = nd.actionId;
-
-        if (!actionId || actionId === lastFetchedActionId.current) {
-            return;
-        }
-
-        lastFetchedActionId.current = actionId;
-        setIsLoadingAction(true);
-
-        fetchActionById(actionId).then((result) => {
-            if (result.success && result.data) {
-                const rawAction = result.data as any; // cast to any to access both snake_case and camelCase fields
-                const versionId = rawAction.action_version_id || rawAction.actionVersionId || nd.actionVersionId || '';
-
-                // Map backend fields to frontend interface
-                const action: ActionDefinition = {
-                    ...rawAction,
-                    capability: capabilitiesMap[rawAction.capabilityId ?? rawAction.capability_id] || rawAction.capability || 'api', // ID → name
-                    category: rawAction.category || 'Uncategorized',
-                    configurationsJson: rawAction.configurations_json || rawAction.configurationsJson || {},
-                };
-
-                // Parse execution config
-                let execution: ActionExecutionConfig | null = null;
-                if (rawAction.execution_json || rawAction.executionJson) {
-                    const raw = rawAction.execution_json || rawAction.executionJson;
-                    execution = {
-                        connectorType: raw.connectorType || raw.connector_type || 'rest',
-                        endpointUrl: raw.endpointUrl || raw.endpoint_url || '',
-                        httpMethod: raw.httpMethod || raw.http_method || 'POST',
-                        timeoutMs: Number(raw.timeoutMs) || Number(raw.timeout_ms) || 30000,
-                        retryCount: Number(raw.retryCount) || Number(raw.retry_count) || 0,
-                        retryDelayMs: Number(raw.retryDelayMs) || Number(raw.retry_delay_ms) || 1000,
-                    };
-                }
-
-                // Parse configurations - handle both array (legacy) and flat object (new)
-                let configs: Record<string, any> = {};
-                const configJson = rawAction.configurations_json || rawAction.configurationsJson;
-                if (configJson && typeof configJson === 'object' && !Array.isArray(configJson)) {
-                    configs = configJson;
-                } else if (Array.isArray(configJson)) {
-                    configJson.forEach((c: any) => {
-                        configs[c.inputKey || c.key] = c.defaultValue;
-                    });
-                }
-
-                setFetchedExecution(execution);
-                setFetchedConfigs(configs);
-
-                // Update React Flow node with full data + capability
-                setNodes((nds) =>
-                    nds.map((node) => {
-                        if (node.id === selectedNode.id) {
-                            return {
-                                ...node,
-                                data: {
-                                    ...node.data,
-                                    capability: action.capability.toLowerCase() as ActionCapability,
-                                    categoryId: rawAction.category_id || rawAction.categoryId,
-                                    category: categoryMap[rawAction.category_id || rawAction.categoryId] || (node.data as any).category || action.category,
-                                    executionJson: execution,
-                                    configurationsJson: configs,
-                                    actionVersionId: versionId,
-                                },
-                            };
-                        }
-                        return node;
-                    })
-                );
-            }
-        }).catch((err) => {
-            console.error('Failed to fetch action details:', err);
-        }).finally(() => {
-            setIsLoadingAction(false);
-        });
-    }, [selectedNodeId, selectedNode?.data]);
-
-    // Re-surface the correct node/edge title onto the form fields when data is ready
-    useEffect(() => {
-        if (selectedNode) {
-            const isSubFlow = selectedNode.type === 'subflow';
-            const nodeLabel = selectedNode.data.label;
-
-            if (isSubFlow) {
-                const sd = selectedNode.data as any; // SubFlowNodeData
-                form.setFieldsValue({
-                    label: nodeLabel,
-                    description: sd.description || '',
-                });
-                return;
-            }
-
-
+        // For connectors, read from node.data directly
+        if (selectedNode.type === 'connector') {
+            const nd = selectedNode.data as any;
             form.setFieldsValue({
-                label: nodeLabel,
-                ...fetchedConfigs, // fetchedConfigs is now an object
+                name: nd.label,
+                description: nd.description || '',
+                configJson: nd.configJson || {},
             });
-        } else if (selectedEdge) {
+            return;
+        }
+
+        // For subflows, read from node.data directly
+        if (selectedNode.type === 'subflow') {
+            const sd = selectedNode.data as any;
+            form.setFieldsValue({
+                label: sd.label,
+                description: sd.description || '',
+            });
+            return;
+        }
+
+        // For action/trigger nodes: read from localStorage
+        if (versionId) {
+            const stored = loadGraphFromStorage(versionId);
+            const storedNode = stored?.nodes?.[selectedNode.id];
+            if (storedNode) {
+                const configs = storedNode.data?.configurationsJson || {};
+                form.setFieldsValue({
+                    label: storedNode.data?.label || selectedNode.data.label,
+                    ...(typeof configs === 'object' && !Array.isArray(configs) ? configs : {}),
+                });
+            } else {
+                // Fallback: read from React Flow node data
+                const nd = selectedNode.data as any;
+                const configs = nd.configurationsJson || {};
+                form.setFieldsValue({
+                    label: nd.label,
+                    ...(typeof configs === 'object' && !Array.isArray(configs) ? configs : {}),
+                });
+            }
+        } else {
+            const nd = selectedNode.data as any;
+            const configs = nd.configurationsJson || {};
+            form.setFieldsValue({
+                label: nd.label,
+                ...(typeof configs === 'object' && !Array.isArray(configs) ? configs : {}),
+            });
+        }
+    }, [selectedNodeId, selectedEdgeId, form, versionId]);
+
+    // When edge is selected, populate edge form
+    useEffect(() => {
+        if (selectedEdge) {
             const edgeData = selectedEdge.data as unknown as CanvasEdgeData | undefined;
             form.setFieldsValue({
                 routeType: edgeData?.routeType || 'unconditional',
                 conditionLabel: edgeData?.conditionLabel || '',
             });
-        } else {
-            form.resetFields();
         }
-    }, [selectedNodeId, selectedEdgeId, fetchedExecution, fetchedConfigs, form]);
+    }, [selectedEdgeId, selectedEdge, form]);
 
     // When the form values change we instantly update the React Flow instance
-    const handleValuesChange = (changedValues: any, allValues: any) => {
+    const handleValuesChange = (_changedValues: any, allValues: any) => {
         if (selectedNode) {
+            const currentNode = nodes.find(n => n.id === selectedNode.id);
+            if (!currentNode) return;
+
+            let updatedNode: any = null;
+
             if (selectedNode.type === 'subflow') {
-                setNodes((nodes) =>
-                    nodes.map((node) => {
-                        if (node.id === selectedNode.id) {
-                            return {
-                                ...node,
-                                data: {
-                                    ...node.data,
-                                    label: allValues.label,
-                                    description: allValues.description,
-                                },
-                            };
-                        }
-                        return node;
-                    })
-                );
-                return;
+                updatedNode = {
+                    ...currentNode,
+                    data: {
+                        ...currentNode.data,
+                        label: allValues.label,
+                        description: allValues.description,
+                    },
+                };
+            } else if (selectedNode.type === 'connector') {
+                updatedNode = {
+                    ...currentNode,
+                    data: {
+                        ...currentNode.data,
+                        label: allValues.name || allValues.label,
+                        name: allValues.name || allValues.label, // ensure API parity
+                        description: allValues.description,
+                        configJson: allValues.configJson,
+                    },
+                };
+            } else {
+                // Action/Trigger nodes
+                // Extract configurations (all fields except native node properties)
+                const { label, name, description, ...configurations } = allValues;
+
+                updatedNode = {
+                    ...currentNode,
+                    data: {
+                        ...currentNode.data,
+                        label: label || name || currentNode.data.label,
+                        name: label || name || currentNode.data.name || currentNode.data.label, // strictly mirror to "name" for API
+                        description: description || currentNode.data.description,
+                        // Safely merge new edits into existing objects so we don't drop invisible fields
+                        configurationsJson: { ...(currentNode.data.configurationsJson || {}), ...configurations },
+                        configurations_json: { ...(currentNode.data.configurations_json || {}), ...configurations },
+                    },
+                };
             }
 
-            if (selectedNode.type === 'connector') {
-                setNodes((nds) =>
-                    nds.map((node) => {
-                        if (node.id === selectedNode.id) {
-                            return {
-                                ...node,
-                                data: {
-                                    ...node.data,
-                                    label: allValues.name || allValues.label,
-                                    description: allValues.description,
-                                    configJson: allValues.configJson,
-                                },
-                            };
-                        }
-                        return node;
-                    })
-                );
-                return;
+            // Update React Flow state
+            setNodes((nds) => nds.map((n) => (n.id === selectedNode.id ? updatedNode : n)));
+
+            // Sync to localStorage immediately
+            if (versionId && updatedNode) {
+                upsertNodeInStorage(versionId, selectedNode.id, updatedNode);
             }
-
-            // Extract configurations (all fields except native node properties)
-            const { label, name, description, ...configurations } = allValues;
-
-            // Update the React Flow node data in-place
-            setNodes((nds) =>
-                nds.map((node) => {
-                    if (node.id === selectedNode.id) {
-                        return {
-                            ...node,
-                            data: {
-                                ...node.data,
-                                label: label || name || node.data.label,
-                                description: description || node.data.description,
-                                configurationsJson: configurations,
-                            },
-                        };
-                    }
-                    return node;
-                })
-            );
         } else if (selectedEdge) {
+            let updatedEdge: any = null;
             setEdges((edges) =>
                 edges.map((edge) => {
                     if (edge.id === selectedEdge.id) {
                         const newRouteType = allValues.routeType;
                         const labelText = newRouteType === 'conditional' ? allValues.conditionLabel : (newRouteType === 'fallback' ? 'Default' : undefined);
-                        return {
+                        updatedEdge = {
                             ...edge,
                             label: labelText,
                             labelShowBg: !!labelText,
@@ -258,10 +176,23 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                 conditionLabel: allValues.conditionLabel,
                             },
                         };
+                        return updatedEdge;
                     }
                     return edge;
                 })
             );
+            
+            // Sync to localStorage
+            if (versionId && updatedEdge) {
+                // To avoid React Flow specific internal props (like selected) blowing up storage,
+                // we store a clean representation
+                upsertConnectionInStorage(versionId, selectedEdge.id, {
+                    id: updatedEdge.id,
+                    source: updatedEdge.source,
+                    target: updatedEdge.target,
+                    ...updatedEdge.data, // store routeType and conditionLabel
+                });
+            }
         }
     };
 
@@ -701,18 +632,6 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                             }
                         </Form.Item>
                     </Form>
-
-                    <div style={{ marginTop: '32px', display: 'flex', gap: '8px' }}>
-                        <Button type="primary" block onClick={() => form.submit()}>
-                            Apply
-                        </Button>
-                        <Button danger variant="outlined" block onClick={() => {
-                            setEdges((edges) => edges.filter(edge => edge.id !== selectedEdge.id));
-                            onClose();
-                        }}>
-                            Delete Edge
-                        </Button>
-                    </div>
                 </div>
             );
         }
