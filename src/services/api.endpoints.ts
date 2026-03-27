@@ -36,4 +36,7 @@ export const API_ENDPOINTS = {
         GROUPED: '/api/v1/connectors/grouped',
         BY_ID: (connectorId: number) => `/api/v1/connectors/${connectorId}`,
     },
+    ENGINE: {
+        GENERATE_CODE: (versionId: string) => `/api/engine/generate-code/${versionId}`,
+    },
 } as const;

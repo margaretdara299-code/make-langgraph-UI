@@ -20,7 +20,6 @@ export default function CreateActionModal({ isOpen, onClose, onCreated, actionTo
     // The single source of truth for the Action being built
     const [actionDraft, setActionDraft] = useState<Partial<ActionDefinition>>({
         category: 'Uncategorized',
-        capability_id: 4,
         scope: 'global',
         icon: '🧩',
     });
@@ -39,7 +38,6 @@ export default function CreateActionModal({ isOpen, onClose, onCreated, actionTo
                 // Reset for creating a new action
                 setActionDraft({
                     category: 'Uncategorized',
-                    capability_id: 4,
                     scope: 'global' as const,
                     icon: '🧩',
                 });

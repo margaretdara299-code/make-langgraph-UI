@@ -25,11 +25,17 @@ export interface ActionDefinition {
 
     // ── Version-level Configuration Blob ──
     configurations_json?: Record<string, any>;
+    configurationsJson?: Record<string, any>;
     inputs_schema_json?: any;
+    inputsSchemaJson?: any;
     execution_json?: any;
+    executionJson?: any;
     outputs_schema_json?: any;
+    outputsSchemaJson?: any;
     ui_form_json?: any;
+    uiFormJson?: any;
     policy_json?: any;
+    policyJson?: any;
 }
 
 export interface ActionVersion {

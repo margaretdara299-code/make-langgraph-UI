@@ -91,3 +91,13 @@ export async function runSkillVersion(
         maxSteps,
     }).then(res => res.data);
 }
+
+/**
+ * Generates executable LangGraph Python source code for a given skill version.
+ * @param skillVersionId The unique identifier of the skill version.
+ */
+export async function generateCode(skillVersionId: string) {
+    return apiClient.get<{ code: string }>(
+        API_ENDPOINTS.ENGINE.GENERATE_CODE(skillVersionId)
+    ).then(res => res.data);
+}
