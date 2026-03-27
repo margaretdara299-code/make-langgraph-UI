@@ -10,6 +10,8 @@ import SkillsLibraryPage from '@/pages/SkillsLibrary/SkillsLibraryPage';
 import SkillDesignerPage from '@/pages/SkillDesigner/SkillDesignerPage';
 import ActionCatalogPage from '@/pages/ActionCatalog/ActionCatalogPage';
 import ConnectorsPage from '@/pages/Connectors/ConnectorsPage';
+import CategoriesPage from '@/pages/Categories/CategoriesPage';
+import CapabilitiesPage from '@/pages/Capabilities/CapabilitiesPage';
 import { ROUTES } from '@/routes';
 import AppInitializer from '@/components/AppInitializer/AppInitializer';
 
@@ -25,6 +27,8 @@ function App() {
               <Route path={ROUTES.SKILL_DESIGNER} element={<SkillDesignerPage />} />
               <Route path={ROUTES.ACTION_CATALOG} element={<ActionCatalogPage />} />
               <Route path={ROUTES.CONNECTORS} element={<ConnectorsPage />} />
+              <Route path={ROUTES.CATEGORIES} element={<CategoriesPage />} />
+              <Route path={ROUTES.CAPABILITIES} element={<CapabilitiesPage />} />
             </Routes>
           </MainLayout>
         </BrowserRouter>

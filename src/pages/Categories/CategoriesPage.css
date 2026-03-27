@@ -1,0 +1,58 @@
+/**
+ * CategoriesPage styles. Mirrors ConnectorsPage layout.
+ */
+
+.categories-page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: calc(100vh - 112px);
+}
+
+.categories-page__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.categories-page__title {
+    margin: 0 !important;
+}
+
+.categories-page__toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.categories-page__search {
+    max-width: 480px;
+}
+
+.categories-page__body {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+}
+
+.categories-page__grid-area {
+    flex: 1;
+    min-width: 0;
+    overflow-y: auto;
+    padding-right: 12px;
+}
+
+.categories-page__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.categories-page__loading,
+.categories-page__empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+}

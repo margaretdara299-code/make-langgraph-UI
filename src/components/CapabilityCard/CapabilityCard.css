@@ -1,0 +1,60 @@
+/**
+ * CapabilityCard styles.
+ */
+
+.capability-card {
+    border-radius: 12px;
+    transition: box-shadow 0.2s ease;
+}
+
+.capability-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.capability-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.capability-card__icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-node-trigger-bg);
+    color: var(--color-node-trigger-text);
+    font-size: 18px;
+}
+
+.capability-card__menu-trigger {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.capability-card__menu-trigger:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.capability-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.capability-card__title {
+    margin: 0 !important;
+}
+
+.capability-card__description {
+    min-height: 22px;
+}

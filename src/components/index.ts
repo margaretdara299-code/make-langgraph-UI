@@ -31,3 +31,7 @@ export { default as SubFlowNode } from './SubFlowNode/SubFlowNode';
 export { default as EditSkillModal } from './EditSkillModal/EditSkillModal';
 export { default as CreateConnectorModal } from './CreateConnectorModal/CreateConnectorModal';
 export { default as ConnectorCard } from './ConnectorCard/ConnectorCard';
+export { default as CategoryCard } from './CategoryCard/CategoryCard';
+export { default as CapabilityCard } from './CapabilityCard/CapabilityCard';
+export { default as CreateCategoryModal } from './CreateCategoryModal/CreateCategoryModal';
+export { default as CreateCapabilityModal } from './CreateCapabilityModal/CreateCapabilityModal';

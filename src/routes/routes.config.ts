@@ -8,5 +8,7 @@ export const ROUTES = {
     SKILLS_LIBRARY: '/skills',
     SKILL_DESIGNER: '/skills/:skillId/versions/:versionId/design',
     ACTION_CATALOG: '/settings/catalog',
+    CATEGORIES: '/settings/categories',
+    CAPABILITIES: '/settings/capabilities',
     CONNECTORS: '/connectors',
 } as const;

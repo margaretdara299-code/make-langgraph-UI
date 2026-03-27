@@ -1,0 +1,58 @@
+/**
+ * CapabilitiesPage styles. Mirrors ConnectorsPage layout.
+ */
+
+.capabilities-page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: calc(100vh - 112px);
+}
+
+.capabilities-page__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.capabilities-page__title {
+    margin: 0 !important;
+}
+
+.capabilities-page__toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.capabilities-page__search {
+    max-width: 480px;
+}
+
+.capabilities-page__body {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+}
+
+.capabilities-page__grid-area {
+    flex: 1;
+    min-width: 0;
+    overflow-y: auto;
+    padding-right: 12px;
+}
+
+.capabilities-page__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.capabilities-page__loading,
+.capabilities-page__empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+}
