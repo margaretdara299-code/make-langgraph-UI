@@ -3,17 +3,28 @@
  * Standardized for Top/Bottom connectivity.
  */
 
-import { Handle, Position, NodeResizer } from '@xyflow/react';
+import { Handle, Position, NodeResizer, useReactFlow } from '@xyflow/react';
+import { useParams } from 'react-router-dom';
+import { DeleteOutlined } from '@ant-design/icons';
 import type { NodeProps } from '@xyflow/react';
 import type { CanvasNode } from '@/interfaces';
+import { removeNodeFromStorage } from '@/services/skillGraphStorage.service';
 import './SubFlowNode.css';
 
-export default function SubFlowNode({ data, selected }: NodeProps<CanvasNode>) {
+export default function SubFlowNode({ id, data, selected }: NodeProps<CanvasNode>) {
     const nodeData = data;
+    const { setNodes } = useReactFlow();
+    const { versionId } = useParams<{ versionId: string }>();
 
     // Use a fixed accent color or derive from data if available
     const accentColor = nodeData.color || 'var(--color-primary)';
     const headerBg = accentColor;
+
+    const handleDelete = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setNodes((nodes) => nodes.filter((node) => node.id !== id));
+        if (versionId) removeNodeFromStorage(versionId, id);
+    };
 
     return (
         <div 
@@ -44,8 +55,15 @@ export default function SubFlowNode({ data, selected }: NodeProps<CanvasNode>) {
                         }}
                     >
                         <span className="subflow-node__icon">📦</span>
-                        <span className="subflow-node__title">
+                        <span className="subflow-node__title" style={{ flex: 1 }}>
                             {nodeData.label || 'Sub-Flow'}
+                        </span>
+                        <span
+                            className="subflow-node__delete"
+                            onClick={handleDelete}
+                            title="Delete Sub-Flow"
+                        >
+                            <DeleteOutlined />
                         </span>
                     </div>
 

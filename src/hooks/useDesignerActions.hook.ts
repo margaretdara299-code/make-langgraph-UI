@@ -14,6 +14,8 @@ export default function useDesignerActions() {
     } = useQuery({
         queryKey: ['designerActions'],
         queryFn: fetchGroupedActions,
+        staleTime: 0, // Always consider stale so it refetches
+        refetchOnMount: true, // Force refetch when canvas opens
     });
 
     return {

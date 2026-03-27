@@ -35,3 +35,5 @@ export { default as CategoryCard } from './CategoryCard/CategoryCard';
 export { default as CapabilityCard } from './CapabilityCard/CapabilityCard';
 export { default as CreateCategoryModal } from './CreateCategoryModal/CreateCategoryModal';
 export { default as CreateCapabilityModal } from './CreateCapabilityModal/CreateCapabilityModal';
+export { default as CodeViewerModal } from './CodeViewerModal/CodeViewerModal';
+export { default as PublishStepperModal } from './PublishStepperModal/PublishStepperModal';

@@ -163,3 +163,31 @@ export interface ReviewPolicyProps {
 export interface StructureSectionProps {
     search: string;
 }
+
+export interface CreateCategoryModalProps {
+    isOpen: boolean;
+    categoryToEdit: import('./category.interface').Category | null;
+    onClose: () => void;
+    onCreated: () => void;
+}
+
+export interface CreateCapabilityModalProps {
+    isOpen: boolean;
+    capabilityToEdit: import('./capability.interface').Capability | null;
+    onClose: () => void;
+    onCreated: () => void;
+}
+
+export interface CodeViewerModalProps {
+    isOpen: boolean;
+    code: string;
+    onClose: () => void;
+    fileName?: string;
+}
+
+export interface PublishStepperModalProps {
+    isOpen: boolean;
+    versionId: string;
+    onClose: () => void;
+    onViewCode?: (code: string) => void;
+}

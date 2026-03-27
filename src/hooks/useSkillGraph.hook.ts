@@ -33,7 +33,22 @@ export function useSkillGraph() {
                 const nodesMap: Record<string, any> = {};
                 const reactFlowNodes: Node[] = apiNodes.map((node: any) => {
                     nodesMap[node.id] = node;
-                    return node;
+                    // Preserve parentId and extent for sub-flow children
+                    const rfNode: any = { ...node };
+                    if (node.parentId || node.parentNode) {
+                        rfNode.parentId = node.parentId || node.parentNode;
+                        rfNode.extent = node.extent || 'parent';
+                    }
+                    return rfNode as Node;
+                });
+
+                // Sort: parent (subflow) nodes must come before their children
+                reactFlowNodes.sort((a, b) => {
+                    const aIsParent = a.type === 'subflow';
+                    const bIsParent = b.type === 'subflow';
+                    if (aIsParent && !bIsParent) return -1;
+                    if (!aIsParent && bIsParent) return 1;
+                    return 0;
                 });
 
                 // Build React Flow edges from connections + store connections as-is
