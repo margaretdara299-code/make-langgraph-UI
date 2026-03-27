@@ -5,6 +5,7 @@
 export const API_ENDPOINTS = {
     CATEGORIES: {
         BASE: '/api/v1/categories',
+        BY_ID: (categoryId: number) => `/api/v1/categories/${categoryId}`,
     },
     SKILLS: {
         BASE: '/api/skills',
@@ -14,6 +15,7 @@ export const API_ENDPOINTS = {
     },
     CAPABILITIES: {
         BASE: '/api/v1/capabilities',
+        BY_ID: (capabilityId: number) => `/api/v1/capabilities/${capabilityId}`,
     },
     SKILL_GRAPH: {
         GRAPH: (versionId: string) => `/api/skills/versions/${versionId}/graph`,
