@@ -45,8 +45,8 @@ export interface SelectOption {
 export interface ConnectorInstance {
     id: string;
     name: string;
-    connectorType: string;
-    clientId: string;
+    connector_type: string;
+    client_id: string;
     environment: string;
-    secretRef: string;
+    secret_ref: string;
 }

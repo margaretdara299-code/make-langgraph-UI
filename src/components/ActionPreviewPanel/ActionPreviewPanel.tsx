@@ -13,19 +13,19 @@ export default function ActionPreviewPanel({ actionDef, currentStep }: ActionPre
     // Generate a mock complete ActionDefinition for the card to render
     const mockAction: ActionDefinition = {
         id: 'preview-01',
-        actionKey: actionDef.actionKey || 'my.new.action',
+        action_key: actionDef.action_key || 'my_new_action',
         name: actionDef.name || 'Untitled Action',
         description: actionDef.description || 'Provide a description for this action...',
         category: actionDef.category || 'Uncategorized',
         capability: actionDef.capability || 'api',
         scope: actionDef.scope || 'global',
         icon: actionDef.icon || '🧩',
-        defaultNodeTitle: actionDef.defaultNodeTitle || actionDef.name || 'Untitled',
+        default_node_title: actionDef.default_node_title || actionDef.name || 'Untitled',
         status: 'draft',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
     };
-    const configKeysCount = Object.keys(actionDef.configurationsJson || {}).length;
+    const configKeysCount = Object.keys(actionDef.configurations_json || {}).length;
 
     return (
         <div className="action-preview-panel">

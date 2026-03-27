@@ -17,17 +17,17 @@ export default function NodePaletteItem({ action }: NodePaletteItemProps) {
 
     const handleDragStart = (e: React.DragEvent) => {
         const dragData = JSON.stringify({
-            actionId: action.id,
-            actionKey: action.actionKey,
-            actionVersionId: (action as any).actionVersionId || (action as any).latestVersionId || '',
-            label: action.defaultNodeTitle,
+            action_id: action.id,
+            action_key: action.action_key,
+            action_version_id: (action as any).action_version_id || (action as any).latestVersionId || '',
+            label: action.default_node_title || action.name,
             category: action.category,
             capability: action.capability,
             icon: action.icon || '⚡',
-            inputsSchemaJson: action.inputsSchemaJson || [],
-            outputsSchemaJson: action.outputsSchemaJson || [],
-            executionJson: action.executionJson || null,
-            configurationsJson: action.configurationsJson || [],
+            inputs_schema_json: action.inputs_schema_json || [],
+            outputs_schema_json: action.outputs_schema_json || [],
+            execution_json: action.execution_json || null,
+            configurations_json: action.configurations_json || [],
         });
         e.dataTransfer.setData('application/reactflow', dragData);
         e.dataTransfer.effectAllowed = 'move';

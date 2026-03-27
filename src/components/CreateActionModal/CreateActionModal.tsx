@@ -20,7 +20,7 @@ export default function CreateActionModal({ isOpen, onClose, onCreated, actionTo
     // The single source of truth for the Action being built
     const [actionDraft, setActionDraft] = useState<Partial<ActionDefinition>>({
         category: 'Uncategorized',
-        capabilityId: 4,
+        capability_id: 4,
         scope: 'global',
         icon: '🧩',
     });
@@ -39,7 +39,7 @@ export default function CreateActionModal({ isOpen, onClose, onCreated, actionTo
                 // Reset for creating a new action
                 setActionDraft({
                     category: 'Uncategorized',
-                    capabilityId: 4,
+                    capability_id: 4,
                     scope: 'global' as const,
                     icon: '🧩',
                 });
@@ -69,16 +69,32 @@ export default function CreateActionModal({ isOpen, onClose, onCreated, actionTo
     const handlePublish = async () => {
         setIsSubmitting(true);
         try {
+            // Clean configurations_json: strip empty rows/fields before sending to backend
+            const rawConfig = actionDraft.configurations_json || {};
+            const cleanedConfig: Record<string, any> = {};
+            if (rawConfig.url) cleanedConfig.url = rawConfig.url;
+            if (rawConfig.method) cleanedConfig.method = rawConfig.method;
+            if (rawConfig.output_key) cleanedConfig.output_key = rawConfig.output_key;
+            if (Array.isArray(rawConfig.parameters)) {
+                const filtered = rawConfig.parameters.filter((p: any) => p && (p.key || p.value));
+                if (filtered.length > 0) cleanedConfig.parameters = filtered;
+            }
+            if (Array.isArray(rawConfig.input_keys)) {
+                const filtered = rawConfig.input_keys.filter((k: any) => k && k.key);
+                if (filtered.length > 0) cleanedConfig.input_keys = filtered;
+            }
+            const cleanedDraft = { ...actionDraft, configurations_json: cleanedConfig };
+
             let res;
             if (actionToEdit) {
                 // Edit: PUT /api/actions/{id}
-                res = await updateActionDefinition(actionToEdit.id, actionDraft);
+                res = await updateActionDefinition(actionToEdit.id, cleanedDraft);
                 if (res.success) {
                     message.success(res.message || 'Action updated successfully!');
                 }
             } else {
                 // Create: POST /api/actions
-                res = await createAction(actionDraft);
+                res = await createAction(cleanedDraft);
                 if (res.success) {
                     message.success(res.message || 'Action created successfully!');
                 }

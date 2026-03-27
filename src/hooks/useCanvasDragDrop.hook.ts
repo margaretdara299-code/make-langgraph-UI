@@ -107,9 +107,9 @@ export default function useCanvasDragDrop(
                         category: data.category || 'Connectors',
                         capability: data.capability || 'api',
                         icon: data.icon || 'ApiOutlined',
-                        connectorId: data.connectorId,
-                        connectorType: data.connectorType,
-                        configJson: data.configJson,
+                        connector_id: data.connector_id || data.connectorId,
+                        connector_type: data.connector_type || data.connectorType,
+                        config_json: data.config_json || data.configJson,
                     } as any,
                     ...(parentSubFlow
                         ? {
@@ -158,7 +158,7 @@ export default function useCanvasDragDrop(
             setNodes((nds) => [...nds, placeholderNode]);
 
             // Fetch full action data from backend to enrich the node
-            const actionId = nodeData.actionId;
+            const actionId = nodeData.action_id || (nodeData as any).actionId;
             if (actionId) {
                 // Fetch both action details and capabilities map to guarantee capability name resolution
                 import('@/services').then(({ fetchCapabilities }) => {
@@ -189,15 +189,15 @@ export default function useCanvasDragDrop(
 
                             const enrichedData = {
                                 ...rawAction, // Keep every payload key the API returned!
-                                actionId: rawAction.actionDefinitionId || rawAction.action_definition_id || actionId,
-                                actionKey: rawAction.actionKey || rawAction.action_key || nodeData.actionKey,
-                                actionVersionId: rawAction.actionVersionId || rawAction.action_version_id || '',
+                                action_id: rawAction.action_definition_id || rawAction.action_id || actionId,
+                                action_key: rawAction.action_key || nodeData.action_key,
+                                action_version_id: rawAction.action_version_id || '',
                                 label: nodeData.label || rawAction.name,
                                 category: nodeData.category || rawAction.category || 'Uncategorized',
                                 capability: mappedCapability,
                                 icon: nodeData.icon || rawAction.icon || '🧩',
-                                configurationsJson: rawAction.configurationsJson || rawAction.configurations_json || {},
-                                categoryId: rawAction.categoryId || rawAction.category_id,
+                                configurations_json: rawAction.configurations_json || {},
+                                category_id: rawAction.category_id,
                             };
 
                             // Build the full node object matching the Save payload format

@@ -1,5 +1,7 @@
 import { apiClient } from './http.service';
 import { API_ENDPOINTS } from './api.endpoints';
+import { fetchCapabilities } from './capability.service';
+import { fetchCategories } from './category.service';
 import type { ActionDefinition, PaginatedResponse, ApiResponse, ActionFilters } from '@/interfaces';
 
 // Cache for mock fallback functions
@@ -16,35 +18,35 @@ export async function createAction(
     try {
         const payload = {
             name: input.name || 'Untitled Action',
-            actionKey: input.actionKey || 'new.action.key',
+            action_key: input.action_key || 'new_action_key',
             description: input.description || '',
             category: input.category || 'Uncategorized',
-            categoryId: input.categoryId || 1,
+            category_id: input.category_id || 1,
             capability: (input.capability || 'api').toUpperCase(),
-            capabilityId: input.capabilityId || 1,
+            capability_id: input.capability_id || 1,
             icon: input.icon || '🧩',
-            defaultNodeTitle: input.defaultNodeTitle || input.name || 'Untitled',
+            default_node_title: input.default_node_title || input.name || 'Untitled',
             scope: input.scope || 'global',
 
             // ── Version-level JSON blobs (wizard step 2: Configuration) ──
-            configurationsJson: input.configurationsJson || {},
+            configurations_json: input.configurations_json || {},
         };
 
         const res = await apiClient.post<ActionDefinition>(API_ENDPOINTS.ACTIONS.BASE, payload);
 
         const newAction: ActionDefinition = {
             id: 'pending-refresh',
-            actionKey: input.actionKey || 'new.action.key',
+            action_key: input.action_key || 'new_action_key',
             name: input.name || 'Untitled Action',
             description: input.description || '',
             category: input.category || 'Uncategorized',
             capability: input.capability || 'api',
             scope: input.scope || 'global',
             icon: input.icon || '🧩',
-            defaultNodeTitle: input.defaultNodeTitle || input.name || 'Untitled',
+            default_node_title: input.default_node_title || input.name || 'Untitled',
             status: 'draft',
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
         };
         return { success: true, data: newAction, message: res.message };
     } catch (error) {
@@ -59,7 +61,15 @@ export async function createAction(
  */
 export async function fetchGroupedActions(): Promise<Record<string, ActionDefinition[]>> {
     try {
-        const result = await apiClient.get<any>(API_ENDPOINTS.ACTIONS.GROUPED);
+        // Fetch capabilities map in parallel so we can resolve capability_id → name
+        const [result, capList] = await Promise.all([
+            apiClient.get<any>(API_ENDPOINTS.ACTIONS.GROUPED),
+            fetchCapabilities().catch(() => []),
+        ]);
+
+        const capMap: Record<number, string> = Object.fromEntries(
+            capList.map((c: any) => [c.capabilityId ?? c.capability_id, (c.name || '').toLowerCase()])
+        );
 
         // The backend wraps the response in { data: { "CategoryName": [...], ... } }
         const grouped: Record<string, any[]> = result.data || {};
@@ -67,18 +77,21 @@ export async function fetchGroupedActions(): Promise<Record<string, ActionDefini
 
         for (const [category, actions] of Object.entries(grouped)) {
             mapped[category] = (actions as any[]).map((a: any) => ({
-                id: a.actionDefinitionId || a.id,
-                actionKey: a.actionKey || '',
+                id: a.action_definition_id || a.actionDefinitionId || a.id,
+                action_key: a.action_key || a.actionKey || '',
                 name: a.name || '',
                 description: a.description || '',
                 category: category,
-                capability: (a.capability || 'api').toLowerCase(),
+                capability: (capMap[a.capability_id || a.capabilityId] || a.capability || 'api').toLowerCase(),
+                capability_id: a.capability_id || a.capabilityId,
                 scope: a.scope || 'global',
                 icon: a.icon || '🧩',
-                defaultNodeTitle: a.defaultNodeTitle || a.name || '',
+                default_node_title: a.default_node_title || a.defaultNodeTitle || a.name || '',
                 status: a.status || 'published',
-                createdAt: a.createdAt || '',
-                updatedAt: a.updatedAt || '',
+                created_at: a.created_at || a.createdAt || '',
+                updated_at: a.updated_at || a.updatedAt || '',
+                configurations_json: a.configurations_json || a.configurationsJson || {},
+                action_version_id: a.action_version_id || a.actionVersionId || '',
             } as ActionDefinition));
         }
 
@@ -108,16 +121,36 @@ export async function fetchActions(
         const queryString = params.toString();
         const url = `${API_ENDPOINTS.ACTIONS.BASE}${queryString ? `?${queryString}` : ''}`;
 
-        const result = await apiClient.get<{ items: ActionDefinition[]; total: number }>(url);
+        // Fetch capabilities and categories map in parallel
+        const [result, capList, catList] = await Promise.all([
+            apiClient.get<{ items: ActionDefinition[]; total: number }>(url),
+            fetchCapabilities().catch(() => []),
+            fetchCategories().catch(() => []),
+        ]);
 
-        const items: ActionDefinition[] = (result.data.items || []).map((a) => {
+        const capMap: Record<number, string> = Object.fromEntries(
+            capList.map((c: any) => [c.capabilityId ?? c.capability_id, (c.name || '').toLowerCase()])
+        );
+
+        const catMap: Record<number, string> = Object.fromEntries(
+            catList.map((c: any) => [c.id || c.categoryId || c.category_id, c.name || ''])
+        );
+
+        const items: ActionDefinition[] = (result.data.items || []).map((a: ActionDefinition) => {
             const anyA = a as any;
+            const capId = anyA.capability_id || anyA.capabilityId;
+            const catId = anyA.category_id || anyA.categoryId;
+            
             return {
                 ...a,
-                id: anyA.actionDefinitionId || anyA.id,
-                categoryId: anyA.categoryId || anyA.category_id,
-                capabilityId: anyA.capabilityId || anyA.capability_id,
-                capability: (a.capability || 'api').toLowerCase() as ActionDefinition['capability'],
+                id: anyA.action_definition_id || anyA.actionDefinitionId || anyA.id,
+                action_key: anyA.action_key || anyA.actionKey || '',
+                category_id: catId,
+                category: anyA.category || catMap[catId] || 'Uncategorized',
+                capability_id: capId,
+                capability: (capMap[capId] || a.capability || 'api').toLowerCase() as ActionDefinition['capability'],
+                updated_at: anyA.updated_at || anyA.updatedAt || '',
+                created_at: anyA.created_at || anyA.createdAt || '',
             };
         });
 
@@ -236,23 +269,23 @@ export async function fetchActionById(id: string): Promise<ApiResponse<ActionDef
 
         const action: ActionDefinition = {
             id: data.action_definition_id || data.actionDefinitionId || data.id || id,
-            actionKey: data.action_key || data.actionKey || '',
+            action_key: data.action_key || data.actionKey || '',
             name: data.name || '',
             description: data.description || '',
             category: data.category || 'Uncategorized',
-            categoryId: data.category_id || data.categoryId,
+            category_id: data.category_id || data.categoryId,
             capability: data.capability || 'api',
-            capabilityId: data.capability_id || data.capabilityId,
+            capability_id: data.capability_id || data.capabilityId,
             scope: data.scope || 'global',
             icon: data.icon || '🧩',
-            defaultNodeTitle: data.default_node_title || data.name || '',
+            default_node_title: data.default_node_title || data.defaultNodeTitle || data.name || '',
             status: data.status || 'draft',
-            createdAt: data.created_at || data.createdAt || '',
-            updatedAt: data.updated_at || data.updatedAt || '',
-            configurationsJson: data.configurations_json || data.configurationsJson || {},
-            executionJson: data.execution_json || data.executionJson,
-            inputsSchemaJson: data.inputs_schema_json || data.inputsSchemaJson,
-            outputsSchemaJson: data.outputs_schema_json || data.outputsSchemaJson,
+            created_at: data.created_at || data.createdAt || '',
+            updated_at: data.updated_at || data.updatedAt || '',
+            configurations_json: data.configurations_json || data.configurationsJson || {},
+            execution_json: data.execution_json || data.executionJson,
+            inputs_schema_json: data.inputs_schema_json || data.inputsSchemaJson,
+            outputs_schema_json: data.outputs_schema_json || data.outputsSchemaJson,
         };
 
         // Attach backend version IDs
@@ -280,13 +313,20 @@ export async function updateActionDefinition(
     try {
         // Sanitize payload: remove unused and replace null with {}
         const sanitized: any = { ...payload };
+        delete sanitized.execution_json;
         delete sanitized.executionJson;
+        delete sanitized.ui_form_json;
         delete sanitized.uiFormJson;
+        delete sanitized.policy_json;
         delete sanitized.policyJson;
+        delete sanitized.inputs_schema_json;
         delete sanitized.inputsSchemaJson;
+        delete sanitized.outputs_schema_json;
         delete sanitized.outputsSchemaJson;
 
-        if (sanitized.configurationsJson === null || sanitized.configurationsJson === undefined) sanitized.configurationsJson = {};
+        if (sanitized.configurations_json === null || sanitized.configurations_json === undefined) {
+             sanitized.configurations_json = sanitized.configurationsJson || {};
+        }
 
         const result = await apiClient.put<ActionDefinition>(API_ENDPOINTS.ACTIONS.UPDATE(actionDefinitionId), sanitized);
         return { success: true, data: result.data, message: result.message };

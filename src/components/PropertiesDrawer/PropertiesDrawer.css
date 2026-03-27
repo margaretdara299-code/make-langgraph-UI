@@ -103,3 +103,67 @@
 .properties-drawer__schema-table .ant-table-tbody > tr:last-child > td {
     border-bottom: none;
 }
+
+/* ── Unified Config Form ── */
+
+.properties-drawer__flex-row {
+    display: flex;
+    gap: 12px;
+}
+
+.properties-drawer__flex-item {
+    flex: 1;
+}
+
+.properties-drawer__method-select {
+    width: 140px;
+    flex-shrink: 0;
+}
+
+.properties-drawer__kv-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.properties-drawer__kv-field {
+    flex: 1;
+    margin-bottom: 0 !important;
+}
+
+.properties-drawer__delete-icon {
+    color: var(--color-error);
+    font-size: 14px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: color 0.2s ease;
+}
+
+.properties-drawer__delete-icon:hover {
+    color: var(--color-error-hover, #ff7875);
+}
+
+.properties-drawer__empty-hint {
+    display: block;
+    margin-bottom: 8px;
+    font-style: italic;
+    font-size: 12px;
+}
+
+.properties-drawer__state-row {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.properties-drawer__state-col {
+    flex: 1;
+    min-width: 0;
+}
+
+.properties-drawer__state-divider {
+    width: 1px;
+    align-self: stretch;
+    background-color: var(--color-border);
+}

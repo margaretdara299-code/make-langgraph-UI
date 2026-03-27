@@ -3,7 +3,7 @@ import { Form, Input, Select, Space, Typography, Tooltip } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { useCategories, useCapabilities } from '@/hooks';
 import { ACTION_KEY_PATTERN, ACTION_DESCRIPTION_MAX_LENGTH } from '@/constants';
-import type { ActionCapability, CreateActionOverviewProps } from '@/interfaces';
+import type { CreateActionOverviewProps } from '@/interfaces';
 import './CreateActionOverview.css';
 
 const { Title } = Typography;
@@ -18,17 +18,17 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
     // Side effect: If draft has IDs but empty/default labels, "repair" them for the preview panel
     // This handles cases where we open in Edit mode and want the preview to be accurate immediately
     useEffect(() => {
-        if (!isCategoriesLoading && categories.length > 0 && draft.categoryId) {
-            const cat = categories.find(category => (category.categoryId ?? category.id) === draft.categoryId);
+        if (!isCategoriesLoading && categories.length > 0 && draft.category_id) {
+            const cat = categories.find(category => (category.categoryId ?? category.id) === draft.category_id);
             if (cat && draft.category !== cat.name) {
                 setDraft(prev => ({ ...prev, category: cat.name }));
             }
         }
-    }, [isCategoriesLoading, categories, draft.categoryId, draft.category, setDraft]);
+    }, [isCategoriesLoading, categories, draft.category_id, draft.category, setDraft]);
 
     useEffect(() => {
-        if (!isCapabilitiesLoading && capabilities.length > 0 && draft.capabilityId) {
-            const cap = capabilities.find(capability => capability.capabilityId === draft.capabilityId);
+        if (!isCapabilitiesLoading && capabilities.length > 0 && draft.capability_id) {
+            const cap = capabilities.find(capability => capability.capabilityId === draft.capability_id);
             if (cap) {
                 const capName = cap.name.toLowerCase();
                 if (draft.capability !== capName) {
@@ -36,22 +36,27 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                 }
             }
         }
-    }, [isCapabilitiesLoading, capabilities, draft.capabilityId, draft.capability, setDraft]);
+    }, [isCapabilitiesLoading, capabilities, draft.capability_id, draft.capability, setDraft]);
 
     // Form value changes update the master draft state
     // We also map IDs back to labels so the Preview Panel/ActionCard can show names
     const handleValuesChange = (changedValues: any) => {
         let updates = { ...changedValues };
 
-        // If categoryId changed, find and include the category name label
-        if (changedValues.categoryId) {
-            const cat = categories.find(category => (category.categoryId ?? category.id) === changedValues.categoryId);
+        // If name changed, also update default_node_title
+        if (changedValues.name) {
+            updates.default_node_title = changedValues.name;
+        }
+
+        // If category_id changed, find and include the category name label
+        if (changedValues.category_id) {
+            const cat = categories.find(category => (category.categoryId ?? category.id) === changedValues.category_id);
             if (cat) updates.category = cat.name;
         }
 
-        // If capabilityId changed, find and include the capability name for the preview
-        if (changedValues.capabilityId) {
-            const cap = capabilities.find(capability => capability.capabilityId === changedValues.capabilityId);
+        // If capability_id changed, find and include the capability name for the preview
+        if (changedValues.capability_id) {
+            const cap = capabilities.find(capability => capability.capabilityId === changedValues.capability_id);
             if (cap) {
                 updates.capability = cap.name;
             }
@@ -85,20 +90,20 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                     </Form.Item>
 
                     <Form.Item
-                        name="actionKey"
+                        name="action_key"
                         label="Action Key"
                         rules={[
                             { required: true, message: 'Key is required' },
-                            { pattern: ACTION_KEY_PATTERN, message: 'Use lowercase dot notation (e.g. api.eligibility)' }
+                            { pattern: ACTION_KEY_PATTERN, message: 'Only letters, numbers, and underscores. No spaces. (e.g. verify_eligibility)' }
                         ]}
                         className="create-action-overview__flex-1"
                     >
-                        <Input placeholder="e.g., api.eligibility.verify" size="large" />
+                        <Input placeholder="e.g., verify_eligibility" size="large" />
                     </Form.Item>
                 </div>
 
                 <div className="create-action-overview__row">
-                    <Form.Item name="categoryId" label="Category" rules={[{ required: true, message: 'Category is required' }]} className="create-action-overview__flex-1">
+                    <Form.Item name="category_id" label="Category" rules={[{ required: true, message: 'Category is required' }]} className="create-action-overview__flex-1">
                         <Select size="large" placeholder="Select a category" loading={isCategoriesLoading}>
                             {categories.map(cat => (
                                 <Select.Option key={cat.categoryId ?? cat.id} value={cat.categoryId ?? cat.id}>
@@ -108,7 +113,7 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                         </Select>
                     </Form.Item>
 
-                    <Form.Item name="capabilityId" label="Capability" rules={[{ required: true, message: 'Capability is required' }]} className="create-action-overview__flex-1">
+                    <Form.Item name="capability_id" label="Capability" rules={[{ required: true, message: 'Capability is required' }]} className="create-action-overview__flex-1">
                         <Select size="large" placeholder="Select a capability" loading={isCapabilitiesLoading}>
                             {capabilities.map(cap => (
                                 <Select.Option key={cap.capabilityId} value={cap.capabilityId}>

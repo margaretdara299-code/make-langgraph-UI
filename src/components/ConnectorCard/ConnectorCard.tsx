@@ -27,14 +27,14 @@ export default function ConnectorCard({ connector, onAction }: ConnectorCardProp
         });
     };
 
-    const isApi = connector.connectorType === CONNECTOR_TYPES.API;
+    const isApi = connector.connector_type === CONNECTOR_TYPES.API;
     const typeLabel = isApi ? 'API' : 'Database';
     const typeColor = isApi ? 'blue' : 'green';
     const TypeIcon = isApi ? ApiOutlined : DatabaseOutlined;
 
     /** Render a summary of the config for each type */
     const renderConfigSummary = () => {
-        const config = connector.configJson;
+        const config = connector.config_json;
         if (!config) return null;
 
         if (isApi) {
@@ -84,7 +84,7 @@ export default function ConnectorCard({ connector, onAction }: ConnectorCardProp
                 <Dropdown
                     menu={{
                         items: menuItems,
-                        onClick: (e) => onAction?.(e.key, connector.connectorId),
+                        onClick: (e) => onAction?.(e.key, connector.connector_id),
                     }}
                     trigger={['click']}
                     placement="bottomRight"
@@ -111,13 +111,13 @@ export default function ConnectorCard({ connector, onAction }: ConnectorCardProp
             {/* Footer: Status and Date */}
             <div className="connector-card__footer">
                 <div className="connector-card__footer-top">
-                    <Tag color={connector.isActive ? 'success' : 'default'}>
-                        {connector.isActive ? 'Active' : 'Inactive'}
+                    <Tag color={connector.is_active ? 'success' : 'default'}>
+                        {connector.is_active ? 'Active' : 'Inactive'}
                     </Tag>
                     <Tag className="connector-card__type-tag">{typeLabel}</Tag>
                 </div>
                 <div className="connector-card__date">
-                    Edited {formatDate(connector.updatedAt)}
+                    Edited {formatDate(connector.updated_at)}
                 </div>
             </div>
         </Card>

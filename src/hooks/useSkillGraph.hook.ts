@@ -76,7 +76,12 @@ export function useSkillGraph() {
 
         // Convert nodes map to array, strip internal-only fields
         const cleanNodes = Object.values(stored.nodes).map((node: any) => {
-            const { inputsSchemaJson, outputsSchemaJson, executionJson, ...cleanData } = node.data || {};
+            const { 
+                inputsSchemaJson, inputs_schema_json, 
+                outputsSchemaJson, outputs_schema_json, 
+                executionJson, execution_json, 
+                ...cleanData 
+            } = node.data || {};
             return { ...node, data: cleanData };
         });
 
