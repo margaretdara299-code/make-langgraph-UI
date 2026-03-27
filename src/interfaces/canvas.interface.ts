@@ -8,16 +8,16 @@ import type { ActionCapability, ActionConfigField, ActionInputField, ActionOutpu
 /** Data payload attached to each canvas node */
 export interface CanvasNodeData {
     label: string;
-    actionId: string;
-    actionKey: string;
-    actionVersionId?: string;
+    action_id: string;
+    action_key: string;
+    action_version_id?: string;
     category: string;
     capability: ActionCapability;
     icon: string;
-    inputsSchemaJson?: ActionInputField[];
-    outputsSchemaJson?: ActionOutputField[];
-    executionJson?: ActionExecutionConfig;
-    configurationsJson?: Record<string, any> | ActionConfigField[];
+    inputs_schema_json?: ActionInputField[];
+    outputs_schema_json?: ActionOutputField[];
+    execution_json?: ActionExecutionConfig;
+    configurations_json?: Record<string, any> | ActionConfigField[];
     color?: string;
     description?: string;
     // Index signature to satisfy React Flow's Record<string, unknown> constraint

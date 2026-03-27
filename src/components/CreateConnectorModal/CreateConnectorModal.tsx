@@ -35,7 +35,7 @@ export default function CreateConnectorModal({
             form.setFieldsValue({
                 name: connectorToEdit.name,
                 description: connectorToEdit.description,
-                configJson: connectorToEdit.configJson,
+                config_json: connectorToEdit.config_json,
             });
         } else if (isOpen && !connectorToEdit) {
             form.resetFields();
@@ -48,11 +48,11 @@ export default function CreateConnectorModal({
             setIsSubmitting(true);
 
             if (isEditMode) {
-                const result = await updateConnector(connectorToEdit!.connectorId, {
+                const result = await updateConnector(connectorToEdit!.connector_id, {
                     name: values.name,
-                    connectorType,
+                    connector_type: connectorType,
                     description: values.description,
-                    configJson: values.configJson,
+                    config_json: values.config_json,
                 });
                 if (result.success) {
                     message.success(result.message || `${isApi ? 'API' : 'Database'} connector updated successfully`);
@@ -62,9 +62,9 @@ export default function CreateConnectorModal({
             } else {
                 const result = await createConnector({
                     name: values.name,
-                    connectorType,
+                    connector_type: connectorType,
                     description: values.description,
-                    configJson: values.configJson,
+                    config_json: values.config_json,
                 });
                 if (result.success) {
                     message.success(result.message || `${isApi ? 'API' : 'Database'} connector created successfully`);

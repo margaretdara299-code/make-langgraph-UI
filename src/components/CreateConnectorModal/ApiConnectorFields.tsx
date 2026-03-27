@@ -66,7 +66,7 @@ export default function ApiConnectorFields() {
 
             <Form.Item
                 label="Method"
-                name={['configJson', 'method']}
+                name={['config_json', 'method']}
                 rules={[{ required: true, message: 'Please select an HTTP method' }]}
             >
                 <Select placeholder="Select HTTP method" options={API_METHOD_OPTIONS} />
@@ -74,28 +74,28 @@ export default function ApiConnectorFields() {
 
             <Form.Item
                 label="URL"
-                name={['configJson', 'url']}
+                name={['config_json', 'url']}
                 rules={[{ required: true, message: 'Please enter the API URL' }]}
             >
                 <Input placeholder="e.g. https://api.example.com/v1/:resource" />
             </Form.Item>
 
             {/* ── Dynamic Key-Value Pair Lists ── */}
-            <KeyValueList name={['configJson', 'headers']} label="Headers" />
-            <KeyValueList name={['configJson', 'queryParams']} label="Query Params" />
-            <KeyValueList name={['configJson', 'pathVariables']} label="Path Variables" />
+            <KeyValueList name={['config_json', 'headers']} label="Headers" />
+            <KeyValueList name={['config_json', 'query_params']} label="Query Params" />
+            <KeyValueList name={['config_json', 'path_variables']} label="Path Variables" />
 
             {/* ── Body ── */}
             <Form.Item
                 label="Body Mode"
-                name={['configJson', 'body', 'mode']}
+                name={['config_json', 'body', 'mode']}
             >
                 <Select placeholder="Select body mode" options={API_BODY_MODE_OPTIONS} allowClear />
             </Form.Item>
 
             <Form.Item
                 label="Body (Raw)"
-                name={['configJson', 'body', 'raw']}
+                name={['config_json', 'body', 'raw']}
             >
                 <Input.TextArea
                     placeholder='e.g. {"status": "active"}'

@@ -14,7 +14,7 @@ export interface ConnectorTabConfig {
     key: ConnectorTab;
     label: string;
     createLabel: string;
-    connectorType: ConnectorTypeValue;
+    connector_type: ConnectorTypeValue;
 }
 
 /** ── Database Connector Config ── */
@@ -43,8 +43,8 @@ export interface ApiConfigJson {
     method: string;
     url: string;
     headers: KeyValuePair[];
-    queryParams: KeyValuePair[];
-    pathVariables: KeyValuePair[];
+    query_params: KeyValuePair[];
+    path_variables: KeyValuePair[];
     body: ApiBodyConfig;
 }
 
@@ -52,23 +52,23 @@ export interface ApiConfigJson {
 
 export interface CreateConnectorPayload {
     name: string;
-    connectorType: ConnectorTypeValue;
+    connector_type: ConnectorTypeValue;
     description: string;
-    configJson: DatabaseConfigJson | ApiConfigJson;
+    config_json: DatabaseConfigJson | ApiConfigJson;
 }
 
 /** ── Connector Response (from backend) ── */
 
 export interface ConnectorResponse {
-    connectorId: number;
+    connector_id: number;
     name: string;
-    connectorType: string;
+    connector_type: string;
     description?: string;
-    configJson: Record<string, any>;
+    config_json: Record<string, any>;
     status: string;
-    isActive: boolean;
-    createdAt: string;
-    updatedAt: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
 }
 
 /** ── Connector Card Props ── */

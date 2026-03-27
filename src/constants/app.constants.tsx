@@ -11,7 +11,7 @@ export const SKILL_TAGS_MAX_COUNT = 10;
 export const SKILL_TAG_MAX_LENGTH = 24;
 
 /** Action-related constants */
-export const ACTION_KEY_PATTERN = /^[a-z][a-z0-9.]*$/;
+export const ACTION_KEY_PATTERN = /^[a-zA-Z][a-zA-Z0-9_]*$/;
 export const ACTION_DESCRIPTION_MAX_LENGTH = 400;
 
 /** Skill statuses */
@@ -40,3 +40,12 @@ export const USER_ROLES = ['viewer', 'editor', 'publisher', 'admin'] as const;
 
 /** Pagination */
 export const DEFAULT_PAGE_SIZE = 12;
+
+/** HTTP Methods */
+export const HTTP_METHODS = [
+    { value: 'GET', label: 'GET' },
+    { value: 'POST', label: 'POST' },
+    { value: 'PUT', label: 'PUT' },
+    { value: 'PATCH', label: 'PATCH' },
+    { value: 'DELETE', label: 'DELETE' },
+];

@@ -27,7 +27,7 @@ export default function DatabaseConnectorFields() {
 
             <Form.Item
                 label="Engine"
-                name={['configJson', 'engine']}
+                name={['config_json', 'engine']}
                 rules={[{ required: true, message: 'Please select a database engine' }]}
             >
                 <Select placeholder="Select database engine" options={DB_ENGINE_OPTIONS} />
@@ -35,7 +35,7 @@ export default function DatabaseConnectorFields() {
 
             <Form.Item
                 label="Host"
-                name={['configJson', 'host']}
+                name={['config_json', 'host']}
                 rules={[{ required: true, message: 'Please enter the host' }]}
             >
                 <Input placeholder="e.g. db.internal.local" />
@@ -43,7 +43,7 @@ export default function DatabaseConnectorFields() {
 
             <Form.Item
                 label="Port"
-                name={['configJson', 'port']}
+                name={['config_json', 'port']}
                 rules={[{ required: true, message: 'Please enter the port' }]}
             >
                 <InputNumber placeholder="e.g. 5432" min={1} max={65535} style={{ width: '100%' }} />
@@ -51,7 +51,7 @@ export default function DatabaseConnectorFields() {
 
             <Form.Item
                 label="User"
-                name={['configJson', 'user']}
+                name={['config_json', 'user']}
                 rules={[{ required: true, message: 'Please enter the database user' }]}
             >
                 <Input placeholder="e.g. orchestrator" />
@@ -59,7 +59,7 @@ export default function DatabaseConnectorFields() {
 
             <Form.Item
                 label="Database"
-                name={['configJson', 'database']}
+                name={['config_json', 'database']}
                 rules={[{ required: true, message: 'Please enter the database name' }]}
             >
                 <Input placeholder="e.g. rcm_prod" />

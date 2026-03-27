@@ -5,7 +5,7 @@ import './CreateActionReviewStep.css';
 const { Title, Text } = Typography;
 
 export default function CreateActionReviewStep({ draft }: CreateActionStepProps) {
-    const configCount = draft.configurationsJson ? Object.keys(draft.configurationsJson).length : 0;
+    const configCount = draft.configurations_json ? Object.keys(draft.configurations_json).length : 0;
 
     return (
         <div className="create-action-review">
@@ -17,7 +17,7 @@ export default function CreateActionReviewStep({ draft }: CreateActionStepProps)
             <Descriptions bordered column={2} size="small" className="create-action-review__descriptions">
                 <Descriptions.Item label="Action Name">{draft.name || <Text type="secondary">Not set</Text>}</Descriptions.Item>
                 <Descriptions.Item label="Action Key">
-                    {draft.actionKey ? <Text code>{draft.actionKey}</Text> : <Text type="secondary">Not set</Text>}
+                    {draft.action_key ? <Text code>{draft.action_key}</Text> : <Text type="secondary">Not set</Text>}
                 </Descriptions.Item>
                 <Descriptions.Item label="Capability">
                     {draft.capability ? <Tag color="blue">{draft.capability.toUpperCase()}</Tag> : <Text type="secondary">Not set</Text>}
@@ -35,7 +35,7 @@ export default function CreateActionReviewStep({ draft }: CreateActionStepProps)
             {configCount > 0 ? (
                 <div className="create-action-review__payload-container">
                     <pre className="create-action-review__payload-pre">
-                        {JSON.stringify(draft.configurationsJson, null, 2)}
+                        {JSON.stringify(draft.configurations_json, null, 2)}
                     </pre>
                 </div>
             ) : (

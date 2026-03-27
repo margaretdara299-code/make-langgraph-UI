@@ -7,7 +7,6 @@ import { useState, useEffect } from 'react';
 import { Button, Typography, Space, Tooltip, message, Skeleton } from 'antd';
 import { ArrowLeftOutlined, PlayCircleOutlined, SaveOutlined, SendOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useReactFlow } from '@xyflow/react';
 import StatusPill from '@/components/StatusPill/StatusPill';
 import { ROUTES } from '@/routes';
 import { useSkillGraph } from '@/hooks';
@@ -19,8 +18,7 @@ const { Text, Title } = Typography;
 
 export default function SkillDesignerHeader() {
     const navigate = useNavigate();
-    const { skillId, versionId } = useParams<{ skillId: string, versionId: string }>();
-    const { getNodes, getEdges } = useReactFlow();
+    const { skillId } = useParams<{ skillId: string }>();
     const { saveGraph } = useSkillGraph();
     const [skill, setSkill] = useState<Skill | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -40,7 +38,7 @@ export default function SkillDesignerHeader() {
 
     const handleSave = async () => {
         try {
-            const res: any = await saveGraph(getNodes(), getEdges());
+            const res: any = await saveGraph();
             message.success(res.message || 'Draft saved successfully');
         } catch (error: any) {
             message.error(error?.message || 'Failed to save draft');
