@@ -9,48 +9,42 @@ export type ActionVersionStatus = 'draft' | 'published';
 
 export interface ActionDefinition {
     id: string;
-    action_key: string;
+    actionKey: string;
     name: string;
     description: string;
     category: string;
-    category_id?: number;
+    categoryId?: number;
     capability: ActionCapability;
-    capability_id?: number;
+    capabilityId?: number;
     scope: ActionScope;
     icon?: string;
-    default_node_title: string;
+    defaultNodeTitle: string;
     status: ActionVersionStatus;
-    created_at: string;
-    updated_at: string;
+    createdAt: string;
+    updatedAt: string;
 
     // ── Version-level Configuration Blob ──
-    configurations_json?: Record<string, any>;
     configurationsJson?: Record<string, any>;
-    inputs_schema_json?: any;
     inputsSchemaJson?: any;
-    execution_json?: any;
     executionJson?: any;
-    outputs_schema_json?: any;
     outputsSchemaJson?: any;
-    ui_form_json?: any;
     uiFormJson?: any;
-    policy_json?: any;
     policyJson?: any;
 }
 
 export interface ActionVersion {
     id: string;
-    action_definition_id: string;
+    actionDefinitionId: string;
     version: string;
     status: ActionVersionStatus;
-    configurations_json: Record<string, any>;
-    inputs_schema_json?: any;
-    execution_json?: any;
-    outputs_schema_json?: any;
-    ui_form_json?: any;
-    policy_json?: any;
-    created_at: string;
-    updated_at: string;
+    configurationsJson: Record<string, any>;
+    inputsSchemaJson?: any;
+    executionJson?: any;
+    outputsSchemaJson?: any;
+    uiFormJson?: any;
+    policyJson?: any;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface ActionFilters {
@@ -79,19 +73,19 @@ export interface ActionOutputField {
 }
 
 export interface ActionExecutionConfig {
-    connector_type: 'rest' | 'graphql' | 'grpc' | 'internal' | 'none' | string;
-    endpoint_url: string;
-    http_method: string;
-    timeout_ms: number;
-    retry_count: number;
-    retry_delay_ms: number;
+    connectorType: 'rest' | 'graphql' | 'grpc' | 'internal' | 'none' | string;
+    endpointUrl: string;
+    httpMethod: string;
+    timeoutMs: number;
+    retryCount: number;
+    retryDelayMs: number;
 }
 
 export interface ActionConfigField {
-    input_key: string;
+    inputKey: string;
     label: string;
-    input_type: 'text' | 'number' | 'boolean' | 'select' | 'textarea' | string;
-    default_value?: any;
+    inputType: 'text' | 'number' | 'boolean' | 'select' | 'textarea' | string;
+    defaultValue?: any;
     options?: string[];
     description?: string;
 }

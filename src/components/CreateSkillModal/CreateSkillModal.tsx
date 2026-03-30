@@ -50,7 +50,7 @@ export default function CreateSkillModal({ isOpen, onClose, onCreated }: CreateS
                 description: formData.description || '',
                 categoryId: formData.categoryId || 1, // default internal fallback
                 tags: formData.tags || [],
-                clientId: 'client-acme',
+                clientId: '1',
                 owner: 'Current User',
                 updatedBy: 'Current User',
                 status: 'draft',

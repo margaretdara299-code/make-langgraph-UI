@@ -41,4 +41,3 @@ export default function StructureSection({ search }: StructureSectionProps) {
         </div>
     );
 }
-

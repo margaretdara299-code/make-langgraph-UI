@@ -16,37 +16,38 @@ export async function createAction(
     input: Partial<ActionDefinition>
 ): Promise<ApiResponse<ActionDefinition>> {
     try {
+        const anyInput = input as any;
         const payload = {
             name: input.name || 'Untitled Action',
-            action_key: input.action_key || 'new_action_key',
+            action_key: anyInput.action_key || input.actionKey || 'new_action_key',
             description: input.description || '',
             category: input.category || 'Uncategorized',
-            category_id: input.category_id || 1,
+            category_id: anyInput.category_id || input.categoryId || 1,
             capability: (input.capability || 'api').toUpperCase(),
-            capability_id: input.capability_id || 1,
+            capability_id: anyInput.capability_id || input.capabilityId || 1,
             icon: input.icon || '🧩',
-            default_node_title: input.default_node_title || input.name || 'Untitled',
+            default_node_title: anyInput.default_node_title || input.defaultNodeTitle || input.name || 'Untitled',
             scope: input.scope || 'global',
 
             // ── Version-level JSON blobs (wizard step 2: Configuration) ──
-            configurations_json: input.configurations_json || {},
+            configurations_json: anyInput.configurations_json || input.configurationsJson || {},
         };
 
-        const res = await apiClient.post<ActionDefinition>(API_ENDPOINTS.ACTIONS.BASE, payload);
+        const res = await apiClient.post<any>(API_ENDPOINTS.ACTIONS.BASE, payload);
 
-        const newAction: ActionDefinition = {
+        const newAction = {
             id: 'pending-refresh',
-            action_key: input.action_key || 'new_action_key',
+            action_key: input.actionKey || 'new_action_key',
             name: input.name || 'Untitled Action',
             description: input.description || '',
             category: input.category || 'Uncategorized',
             capability: input.capability || 'api',
             scope: input.scope || 'global',
             icon: input.icon || '🧩',
-            default_node_title: input.default_node_title || input.name || 'Untitled',
+            defaultNodeTitle: input.defaultNodeTitle || input.name || 'Untitled',
             status: 'draft',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
         };
         return { success: true, data: newAction, message: res.message };
     } catch (error) {
@@ -77,21 +78,21 @@ export async function fetchGroupedActions(): Promise<Record<string, ActionDefini
 
         for (const [category, actions] of Object.entries(grouped)) {
             mapped[category] = (actions as any[]).map((a: any) => ({
-                id: a.action_definition_id || a.actionDefinitionId || a.id,
-                action_key: a.action_key || a.actionKey || '',
+                id: a.actionDefinitionId || a.id,
+                actionKey: a.actionKey || '',
                 name: a.name || '',
                 description: a.description || '',
                 category: category,
-                capability: (capMap[a.capability_id || a.capabilityId] || a.capability || 'api').toLowerCase(),
-                capability_id: a.capability_id || a.capabilityId,
+                capability: (capMap[a.capabilityId] || a.capability || 'api').toLowerCase(),
+                capabilityId: a.capabilityId,
                 scope: a.scope || 'global',
                 icon: a.icon || '🧩',
-                default_node_title: a.default_node_title || a.defaultNodeTitle || a.name || '',
+                defaultNodeTitle: a.defaultNodeTitle || a.name || '',
                 status: a.status || 'published',
-                created_at: a.created_at || a.createdAt || '',
-                updated_at: a.updated_at || a.updatedAt || '',
-                configurations_json: a.configurations_json || a.configurationsJson || {},
-                action_version_id: a.action_version_id || a.actionVersionId || '',
+                createdAt: a.createdAt || '',
+                updatedAt: a.updatedAt || '',
+                configurationsJson: a.configurationsJson || {},
+                actionVersionId: a.actionVersionId || '',
             } as ActionDefinition));
         }
 
@@ -138,19 +139,19 @@ export async function fetchActions(
 
         const items: ActionDefinition[] = (result.data.items || []).map((a: ActionDefinition) => {
             const anyA = a as any;
-            const capId = anyA.capability_id || anyA.capabilityId;
-            const catId = anyA.category_id || anyA.categoryId;
+            const capId = anyA.capabilityId;
+            const catId = anyA.categoryId;
             
             return {
                 ...a,
-                id: anyA.action_definition_id || anyA.actionDefinitionId || anyA.id,
-                action_key: anyA.action_key || anyA.actionKey || '',
-                category_id: catId,
+                id: anyA.actionDefinitionId || anyA.id,
+                actionKey: anyA.actionKey || '',
+                categoryId: catId,
                 category: anyA.category || catMap[catId] || 'Uncategorized',
-                capability_id: capId,
+                capabilityId: capId,
                 capability: (capMap[capId] || a.capability || 'api').toLowerCase() as ActionDefinition['capability'],
-                updated_at: anyA.updated_at || anyA.updatedAt || '',
-                created_at: anyA.created_at || anyA.createdAt || '',
+                updatedAt: anyA.updatedAt || '',
+                createdAt: anyA.createdAt || '',
             };
         });
 
@@ -268,24 +269,24 @@ export async function fetchActionById(id: string): Promise<ApiResponse<ActionDef
         const data = result.data;
 
         const action: ActionDefinition = {
-            id: data.action_definition_id || data.actionDefinitionId || data.id || id,
-            action_key: data.action_key || data.actionKey || '',
+            id: data.actionDefinitionId || data.id || id,
+            actionKey: data.actionKey || '',
             name: data.name || '',
             description: data.description || '',
             category: data.category || 'Uncategorized',
-            category_id: data.category_id || data.categoryId,
+            categoryId: data.categoryId,
             capability: data.capability || 'api',
-            capability_id: data.capability_id || data.capabilityId,
+            capabilityId: data.capabilityId,
             scope: data.scope || 'global',
             icon: data.icon || '🧩',
-            default_node_title: data.default_node_title || data.defaultNodeTitle || data.name || '',
+            defaultNodeTitle: data.defaultNodeTitle || data.name || '',
             status: data.status || 'draft',
-            created_at: data.created_at || data.createdAt || '',
-            updated_at: data.updated_at || data.updatedAt || '',
-            configurations_json: data.configurations_json || data.configurationsJson || {},
-            execution_json: data.execution_json || data.executionJson,
-            inputs_schema_json: data.inputs_schema_json || data.inputsSchemaJson,
-            outputs_schema_json: data.outputs_schema_json || data.outputsSchemaJson,
+            createdAt: data.createdAt || '',
+            updatedAt: data.updatedAt || '',
+            configurationsJson: data.configurationsJson || {},
+            executionJson: data.executionJson,
+            inputsSchemaJson: data.inputsSchemaJson,
+            outputsSchemaJson: data.outputsSchemaJson,
         };
 
         // Attach backend version IDs

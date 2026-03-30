@@ -2,41 +2,43 @@
  * Central dictionary for all backend API endpoints.
  */
 
+export const API_V1_BASE = '/api/v1';
+
 export const API_ENDPOINTS = {
     CATEGORIES: {
-        BASE: '/api/v1/categories',
-        BY_ID: (categoryId: number) => `/api/v1/categories/${categoryId}`,
+        BASE: `${API_V1_BASE}/categories`,
+        BY_ID: (categoryId: string) => `${API_V1_BASE}/categories/${categoryId}`,
     },
     SKILLS: {
-        BASE: '/api/skills',
-        BY_ID: (skillId: string) => `/api/skills/${skillId}`,
-        UPDATE: (skillId: string) => `/api/skills/${skillId}`,
-        VERSION_STATUS: (versionId: string) => `/api/skills/versions/${versionId}/status`,
+        BASE: `${API_V1_BASE}/skills`,
+        BY_ID: (skillId: string) => `${API_V1_BASE}/skills/${skillId}`,
+        UPDATE: (skillId: string) => `${API_V1_BASE}/skills/${skillId}`,
+        VERSION_STATUS: (versionId: string) => `${API_V1_BASE}/skill-versions/${versionId}/status`,
     },
     CAPABILITIES: {
-        BASE: '/api/v1/capabilities',
-        BY_ID: (capabilityId: number) => `/api/v1/capabilities/${capabilityId}`,
+        BASE: `${API_V1_BASE}/capabilities`,
+        BY_ID: (capabilityId: string) => `${API_V1_BASE}/capabilities/${capabilityId}`,
     },
     SKILL_GRAPH: {
-        GRAPH: (versionId: string) => `/api/skills/versions/${versionId}/graph`,
-        VALIDATE: (versionId: string) => `/api/skills/versions/${versionId}/validate`,
-        COMPILE: (versionId: string) => `/api/skills/versions/${versionId}/compile`,
-        PUBLISH: (versionId: string) => `/api/skills/versions/${versionId}/status`,
-        RUN: (versionId: string) => `/api/skills/versions/${versionId}/run`,
+        GRAPH: (versionId: string) => `${API_V1_BASE}/skill-versions/${versionId}/graph`,
+        VALIDATE: (versionId: string) => `${API_V1_BASE}/skill-versions/${versionId}/validate`,
+        COMPILE: (versionId: string) => `${API_V1_BASE}/skill-versions/${versionId}/compile`,
+        PUBLISH: (versionId: string) => `${API_V1_BASE}/skill-versions/${versionId}/status`,
+        RUN: (versionId: string) => `${API_V1_BASE}/skill-versions/${versionId}/run`,
     },
     ACTIONS: {
-        BASE: '/api/actions',
-        GROUPED: '/api/actions/grouped',
-        BY_ID: (actionDefinitionId: string) => `/api/actions/${actionDefinitionId}`,
-        UPDATE: (actionDefinitionId: string) => `/api/actions/${actionDefinitionId}`,
-        DESIGNER: '/api/designer/actions',
+        BASE: `${API_V1_BASE}/actions`,
+        GROUPED: `${API_V1_BASE}/actions/grouped`,
+        BY_ID: (actionDefinitionId: string) => `${API_V1_BASE}/actions/${actionDefinitionId}`,
+        UPDATE: (actionDefinitionId: string) => `${API_V1_BASE}/actions/${actionDefinitionId}`,
+        DESIGNER: `${API_V1_BASE}/designer/actions`,
     },
     CONNECTORS: {
-        BASE: '/api/v1/connectors',
-        GROUPED: '/api/v1/connectors/grouped',
-        BY_ID: (connectorId: number) => `/api/v1/connectors/${connectorId}`,
+        BASE: `${API_V1_BASE}/connectors`,
+        GROUPED: `${API_V1_BASE}/connectors/grouped`,
+        BY_ID: (connectorId: string) => `${API_V1_BASE}/connectors/${connectorId}`,
     },
     ENGINE: {
-        GENERATE_CODE: (versionId: string) => `/api/engine/generate-code/${versionId}`,
+        GENERATE_CODE: (versionId: string) => `${API_V1_BASE}/engine/generate-code/${versionId}`,
     },
 } as const;

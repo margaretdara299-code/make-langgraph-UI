@@ -85,9 +85,9 @@ export default function ActionCard({ action, onAction }: ActionCardProps) {
                 <Title level={5} className="action-card__title" ellipsis>
                     {action.name}
                 </Title>
-                <Tooltip title={action.action_key}>
+                <Tooltip title={action.actionKey}>
                     <Text className="action-card__key" code ellipsis>
-                        {action.action_key}
+                        {action.actionKey}
                     </Text>
                 </Tooltip>
                 <div className="action-card__description">
@@ -102,7 +102,7 @@ export default function ActionCard({ action, onAction }: ActionCardProps) {
                     <Tag className="action-card__category">{action.category}</Tag>
                 </div>
                 <div className="action-card__date">
-                    Edited {formatDate(action.updated_at)}
+                    Edited {formatDate(action.updatedAt)}
                 </div>
             </div>
         </Card>
