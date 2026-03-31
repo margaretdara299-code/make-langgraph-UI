@@ -37,3 +37,4 @@ export { default as CreateCategoryModal } from './CreateCategoryModal/CreateCate
 export { default as CreateCapabilityModal } from './CreateCapabilityModal/CreateCapabilityModal';
 export { default as CodeViewerModal } from './CodeViewerModal/CodeViewerModal';
 export { default as PublishStepperModal } from './PublishStepperModal/PublishStepperModal';
+export { default as TestApiModal } from './TestApiModal/TestApiModal';

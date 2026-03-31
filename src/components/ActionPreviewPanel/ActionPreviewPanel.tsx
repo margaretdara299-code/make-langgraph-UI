@@ -2,14 +2,15 @@
  * ActionPreviewPanel — a real-time card preview of the Action being drafted.
  */
 
-import { Typography, Card } from 'antd';
+import { Typography, Card, Button, Tooltip } from 'antd';
+import { ApiOutlined } from '@ant-design/icons';
 import { ActionCard } from '@/components';
 import type { ActionDefinition, ActionPreviewPanelProps } from '@/interfaces';
 import './ActionPreviewPanel.css';
 
 const { Title } = Typography;
 
-export default function ActionPreviewPanel({ actionDef, currentStep }: ActionPreviewPanelProps) {
+export default function ActionPreviewPanel({ actionDef, currentStep, onTestApiClick }: ActionPreviewPanelProps) {
     // Generate a mock complete ActionDefinition for the card to render
     const mockAction: ActionDefinition = {
         id: 'preview-01',
@@ -34,6 +35,24 @@ export default function ActionPreviewPanel({ actionDef, currentStep }: ActionPre
                 {/* The actual live-updating Action Card mockup */}
                 <div className="action-preview-panel__card-wrapper">
                     <ActionCard action={mockAction} />
+                </div>
+
+                {/* API Test Button placed here for high visibility */}
+                <div className="action-preview-panel__test-btn-wrapper">
+                    <Tooltip title={currentStep !== 2 ? "The API testing feature is only available during the Configuration step." : "Open Test Interface"}>
+                        <span>
+                            <Button 
+                                type="primary" 
+                                icon={<ApiOutlined />} 
+                                size="large" 
+                                block
+                                disabled={currentStep !== 2}
+                                onClick={onTestApiClick}
+                            >
+                                Test API Connection
+                            </Button>
+                        </span>
+                    </Tooltip>
                 </div>
 
 

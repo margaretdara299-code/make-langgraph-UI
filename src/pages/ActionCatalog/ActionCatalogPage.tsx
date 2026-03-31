@@ -21,6 +21,7 @@ export default function ActionCatalogPage() {
     const [activeCapability, setActiveCapability] = useState<string>('all');
     const [activeCategory, setActiveCategory] = useState<string>('all');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [initialModalStep, setInitialModalStep] = useState(0);
     const [actionToEdit, setActionToEdit] = useState<ActionDefinition | undefined>(undefined);
 
     const { actions, statusCounts, categoryCounts, capabilityCounts, isLoading: isActionsLoading, setFilters, refetch } = useActions();
@@ -66,11 +67,12 @@ export default function ActionCatalogPage() {
 
     /** Handle action menu selections */
     const handleCardAction = (actionKey: string, actionId: string) => {
-        if (actionKey === CARD_ACTION_KEYS.EDIT_SETTINGS) {
+        if (actionKey === CARD_ACTION_KEYS.EDIT_SETTINGS || actionKey === CARD_ACTION_KEYS.TEST) {
             // Fetch full action data with JSON blobs
             fetchActionById(actionId).then((result: Awaited<ReturnType<typeof fetchActionById>>) => {
                 if (result.success) {
                     setActionToEdit(result.data);
+                    setInitialModalStep(actionKey === CARD_ACTION_KEYS.TEST ? 1 : 0);
                     setIsCreateModalOpen(true);
                 } else {
                     message.error(result.error || 'Failed to load action for editing');
@@ -89,7 +91,8 @@ export default function ActionCatalogPage() {
         <div className="action-catalog">
             <CreateActionModal
                 isOpen={isCreateModalOpen}
-                onClose={() => { setIsCreateModalOpen(false); setActionToEdit(undefined); }}
+                initialStep={initialModalStep}
+                onClose={() => { setIsCreateModalOpen(false); setActionToEdit(undefined); setInitialModalStep(0); }}
                 onCreated={() => refetch()}
                 actionToEdit={actionToEdit}
             />

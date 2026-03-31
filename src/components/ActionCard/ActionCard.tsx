@@ -18,6 +18,7 @@ export default function ActionCard({ action, onAction }: ActionCardProps) {
     // Dropdown menu items
     const menuItems: MenuProps['items'] = [
         { key: CARD_ACTION_KEYS.EDIT_SETTINGS, label: 'Edit' },
+        { key: CARD_ACTION_KEYS.TEST, label: 'Test API' },
         { type: 'divider' },
         { key: CARD_ACTION_KEYS.DELETE, label: 'Delete', danger: true },
     ];

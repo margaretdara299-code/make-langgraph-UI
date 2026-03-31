@@ -22,25 +22,40 @@ const DynamicParamList = ({ name, title, emptyMessage }: { name: string, title: 
                             {emptyMessage}
                         </Text>
                     )}
-                    {fields.map(({ key, name, ...restField }) => (
+                    {fields.map(({ key, name: fieldName, ...restField }) => (
                         <div key={key} className="action-config-step__kv-row">
                             <Form.Item
                                 {...restField}
-                                name={[name, 'key']}
+                                name={[fieldName, 'key']}
                                 className="action-config-step__kv-field"
                             >
                                 <Input placeholder="Key" />
                             </Form.Item>
+                            
                             <Form.Item
-                                {...restField}
-                                name={[name, 'value']}
-                                className="action-config-step__kv-field"
+                                noStyle
+                                shouldUpdate={(prevValues, currentValues) => 
+                                    prevValues[name]?.[fieldName]?.key !== currentValues[name]?.[fieldName]?.key
+                                }
                             >
-                                <Input placeholder="Value" />
+                                {({ getFieldValue }) => {
+                                    const keyVal = getFieldValue([name, fieldName, 'key']);
+                                    return (
+                                        <Form.Item
+                                            {...restField}
+                                            name={[fieldName, 'value']}
+                                            className="action-config-step__kv-field"
+                                            rules={keyVal ? [{ required: true, message: 'Required' }] : []}
+                                        >
+                                            <Input placeholder="Value" />
+                                        </Form.Item>
+                                    );
+                                }}
                             </Form.Item>
+
                             <DeleteOutlined
                                 className="action-config-step__delete-icon"
-                                onClick={() => remove(name)}
+                                onClick={() => remove(fieldName)}
                             />
                         </div>
                     ))}
@@ -193,7 +208,11 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
                 <Divider />
                 <SectionTitle>Integration Parameters</SectionTitle>
                 
-                <DynamicParamList name="path_params" title="Path Parameters" emptyMessage="No path parameters added." />
+                <DynamicParamList 
+                    name="path_params" 
+                    title="Path Parameters" 
+                    emptyMessage="No path parameters added." 
+                />
                 <DynamicParamList name="query_params" title="Query Parameters" emptyMessage="No query parameters added." />
                 <DynamicParamList name="header_params" title="Header Parameters" emptyMessage="No header key-value pairs added." />
                 <DynamicParamList name="body_params" title="Body Parameters" emptyMessage="No body parameters added." />

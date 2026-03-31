@@ -4,7 +4,8 @@
 
 import { useState, useEffect } from 'react';
 import { Modal, Steps, Button, Space, message, Form } from 'antd';
-import { ActionPreviewPanel } from '@/components';
+import { ActionPreviewPanel, TestApiModal } from '@/components';
+import { useApiTest } from '@/hooks/useApiTest';
 import { createAction, updateActionDefinition } from '@/services';
 import type { ActionDefinition, CreateActionModalProps } from '@/interfaces';
 import './CreateActionModal.css';
@@ -13,7 +14,9 @@ import CreateActionOverview from '../CreateActionOverview/CreateActionOverview';
 import CreateActionConfigStep from '../CreateActionConfigStep/CreateActionConfigStep';
 import CreateActionReviewStep from '../CreateActionReviewStep/CreateActionReviewStep';
 
-export default function CreateActionModal({ isOpen, onClose, onCreated, actionToEdit }: CreateActionModalProps) {
+
+
+export default function CreateActionModal({ isOpen, initialStep = 0, onClose, onCreated, actionToEdit }: CreateActionModalProps) {
     const [currentStep, setCurrentStep] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -44,9 +47,18 @@ export default function CreateActionModal({ isOpen, onClose, onCreated, actionTo
                 // Clear all form fields so no stale data remains
                 setTimeout(() => overviewForm.resetFields(), 0);
             }
-            setCurrentStep(0);
+            setCurrentStep(initialStep);
         }
-    }, [isOpen, actionToEdit, overviewForm]);
+    }, [isOpen, actionToEdit, overviewForm, initialStep]);
+
+    const { 
+        isTestPopupOpen, 
+        setIsTestPopupOpen, 
+        testState, 
+        testResponse, 
+        testInputPayload, 
+        handleTestApi 
+    } = useApiTest(actionDraft);
 
     const handleNext = async () => {
         // Validate the Overview form before allowing step advancement
@@ -190,9 +202,19 @@ export default function CreateActionModal({ isOpen, onClose, onCreated, actionTo
                     <ActionPreviewPanel
                         actionDef={actionDraft}
                         currentStep={currentStep + 1}
+                        onTestApiClick={handleTestApi}
                     />
                 </div>
             </div>
+
+            {/* ── Test API Popup ── */}
+            <TestApiModal
+                isOpen={isTestPopupOpen}
+                onClose={() => setIsTestPopupOpen(false)}
+                testState={testState}
+                testResponse={testResponse}
+                testInputPayload={testInputPayload}
+            />
         </Modal>
     );
 }
