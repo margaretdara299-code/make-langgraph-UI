@@ -115,10 +115,12 @@ export interface ActionCardProps {
 export interface ActionPreviewPanelProps {
     actionDef: Partial<import('./action.interface').ActionDefinition>;
     currentStep: number;
+    onTestApiClick?: () => void;
 }
 
 export interface CreateActionModalProps {
     isOpen: boolean;
+    initialStep?: number;
     onClose: () => void;
     onCreated: () => void;
     actionToEdit?: import('./action.interface').ActionDefinition;
@@ -145,19 +147,19 @@ export interface ReviewOverviewProps {
 }
 
 export interface ReviewExecutionProps {
-    execution: NonNullable<CreateActionStepProps['draft']['executionJson']>;
+    execution: NonNullable<CreateActionStepProps['draft']['execution_json']>;
 }
 
 export interface ReviewConfigurationsProps {
-    configurations: NonNullable<CreateActionStepProps['draft']['configurationsJson']>;
+    configurations: NonNullable<CreateActionStepProps['draft']['configurations_json']>;
 }
 
 export interface ReviewUiFormProps {
-    uiForm: NonNullable<CreateActionStepProps['draft']['uiFormJson']>;
+    uiForm: NonNullable<CreateActionStepProps['draft']['ui_form_json']>;
 }
 
 export interface ReviewPolicyProps {
-    policy: NonNullable<CreateActionStepProps['draft']['policyJson']>;
+    policy: NonNullable<CreateActionStepProps['draft']['policy_json']>;
 }
 
 export interface StructureSectionProps {
@@ -190,4 +192,12 @@ export interface PublishStepperModalProps {
     versionId: string;
     onClose: () => void;
     onViewCode?: (code: string) => void;
+}
+
+export interface TestApiModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    testState: 'idle' | 'loading' | 'success' | 'error';
+    testResponse: any;
+    testInputPayload: any;
 }

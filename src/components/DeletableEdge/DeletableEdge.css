@@ -1,37 +1,52 @@
-.deletable-edge__container {
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out;
-    position: absolute;
+.deletable-edge__wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    pointer-events: none;
+}
+
+.deletable-edge__label {
+    background: #fff; /* fallback */
+    background-color: var(--color-background-elevated, #fff);
+    border: 1px solid var(--color-border-secondary, #d9d9d9);
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text, #333);
     pointer-events: all;
-    z-index: 1000;
-}
-
-/* Make it visible when edge is hovered, but also allow the button to be hovered easily */
-.react-flow__edge:hover + .react-flow__edgelabel-renderer .deletable-edge__container,
-.deletable-edge__container:hover {
-    opacity: 1;
-}
-
-/* Always show it if selected (optional) */
-.react-flow__edge.selected + .react-flow__edgelabel-renderer .deletable-edge__container {
-    opacity: 1;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    white-space: nowrap;
 }
 
 .deletable-edge__btn {
-    width: 24px;
-    height: 24px;
-    background: var(--color-error);
-    color: var(--color-background, #fff);
+    width: 20px;
+    height: 20px;
+    background: var(--color-error, #ff4d4f);
+    color: #fff;
     border: none;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 10px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     transition: all 0.2s ease;
     padding: 0;
+    pointer-events: all;
+    
+    /* Initially hidden, only shows on hover */
+    opacity: 0;
+    transform: scale(0.8);
+}
+
+/* Show button when the entire React Flow edge group or the label wrapper is hovered */
+.react-flow__edge:hover + .react-flow__edgelabel-renderer .deletable-edge__btn,
+.deletable-edge__wrapper:hover .deletable-edge__btn {
+    opacity: 1;
+    transform: scale(1);
 }
 
 .deletable-edge__btn:hover {

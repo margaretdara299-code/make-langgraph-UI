@@ -14,13 +14,13 @@ export interface Skill {
     category?: string;
     clientId: string;
     payerId?: string;
-    owner: string;
+    owner?: string;
     tags: string[];
     status: SkillStatus;
     environment: Environment;
     createdAt: string;
     updatedAt: string;
-    updatedBy: string;
+    updatedBy?: string;
 }
 
 export interface SkillVersion {

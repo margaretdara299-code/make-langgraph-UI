@@ -33,7 +33,11 @@ export function getMenuItems(status: string, skillId: string, versionId?: string
             icon: <SettingOutlined />, 
             label: 'Edit' 
         },
-        { key: CARD_ACTION_KEYS.TEST, icon: <PlayCircleOutlined />, label: 'Test' },
+        { 
+            key: CARD_ACTION_KEYS.TEST, 
+            icon: <PlayCircleOutlined />, 
+            label: 'Test' 
+        },
         { type: 'divider' },
     ];
 

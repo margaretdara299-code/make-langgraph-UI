@@ -34,16 +34,27 @@ export default function DeletableEdge(props: EdgeProps) {
             <BaseEdge path={edgePath} markerEnd={markerEnd} style={style} />
             <EdgeLabelRenderer>
                 <div
-                    style={{ transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)` }}
-                    className="nodrag nopan deletable-edge__container"
+                    style={{
+                        position: 'absolute',
+                        transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`,
+                        pointerEvents: 'all',
+                    }}
+                    className="nodrag nopan"
                 >
-                    <button
-                        className="deletable-edge__btn"
-                        onClick={handleDelete}
-                        title="Delete connection"
-                    >
-                        <DeleteOutlined />
-                    </button>
+                    <div className="deletable-edge__wrapper">
+                        {props.label && (
+                            <div className="deletable-edge__label">
+                                {props.label}
+                            </div>
+                        )}
+                        <button
+                            className="deletable-edge__btn"
+                            onClick={handleDelete}
+                            title="Delete connection"
+                        >
+                            <DeleteOutlined />
+                        </button>
+                    </div>
                 </div>
             </EdgeLabelRenderer>
         </>

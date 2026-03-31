@@ -11,6 +11,68 @@ const SectionTitle = ({ children }: { children: React.ReactNode }) => (
     <Title level={5} className="action-config-step__section-title">{children}</Title>
 );
 
+const DynamicParamList = ({ name, title, emptyMessage }: { name: string, title: string, emptyMessage: string }) => (
+    <div className="action-config-step__param-group">
+        <Text strong className="action-config-step__subsection-label">{title}</Text>
+        <Form.List name={name}>
+            {(fields, { add, remove }) => (
+                <>
+                    {fields.length === 0 && (
+                        <Text type="secondary" className="action-config-step__empty-hint">
+                            {emptyMessage}
+                        </Text>
+                    )}
+                    {fields.map(({ key, name: fieldName, ...restField }) => (
+                        <div key={key} className="action-config-step__kv-row">
+                            <Form.Item
+                                {...restField}
+                                name={[fieldName, 'key']}
+                                className="action-config-step__kv-field"
+                            >
+                                <Input placeholder="Key" />
+                            </Form.Item>
+                            
+                            <Form.Item
+                                noStyle
+                                shouldUpdate={(prevValues, currentValues) => 
+                                    prevValues[name]?.[fieldName]?.key !== currentValues[name]?.[fieldName]?.key
+                                }
+                            >
+                                {({ getFieldValue }) => {
+                                    const keyVal = getFieldValue([name, fieldName, 'key']);
+                                    return (
+                                        <Form.Item
+                                            {...restField}
+                                            name={[fieldName, 'value']}
+                                            className="action-config-step__kv-field"
+                                            rules={keyVal ? [{ required: true, message: 'Required' }] : []}
+                                        >
+                                            <Input placeholder="Value" />
+                                        </Form.Item>
+                                    );
+                                }}
+                            </Form.Item>
+
+                            <DeleteOutlined
+                                className="action-config-step__delete-icon"
+                                onClick={() => remove(fieldName)}
+                            />
+                        </div>
+                    ))}
+                    <Button
+                        type="dashed"
+                        onClick={() => add()}
+                        icon={<PlusOutlined />}
+                        className="action-config-step__add-btn"
+                    >
+                        Add {title}
+                    </Button>
+                </>
+            )}
+        </Form.List>
+    </div>
+);
+
 export default function CreateActionConfigStep({ draft, setDraft }: CreateActionStepProps) {
     const [form] = Form.useForm();
 
@@ -18,15 +80,102 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
     useEffect(() => {
         const config = draft.configurations_json;
         if (config && Object.keys(config).length > 0) {
-            form.setFieldsValue(config);
+            const formConfig = { ...config };
+            if (formConfig.body_params && !Array.isArray(formConfig.body_params) && typeof formConfig.body_params === 'object') {
+                formConfig.body_params = Object.entries(formConfig.body_params).map(([key, value]) => ({ key, value }));
+            }
+            form.setFieldsValue(formConfig);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handleValuesChange = (_: any, allValues: any) => {
-        // Store ALL form values (including empty rows) so the form state stays intact.
-        // Empty-field stripping is done only at final save time, not during editing.
-        setDraft(prev => ({ ...prev, configurations_json: allValues }));
+    const handleValuesChange = (changedValues: any, allValues: any) => {
+        let newValues = { ...allValues };
+
+        // 1. If URL changed manually, parse it to update path/query params
+        if ('url' in changedValues) {
+            const urlStr = changedValues.url || '';
+            
+            // Parse path params (e.g. /users/:id)
+            const pathMatches = [...urlStr.matchAll(/:([a-zA-Z0-9_]+)/g)];
+            const pathKeys = pathMatches.map(match => match[1]);
+            
+            // Preserve existing path values if key matches
+            const currentPathParams = newValues.path_params || [];
+            newValues.path_params = pathKeys.map(key => {
+                const existing = currentPathParams.find((param: any) => param && param.key === key);
+                return existing ? existing : { key, value: '' };
+            });
+
+            // Parse query params (e.g. ?search=test&sort=asc)
+            const queryParams: any[] = [];
+            try {
+                const urlParts = urlStr.split('?');
+                if (urlParts.length > 1) {
+                    const searchParams = new URLSearchParams(urlParts[1]);
+                    searchParams.forEach((val, key) => {
+                        queryParams.push({ key, value: val });
+                    });
+                }
+            } catch (e) {
+                // Ignore parse errors
+            }
+            if (queryParams.length > 0 || urlStr.includes('?')) {
+                 newValues.query_params = queryParams;
+            }
+
+            form.setFieldsValue({ 
+                path_params: newValues.path_params, 
+                query_params: newValues.query_params 
+            });
+        }
+
+        // 2. If path_params or query_params changed, rebuild the URL
+        if ('path_params' in changedValues || 'query_params' in changedValues) {
+            const baseUrl = newValues.url || '';
+            const pathParams = newValues.path_params || [];
+            const queryParams = newValues.query_params || [];
+
+            let [basePath] = baseUrl.split('?');
+            
+            const formPathKeys = pathParams.map((param: any) => param?.key).filter(Boolean);
+            const currentPathKeys = [...basePath.matchAll(/:([a-zA-Z0-9_]+)/g)].map(match => match[1]);
+
+            // First, remove path params from the URL that were deleted from the form
+            currentPathKeys.forEach((key) => {
+                if (!formPathKeys.includes(key)) {
+                    basePath = basePath.replace(new RegExp(`/:${key}(?=/|$)`, 'g'), '');
+                    basePath = basePath.replace(new RegExp(`^:${key}(?=/|$)`, 'g'), '');
+                }
+            });
+
+            // Re-check after removal
+            const finalPathKeys = [...basePath.matchAll(/:([a-zA-Z0-9_]+)/g)].map(match => match[1]);
+
+            // Then, append path params that are in the form but missing from the URL
+            pathParams.forEach((param: any) => {
+                if (param && param.key && !finalPathKeys.includes(param.key)) {
+                    basePath += (basePath.endsWith('/') ? '' : '/') + `:${param.key}`;
+                }
+            });
+
+            // Rebuild query string
+            const validQueries = queryParams.filter((query: any) => query && query.key);
+            let updatedUrl = basePath;
+
+            if (validQueries.length > 0) {
+                const searchParams = new URLSearchParams();
+                validQueries.forEach((query: any) => {
+                    searchParams.append(query.key, query.value || '');
+                });
+                updatedUrl = basePath + '?' + decodeURIComponent(searchParams.toString());
+            }
+
+            newValues.url = updatedUrl;
+            form.setFieldsValue({ url: updatedUrl });
+        }
+
+        setDraft(prev => ({ ...prev, configurations_json: newValues }));
     };
 
     return (
@@ -57,48 +206,23 @@ export default function CreateActionConfigStep({ draft, setDraft }: CreateAction
 
                 {/* ── Section 2: Parameters (Dynamic Key-Value) ── */}
                 <Divider />
-                <SectionTitle>Parameters</SectionTitle>
-                <Form.List name="parameters">
-                    {(fields, { add, remove }) => (
-                        <>
-                            {fields.length === 0 && (
-                                <Text type="secondary" className="action-config-step__empty-hint">
-                                    No parameters added yet. Click "Add Parameter" to define key-value pairs.
-                                </Text>
-                            )}
-                            {fields.map(({ key, name, ...restField }) => (
-                                <div key={key} className="action-config-step__kv-row">
-                                    <Form.Item
-                                        {...restField}
-                                        name={[name, 'key']}
-                                        className="action-config-step__kv-field"
-                                    >
-                                        <Input placeholder="Key" />
-                                    </Form.Item>
-                                    <Form.Item
-                                        {...restField}
-                                        name={[name, 'value']}
-                                        className="action-config-step__kv-field"
-                                    >
-                                        <Input placeholder="Value" />
-                                    </Form.Item>
-                                    <DeleteOutlined
-                                        className="action-config-step__delete-icon"
-                                        onClick={() => remove(name)}
-                                    />
-                                </div>
-                            ))}
-                            <Button
-                                type="dashed"
-                                onClick={() => add()}
-                                icon={<PlusOutlined />}
-                                className="action-config-step__add-btn"
-                            >
-                                Add Parameter
-                            </Button>
-                        </>
-                    )}
-                </Form.List>
+                <SectionTitle>Integration Parameters</SectionTitle>
+                
+                <DynamicParamList 
+                    name="path_params" 
+                    title="Path Parameters" 
+                    emptyMessage="No path parameters added." 
+                />
+                <DynamicParamList name="query_params" title="Query Parameters" emptyMessage="No query parameters added." />
+                <DynamicParamList name="header_params" title="Header Parameters" emptyMessage="No header key-value pairs added." />
+                <DynamicParamList name="body_params" title="Body Parameters" emptyMessage="No body parameters added." />
+
+                {/* ── Section 3: Fallback ── */}
+                <Divider />
+                <SectionTitle>Fallback Configuration</SectionTitle>
+                <Form.Item name="fallback_message" label="Fallback Message">
+                    <Input.TextArea placeholder="Enter a message to be used if the action fails..." rows={3} />
+                </Form.Item>
 
                 {/* ── Section 3: State Management ── */}
                 <Divider />

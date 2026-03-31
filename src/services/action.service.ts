@@ -16,25 +16,26 @@ export async function createAction(
     input: Partial<ActionDefinition>
 ): Promise<ApiResponse<ActionDefinition>> {
     try {
+        const anyInput = input as any;
         const payload = {
             name: input.name || 'Untitled Action',
-            action_key: input.action_key || 'new_action_key',
+            action_key: anyInput.action_key || input.action_key || 'new_action_key',
             description: input.description || '',
             category: input.category || 'Uncategorized',
-            category_id: input.category_id || 1,
+            category_id: anyInput.category_id || input.category_id || 1,
             capability: (input.capability || 'api').toUpperCase(),
-            capability_id: input.capability_id || 1,
+            capability_id: anyInput.capability_id || input.capability_id || 1,
             icon: input.icon || '🧩',
-            default_node_title: input.default_node_title || input.name || 'Untitled',
+            default_node_title: anyInput.default_node_title || input.default_node_title || input.name || 'Untitled',
             scope: input.scope || 'global',
 
             // ── Version-level JSON blobs (wizard step 2: Configuration) ──
-            configurations_json: input.configurations_json || {},
+            configurations_json: anyInput.configurations_json || input.configurations_json || {},
         };
 
-        const res = await apiClient.post<ActionDefinition>(API_ENDPOINTS.ACTIONS.BASE, payload);
+        const res = await apiClient.post<any>(API_ENDPOINTS.ACTIONS.BASE, payload);
 
-        const newAction: ActionDefinition = {
+        const newAction = {
             id: 'pending-refresh',
             action_key: input.action_key || 'new_action_key',
             name: input.name || 'Untitled Action',
@@ -44,11 +45,11 @@ export async function createAction(
             scope: input.scope || 'global',
             icon: input.icon || '🧩',
             default_node_title: input.default_node_title || input.name || 'Untitled',
-            status: 'draft',
+            status: 'draft' as const,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
         };
-        return { success: true, data: newAction, message: res.message };
+        return { success: true, data: newAction as any, message: res.message };
     } catch (error) {
         return { success: false, error: error instanceof Error ? error.message : 'Failed to create action' };
     }
@@ -77,21 +78,21 @@ export async function fetchGroupedActions(): Promise<Record<string, ActionDefini
 
         for (const [category, actions] of Object.entries(grouped)) {
             mapped[category] = (actions as any[]).map((a: any) => ({
-                id: a.action_definition_id || a.actionDefinitionId || a.id,
-                action_key: a.action_key || a.actionKey || '',
+                id: a.actionDefinitionId || a.id,
+                action_key: a.actionKey || a.action_key || '',
                 name: a.name || '',
                 description: a.description || '',
                 category: category,
-                capability: (capMap[a.capability_id || a.capabilityId] || a.capability || 'api').toLowerCase(),
-                capability_id: a.capability_id || a.capabilityId,
+                capability: (capMap[a.capabilityId || a.capability_id] || a.capability || 'api').toLowerCase(),
+                capability_id: a.capabilityId || a.capability_id,
                 scope: a.scope || 'global',
                 icon: a.icon || '🧩',
-                default_node_title: a.default_node_title || a.defaultNodeTitle || a.name || '',
+                default_node_title: a.defaultNodeTitle || a.default_node_title || a.name || '',
                 status: a.status || 'published',
-                created_at: a.created_at || a.createdAt || '',
-                updated_at: a.updated_at || a.updatedAt || '',
-                configurations_json: a.configurations_json || a.configurationsJson || {},
-                action_version_id: a.action_version_id || a.actionVersionId || '',
+                created_at: a.createdAt || a.created_at || '',
+                updated_at: a.updatedAt || a.updated_at || '',
+                configurations_json: a.configurationsJson || a.configurations_json || {},
+                actionVersionId: a.actionVersionId || a.action_version_id || '',
             } as ActionDefinition));
         }
 
@@ -136,21 +137,20 @@ export async function fetchActions(
             catList.map((c: any) => [c.id || c.categoryId || c.category_id, c.name || ''])
         );
 
-        const items: ActionDefinition[] = (result.data.items || []).map((a: ActionDefinition) => {
-            const anyA = a as any;
-            const capId = anyA.capability_id || anyA.capabilityId;
-            const catId = anyA.category_id || anyA.categoryId;
+        const items: ActionDefinition[] = (result.data.items || []).map((a: any) => {
+            const capId = a.capabilityId || a.capability_id;
+            const catId = a.categoryId || a.category_id;
             
             return {
                 ...a,
-                id: anyA.action_definition_id || anyA.actionDefinitionId || anyA.id,
-                action_key: anyA.action_key || anyA.actionKey || '',
+                id: a.actionDefinitionId || a.action_definition_id || a.id,
+                action_key: a.actionKey || a.action_key || '',
                 category_id: catId,
-                category: anyA.category || catMap[catId] || 'Uncategorized',
+                category: a.category || catMap[catId] || 'Uncategorized',
                 capability_id: capId,
                 capability: (capMap[capId] || a.capability || 'api').toLowerCase() as ActionDefinition['capability'],
-                updated_at: anyA.updated_at || anyA.updatedAt || '',
-                created_at: anyA.created_at || anyA.createdAt || '',
+                updated_at: a.updatedAt || a.updated_at || '',
+                created_at: a.createdAt || a.created_at || '',
             };
         });
 
@@ -268,28 +268,28 @@ export async function fetchActionById(id: string): Promise<ApiResponse<ActionDef
         const data = result.data;
 
         const action: ActionDefinition = {
-            id: data.action_definition_id || data.actionDefinitionId || data.id || id,
-            action_key: data.action_key || data.actionKey || '',
+            id: data.actionDefinitionId || data.action_definition_id || data.id || id,
+            action_key: data.actionKey || data.action_key || '',
             name: data.name || '',
             description: data.description || '',
             category: data.category || 'Uncategorized',
-            category_id: data.category_id || data.categoryId,
+            category_id: data.categoryId || data.category_id,
             capability: data.capability || 'api',
-            capability_id: data.capability_id || data.capabilityId,
+            capability_id: data.capabilityId || data.capability_id,
             scope: data.scope || 'global',
             icon: data.icon || '🧩',
-            default_node_title: data.default_node_title || data.defaultNodeTitle || data.name || '',
+            default_node_title: data.defaultNodeTitle || data.default_node_title || data.name || '',
             status: data.status || 'draft',
-            created_at: data.created_at || data.createdAt || '',
-            updated_at: data.updated_at || data.updatedAt || '',
-            configurations_json: data.configurations_json || data.configurationsJson || {},
-            execution_json: data.execution_json || data.executionJson,
-            inputs_schema_json: data.inputs_schema_json || data.inputsSchemaJson,
-            outputs_schema_json: data.outputs_schema_json || data.outputsSchemaJson,
+            created_at: data.createdAt || data.created_at || '',
+            updated_at: data.updatedAt || data.updated_at || '',
+            configurations_json: data.configurationsJson || data.configurations_json || {},
+            execution_json: data.executionJson || data.execution_json,
+            inputs_schema_json: data.inputsSchemaJson || data.inputs_schema_json,
+            outputs_schema_json: data.outputsSchemaJson || data.outputs_schema_json,
         };
 
         // Attach backend version IDs
-        (action as any).actionVersionId = data.action_version_id || data.actionVersionId || '';
+        (action as any).action_version_id = data.action_version_id || data.actionVersionId || '';
 
         return { success: true, data: action };
     } catch (error) {
