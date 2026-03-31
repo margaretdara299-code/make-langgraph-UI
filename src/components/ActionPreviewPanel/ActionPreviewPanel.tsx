@@ -2,12 +2,12 @@
  * ActionPreviewPanel — a real-time card preview of the Action being drafted.
  */
 
-import { Typography, Space, Divider, Card } from 'antd';
+import { Typography, Card } from 'antd';
 import { ActionCard } from '@/components';
 import type { ActionDefinition, ActionPreviewPanelProps } from '@/interfaces';
 import './ActionPreviewPanel.css';
 
-const { Text, Title } = Typography;
+const { Title } = Typography;
 
 export default function ActionPreviewPanel({ actionDef, currentStep }: ActionPreviewPanelProps) {
     // Generate a mock complete ActionDefinition for the card to render
@@ -25,8 +25,7 @@ export default function ActionPreviewPanel({ actionDef, currentStep }: ActionPre
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
     };
-    const configData = actionDef.configurations_json || {};
-    const configKeysCount = Object.keys(configData).length;
+
 
     return (
         <div className="action-preview-panel">
@@ -37,19 +36,7 @@ export default function ActionPreviewPanel({ actionDef, currentStep }: ActionPre
                     <ActionCard action={mockAction} />
                 </div>
 
-                <Divider />
 
-                <Title level={5}>Configuration Info</Title>
-                <div className="action-preview-panel__stats">
-                    <Space size="large">
-                        <div className="action-preview-panel__stat">
-                            <Text className="action-preview-panel__stat-val">{configKeysCount}</Text>
-                            <Text type="secondary" className="action-preview-panel__stat-lbl">Settings Configured</Text>
-                        </div>
-                    </Space>
-                </div>
-
-                <Divider />
 
                 <Title level={5}>Progress</Title>
                 <div className="action-preview-panel__steps">

@@ -35,6 +35,10 @@
     flex-shrink: 0;
 }
 
+.action-config-step__param-group {
+    margin-bottom: 24px;
+}
+
 /* ── Dynamic Key-Value Rows ── */
 
 .action-config-step__kv-row {

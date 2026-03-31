@@ -73,12 +73,27 @@ export default function CreateActionModal({ isOpen, onClose, onCreated, actionTo
             if (rawConfig.url) cleanedConfig.url = rawConfig.url;
             if (rawConfig.method) cleanedConfig.method = rawConfig.method;
             if (rawConfig.output_key) cleanedConfig.output_key = rawConfig.output_key;
-            if (Array.isArray(rawConfig.parameters)) {
-                const filtered = rawConfig.parameters.filter((p: any) => p && (p.key || p.value));
-                if (filtered.length > 0) cleanedConfig.parameters = filtered;
+            ['path_params', 'query_params', 'header_params', 'body_params'].forEach(paramType => {
+                if (Array.isArray(rawConfig[paramType])) {
+                    const filtered = rawConfig[paramType].filter((param: any) => param && (param.key || param.value));
+                    if (filtered.length > 0) {
+                        if (paramType === 'body_params') {
+                            const bodyObj: Record<string, any> = {};
+                            filtered.forEach((param: any) => {
+                                if (param.key) bodyObj[param.key] = param.value;
+                            });
+                            cleanedConfig.body_params = bodyObj;
+                        } else {
+                            cleanedConfig[paramType] = filtered;
+                        }
+                    }
+                }
+            });
+            if (rawConfig.fallback_message) {
+                cleanedConfig.fallback_message = rawConfig.fallback_message;
             }
             if (Array.isArray(rawConfig.input_keys)) {
-                const filtered = rawConfig.input_keys.filter((k: any) => k && k.key);
+                const filtered = rawConfig.input_keys.filter((keyItem: any) => keyItem && keyItem.key);
                 if (filtered.length > 0) cleanedConfig.input_keys = filtered;
             }
             const cleanedDraft = { ...actionDraft, configurations_json: cleanedConfig };
