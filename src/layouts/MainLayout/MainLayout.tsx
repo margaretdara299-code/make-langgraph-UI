@@ -32,7 +32,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
     // Determine active menu key
     const selectedKey = SIDEBAR_MENU_ITEMS.find((item) =>
         location.pathname.startsWith(item.key)
-    )?.key ?? ROUTES.SKILLS_LIBRARY;
+    )?.key ?? ROUTES.DASHBOARD;
 
     /** Ensure only one sub-menu is open at a time */
     const handleOpenChange = (keys: string[]) => {
@@ -47,7 +47,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
     return (
         <Layout className="main-layout">
             <Header className="main-layout__header">
-                <div className="main-layout__logo" onClick={() => navigate(ROUTES.SKILLS_LIBRARY)}>
+                <div className="main-layout__logo" onClick={() => navigate(ROUTES.DASHBOARD)}>
                     <img src="/tensawLogo.jpg" alt="Tensaw Logo" className="main-layout__logo-image" />
                     <Text strong className="main-layout__logo-brand">Tensaw</Text>
                     <Text className="main-layout__logo-sub">Skills Studio</Text>
