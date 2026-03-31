@@ -25,7 +25,8 @@ export default function ActionPreviewPanel({ actionDef, currentStep }: ActionPre
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
     };
-    const configKeysCount = Object.keys(actionDef.configurations_json || {}).length;
+    const configData = actionDef.configurations_json || {};
+    const configKeysCount = Object.keys(configData).length;
 
     return (
         <div className="action-preview-panel">

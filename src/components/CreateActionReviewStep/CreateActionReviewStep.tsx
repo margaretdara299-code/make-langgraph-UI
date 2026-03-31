@@ -5,7 +5,8 @@ import './CreateActionReviewStep.css';
 const { Title, Text } = Typography;
 
 export default function CreateActionReviewStep({ draft }: CreateActionStepProps) {
-    const configCount = draft.configurations_json ? Object.keys(draft.configurations_json).length : 0;
+    const configData = draft.configurations_json;
+    const configCount = configData ? Object.keys(configData).length : 0;
 
     return (
         <div className="create-action-review">
@@ -35,7 +36,7 @@ export default function CreateActionReviewStep({ draft }: CreateActionStepProps)
             {configCount > 0 ? (
                 <div className="create-action-review__payload-container">
                     <pre className="create-action-review__payload-pre">
-                        {JSON.stringify(draft.configurations_json, null, 2)}
+                        {JSON.stringify(configData, null, 2)}
                     </pre>
                 </div>
             ) : (
