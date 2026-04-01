@@ -73,8 +73,9 @@ const DynamicParamList = ({ name, title, emptyMessage }: { name: string, title: 
     </div>
 );
 
-export default function CreateActionConfigStep({ draft, setDraft }: CreateActionStepProps) {
-    const [form] = Form.useForm();
+export default function CreateActionConfigStep({ draft, setDraft, form: externalForm }: CreateActionStepProps) {
+    const [internalForm] = Form.useForm();
+    const form = externalForm || internalForm;
 
     // Only seed form on initial mount or when configurations_json reference changes from outside (e.g. edit mode)
     useEffect(() => {

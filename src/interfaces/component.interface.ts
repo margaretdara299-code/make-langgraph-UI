@@ -137,6 +137,7 @@ export interface CreateActionOverviewProps {
 export interface CreateActionStepProps {
     draft: Partial<import('./action.interface').ActionDefinition>;
     setDraft: import('react').Dispatch<import('react').SetStateAction<Partial<import('./action.interface').ActionDefinition>>>;
+    form?: import('antd').FormInstance;
 }
 
 export interface PlaceholderStepProps {
