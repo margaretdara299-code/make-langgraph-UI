@@ -5,6 +5,7 @@
  */
 
 import type { ReactNode } from 'react';
+import type { DashboardCounts } from './engine.interface';
 
 export interface StatusPillProps {
     status: 'draft' | 'published';
@@ -188,4 +189,9 @@ export interface TestApiModalProps {
     testState: 'idle' | 'loading' | 'success' | 'error';
     testResponse: any;
     testInputPayload: any;
+}
+
+export interface DashboardMetricsCardProps {
+    type: 'skills' | 'actions';
+    data: DashboardCounts['skills'] | DashboardCounts['actions'];
 }
