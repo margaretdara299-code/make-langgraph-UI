@@ -39,6 +39,7 @@ export const API_ENDPOINTS = {
         BY_ID: (connectorId: string) => `${API_V1_BASE}/connectors/${connectorId}`,
     },
     ENGINE: {
+        COUNTS: `${API_V1_BASE}/engine/counts`,
         GENERATE_CODE: (versionId: string) => `${API_V1_BASE}/engine/generate-code/${versionId}`,
     },
 } as const;

@@ -14,3 +14,4 @@ export * from './category.interface';
 export * from './capability.interface';
 export * from './connector.interface';
 export * from './auth.interface';
+export * from './engine.interface';

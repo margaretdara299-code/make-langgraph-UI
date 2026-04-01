@@ -1,0 +1,99 @@
+.dashboard-card {
+    border-radius: 16px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid var(--color-border) !important;
+    height: 100%;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
+}
+
+.dashboard-card__title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.dashboard-card__icon {
+    font-size: 24px;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.skills-icon {
+    color: var(--color-primary);
+    background: rgba(var(--color-primary-rgb), 0.1);
+}
+
+.actions-icon {
+    color: var(--color-node-connector, #0ea5e9);
+    background: rgba(14, 165, 233, 0.1);
+}
+
+.dashboard-card__primary-stat {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px 0;
+    text-align: center;
+}
+
+.dashboard-card__primary-stat .ant-statistic {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dashboard-card__primary-stat .ant-statistic-title {
+    justify-content: center;
+}
+
+.dashboard-card__divider {
+    margin: 16px 0 24px 0 !important;
+    border-top-color: var(--color-border) !important;
+}
+
+/* ── Specific Overrides for AntD Statistic Component Values ── */
+
+.dashboard-card__stat-main .ant-statistic-content-value {
+    font-size: 48px !important;
+    font-weight: bold !important;
+}
+
+.stat-color-primary .ant-statistic-content-value {
+    color: var(--color-primary) !important;
+}
+
+.stat-color-connector .ant-statistic-content-value {
+    color: var(--color-node-connector, #0ea5e9) !important;
+}
+
+.stat-color-success .ant-statistic-content-value {
+    color: var(--color-success) !important;
+}
+
+.stat-color-secondary .ant-statistic-content-value {
+    color: var(--color-text-secondary) !important;
+}
+
+.stat-color-warning .ant-statistic-content-value {
+    color: var(--color-warning, #faad14) !important;
+}
+
+/* Make AntD Statistic titles a bit cleaner */
+.dashboard-card .ant-statistic-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px !important;
+    color: var(--color-text-secondary) !important;
+}
+
+.dashboard-card .ant-statistic-content-value {
+    font-weight: 600;
+}

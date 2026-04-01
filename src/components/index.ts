@@ -42,3 +42,4 @@ export { default as AnimatedNodesBackground } from './AnimatedNodesBackground/An
 export { default as LoginCard } from './LoginCard/LoginCard';
 export { default as PrivateRoute } from './PrivateRoute/PrivateRoute';
 export { default as PublicRoute } from './PublicRoute/PublicRoute';
+export { default as DashboardMetricsCard } from './DashboardMetricsCard/DashboardMetricsCard';

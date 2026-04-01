@@ -1,0 +1,28 @@
+.dashboard-page {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.dashboard-page__header {
+    margin-bottom: 24px;
+}
+
+.dashboard-page__title {
+    margin-bottom: 0 !important;
+    color: var(--color-nav-input-text) !important;
+    font-weight: 600 !important;
+}
+
+.dashboard-page__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 400px;
+}
+
+.dashboard-page__body {
+    flex: 1;
+}
+

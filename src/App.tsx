@@ -9,6 +9,7 @@ import { ConfigProvider } from 'antd';
 import { antdTheme } from '@/config';
 import MainLayout from '@/layouts/MainLayout/MainLayout';
 import SkillsLibraryPage from '@/pages/SkillsLibrary/SkillsLibraryPage';
+import DashboardPage from '@/pages/Dashboard/DashboardPage';
 import SkillDesignerPage from '@/pages/SkillDesigner/SkillDesignerPage';
 import ActionCatalogPage from '@/pages/ActionCatalog/ActionCatalogPage';
 import ConnectorsPage from '@/pages/Connectors/ConnectorsPage';
@@ -44,7 +45,7 @@ function App() {
                   <MainLayout>
                     <Routes>
                       <Route path={ROUTES.HOME} element={<Navigate to={ROUTES.DASHBOARD} replace />} />
-                      <Route path={ROUTES.DASHBOARD} element={<div>Dashboard Placeholder</div>} />
+                      <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
                       <Route path={ROUTES.SKILLS_LIBRARY} element={<SkillsLibraryPage />} />
                       <Route path={ROUTES.SKILL_DESIGNER} element={<SkillDesignerPage />} />
                       <Route path={ROUTES.ACTION_CATALOG} element={<ActionCatalogPage />} />

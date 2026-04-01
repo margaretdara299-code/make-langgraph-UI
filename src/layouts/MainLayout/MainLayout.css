@@ -109,6 +109,7 @@
   background: var(--color-bg-white) !important;
   color: var(--color-text-secondary) !important;
   border-top: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
   height: auto !important;
   line-height: normal !important;
   padding: 0;
