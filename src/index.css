@@ -59,6 +59,8 @@
   --color-node-connector: #0ea5e9;
   --color-node-connector-bg: #e0f2fe;
   --color-node-connector-text: #0369a1;
+  --color-node-start: #52c41a;
+  --color-node-start-bg: rgba(82, 196, 26, 0.2);
 
   /* Colors - Capability Badges */
   --color-badge-bg-api: #e0f2fe;

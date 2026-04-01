@@ -90,6 +90,23 @@ export default function useCanvasDragDrop(
                 return;
             }
 
+            // ── Handle Start node drop ──
+            if (data.nodeType === 'start') {
+                const newNode: Node = {
+                    id: getNextNodeId(),
+                    type: 'start',
+                    position,
+                    data: {
+                        label: data.label || 'Start',
+                        category: data.category || 'structure',
+                        icon: data.icon || '▶️',
+                    } as any,
+                };
+                setNodes((nds) => [...nds, newNode]);
+                if (versionId) upsertNodeInStorage(versionId, newNode.id, newNode);
+                return;
+            }
+
             // ── Handle Connector node drop ──
             if (data.nodeType === 'connector') {
                 const parentSubFlow = findSubFlowAtPosition(position.x, position.y);

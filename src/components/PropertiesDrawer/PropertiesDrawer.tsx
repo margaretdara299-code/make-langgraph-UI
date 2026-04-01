@@ -368,47 +368,51 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                 {/* ── Section 4: State Management ── */}
                 <div className="properties-drawer__divider" />
                 <Title level={5} className="properties-drawer__section-subtitle">State Management</Title>
-                <div className="properties-drawer__state-row">
-                    {/* Input Keys */}
-                    <div className="properties-drawer__state-col">
-                        <Text strong>Input</Text>
-                        <Form.List name="input_keys">
-                            {(fields, { add, remove }) => (
-                                <>
-                                    {fields.length === 0 && (
-                                        <Text type="secondary" className="properties-drawer__empty-hint">
-                                            No input keys.
-                                        </Text>
-                                    )}
-                                    {fields.map(({ key, name, ...restField }) => (
-                                        <div key={key} className="properties-drawer__kv-row">
-                                            <Form.Item {...restField} name={[name, 'key']} className="properties-drawer__kv-field">
-                                                <Input placeholder="e.g. claim_id" />
-                                            </Form.Item>
-                                            <DeleteOutlined className="properties-drawer__delete-icon" onClick={() => remove(name)} />
-                                        </div>
-                                    ))}
-                                    <Button type="dashed" onClick={() => add()} icon={<PlusOutlined />} block>
-                                        Add Input Key
-                                    </Button>
-                                </>
-                            )}
-                        </Form.List>
-                    </div>
-
-                    <div className="properties-drawer__state-divider" />
-
-                    {/* Output Key */}
-                    <div className="properties-drawer__state-col">
-                        <Text strong>Output</Text>
-                        <Form.Item name="output_key">
-                            <Input placeholder="e.g. result_key" />
-                        </Form.Item>
-                    </div>
-                </div>
+                {renderStateManagement()}
             </>
         );
     };
+
+    const renderStateManagement = () => (
+        <div className="properties-drawer__state-row">
+            {/* Input Keys */}
+            <div className="properties-drawer__state-col">
+                <Text strong>Input</Text>
+                <Form.List name="input_keys">
+                    {(fields, { add, remove }) => (
+                        <>
+                            {fields.length === 0 && (
+                                <Text type="secondary" className="properties-drawer__empty-hint">
+                                    No input keys.
+                                </Text>
+                            )}
+                            {fields.map(({ key, name, ...restField }) => (
+                                <div key={key} className="properties-drawer__kv-row">
+                                    <Form.Item {...restField} name={[name, 'key']} className="properties-drawer__kv-field">
+                                        <Input placeholder="e.g. claim_id" />
+                                    </Form.Item>
+                                    <DeleteOutlined className="properties-drawer__delete-icon" onClick={() => remove(name)} />
+                                </div>
+                            ))}
+                            <Button type="dashed" onClick={() => add()} icon={<PlusOutlined />} block>
+                                Add Input Key
+                            </Button>
+                        </>
+                    )}
+                </Form.List>
+            </div>
+
+            <div className="properties-drawer__state-divider" />
+
+            {/* Output Key */}
+            <div className="properties-drawer__state-col">
+                <Text strong>Output</Text>
+                <Form.Item name="output_key">
+                    <Input placeholder="e.g. result_key" />
+                </Form.Item>
+            </div>
+        </div>
+    );
 
 
     // Drawer is open if exactly ONE node or exactly ONE edge is selected
@@ -421,6 +425,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
         if (selectedNode) {
             const isSubFlow = selectedNode.type === 'subflow';
             const isConnector = selectedNode.type === 'connector';
+            const isStart = selectedNode.type === 'start';
 
             if (isLoadingAction) {
                 return (
@@ -436,15 +441,15 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                     <div className="properties-drawer__meta" style={{ background: token.colorBgContainer, borderColor: token.colorBorderSecondary }}>
                         <div className="properties-drawer__meta-item">
                             <Text type="secondary">Type</Text>
-                            <Text strong>{isSubFlow ? 'Structure Group' : (nodeData?.categoryId ? (categoryMap[nodeData.categoryId] || 'Uncategorized') : (nodeData?.category || 'Uncategorized'))}</Text>
+                            <Text strong>{isStart ? 'Workflow Entry' : isSubFlow ? 'Structure Group' : (nodeData?.categoryId ? (categoryMap[nodeData.categoryId] || 'Uncategorized') : (nodeData?.category || 'Uncategorized'))}</Text>
                         </div>
                         <div className="properties-drawer__meta-item">
                             <Text type="secondary">Capability</Text>
                             <div className={`properties-drawer__capability-badge badge-${isSubFlow ? 'default' : nodeData?.capability}`}>
-                                {isSubFlow ? 'GROUP' : (nodeData?.capability || 'DEFAULT').toUpperCase()}
+                                {isStart ? 'ENTRY' : isSubFlow ? 'GROUP' : (nodeData?.capability || 'DEFAULT').toUpperCase()}
                             </div>
                         </div>
-                        {!isSubFlow && nodeData?.action_key && (
+                        {!isSubFlow && !isStart && nodeData?.action_key && (
                             <div className="properties-drawer__meta-item">
                                 <Text type="secondary">Action ID</Text>
                                 <Text code>{nodeData.action_key}</Text>
@@ -489,7 +494,15 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                             </Form.Item>
                         )}
 
-                        {!isSubFlow && !isConnector && nodeData && (
+                        {isStart && (
+                            <>
+                                <div className="properties-drawer__divider" />
+                                <Title level={5} className="properties-drawer__section-title">State Management</Title>
+                                {renderStateManagement()}
+                            </>
+                        )}
+
+                        {!isSubFlow && !isConnector && !isStart && nodeData && (
                             <>
                                 {/* ── Configurations Section ── */}
                                 <div className="properties-drawer__divider" />

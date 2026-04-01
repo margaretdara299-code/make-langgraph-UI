@@ -8,6 +8,7 @@ import TriggerNode from '@/components/TriggerNode/TriggerNode';
 import ConnectorNode from '@/components/ConnectorNode/ConnectorNode';
 import EndNode from '@/components/EndNode/EndNode';
 import SubFlowNode from '@/components/SubFlowNode/SubFlowNode';
+import StartNode from '@/components/StartNode/StartNode';
 import DeletableEdge from '@/components/DeletableEdge/DeletableEdge';
 
 export const NODE_TYPES = {
@@ -16,6 +17,7 @@ export const NODE_TYPES = {
     connector: ConnectorNode,
     end: EndNode,
     subflow: SubFlowNode,
+    start: StartNode,
 };
 
 export const EDGE_TYPES = {
