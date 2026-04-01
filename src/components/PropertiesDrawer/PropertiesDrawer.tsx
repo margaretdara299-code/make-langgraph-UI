@@ -106,7 +106,86 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     }, [selectedEdgeId, selectedEdge, form]);
 
     // When the form values change we instantly update the React Flow instance
-    const handleValuesChange = (_changedValues: any, allValues: any) => {
+    const handleValuesChange = (changedValues: any, allValues: any) => {
+        let newValues = { ...allValues };
+
+        // 1. If URL changed manually, parse it to update path/query params
+        if ('url' in changedValues) {
+            const urlStr = changedValues.url || '';
+            const pathMatches = [...urlStr.matchAll(/:([a-zA-Z0-9_]+)/g)];
+            const pathKeys = pathMatches.map(match => match[1]);
+            const currentPathParams = newValues.path_params || [];
+            newValues.path_params = pathKeys.map(key => {
+                const existing = currentPathParams.find((param: any) => param && param.key === key);
+                return existing ? existing : { key, value: '' };
+            });
+
+            const queryParams: any[] = [];
+            try {
+                const urlParts = urlStr.split('?');
+                if (urlParts.length > 1) {
+                    const searchParams = new URLSearchParams(urlParts[1]);
+                    searchParams.forEach((val, key) => {
+                        queryParams.push({ key, value: val });
+                    });
+                }
+            } catch (e) {
+                // Ignore parse errors
+            }
+            if (queryParams.length > 0 || urlStr.includes('?')) {
+                 newValues.query_params = queryParams;
+            }
+
+            form.setFieldsValue({ 
+                path_params: newValues.path_params, 
+                query_params: newValues.query_params 
+            });
+        }
+
+        // 2. If path_params or query_params changed, rebuild the URL
+        if ('path_params' in changedValues || 'query_params' in changedValues) {
+            const baseUrl = newValues.url || '';
+            const pathParams = newValues.path_params || [];
+            const queryParams = newValues.query_params || [];
+
+            let [basePath] = baseUrl.split('?');
+            
+            const formPathKeys = pathParams.map((param: any) => param?.key).filter(Boolean);
+            const currentPathKeys = [...basePath.matchAll(/:([a-zA-Z0-9_]+)/g)].map(match => match[1]);
+
+            // Remove path params from the URL that were deleted
+            currentPathKeys.forEach((key) => {
+                if (!formPathKeys.includes(key)) {
+                    basePath = basePath.replace(new RegExp(`/:${key}(?=/|$)`, 'g'), '');
+                    basePath = basePath.replace(new RegExp(`^:${key}(?=/|$)`, 'g'), '');
+                }
+            });
+
+            const finalPathKeys = [...basePath.matchAll(/:([a-zA-Z0-9_]+)/g)].map(match => match[1]);
+
+            // Append path params that are in the form but missing from the URL
+            pathParams.forEach((param: any) => {
+                if (param && param.key && !finalPathKeys.includes(param.key)) {
+                    basePath += (basePath.endsWith('/') ? '' : '/') + `:${param.key}`;
+                }
+            });
+
+            const validQueries = queryParams.filter((query: any) => query && query.key);
+            let updatedUrl = basePath;
+
+            if (validQueries.length > 0) {
+                const searchParams = new URLSearchParams();
+                validQueries.forEach((query: any) => {
+                    searchParams.append(query.key, query.value || '');
+                });
+                updatedUrl = basePath + '?' + decodeURIComponent(searchParams.toString());
+            }
+
+            newValues.url = updatedUrl;
+            form.setFieldsValue({ url: updatedUrl });
+        }
+
+
         if (selectedNode) {
             const currentNode = nodes.find(n => n.id === selectedNode.id);
             if (!currentNode) return;
@@ -118,8 +197,8 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                     ...currentNode,
                     data: {
                         ...currentNode.data,
-                        label: allValues.label,
-                        description: allValues.description,
+                        label: newValues.label,
+                        description: newValues.description,
                     },
                 };
             } else if (selectedNode.type === 'connector') {
@@ -127,16 +206,16 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                     ...currentNode,
                     data: {
                         ...currentNode.data,
-                        label: allValues.name || allValues.label,
-                        name: allValues.name || allValues.label, // ensure API parity
-                        description: allValues.description,
-                        config_json: allValues.config_json || allValues.configJson,
+                        label: newValues.name || newValues.label,
+                        name: newValues.name || newValues.label, // ensure API parity
+                        description: newValues.description,
+                        config_json: newValues.config_json || newValues.configJson,
                     },
                 };
             } else {
                 // Action/Trigger nodes
                 // Extract configurations (all fields except native node properties)
-                const { label, name, description, ...configurations } = allValues;
+                const { label, name, description, ...configurations } = newValues;
 
                 updatedNode = {
                     ...currentNode,
@@ -195,6 +274,54 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
         }
     };
 
+    const DynamicParamList = ({ name, title, emptyMessage }: { name: string, title: string, emptyMessage: string }) => (
+        <div className="properties-drawer__param-group" style={{ marginBottom: 16 }}>
+            <Text strong className="properties-drawer__subsection-label" style={{ display: 'block', marginBottom: 8 }}>{title}</Text>
+            <Form.List name={name}>
+                {(fields, { add, remove }) => (
+                    <>
+                        {fields.length === 0 && (
+                            <Text type="secondary" className="properties-drawer__empty-hint" style={{ display: 'block', marginBottom: 8, fontSize: 13 }}>
+                                {emptyMessage}
+                            </Text>
+                        )}
+                        {fields.map(({ key, name: fieldName, ...restField }) => (
+                            <div key={key} className="properties-drawer__kv-row">
+                                <Form.Item {...restField} name={[fieldName, 'key']} className="properties-drawer__kv-field">
+                                    <Input placeholder="Key" />
+                                </Form.Item>
+                                <Form.Item
+                                    noStyle
+                                    shouldUpdate={(prevValues, currentValues) => 
+                                        prevValues[name]?.[fieldName]?.key !== currentValues[name]?.[fieldName]?.key
+                                    }
+                                >
+                                    {({ getFieldValue }) => {
+                                        const keyVal = getFieldValue([name, fieldName, 'key']);
+                                        return (
+                                            <Form.Item
+                                                {...restField}
+                                                name={[fieldName, 'value']}
+                                                className="properties-drawer__kv-field"
+                                                rules={keyVal ? [{ required: true, message: 'Required' }] : []}
+                                            >
+                                                <Input placeholder="Value" />
+                                            </Form.Item>
+                                        );
+                                    }}
+                                </Form.Item>
+                                <DeleteOutlined className="properties-drawer__delete-icon" onClick={() => remove(fieldName)} />
+                            </div>
+                        ))}
+                        <Button type="dashed" onClick={() => add()} icon={<PlusOutlined />} block>
+                            Add {title}
+                        </Button>
+                    </>
+                )}
+            </Form.List>
+        </div>
+    );
+
     /** Render the Connector-specific fields */
     const renderNodeConfig = (_nodeData: CanvasNodeData) => {
         return (
@@ -210,36 +337,23 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                     </Form.Item>
                 </div>
 
-                {/* ── Section 2: Parameters (Dynamic Key-Value) ── */}
+                {/* ── Section 2: Integration Parameters ── */}
                 <div className="properties-drawer__divider" />
-                <Title level={5} className="properties-drawer__section-subtitle">Parameters</Title>
-                <Form.List name="parameters">
-                    {(fields, { add, remove }) => (
-                        <>
-                            {fields.length === 0 && (
-                                <Text type="secondary" className="properties-drawer__empty-hint">
-                                    No parameters added yet.
-                                </Text>
-                            )}
-                            {fields.map(({ key, name, ...restField }) => (
-                                <div key={key} className="properties-drawer__kv-row">
-                                    <Form.Item {...restField} name={[name, 'key']} className="properties-drawer__kv-field">
-                                        <Input placeholder="Key" />
-                                    </Form.Item>
-                                    <Form.Item {...restField} name={[name, 'value']} className="properties-drawer__kv-field">
-                                        <Input placeholder="Value" />
-                                    </Form.Item>
-                                    <DeleteOutlined className="properties-drawer__delete-icon" onClick={() => remove(name)} />
-                                </div>
-                            ))}
-                            <Button type="dashed" onClick={() => add()} icon={<PlusOutlined />} block>
-                                Add Parameter
-                            </Button>
-                        </>
-                    )}
-                </Form.List>
+                <Title level={5} className="properties-drawer__section-subtitle">Integration Parameters</Title>
+                
+                <DynamicParamList name="path_params" title="Path Parameters" emptyMessage="No path parameters." />
+                <DynamicParamList name="query_params" title="Query Parameters" emptyMessage="No query parameters." />
+                <DynamicParamList name="header_params" title="Header Parameters" emptyMessage="No header parameters." />
+                <DynamicParamList name="body_params" title="Body Parameters" emptyMessage="No body parameters." />
 
-                {/* ── Section 3: State Management ── */}
+                {/* ── Section 3: Fallback Configuration ── */}
+                <div className="properties-drawer__divider" />
+                <Title level={5} className="properties-drawer__section-subtitle">Fallback Configuration</Title>
+                <Form.Item name="fallback_message" label="Fallback Message">
+                    <Input.TextArea placeholder="Enter a message to be used if the action fails..." rows={3} />
+                </Form.Item>
+
+                {/* ── Section 4: State Management ── */}
                 <div className="properties-drawer__divider" />
                 <Title level={5} className="properties-drawer__section-subtitle">State Management</Title>
                 <div className="properties-drawer__state-row">
