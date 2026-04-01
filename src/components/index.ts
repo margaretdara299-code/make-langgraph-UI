@@ -38,3 +38,7 @@ export { default as CreateCapabilityModal } from './CreateCapabilityModal/Create
 export { default as CodeViewerModal } from './CodeViewerModal/CodeViewerModal';
 export { default as PublishStepperModal } from './PublishStepperModal/PublishStepperModal';
 export { default as TestApiModal } from './TestApiModal/TestApiModal';
+export { default as AnimatedNodesBackground } from './AnimatedNodesBackground/AnimatedNodesBackground';
+export { default as LoginCard } from './LoginCard/LoginCard';
+export { default as PrivateRoute } from './PrivateRoute/PrivateRoute';
+export { default as PublicRoute } from './PublicRoute/PublicRoute';
