@@ -9,6 +9,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import type { MainLayoutProps } from '@/interfaces';
 import { ROUTES } from '@/routes';
 import { SIDEBAR_MENU_ITEMS } from '@/constants';
+import { setAuthPersistence } from '@/utils/auth.utils';
+import SidebarFooter from './SidebarFooter';
 import './MainLayout.css';
 
 const { Header, Sider, Content } = Layout;
@@ -44,6 +46,12 @@ export default function MainLayout({ children }: MainLayoutProps) {
         }
     };
 
+    /** Clears auth state and redirects to the login page */
+    const handleLogout = () => {
+        setAuthPersistence(false);
+        navigate(ROUTES.LOGIN, { replace: true });
+    };
+
     return (
         <Layout className="main-layout">
             <Header className="main-layout__header">
@@ -72,6 +80,13 @@ export default function MainLayout({ children }: MainLayoutProps) {
                     collapsible
                     collapsed={collapsed}
                     onCollapse={(value) => setCollapsed(value)}
+                    trigger={
+                        <SidebarFooter
+                            collapsed={collapsed}
+                            onToggleCollapse={() => setCollapsed(!collapsed)}
+                            onLogout={handleLogout}
+                        />
+                    }
                 >
                     <Menu
                         mode="inline"
