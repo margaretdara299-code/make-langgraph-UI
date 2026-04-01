@@ -114,3 +114,9 @@
     color: var(--color-success);
     font-weight: bold;
 }
+
+.action-preview-panel__test-btn-wrapper {
+    margin-top: 24px; 
+    margin-bottom: 24px; 
+    text-align: center;
+}

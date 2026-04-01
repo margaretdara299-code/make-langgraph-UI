@@ -18,6 +18,7 @@ export default function ActionCard({ action, onAction }: ActionCardProps) {
     // Dropdown menu items
     const menuItems: MenuProps['items'] = [
         { key: CARD_ACTION_KEYS.EDIT_SETTINGS, label: 'Edit' },
+        { key: CARD_ACTION_KEYS.TEST, label: 'Test API' },
         { type: 'divider' },
         { key: CARD_ACTION_KEYS.DELETE, label: 'Delete', danger: true },
     ];
@@ -85,9 +86,9 @@ export default function ActionCard({ action, onAction }: ActionCardProps) {
                 <Title level={5} className="action-card__title" ellipsis>
                     {action.name}
                 </Title>
-                <Tooltip title={action.actionKey}>
+                <Tooltip title={action.action_key}>
                     <Text className="action-card__key" code ellipsis>
-                        {action.actionKey}
+                        {action.action_key}
                     </Text>
                 </Tooltip>
                 <div className="action-card__description">
@@ -102,7 +103,7 @@ export default function ActionCard({ action, onAction }: ActionCardProps) {
                     <Tag className="action-card__category">{action.category}</Tag>
                 </div>
                 <div className="action-card__date">
-                    Edited {formatDate(action.updatedAt)}
+                    Edited {formatDate(action.updated_at)}
                 </div>
             </div>
         </Card>

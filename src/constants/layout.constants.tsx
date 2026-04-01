@@ -2,10 +2,15 @@
  * Constants for layout components.
  */
 
-import { BulbOutlined, SettingOutlined, AppstoreOutlined, ThunderboltOutlined, ApiOutlined } from '@ant-design/icons';
+import { BulbOutlined, SettingOutlined, AppstoreOutlined, ThunderboltOutlined, DashboardOutlined, ToolOutlined, PartitionOutlined, ApiOutlined } from '@ant-design/icons';
 import { ROUTES } from '@/routes';
 
 export const SIDEBAR_MENU_ITEMS = [
+    {
+        key: ROUTES.DASHBOARD,
+        icon: DashboardOutlined,
+        label: 'Dashboard',
+    },
     {
         key: ROUTES.SKILLS_LIBRARY,
         icon: BulbOutlined,
@@ -31,4 +36,16 @@ export const SIDEBAR_MENU_ITEMS = [
     //     icon: ApiOutlined,
     //     label: 'Connectors',
     // },
+    {
+        key: ROUTES.TOOLS,
+        icon: ToolOutlined,
+        label: 'Tools',
+    },
+    {
+        key: ROUTES.WORKFLOW,
+        icon: PartitionOutlined,
+        label: 'Workflow',
+    },
 ];
+
+

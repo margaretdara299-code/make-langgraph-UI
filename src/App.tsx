@@ -22,13 +22,17 @@ function App() {
         <BrowserRouter>
           <MainLayout>
             <Routes>
-              <Route path={ROUTES.HOME} element={<Navigate to={ROUTES.SKILLS_LIBRARY} replace />} />
+              <Route path={ROUTES.HOME} element={<Navigate to={ROUTES.DASHBOARD} replace />} />
+              <Route path={ROUTES.DASHBOARD} element={<div>Dashboard Placeholder</div>} />
               <Route path={ROUTES.SKILLS_LIBRARY} element={<SkillsLibraryPage />} />
               <Route path={ROUTES.SKILL_DESIGNER} element={<SkillDesignerPage />} />
               <Route path={ROUTES.ACTION_CATALOG} element={<ActionCatalogPage />} />
               <Route path={ROUTES.CONNECTORS} element={<ConnectorsPage />} />
               <Route path={ROUTES.CATEGORIES} element={<CategoriesPage />} />
               <Route path={ROUTES.CAPABILITIES} element={<CapabilitiesPage />} />
+              <Route path={ROUTES.TOOLS} element={<div>Tools Placeholder</div>} />
+              <Route path={ROUTES.WORKFLOW} element={<div>Workflow Placeholder</div>} />
+
             </Routes>
           </MainLayout>
         </BrowserRouter>

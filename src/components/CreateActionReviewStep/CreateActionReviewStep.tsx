@@ -5,7 +5,41 @@ import './CreateActionReviewStep.css';
 const { Title, Text } = Typography;
 
 export default function CreateActionReviewStep({ draft }: CreateActionStepProps) {
-    const configCount = draft.configurations_json ? Object.keys(draft.configurations_json).length : 0;
+    const configData = draft.configurations_json;
+
+    // Transform data solely for accurate preview (mocking the handlePublish cleaning logic)
+    const displayData = configData ? { ...configData } : null;
+    if (displayData) {
+        ['path_params', 'query_params', 'header_params', 'body_params'].forEach(paramType => {
+            if (Array.isArray(displayData[paramType])) {
+                const filtered = displayData[paramType].filter((param: any) => param && (param.key || param.value));
+                if (filtered.length > 0) {
+                    if (paramType === 'body_params') {
+                        const bodyObj: Record<string, any> = {};
+                        filtered.forEach((param: any) => {
+                            if (param.key) bodyObj[param.key] = param.value;
+                        });
+                        displayData.body_params = bodyObj;
+                    } else {
+                        displayData[paramType] = filtered;
+                    }
+                } else {
+                    delete displayData[paramType];
+                }
+            }
+        });
+        
+        if (Array.isArray(displayData.input_keys)) {
+            const filtered = displayData.input_keys.filter((keyItem: any) => keyItem && keyItem.key);
+            if (filtered.length > 0) {
+                displayData.input_keys = filtered;
+            } else {
+                delete displayData.input_keys;
+            }
+        }
+    }
+
+    const configCount = displayData ? Object.keys(displayData).length : 0;
 
     return (
         <div className="create-action-review">
@@ -32,10 +66,10 @@ export default function CreateActionReviewStep({ draft }: CreateActionStepProps)
                 These {configCount} parameters define how the {draft.capability?.toUpperCase()} will execute.
             </Text>
 
-            {configCount > 0 ? (
+            {displayData && Object.keys(displayData).length > 0 ? (
                 <div className="create-action-review__payload-container">
                     <pre className="create-action-review__payload-pre">
-                        {JSON.stringify(draft.configurations_json, null, 2)}
+                        {JSON.stringify(displayData, null, 2)}
                     </pre>
                 </div>
             ) : (
