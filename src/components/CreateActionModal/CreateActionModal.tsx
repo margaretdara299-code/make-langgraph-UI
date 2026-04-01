@@ -27,8 +27,9 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
         icon: '🧩',
     });
 
-    // Form instance for step 0 (Overview) — used for validation before advancing
+    // Form instances for steps
     const [overviewForm] = Form.useForm();
+    const [configForm] = Form.useForm();
 
     // Populate draft when opening in Edit mode
     useEffect(() => {
@@ -58,7 +59,7 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
         testResponse, 
         testInputPayload, 
         handleTestApi 
-    } = useApiTest(actionDraft);
+    } = useApiTest(actionDraft, configForm);
 
     const handleNext = async () => {
         // Validate the Overview form before allowing step advancement
@@ -146,7 +147,7 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
     // Form steps configuration
     const steps = [
         { title: 'Overview', content: <CreateActionOverview draft={actionDraft} setDraft={setActionDraft} form={overviewForm} /> },
-        { title: 'Configuration', content: <CreateActionConfigStep draft={actionDraft} setDraft={setActionDraft} /> },
+        { title: 'Configuration', content: <CreateActionConfigStep draft={actionDraft} setDraft={setActionDraft} form={configForm} /> },
         { title: 'Publish', content: <CreateActionReviewStep draft={actionDraft} setDraft={setActionDraft} /> },
     ];
 

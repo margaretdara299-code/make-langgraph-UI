@@ -44,6 +44,18 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             return;
         }
 
+        // Helper to normalize Object maps to Array of key-value objects for Form.List
+        const prepareConfigsForForm = (rawConfigs: any) => {
+            if (typeof rawConfigs !== 'object' || Array.isArray(rawConfigs) || !rawConfigs) return {};
+            const prepared = { ...rawConfigs };
+            ['path_params', 'query_params', 'header_params', 'body_params'].forEach(paramKey => {
+                if (prepared[paramKey] && !Array.isArray(prepared[paramKey]) && typeof prepared[paramKey] === 'object') {
+                    prepared[paramKey] = Object.entries(prepared[paramKey]).map(([key, value]) => ({ key, value }));
+                }
+            });
+            return prepared;
+        };
+
         // For connectors, read from node.data directly
         if (selectedNode.type === 'connector') {
             const nd = selectedNode.data as any;
@@ -70,26 +82,26 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             const stored = loadGraphFromStorage(versionId);
             const storedNode = stored?.nodes?.[selectedNode.id];
             if (storedNode) {
-                const configs = storedNode.data?.configurations_json || {};
+                const configs = prepareConfigsForForm(storedNode.data?.configurations_json);
                 form.setFieldsValue({
                     label: storedNode.data?.label || selectedNode.data.label,
-                    ...(typeof configs === 'object' && !Array.isArray(configs) ? configs : {}),
+                    ...configs,
                 });
             } else {
                 // Fallback: read from React Flow node data
                 const nd = selectedNode.data as any;
-                const configs = nd.configurations_json || {};
+                const configs = prepareConfigsForForm(nd.configurations_json);
                 form.setFieldsValue({
                     label: nd.label,
-                    ...(typeof configs === 'object' && !Array.isArray(configs) ? configs : {}),
+                    ...configs,
                 });
             }
         } else {
             const nd = selectedNode.data as any;
-            const configs = nd.configurations_json || {};
+            const configs = prepareConfigsForForm(nd.configurations_json);
             form.setFieldsValue({
                 label: nd.label,
-                ...(typeof configs === 'object' && !Array.isArray(configs) ? configs : {}),
+                ...configs,
             });
         }
     }, [selectedNodeId, selectedEdgeId, form, versionId]);
