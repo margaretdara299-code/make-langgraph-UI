@@ -1,0 +1,227 @@
+.execution-modal .ant-modal-content {
+    display: flex;
+    flex-direction: column;
+    height: 85vh; /* Large height to take most of the screen */
+    overflow: hidden;
+    padding: 0;
+}
+
+.execution-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.execution-modal__header-spin {
+    margin-right: 8px;
+}
+
+.execution-modal__layout {
+    display: flex;
+    flex: 1;
+    height: calc(85vh - 60px); /* Subtract header height */
+    overflow: hidden;
+}
+
+.execution-modal__pane {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.execution-modal__pane--left {
+    flex: 0 0 25%;
+    border-right: 1px solid var(--color-border);
+}
+
+.execution-modal__pane--middle {
+    flex: 0 0 50%;
+}
+
+.execution-modal__pane--right {
+    flex: 0 0 25%;
+    border-left: 1px solid var(--color-border);
+}
+
+.execution-modal__pane-header {
+    padding: 12px 16px;
+    background-color: var(--color-bg-base);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.execution-modal__pane-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    position: relative;
+}
+
+.execution-modal__pane-content--logs {
+    background-color: var(--color-nav-bg); /* Dark terminal look from variable */
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Split Pane for the Right side */
+.execution-modal__pane-split {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+}
+
+.execution-modal__pane-split--top {
+    height: 50%;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.execution-modal__pane-split--bottom {
+    height: 50%;
+}
+
+/* Code viewers */
+.execution-modal__code-viewer {
+    margin: 0;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', Courier, monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    background-color: var(--color-bg-white);
+    padding: 12px;
+    border-radius: 6px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    border: 1px solid var(--color-border);
+    height: 100%;
+    margin-bottom: 0;
+}
+
+.execution-modal__logs-viewer {
+    margin: 0;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', Courier, monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    background-color: transparent;
+    color: var(--color-nav-text);
+    padding: 16px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    height: 100%;
+}
+
+/* Step & Code Item Spacing */
+.execution-modal__step-item {
+    margin-bottom: 16px;
+}
+
+.execution-modal__step-label {
+    display: block;
+    margin-bottom: 4px;
+}
+
+/* Stepper Pane Specifics */
+.execution-modal__stepper-container {
+    padding: 24px;
+    background-color: var(--color-bg-white);
+}
+
+/* Progress Dashboard Styling */
+.execution-modal__progress-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 16px;
+}
+
+.execution-modal__progress-text {
+    color: var(--color-nav-text);
+    opacity: 0.8;
+}
+
+/* Centered content logic */
+.execution-modal__centered-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+/* Empty state styling */
+.execution-modal__empty {
+    margin-top: 40px;
+}
+
+/* ── Custom Pulse Reactor Loader ── */
+.reactor-loader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    gap: 24px;
+}
+
+.reactor-loader {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reactor-core {
+    width: 24px;
+    height: 24px;
+    background-color: var(--color-primary);
+    border-radius: 50%;
+    box-shadow: 0 0 15px var(--color-primary);
+    animation: core-pulse 1.5s ease-in-out infinite alternate;
+    z-index: 2;
+}
+
+.reactor-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+    animation: ring-spin 2s linear infinite;
+    z-index: 1;
+}
+
+.reactor-ring--inner {
+    top: 15px;
+    left: 15px;
+    width: calc(100% - 30px);
+    height: calc(100% - 30px);
+    border: 3px solid transparent;
+    border-left-color: var(--color-success);
+    border-right-color: var(--color-success);
+    animation: ring-spin-reverse 1.5s linear infinite;
+}
+
+@keyframes core-pulse {
+    0% { transform: scale(0.9); box-shadow: 0 0 8px var(--color-primary); }
+    100% { transform: scale(1.2); box-shadow: 0 0 20px var(--color-primary), 0 0 40px var(--color-primary); }
+}
+
+@keyframes ring-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes ring-spin-reverse {
+    0% { transform: rotate(360deg); }
+    100% { transform: rotate(0deg); }
+}
