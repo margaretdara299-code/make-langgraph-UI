@@ -17,7 +17,6 @@ import './PropertiesDrawer.css';
 
 const { Title, Text } = Typography;
 
-
 export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClose }: PropertiesDrawerProps) {
     const { token } = theme.useToken();
     const { setNodes, setEdges } = useReactFlow();
@@ -145,12 +144,12 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                 // Ignore parse errors
             }
             if (queryParams.length > 0 || urlStr.includes('?')) {
-                 newValues.query_params = queryParams;
+                newValues.query_params = queryParams;
             }
 
-            form.setFieldsValue({ 
-                path_params: newValues.path_params, 
-                query_params: newValues.query_params 
+            form.setFieldsValue({
+                path_params: newValues.path_params,
+                query_params: newValues.query_params
             });
         }
 
@@ -161,7 +160,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             const queryParams = newValues.query_params || [];
 
             let [basePath] = baseUrl.split('?');
-            
+
             const formPathKeys = pathParams.map((param: any) => param?.key).filter(Boolean);
             const currentPathKeys = [...basePath.matchAll(/:([a-zA-Z0-9_]+)/g)].map(match => match[1]);
 
@@ -271,7 +270,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                     return edge;
                 })
             );
-            
+
             // Sync to localStorage
             if (versionId && updatedEdge) {
                 // To avoid React Flow specific internal props (like selected) blowing up storage,
@@ -304,7 +303,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                 </Form.Item>
                                 <Form.Item
                                     noStyle
-                                    shouldUpdate={(prevValues, currentValues) => 
+                                    shouldUpdate={(prevValues, currentValues) =>
                                         prevValues[name]?.[fieldName]?.key !== currentValues[name]?.[fieldName]?.key
                                     }
                                 >
@@ -352,7 +351,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                 {/* ── Section 2: Integration Parameters ── */}
                 <div className="properties-drawer__divider" />
                 <Title level={5} className="properties-drawer__section-subtitle">Integration Parameters</Title>
-                
+
                 <DynamicParamList name="path_params" title="Path Parameters" emptyMessage="No path parameters." />
                 <DynamicParamList name="query_params" title="Query Parameters" emptyMessage="No query parameters." />
                 <DynamicParamList name="header_params" title="Header Parameters" emptyMessage="No header parameters." />

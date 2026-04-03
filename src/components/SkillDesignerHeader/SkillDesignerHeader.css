@@ -45,3 +45,14 @@
     display: flex;
     align-items: center;
 }
+
+.skill-designer-header__run-btn--active {
+    color: var(--color-success) !important;
+    border-color: var(--color-success) !important;
+}
+
+.skill-designer-header__run-btn--active:hover {
+    color: var(--color-success) !important;
+    border-color: var(--color-success) !important;
+    opacity: 0.8;
+}

@@ -5,15 +5,17 @@
 
 import { useState, useEffect } from 'react';
 import { Button, Typography, Space, Tooltip, message, Skeleton } from 'antd';
-import { ArrowLeftOutlined, CodeOutlined, SaveOutlined, SendOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, CodeOutlined, SaveOutlined, SendOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import StatusPill from '@/components/StatusPill/StatusPill';
 import CodeViewerModal from '@/components/CodeViewerModal/CodeViewerModal';
 import PublishStepperModal from '@/components/PublishStepperModal/PublishStepperModal';
+import ExecutionDebuggerModal from '@/components/ExecutionDebuggerModal/ExecutionDebuggerModal';
 import { ROUTES } from '@/routes';
 import { useSkillGraph } from '@/hooks';
 import { fetchSkillById } from '@/services';
 import { generateCode } from '@/services/graph.service';
+import { useReactFlow } from '@xyflow/react';
 import type { Skill } from '@/interfaces';
 import './SkillDesignerHeader.css';
 
@@ -21,6 +23,7 @@ const { Text, Title } = Typography;
 
 export default function SkillDesignerHeader() {
     const navigate = useNavigate();
+    const { getNodes, getEdges } = useReactFlow();
     const { skillId } = useParams<{ skillId: string }>();
     const { saveGraph, versionId } = useSkillGraph();
     const [skill, setSkill] = useState<Skill | null>(null);
@@ -33,6 +36,9 @@ export default function SkillDesignerHeader() {
 
     // Publish stepper state
     const [isPublishOpen, setIsPublishOpen] = useState(false);
+    
+    // Debugger Modal
+    const [isDebuggerOpen, setIsDebuggerOpen] = useState(false);
 
     useEffect(() => {
         if (!skillId) return;
@@ -100,6 +106,18 @@ export default function SkillDesignerHeader() {
 
             {/* Right Side: Primary Actions */}
             <Space size="middle" className="skill-designer-header__actions">
+                <Tooltip title="Run Workflow">
+                    <Button
+                        type="default"
+                        className="skill-designer-header__run-btn--active"
+                        icon={<PlayCircleOutlined />}
+                        onClick={() => versionId && setIsDebuggerOpen(true)}
+                        disabled={!versionId}
+                    >
+                        Run
+                    </Button>
+                </Tooltip>
+                
                 <Tooltip title="Save Draft">
                     <Button icon={<SaveOutlined />} onClick={handleSave}>Save</Button>
                 </Tooltip>
@@ -143,6 +161,17 @@ export default function SkillDesignerHeader() {
                     setIsCodeViewerOpen(true);
                 }}
             />
+
+            {/* Execution Debugger Modal */}
+            {versionId && (
+                <ExecutionDebuggerModal 
+                    isOpen={isDebuggerOpen}
+                    onClose={() => setIsDebuggerOpen(false)}
+                    versionId={versionId}
+                    nodes={getNodes()}
+                    edges={getEdges()}
+                />
+            )}
         </div>
     );
 }
