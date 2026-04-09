@@ -24,8 +24,9 @@
 }
 
 .node-palette-item__icon {
-    font-size: 18px;
+    font-size: 15px;
     line-height: 1;
+
     flex-shrink: 0;
 }
 

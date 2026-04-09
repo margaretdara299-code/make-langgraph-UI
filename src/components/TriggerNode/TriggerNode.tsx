@@ -21,7 +21,7 @@ export default function TriggerNode({ id, data }: NodeProps<CanvasNode>) {
     };
 
     return (
-        <div className="modern-node-card" style={{ background: theme.bg, borderColor: theme.stroke }}>
+        <div className="modern-node-card" style={{ background: theme.bg, borderColor: theme.stroke, color: theme.stroke } as any}>
             <div className="modern-node-delete" onClick={handleDelete} title="Delete Node">×</div>
 
             <div className="modern-node-content">

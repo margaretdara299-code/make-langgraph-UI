@@ -31,7 +31,16 @@ export default function DeletableEdge(props: EdgeProps) {
 
     return (
         <>
-            <BaseEdge path={edgePath} markerEnd={markerEnd} style={style} />
+            <BaseEdge 
+                path={edgePath} 
+                markerEnd={markerEnd} 
+                style={{ 
+                    ...style, 
+                    strokeDasharray: '5,5', 
+                    stroke: '#94a3b8',
+                    strokeWidth: 2
+                }} 
+            />
             <EdgeLabelRenderer>
                 <div
                     style={{
@@ -52,7 +61,7 @@ export default function DeletableEdge(props: EdgeProps) {
                             onClick={handleDelete}
                             title="Delete connection"
                         >
-                            <DeleteOutlined />
+                            ×
                         </button>
                     </div>
                 </div>
@@ -60,3 +69,4 @@ export default function DeletableEdge(props: EdgeProps) {
         </>
     );
 }
+

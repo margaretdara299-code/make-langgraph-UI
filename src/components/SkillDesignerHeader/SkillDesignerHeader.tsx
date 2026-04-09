@@ -111,9 +111,10 @@ export default function SkillDesignerHeader() {
             </Space>
 
             {/* Right Side: Primary Actions */}
-            <Space size="middle" className="skill-designer-header__actions">
+            <Space size="small" className="skill-designer-header__actions">
                 <Tooltip title="Run Workflow">
                     <Button
+                        size="small"
                         type="default"
                         className="skill-designer-header__run-btn--active"
                         icon={<PlayCircleOutlined />}
@@ -125,10 +126,11 @@ export default function SkillDesignerHeader() {
                 </Tooltip>
                 
                 <Tooltip title="Save Draft">
-                    <Button icon={<SaveOutlined />} onClick={handleSave}>Save</Button>
+                    <Button size="small" icon={<SaveOutlined />} onClick={handleSave}>Save</Button>
                 </Tooltip>
                 <Tooltip title="View Generated Code">
                     <Button
+                        size="small"
                         icon={<CodeOutlined />}
                         onClick={handleViewCode}
                         loading={isGeneratingCode}
@@ -139,6 +141,7 @@ export default function SkillDesignerHeader() {
                 </Tooltip>
                 <Tooltip title="Publish Workflow">
                     <Button
+                        size="small"
                         type="primary"
                         icon={<SendOutlined />}
                         onClick={() => setIsPublishOpen(true)}
@@ -148,6 +151,7 @@ export default function SkillDesignerHeader() {
                     </Button>
                 </Tooltip>
             </Space>
+
 
             {/* Code Viewer Modal */}
             <CodeViewerModal

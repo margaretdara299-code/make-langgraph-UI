@@ -1,18 +1,13 @@
-/**
- * PropertiesDrawer styles.
- */
-
 .properties-drawer {
-    /* We override the AntD drawer position because mask={false} on a full screen 
-       can sometimes push layout oddly unless bound to its container.
-       We manage absolute positioning inside the main pane wrapper. */
+    position: absolute !important;
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+}
+
+/* Ensure the portal wrapper doesn't move outside the relative container */
+.properties-drawer .ant-drawer-content-wrapper {
     position: absolute !important;
 }
 
-/* Ensure the wrapper doesn't capture clicks when the drawer is open with mask={false} */
-.ant-drawer-inline {
-    position: absolute;
-}
 
 .properties-drawer__header {
     display: flex;
@@ -21,83 +16,126 @@
 }
 
 .properties-drawer__icon {
-    font-size: 20px;
+    font-size: 18px;
     line-height: 1;
+    color: #475569;
 }
 
 .properties-drawer__title-text {
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 15px;
+    color: #1e293b;
+    letter-spacing: -0.01em;
 }
 
 .properties-drawer__content {
     display: flex;
     flex-direction: column;
+    padding: 0;
 }
 
 .properties-drawer__meta {
     padding: 16px;
-    border-radius: 8px;
-    border: 1px solid;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
+    margin-bottom: 24px;
 }
 
 .properties-drawer__meta-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 13px;
+    font-size: 12px;
+}
+
+.properties-drawer__meta-label {
+    color: #64748b;
+    font-weight: 500;
+}
+
+.properties-drawer__meta-value {
+    color: #1e293b;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', 'Monaco', monospace;
+    font-size: 11px;
+    background: rgba(15, 23, 42, 0.05);
+    padding: 2px 6px;
+    border-radius: 4px;
 }
 
 .properties-drawer__divider {
     height: 1px;
-    background-color: var(--color-border);
-    margin: 24px 0;
+    background-color: #f1f5f9;
+    margin: 20px 0;
 }
 
 .properties-drawer__section-title {
     margin-top: 0 !important;
-    margin-bottom: 16px !important;
+    margin-bottom: 12px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: #334155 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .properties-drawer__capability-badge {
-    font-size: 11px;
-    font-weight: 700;
+    font-size: 10px;
+    font-weight: 800;
     padding: 2px 8px;
-    border-radius: 4px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.032em;
 }
 
 .properties-drawer__empty-config {
-    padding: 24px 0;
+    padding: 32px 16px;
     text-align: center;
-    background: rgba(0, 0, 0, 0.02);
-    border-radius: 8px;
-    border: 1px dashed var(--color-border);
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px dashed #cbd5e1;
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.properties-drawer__form .ant-form-item-label {
+    padding-bottom: 4px !important;
 }
 
 .properties-drawer__form .ant-form-item-label>label {
-    font-weight: 500;
-    font-size: 13px;
+    font-weight: 600;
+    font-size: 12px;
+    color: #475569;
 }
 
 /* ── Schema Tables (Inputs / Outputs) ── */
 .properties-drawer__schema-table {
-    margin-bottom: 8px;
+    margin-bottom: 12px;
+    border: 1px solid #f1f5f9;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .properties-drawer__schema-table .ant-table-thead > tr > th {
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 10px;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 6px 8px;
-    background: rgba(0, 0, 0, 0.02);
+    letter-spacing: 0.05em;
+    padding: 8px 12px;
+    background: #f8fafc;
+    color: #64748b;
+    border-bottom: 1px solid #f1f5f9;
 }
 
 .properties-drawer__schema-table .ant-table-tbody > tr > td {
     font-size: 12px;
-    padding: 5px 8px;
+    padding: 8px 12px;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
 }
 
 .properties-drawer__schema-table .ant-table-tbody > tr:last-child > td {
@@ -105,10 +143,10 @@
 }
 
 /* ── Unified Config Form ── */
-
 .properties-drawer__flex-row {
     display: flex;
     gap: 12px;
+    align-items: flex-end;
 }
 
 .properties-drawer__flex-item {
@@ -116,7 +154,7 @@
 }
 
 .properties-drawer__method-select {
-    width: 140px;
+    width: 100px;
     flex-shrink: 0;
 }
 
@@ -124,7 +162,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .properties-drawer__kv-field {
@@ -133,27 +171,31 @@
 }
 
 .properties-drawer__delete-icon {
-    color: var(--color-error);
+    color: #94a3b8;
     font-size: 14px;
     cursor: pointer;
     flex-shrink: 0;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
+    padding: 4px;
+    border-radius: 4px;
 }
 
 .properties-drawer__delete-icon:hover {
-    color: var(--color-error-hover, #ff7875);
+    color: #ef4444;
+    background: #fee2e2;
 }
 
 .properties-drawer__empty-hint {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     font-style: italic;
-    font-size: 12px;
+    font-size: 11px;
+    color: #94a3b8;
 }
 
 .properties-drawer__state-row {
     display: flex;
-    gap: 16px;
+    gap: 20px;
     align-items: flex-start;
 }
 
@@ -165,14 +207,7 @@
 .properties-drawer__state-divider {
     width: 1px;
     align-self: stretch;
-    background-color: var(--color-border);
-}
-
-/* ── Capability badge decision variant ── */
-.badge-decision {
-    background: rgba(245, 158, 11, 0.15);
-    color: #f59e0b;
-    border: 1px solid rgba(245, 158, 11, 0.35);
+    background-color: #f1f5f9;
 }
 
 /* ── Decision Properties Panel ── */
@@ -180,44 +215,56 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: 10px 12px;
-    background: rgba(245, 158, 11, 0.06);
-    border: 1px solid rgba(245, 158, 11, 0.25);
-    border-radius: 6px;
-    margin-bottom: 4px;
+    padding: 12px 14px;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    margin-bottom: 8px;
 }
 
 .properties-drawer__subsection-label {
-    font-size: 13px;
-    margin-bottom: 8px !important;
+    font-size: 12px;
+    font-weight: 700;
+    color: #b45309;
+    margin-bottom: 10px !important;
+    display: block;
 }
 
 .decision-props__condition-card {
-    border: 1px solid rgba(245, 158, 11, 0.3);
-    border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 10px;
-    background: rgba(245, 158, 11, 0.04);
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 12px;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
     position: relative;
+    transition: all 0.2s ease;
+}
+
+.decision-props__condition-card:hover {
+    border-color: #fbbf24;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
 }
 
 .decision-props__condition-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 .decision-props__condition-delete {
-    color: var(--color-error, #ff4d4f);
+    color: #94a3b8;
     cursor: pointer;
     padding: 4px;
-    border-radius: 4px;
-    transition: background 0.2s;
+    border-radius: 6px;
+    transition: all 0.2s;
+    font-size: 14px;
 }
 
 .decision-props__condition-delete:hover {
-    background: rgba(255, 77, 79, 0.1);
+    color: #ef4444;
+    background: #fee2e2;
 }
 
 .decision-props__op-row {
@@ -230,4 +277,5 @@
     flex: 1;
     min-width: 0;
 }
+
 

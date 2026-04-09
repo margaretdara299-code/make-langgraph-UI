@@ -1,32 +1,40 @@
 export function getNodeTheme(type: string, capability?: string, category?: string) {
     const isError = (category || '').toLowerCase().includes('error');
     if (isError) {
-        return { bg: 'rgba(251, 234, 240, 1)', stroke: '#D4537E', badgeBg: '#D4537E', iconBg: 'rgba(255,255,255,0.6)' };
+        return { bg: '#FFF5F5', stroke: '#FF4D4F', badgeBg: '#FF4D4F', iconBg: '#FFFFFF' };
     }
 
     if (type === 'decision' || type === 'router') {
-        return { bg: '#FAEEDA', stroke: '#BA7517', badgeBg: '#BA7517', iconBg: 'rgba(255,255,255,0.6)' };
+        // Orange / Routing
+        return { bg: '#FFF7ED', stroke: '#EA580C', badgeBg: '#EA580C', iconBg: '#FFFFFF' };
     }
     
     if (type === 'start') {
-        // Distinct subtle purple for Start
-        return { bg: '#F3E8FF', stroke: '#9333EA', badgeBg: '#9333EA', iconBg: 'rgba(255,255,255,0.8)' };
+        return { bg: '#F5F3FF', stroke: '#7C3AED', badgeBg: '#7C3AED', iconBg: '#FFFFFF' };
     }
     
     if (type === 'end') {
-        // Distinct charcoal/slate for End
-        return { bg: '#F1F5F9', stroke: '#475569', badgeBg: '#475569', iconBg: 'rgba(255,255,255,0.8)' };
+        return { bg: '#F8FAFC', stroke: '#475569', badgeBg: '#475569', iconBg: '#FFFFFF' };
     }
 
     const cap = (capability || '').toLowerCase();
+    
+    // DB / Connector - Green
     if (cap === 'database' || cap.includes('db')) {
-        return { bg: '#E1F5EE', stroke: '#1D9E75', badgeBg: '#1D9E75', iconBg: 'rgba(255,255,255,0.6)' };
+        return { bg: '#ECFDF5', stroke: '#10B981', badgeBg: '#10B981', iconBg: '#FFFFFF' };
     }
     
+    // Skill - Pink/Magenta
     if (cap === 'skill' || cap === 'human') {
-        return { bg: '#FBEAF0', stroke: '#D4537E', badgeBg: '#D4537E', iconBg: 'rgba(255,255,255,0.6)' };
+        return { bg: '#FDF2F8', stroke: '#DB2777', badgeBg: '#DB2777', iconBg: '#FFFFFF' };
     }
 
-    // Default LLM / API / Action
-    return { bg: '#E6F1FB', stroke: '#378ADD', badgeBg: '#378ADD', iconBg: 'rgba(255,255,255,0.6)' };
+    // Status - Teal / Dark Green
+    if (cap === 'status' || cap.includes('update')) {
+        return { bg: '#F0FDFA', stroke: '#0D9488', badgeBg: '#0D9488', iconBg: '#FFFFFF' };
+    }
+
+    // Default LLM / API / Action - Blue
+    return { bg: '#EFF6FF', stroke: '#2563EB', badgeBg: '#2563EB', iconBg: '#FFFFFF' };
 }
+

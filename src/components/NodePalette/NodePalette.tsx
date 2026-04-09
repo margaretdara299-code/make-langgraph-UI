@@ -1,7 +1,3 @@
-/**
- * NodePalette — left panel with categorized, searchable, draggable action items.
- */
-
 import { Collapse, Spin, Typography } from 'antd';
 import { ThunderboltFilled, AppstoreFilled } from '@ant-design/icons';
 import { useDesignerActions } from '@/hooks';
@@ -33,10 +29,10 @@ export default function NodePalette({ className = '' }: NodePaletteProps) {
                 ) : (
                     <>
                         <Collapse
-                            accordion
                             ghost
-                            defaultActiveKey={undefined}
+                            defaultActiveKey={['common', 'actions']}
                             className="node-palette__root-collapse"
+                            expandIconPosition="end"
                             items={[
                                 {
                                     key: 'common',
@@ -62,10 +58,9 @@ export default function NodePalette({ className = '' }: NodePaletteProps) {
                                         </div>
                                     ) : (
                                         <Collapse
-                                            accordion
                                             ghost
-                                            defaultActiveKey={undefined}
                                             className="node-palette__child-collapse"
+                                            expandIconPosition="end"
                                             items={categoryKeys.map((category) => ({
                                                 key: category,
                                                 label: (
@@ -91,3 +86,5 @@ export default function NodePalette({ className = '' }: NodePaletteProps) {
         </aside>
     );
 }
+
+

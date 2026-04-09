@@ -13,7 +13,7 @@ import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig } from 'axios';
 import type { ApiClientResponse } from '@/interfaces';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? ' http://10.10.11.110:8000';
 
 // ══════════════════════════════════════════════════
 //  KEY TRANSFORMERS
@@ -120,14 +120,14 @@ axiosInstance.interceptors.request.use((config) => {
 // ══════════════════════════════════════════════════
 
 export const apiClient = {
-    get: <T>(path: string, config?: AxiosRequestConfig): Promise<ApiClientResponse<T>> => 
+    get: <T>(path: string, config?: AxiosRequestConfig): Promise<ApiClientResponse<T>> =>
         axiosInstance.get(path, config).then((r) => r.data),
-    post: <T>(path: string, body?: unknown, config?: AxiosRequestConfig): Promise<ApiClientResponse<T>> => 
+    post: <T>(path: string, body?: unknown, config?: AxiosRequestConfig): Promise<ApiClientResponse<T>> =>
         axiosInstance.post(path, body, config).then((r) => r.data),
-    put: <T>(path: string, body?: unknown, config?: AxiosRequestConfig): Promise<ApiClientResponse<T>> => 
+    put: <T>(path: string, body?: unknown, config?: AxiosRequestConfig): Promise<ApiClientResponse<T>> =>
         axiosInstance.put(path, body, config).then((r) => r.data),
-    patch: <T>(path: string, body?: unknown, config?: AxiosRequestConfig): Promise<ApiClientResponse<T>> => 
+    patch: <T>(path: string, body?: unknown, config?: AxiosRequestConfig): Promise<ApiClientResponse<T>> =>
         axiosInstance.patch(path, body, config).then((r) => r.data),
-    delete: <T>(path: string, config?: AxiosRequestConfig): Promise<ApiClientResponse<T>> => 
+    delete: <T>(path: string, config?: AxiosRequestConfig): Promise<ApiClientResponse<T>> =>
         axiosInstance.delete(path, config).then((r) => r.data),
 };

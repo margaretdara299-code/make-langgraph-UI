@@ -7,52 +7,102 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 24px;
-    background: var(--color-bg-container);
-    border-bottom: 1px solid var(--color-border);
-    box-shadow: var(--shadow-sm);
-    z-index: 10;
+    padding: 6px 24px;
+    background: rgba(255, 255, 255, 0.95);
+
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.01), 0 2px 4px -1px rgba(0, 0, 0, 0.006);
+    z-index: 50;
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    position: sticky;
+    top: 0;
 }
 
 .skill-designer-header__context {
     display: flex;
     align-items: center;
+    gap: 16px;
 }
 
 .skill-designer-header__back-btn {
-    color: var(--color-text-secondary);
-    font-size: 16px;
-    margin-right: 8px;
+    color: #64748b;
+    font-size: 14px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid #e2e8f0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    padding: 0;
+    background: #ffffff;
 }
 
 .skill-designer-header__back-btn:hover {
-    color: var(--color-primary);
-    background: var(--color-bg-subtle);
+    color: #1a1a1a;
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    transform: translateX(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .skill-designer-header__titles {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    gap: 2px;
+}
+
+.skill-designer-header__titles h4 {
+    margin: 0 !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    letter-spacing: -0.02em;
 }
 
 .skill-designer-header__meta {
-    margin-top: 2px;
-    font-size: 13px;
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .skill-designer-header__actions {
     display: flex;
     align-items: center;
+    gap: 10px;
 }
 
 .skill-designer-header__run-btn--active {
-    color: var(--color-success) !important;
-    border-color: var(--color-success) !important;
+    color: #059669 !important;
+    border-color: #10b981 !important;
+    background: #ecfdf5 !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
 }
 
 .skill-designer-header__run-btn--active:hover {
-    color: var(--color-success) !important;
-    border-color: var(--color-success) !important;
-    opacity: 0.8;
+    background: #d1fae5 !important;
+    border-color: #059669 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.12);
 }
+
+/* Ensure secondary buttons match the premium feel */
+.skill-designer-header__actions .ant-btn:not(.ant-btn-primary):not(.skill-designer-header__run-btn--active) {
+    border-radius: 8px;
+    font-weight: 500;
+    color: #475569;
+    border-color: #e2e8f0;
+}
+
+.skill-designer-header__actions .ant-btn-primary {
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+

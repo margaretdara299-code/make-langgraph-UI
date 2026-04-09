@@ -486,18 +486,18 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             return (
                 <div className="properties-drawer__content">
                     {/* Node Metadata Card */}
-                    <div className="properties-drawer__meta" style={{ background: token.colorBgContainer, borderColor: token.colorBorderSecondary }}>
+                    <div className="properties-drawer__meta">
                         <div className="properties-drawer__meta-item">
-                            <Text type="secondary">Type</Text>
-                            <Text strong>
+                            <span className="properties-drawer__meta-label">Type</span>
+                            <span className="properties-drawer__meta-value" style={{ background: '#fef3c7', color: '#92400e' }}>
                                 {isStart    ? 'Workflow Entry'
                                 : isDecision ? 'Condition Router'
                                 : isSubFlow  ? 'Structure Group'
                                 : (nodeData?.categoryId ? (categoryMap[nodeData.categoryId] || 'Uncategorized') : (nodeData?.category || 'Uncategorized'))}
-                            </Text>
+                            </span>
                         </div>
                         <div className="properties-drawer__meta-item">
-                            <Text type="secondary">Capability</Text>
+                            <span className="properties-drawer__meta-label">Capability</span>
                             <div className={`properties-drawer__capability-badge badge-${isSubFlow ? 'default' : isDecision ? 'decision' : nodeData?.capability}`}>
                                 {isStart    ? 'ENTRY'
                                 : isDecision ? 'DECISION'
@@ -507,19 +507,20 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                         </div>
                         {!isSubFlow && !isStart && nodeData?.action_key && (
                             <div className="properties-drawer__meta-item">
-                                <Text type="secondary">Action ID</Text>
-                                <Text code>{nodeData.action_key}</Text>
+                                <span className="properties-drawer__meta-label">Action ID</span>
+                                <span className="properties-drawer__meta-value">{nodeData.action_key}</span>
                             </div>
                         )}
                         {!isSubFlow && nodeData?.action_version_id && (
                             <div className="properties-drawer__meta-item">
-                                <Text type="secondary">Version ID</Text>
-                                <Text code style={{ fontSize: 11 }}>{nodeData.action_version_id}</Text>
+                                <span className="properties-drawer__meta-label">Version ID</span>
+                                <span className="properties-drawer__meta-value">{nodeData.action_version_id}</span>
                             </div>
                         )}
                     </div>
 
                     <div className="properties-drawer__divider" />
+
 
                     {/* Node Configuration Form */}
                     <Form
@@ -710,16 +711,19 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             closable={true}
             onClose={onClose}
             open={isOpen}
-            mask={false} // Allow interacting with the canvas while drawer is open
-            width={380}
+            mask={false}
+            width={400}
             className="properties-drawer"
-            zIndex={10} // Keep it above the canvas but below modals
+            zIndex={10}
+            getContainer={false}
             styles={{
-                header: { padding: '16px 20px', background: token.colorBgContainer },
-                body: { padding: '20px', background: token.colorBgLayout },
+                header: { padding: '16px 24px', borderBottom: '1px solid #f1f5f9' },
+                body: { padding: '24px', background: '#ffffff' },
             }}
         >
             {renderContent()}
         </Drawer>
+
+
     );
 }

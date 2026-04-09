@@ -24,7 +24,7 @@ export default function DecisionNode({ id, data }: NodeProps<CanvasNode>) {
     const totalHandles = rules.length + 1; // plus default
     
     return (
-        <div className="modern-node-card" style={{ background: theme.bg, borderColor: theme.stroke }}>
+        <div className="modern-node-card" style={{ background: theme.bg, borderColor: theme.stroke, color: theme.stroke } as any}>
             <div className="modern-node-delete" onClick={handleDelete} title="Delete Node">×</div>
 
             <Handle type="target" position={Position.Top} className="modern-node-handle" />

@@ -61,11 +61,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
                     <Text className="main-layout__logo-sub">Skills Studio</Text>
                 </div>
 
-                <Input.Search
-                    placeholder="Search Skills, Cases, Workflows..."
-                    className="main-layout__search"
-                    allowClear
-                />
+
 
                 <Space size="middle" className="main-layout__actions">
                     <span className="main-layout__env-badge">Dev</span>

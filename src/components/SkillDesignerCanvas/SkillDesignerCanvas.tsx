@@ -17,7 +17,9 @@ import {
     type Edge,
     type ReactFlowInstance,
     MarkerType,
+    BackgroundVariant,
 } from '@xyflow/react';
+
 import '@xyflow/react/dist/style.css';
 import NodePalette from '@/components/NodePalette/NodePalette';
 import PropertiesDrawer from '@/components/PropertiesDrawer/PropertiesDrawer';
@@ -42,11 +44,19 @@ export default function SkillDesignerCanvas() {
     useEffect(() => {
         if (initialNodes && initialNodes.length > 0) {
             setNodes(initialNodes);
+            // Re-fit view after nodes are applied, with a small delay for layout
+            if (reactFlowInstance) {
+                setTimeout(() => {
+                    reactFlowInstance.fitView({ padding: 0.3, maxZoom: 0.85, duration: 400 });
+                }, 100);
+            }
+
         }
         if (initialEdges && initialEdges.length > 0) {
             setEdges(initialEdges);
         }
-    }, [initialNodes, initialEdges, setNodes, setEdges]);
+    }, [initialNodes, initialEdges, setNodes, setEdges, reactFlowInstance]);
+
 
     // Track which node or edge is actively opened in the properties drawer
     const [drawerNodeId, setDrawerNodeId] = useState<string | null>(null);
@@ -102,7 +112,15 @@ export default function SkillDesignerCanvas() {
                     nodeTypes={nodeTypes}
                     edgeTypes={edgeTypes}
                     fitView
-                    fitViewOptions={{ maxZoom: 1 }}
+                    fitViewOptions={{ padding: 0.2, maxZoom: 1.0, minZoom: 0.8 }}
+                    minZoom={0.5}
+                    maxZoom={2.0}
+                    defaultViewport={{ x: 0, y: 0, zoom: 1.0 }}
+                    proOptions={{ hideAttribution: true }}
+
+
+
+
                     deleteKeyCode={['Backspace', 'Delete']}
                     onNodeClick={(_, node) => {
                         if (node.type === 'end') return; // End node has no properties
@@ -143,7 +161,12 @@ export default function SkillDesignerCanvas() {
                         }
                     }}
                 >
-                    <Background color="var(--color-border)" gap={20} size={1} />
+                    <Background color="#000000" variant={BackgroundVariant.Dots} gap={20} size={1} />
+
+
+
+
+
                     <Controls position="bottom-right" />
                     <MiniMap
                         position="bottom-left"

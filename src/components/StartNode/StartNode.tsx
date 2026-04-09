@@ -20,13 +20,17 @@ export default function StartNode({ id, data }: NodeProps<CanvasNode>) {
     };
 
     return (
-        <div className="modern-node-card modern-node-card-small" style={{ background: theme.bg, borderColor: theme.stroke }}>
+        <div className="modern-node-card" style={{ background: theme.bg, borderColor: theme.stroke, color: theme.stroke } as any}>
             <div className="modern-node-delete" onClick={handleDelete} title="Delete Node">×</div>
 
             <div className="modern-node-content">
                 <div className="modern-node-left">
+                    <div className="modern-node-icon" style={{ background: theme.iconBg, color: theme.stroke }}>
+                        🏁
+                    </div>
                     <div className="modern-node-text-col">
-                        <div className="modern-node-title">{nodeData.label || 'Start'}</div>                        
+                        <div className="modern-node-title">{nodeData.label || 'Start'}</div>
+                        <div className="modern-node-sub">Trigger</div>
                     </div>
                 </div>
                 <div className="modern-node-right">
@@ -36,6 +40,7 @@ export default function StartNode({ id, data }: NodeProps<CanvasNode>) {
                     <span className="modern-node-dot" style={{ background: theme.stroke }}></span>
                 </div>
             </div>
+
 
             <Handle type="source" position={Position.Bottom} className="modern-node-handle" />
         </div>

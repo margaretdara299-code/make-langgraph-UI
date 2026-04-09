@@ -32,7 +32,7 @@ export default function ActionNode({ id, data }: NodeProps<CanvasNode>) {
     };
 
     return (
-        <div className="modern-node-card" style={{ background: theme.bg, borderColor: theme.stroke }}>
+        <div className="modern-node-card" style={{ background: theme.bg, borderColor: theme.stroke, color: theme.stroke } as any}>
             {/* Delete button wrapper - Appears on Hover */}
             <div className="modern-node-delete" onClick={handleDelete} title="Delete Node">×</div>
 

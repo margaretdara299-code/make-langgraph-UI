@@ -12,10 +12,20 @@
 }
 
 .skill-designer__canvas {
-    flex: 1;
-    min-width: 0;
-    background: var(--color-bg-canvas);
+    flex-grow: 1;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    background: #ffffff;
 }
+
+
+
+/* Hide React Flow attribution watermark */
+.react-flow__attribution {
+    display: none !important;
+}
+
 
 /* React Flow overrides */
 .skill-designer__canvas .react-flow__pane {
