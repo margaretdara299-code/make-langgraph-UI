@@ -44,3 +44,5 @@ export { default as LoginCard } from './LoginCard/LoginCard';
 export { default as PrivateRoute } from './PrivateRoute/PrivateRoute';
 export { default as PublicRoute } from './PublicRoute/PublicRoute';
 export { default as DashboardMetricsCard } from './DashboardMetricsCard/DashboardMetricsCard';
+export { MetricCard } from './MetricCard/MetricCard';
+export * from './Skeletons/DashboardSkeleton';

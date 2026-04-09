@@ -1,107 +1,65 @@
-/**
- * Main application layout using AntD Layout, Menu, and Input.
- */
-
-import { useState, useEffect } from 'react';
-import { Layout, Menu, Input, Typography, Space } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import React, { useState } from 'react';
+import { Layout, Breadcrumb } from 'antd';
+import { HomeOutlined } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
-import type { MainLayoutProps } from '@/interfaces';
-import { ROUTES } from '@/routes';
-import { SIDEBAR_MENU_ITEMS } from '@/constants';
-import { setAuthPersistence } from '@/utils/auth.utils';
-import SidebarFooter from './SidebarFooter';
+import { SIDEBAR_MENU_ITEMS } from '@/constants/layout.constants';
+import Sidebar from './Sidebar';
 import './MainLayout.css';
 
-const { Header, Sider, Content } = Layout;
-const { Text } = Typography;
+const { Content } = Layout;
+
+interface MainLayoutProps {
+    children: React.ReactNode;
+}
 
 export default function MainLayout({ children }: MainLayoutProps) {
+    const [collapsed, setCollapsed] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
-    const [collapsed, setCollapsed] = useState(false);
-    const [openKeys, setOpenKeys] = useState<string[]>([]);
 
-    // Auto-collapse sidebar on design canvas, auto-expand on other pages
-    useEffect(() => {
-        if (location.pathname.includes('/design')) {
-            setCollapsed(true);
-        } else {
-            setCollapsed(false);
-        }
-    }, [location.pathname]);
+    // Determine current page for breadcrumbs
+    const currentPath = location.pathname;
+    const currentMenuItem = SIDEBAR_MENU_ITEMS.find(item => item.key === currentPath);
+    const pageLabel = currentMenuItem ? currentMenuItem.label : 'Dashboard';
 
-    // Determine active menu key
-    const selectedKey = SIDEBAR_MENU_ITEMS.find((item) =>
-        location.pathname.startsWith(item.key)
-    )?.key ?? ROUTES.DASHBOARD;
-
-    /** Ensure only one sub-menu is open at a time */
-    const handleOpenChange = (keys: string[]) => {
-        const latestOpenKey = keys.find(key => !openKeys.includes(key));
-        if (latestOpenKey) {
-            setOpenKeys([latestOpenKey]);
-        } else {
-            setOpenKeys([]);
-        }
-    };
-
-    /** Clears auth state and redirects to the login page */
     const handleLogout = () => {
-        setAuthPersistence(false);
-        navigate(ROUTES.LOGIN, { replace: true });
+        navigate('/login');
     };
 
     return (
-        <Layout className="main-layout">
-            <Header className="main-layout__header">
-                <div className="main-layout__logo" onClick={() => navigate(ROUTES.DASHBOARD)}>
-                    <img src="/tensawLogo.jpg" alt="Tensaw Logo" className="main-layout__logo-image" />
-                    <Text strong className="main-layout__logo-brand">Tensaw</Text>
-                    <Text className="main-layout__logo-sub">Skills Studio</Text>
-                </div>
+        <div className="main-layout">
+            <Sidebar 
+                collapsed={collapsed} 
+                onToggle={() => setCollapsed(!collapsed)} 
+                onLogout={handleLogout} 
+            />
 
-
-
-                <Space size="middle" className="main-layout__actions">
-                    <span className="main-layout__env-badge">Dev</span>
-                    <UserOutlined className="main-layout__user-icon" />
-                </Space>
-            </Header>
-
-            <Layout>
-                <Sider
-                    width={220}
-                    className="main-layout__sidebar"
-                    collapsible
-                    collapsed={collapsed}
-                    onCollapse={(value) => setCollapsed(value)}
-                    trigger={
-                        <SidebarFooter
-                            collapsed={collapsed}
-                            onToggleCollapse={() => setCollapsed(!collapsed)}
-                            onLogout={handleLogout}
+            <main className="main-layout__main">
+                <header className="main-layout__header">
+                    <div className="header-meta">
+                        <Breadcrumb
+                            items={[
+                                {
+                                    href: '/',
+                                    title: (
+                                        <>
+                                            <HomeOutlined />
+                                            <span>Home</span>
+                                        </>
+                                    ),
+                                },
+                                {
+                                    title: pageLabel,
+                                },
+                            ]}
                         />
-                    }
-                >
-                    <Menu
-                        mode="inline"
-                        selectedKeys={[selectedKey]}
-                        openKeys={openKeys}
-                        onOpenChange={handleOpenChange}
-                        items={SIDEBAR_MENU_ITEMS.map(item => ({
-                            ...item,
-                            icon: <item.icon />
-                        }))}
-                        onClick={({ key }) => navigate(key)}
-                        style={{ borderRight: 'none', paddingTop: 8 }}
-                    />
-                </Sider>
-
+                    </div>
+                </header>
+                
                 <Content className="main-layout__content">
                     {children}
                 </Content>
-            </Layout>
-        </Layout>
+            </main>
+        </div>
     );
 }

@@ -8,8 +8,9 @@ export default function DashboardMetricsCard({ type, data }: DashboardMetricsCar
 
     return (
         <Card 
-            className="dashboard-card" 
+            className={`dashboard-card ${isSkills ? 'skills-card' : 'actions-card'}`} 
             bordered={false}
+
             title={
                 <div className="dashboard-card__title">
                     {isSkills ? (

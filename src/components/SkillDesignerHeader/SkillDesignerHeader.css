@@ -1,20 +1,13 @@
-/**
- * SkillDesignerHeader styles.
- * Sub-header sits flush under the global MainLayout header.
- */
-
 .skill-designer-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 6px 24px;
-    background: rgba(255, 255, 255, 0.95);
-
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.01), 0 2px 4px -1px rgba(0, 0, 0, 0.006);
+    padding: var(--space-1) var(--space-3);
+    background: var(--bg-header);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
     z-index: 50;
-    font-family: 'Inter', -apple-system, system-ui, sans-serif;
     position: sticky;
     top: 0;
 }
@@ -22,87 +15,103 @@
 .skill-designer-header__context {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: var(--space-2);
 }
 
 .skill-designer-header__back-btn {
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 14px;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid #e2e8f0;
-    width: 30px;
-    height: 30px;
+    transition: all var(--motion-fast) var(--ease-out);
+    border: 1px solid var(--border-medium);
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     padding: 0;
-    background: #ffffff;
+    background: var(--bg-card);
 }
 
 .skill-designer-header__back-btn:hover {
-    color: #1a1a1a;
-    background: #f8fafc;
-    border-color: #cbd5e1;
+    color: var(--text-main);
+    background: var(--bg-page);
+    border-color: var(--border-strong);
     transform: translateX(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
 }
 
 .skill-designer-header__titles {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 0;
 }
 
 .skill-designer-header__titles h4 {
     margin: 0 !important;
-    font-size: 15px !important;
-    font-weight: 700 !important;
-    color: #0f172a !important;
-    letter-spacing: -0.02em;
+    font-size: var(--text-base) !important;
+    font-weight: var(--weight-bold) !important;
+    color: var(--text-main) !important;
+    letter-spacing: -0.01em;
 }
 
 .skill-designer-header__meta {
-    font-size: 12px;
-    color: #64748b;
-    font-weight: 500;
+    font-size: var(--text-xs);
+    color: var(--text-subtle);
+    font-weight: var(--weight-medium);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-1);
 }
 
 .skill-designer-header__actions {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-1-5);
+}
+
+/* Secondary Button Redesign */
+.skill-designer-header__actions .ant-btn:not(.ant-btn-primary):not(.skill-designer-header__run-btn--active) {
+    border-radius: var(--radius-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--text-muted);
+    border-color: var(--border-medium);
+    transition: all var(--motion-fast);
+}
+
+.skill-designer-header__actions .ant-btn:not(.ant-btn-primary):not(.skill-designer-header__run-btn--active):hover {
+    color: var(--text-main);
+    background-color: var(--bg-page);
+    border-color: var(--border-strong);
+}
+
+/* Primary / Active Button Redesign */
+.skill-designer-header__actions .ant-btn-primary {
+    border-radius: var(--radius-sm);
+    font-weight: var(--weight-bold);
+    background-color: var(--accent);
+    border-color: var(--accent);
+    box-shadow: var(--shadow-sm);
+}
+
+.skill-designer-header__actions .ant-btn-primary:hover {
+    background-color: var(--accent-hover);
+    border-color: var(--accent-hover);
+    box-shadow: var(--shadow-md);
 }
 
 .skill-designer-header__run-btn--active {
-    color: #059669 !important;
-    border-color: #10b981 !important;
-    background: #ecfdf5 !important;
-    font-weight: 600 !important;
-    border-radius: 8px !important;
+    color: var(--color-success-text) !important;
+    border-color: var(--color-success) !important;
+    background: var(--color-success-bg) !important;
+    font-weight: var(--weight-bold) !important;
+    border-radius: var(--radius-sm) !important;
 }
 
 .skill-designer-header__run-btn--active:hover {
     background: #d1fae5 !important;
-    border-color: #059669 !important;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.12);
+    box-shadow: var(--shadow-sm);
 }
 
-/* Ensure secondary buttons match the premium feel */
-.skill-designer-header__actions .ant-btn:not(.ant-btn-primary):not(.skill-designer-header__run-btn--active) {
-    border-radius: 8px;
-    font-weight: 500;
-    color: #475569;
-    border-color: #e2e8f0;
-}
-
-.skill-designer-header__actions .ant-btn-primary {
-    border-radius: 8px;
-    font-weight: 600;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
-}
 

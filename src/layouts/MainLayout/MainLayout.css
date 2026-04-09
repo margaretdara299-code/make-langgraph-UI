@@ -1,194 +1,369 @@
-/**
- * MainLayout styles — minimal overrides for AntD Layout.
- * Most styling is handled by AntD's theme config in theme.config.ts.
- */
-
+/* --- Root Layout --- */
 .main-layout {
-  min-height: 100vh;
-}
-
-/* ── Header ── */
-
-.main-layout__header {
   display: flex;
-  align-items: center;
-  gap: 24px;
-}
-
-.main-layout__logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.main-layout__logo-image {
-  height: 28px;
-  width: auto;
-  object-fit: contain;
-  border-radius: 4px; /* Optional: adds a slight softening to the corners */
-}
-
-.main-layout__logo-brand {
-  color: var(--color-nav-text-bold) !important;
-  font-size: 16px !important;
-}
-
-.main-layout__logo-sub {
-  color: var(--color-nav-text) !important;
-  font-size: 16px !important;
-}
-
-.main-layout__search {
-  flex: 1;
-  max-width: 480px;
-}
-
-.main-layout__search .ant-input-search,
-.main-layout__search .ant-input-wrapper,
-.main-layout__search .ant-input-group-addon,
-.main-layout__search .ant-input,
-.main-layout__search .ant-btn {
-  background-color: var(--color-nav-input-bg) !important;
-  border-color: var(--color-nav-input-border) !important;
-}
-
-.main-layout__search .ant-input-search {
-  border-radius: 8px;
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--bg-page);
+  color: var(--text-main);
   overflow: hidden;
+  font-family: var(--font-sans);
 }
 
-.main-layout__search .ant-input {
-  color: var(--color-nav-text-bold) !important;
-  border: none !important;
-}
-
-.main-layout__search .ant-input::placeholder {
-  color: var(--color-nav-input-placeholder) !important;
-}
-
-.main-layout__search .ant-btn {
-  box-shadow: none !important;
-  border-left: 1px solid var(--color-nav-input-border) !important;
-}
-
-.main-layout__search .anticon-search {
-  color: var(--color-nav-input-placeholder) !important;
-}
-
-.main-layout__actions {
-  margin-left: auto;
-}
-
-.main-layout__env-badge {
-  padding: 4px 10px;
-  border-radius: 4px;
-  background-color: var(--color-nav-badge-bg);
-  color: var(--color-nav-badge-text);
-  font-size: 12px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.main-layout__user-icon {
-  font-size: 18px;
-  color: var(--color-nav-text);
-  cursor: pointer;
-}
-
-/* ── Sidebar ── */
-
-.main-layout__sidebar {
-  border-right: 1px solid var(--color-border);
-  transition: all 0.2s;
-}
-
-.main-layout__sidebar .ant-layout-sider-trigger {
-  background: var(--color-bg-white) !important;
-  color: var(--color-text-secondary) !important;
-  border-top: 1px solid var(--color-border);
-  border-right: 1px solid var(--color-border);
-  height: auto !important;
-  line-height: normal !important;
-  padding: 0;
-}
-
-.main-layout__sidebar-footer {
+.main-layout__main {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  width: 100%;
+  overflow: hidden;
+  position: relative;
 }
 
-.main-layout__sidebar-logout {
+/* --- Header --- */
+.main-layout__header {
+  height: 64px;
+  padding: 0 32px;
+  background-color: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--border-light);
   display: flex;
   align-items: center;
-  gap: 12px;
-  height: 40px;
-  margin: 6px 8px;
-  padding: 0 16px;
-  cursor: pointer;
-  color: var(--color-text-secondary);
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding-top: 26px;
+}
+
+.header-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.main-layout__breadcrumb .ant-breadcrumb {
   font-size: 14px;
   font-weight: 500;
-  transition: all 0.2s ease;
-  border-radius: 8px;
+  color: var(--text-muted);
 }
 
-.main-layout__sidebar-logout:hover {
-  background: linear-gradient(90deg, rgba(var(--color-error-rgb), 0.1) 0%, transparent 100%);
-  color: var(--color-error-hover);
+.main-layout__breadcrumb .ant-breadcrumb-link {
+  color: var(--text-muted) !important;
+  transition: color 0.2s ease;
 }
 
-.main-layout__sidebar-logout .anticon {
-  font-size: 16px;
-  stroke-width: 40px; /* Match menu icon thickness */
+.main-layout__breadcrumb .ant-breadcrumb-link,
+.header-meta .ant-breadcrumb-link,
+.header-meta .ant-breadcrumb-link:hover {
+  color: var(--text-muted) !important;
+  background-color: transparent !important;
+  background: transparent !important;
+  padding: 0 !important;
+  transition: color 0.2s ease;
 }
 
-.main-layout__sidebar-collapse {
+.header-meta .ant-breadcrumb-link:hover {
+  color: var(--accent) !important;
+}
+
+.main-layout__breadcrumb .anticon {
+  font-size: 15px;
+  color: var(--text-main);
+  opacity: 0.7;
+  position: relative;
+  top: -0.5px;
+}
+
+/* --- Content Viewport --- */
+.main-layout__content {
+  flex: 1;
+  padding: var(--space-3);
+  overflow-y: auto;
+  background: var(--bg-page);
+}
+
+/* ==========================================================================
+   Sidebar Styling (Literal Reference)
+   ========================================================================== */
+
+.main-sidebar {
+  width: 220px;
+  height: 100%;
+  background-color: var(--bg-sidebar);
+  border-right: 0.3px solid #e1d8d8;
+  display: flex;
+  flex-direction: column;
+  padding: 22px 16px;
+  z-index: 1100;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: visible !important;
+}
+
+.main-sidebar.collapsed {
+  width: 72px;
+  padding: 22px 12px;
+}
+
+/* --- Brand Section --- */
+.brand-section {
+  display: flex;
+  right: 10px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px 16px 48px;
+  position: relative;
+  min-height: 80px;
+}
+
+.main-sidebar.collapsed .brand-section {
+  justify-content: center;
+  padding: 8px 0 48px;
+  margin-left: 20px;
+}
+
+.brand-logo-container {
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 44px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  background-color: white;
+  border: 1px solid var(--border-medium);
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.brand-logo-img {
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  animation: reveal-slide 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: opacity 0.3s ease;
+}
+
+/* --- Collapse Toggle --- */
+.sidebar-toggle {
+  position: absolute;
+  right: -35px;
+  top: 15px;
+  width: 17px;
+  height: 17px;
+  background-color: #ffffff;
+  border: 1.5px solid #1a3a5f;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0086a8;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  z-index: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
-  background: var(--color-nav-bg) !important; /* Original dark blue matching header */
-  color: var(--color-text-white) !important; /* White Arrow */
-  font-size: 14px;
-  transition: all 0.2s ease;
+  padding: 0;
 }
 
-.main-layout__sidebar-collapse-icon {
-  transition: transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+.sidebar-toggle:hover {
+  background-color: #f7f9fc;
+  transform: scale(1.1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
 }
 
-.main-layout__sidebar-collapse-icon.rotated {
+.main-sidebar.collapsed .sidebar-toggle {
   transform: rotate(180deg);
 }
 
-.main-layout__sidebar-collapse:hover {
-  background: var(--color-nav-bg-hover) !important;
-}
-
-/* When collapsed, keep logout icon centered */
-.ant-layout-sider-collapsed .main-layout__sidebar-logout {
+.sidebar-toggle svg, 
+.sidebar-toggle .anticon,
+.sidebar-toggle .anticon svg {
+  width: 14px !important;
+  height: 14px !important;
+  stroke-width: 2px !important;
+  z-index: 10;
+  position: relative;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  padding: 0;
 }
 
-.main-layout__sidebar .ant-menu-item {
-  font-weight: 500 !important;
+/* --- Navigation Links --- */
+.nav-links {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
 }
 
-.main-layout__sidebar .ant-menu-item .anticon {
-  stroke-width: 40px;
-  /* Makes AntD outlined icons bolder */
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+  text-decoration: none;
 }
 
-/* ── Content ── */
+.main-sidebar.collapsed .nav-link {
+  justify-content: center;
+  padding: 9px;
+}
 
-.main-layout__content {
-  padding: 24px;
-  min-height: calc(100vh - 56px);
+.nav-link:hover {
+  background-color: var(--border-light);
+  color: var(--text-main);
+  transform: translateX(1px);
+}
+
+.main-sidebar.collapsed .nav-link:hover {
+  transform: scale(1.05);
+}
+
+.nav-link.active {
+  background-color: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.nav-link span {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.nav-link .anticon {
+  font-size: 18px;
+  min-width: 18px;
+  opacity: 0.85;
+}
+
+/* --- User Section --- */
+.sidebar-user-section {
+  margin-top: auto;
+  padding: 16px 4px 0;
+  border-top: 1px solid var(--border-light);
+}
+
+.user-info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.user-info-row:hover {
+  background-color: var(--border-light);
+}
+
+.main-sidebar.collapsed .user-info-row {
+  justify-content: center;
+  padding: 12px 0;
+}
+
+.main-sidebar.collapsed .user-avatar-small {
+  width: 30px;
+  height: 30px;
+  font-size: var(--text-xs);
+}
+
+.user-avatar-small {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background-color: var(--text-main);
+  color: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: var(--text-sm);
+  flex-shrink: 0;
+}
+
+.user-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.user-name {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.user-badge {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+.minimal-logout-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.minimal-logout-btn:hover {
+  background-color: #fee2e2;
+  color: #ef4444;
+  transform: rotate(8deg);
+}
+
+.minimal-logout-btn .anticon {
+  font-size: 14px;
+}
+
+/* --- Animations --- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(-4px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes reveal-slide {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.reveal-slide {
+  animation: revealSlide 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes revealSlide {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
 }
