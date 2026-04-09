@@ -1,17 +1,16 @@
 /**
  * ActionNode — custom React Flow node renderer for action nodes on the canvas.
- * Reduced to Top/Bottom connectivity as per user request.
+ * Now using the modern horizontal pill design.
  */
 
 import { Handle, Position, useReactFlow } from '@xyflow/react';
 import { useParams } from 'react-router-dom';
-import { DeleteOutlined } from '@ant-design/icons';
 import IconRenderer from '@/components/IconRenderer/IconRenderer';
-import { stringToColorParams } from '@/utils';
 import type { NodeProps } from '@xyflow/react';
 import type { CanvasNode } from '@/interfaces';
 import { CAPABILITY_LABELS } from '@/constants';
 import { removeNodeFromStorage } from '@/services/skillGraphStorage.service';
+import { getNodeTheme } from '@/utils';
 import './ActionNode.css';
 
 export default function ActionNode({ id, data }: NodeProps<CanvasNode>) {
@@ -20,70 +19,44 @@ export default function ActionNode({ id, data }: NodeProps<CanvasNode>) {
     const { versionId } = useParams<{ versionId: string }>();
 
     const cap = (nodeData.capability || 'default').toLowerCase();
-    const isKnown = !!CAPABILITY_LABELS[cap];
-    const dynamicTheme = isKnown ? null : stringToColorParams(cap);
+    const theme = getNodeTheme('action', cap, nodeData.category);
 
-    const glowColor = isKnown ? `var(--color-badge-text-${cap})` : dynamicTheme?.text;
+    const badgeLabel = (nodeData as any).connectorId
+        ? (((nodeData as any).connectorType || cap) === 'database' ? 'DB' : 'API')
+        : (CAPABILITY_LABELS[cap] || cap).toUpperCase();
 
     const handleDelete = (e: React.MouseEvent) => {
         e.stopPropagation();
         setNodes((nodes) => nodes.filter((node) => node.id !== id));
-        // Immediately sync deletion to localStorage
         if (versionId) removeNodeFromStorage(versionId, id);
     };
 
     return (
-        <div
-            className="action-node action-node--glow"
-            style={{ '--node-accent-glow': glowColor } as any}
-        >
-            <Handle
-                type="target"
-                position={Position.Top}
-                className="action-node__handle action-node__handle-target-top"
-            />
+        <div className="modern-node-card" style={{ background: theme.bg, borderColor: theme.stroke }}>
+            {/* Delete button wrapper - Appears on Hover */}
+            <div className="modern-node-delete" onClick={handleDelete} title="Delete Node">×</div>
 
-            <div className="action-node__border-wrapper">
-                <div className="action-node__content">
-                    <div
-                        className="action-node__header"
-                        style={{
-                            background: isKnown ? `linear-gradient(90deg, var(--color-badge-bg-${cap}), transparent)` : 'rgba(255, 255, 255, 0.02)'
-                        }}
-                    >
-                        <span className="action-node__icon" style={{ color: glowColor }}>
-                            <IconRenderer iconName={nodeData.icon} size={18} fallback="⚙️" />
-                        </span>
-                        <span className="action-node__title" style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            {nodeData.label}
-                        </span>
-                        <span
-                            className="action-node__delete"
-                            onClick={handleDelete}
-                            title="Delete Node"
-                        >
-                            <DeleteOutlined />
-                        </span>
-                    </div>
+            <Handle type="target" position={Position.Top} className="modern-node-handle" />
 
-                    <div className="action-node__footer">
-                        <span className="action-node__capability-badge">
-                            {(nodeData as any).connectorId
-                                ? ((nodeData as any).connectorType || cap) === 'database'
-                                    ? 'DB Connector'
-                                    : 'Api Connector'
-                                : CAPABILITY_LABELS[cap] || cap}
-                        </span>
-                        <span className="action-node__category">{nodeData.category}</span>
+            <div className="modern-node-content">
+                <div className="modern-node-left">
+                    <div className="modern-node-icon" style={{ background: theme.iconBg, color: theme.stroke }}>
+                        <IconRenderer iconName={nodeData.icon} size={13} fallback="⚙️" />
                     </div>
+                    <div className="modern-node-text-col">
+                        <div className="modern-node-title">{nodeData.label}</div>
+                        <div className="modern-node-sub">{nodeData.category || 'Action'}</div>
+                    </div>
+                </div>
+                <div className="modern-node-right">
+                    <span className="modern-node-badge" style={{ background: theme.badgeBg }}>
+                        {badgeLabel}
+                    </span>
+                    <span className="modern-node-dot" style={{ background: theme.stroke }}></span>
                 </div>
             </div>
 
-            <Handle
-                type="source"
-                position={Position.Bottom}
-                className="action-node__handle action-node__handle-source-bottom"
-            />
+            <Handle type="source" position={Position.Bottom} className="modern-node-handle" />
         </div>
     );
 }

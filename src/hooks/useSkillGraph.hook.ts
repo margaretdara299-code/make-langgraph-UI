@@ -6,7 +6,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { type Node, type Edge } from '@xyflow/react';
+import { type Node, type Edge, MarkerType } from '@xyflow/react';
 import { loadSkillGraph, saveSkillGraph } from '@/services/graph.service';
 import {
     loadGraphFromStorage,
@@ -65,9 +65,37 @@ export function useSkillGraph() {
                         source: conn.source,
                         target: conn.target,
                         type: 'default',
-                        animated: true,
+                        animated: false,
+                        markerEnd: { type: MarkerType.ArrowClosed, color: '#888' },
+                        style: { stroke: '#888', strokeWidth: 1.5 },
                     };
                 });
+
+                // ── Auto-inject End node if none exists ──────────────────
+                const hasEnd = reactFlowNodes.some((n) => n.type === 'end');
+                if (!hasEnd) {
+                    // Find the lowest Y position among existing nodes
+                    const maxY = reactFlowNodes.reduce((acc, n) => {
+                        const y = (n.position?.y ?? 0);
+                        return y > acc ? y : acc;
+                    }, 0);
+                    const avgX = reactFlowNodes.reduce((acc, n) => acc + (n.position?.x ?? 0), 0)
+                        / Math.max(reactFlowNodes.length, 1);
+
+                    const endNodeId = `end-node-auto`;
+                    const endNode: Node = {
+                        id: endNodeId,
+                        type: 'end',
+                        position: { x: avgX - 60, y: maxY + 160 },
+                        data: {
+                            label: 'End',
+                            category: 'success',
+                            icon: '🏁',
+                        } as any,
+                    };
+                    reactFlowNodes.push(endNode);
+                    nodesMap[endNodeId] = endNode;
+                }
 
                 // Seed localStorage (replaces any stale data)
                 saveGraphToStorage(versionId, nodesMap, connectionsMap);

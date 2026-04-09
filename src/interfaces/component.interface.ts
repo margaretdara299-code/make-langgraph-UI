@@ -172,7 +172,7 @@ export interface StructureSectionProps {
 
 export interface CodeViewerModalProps {
     isOpen: boolean;
-    code: string;
+    code: string | Record<string, string>; // Support both single file and multiple files
     onClose: () => void;
     fileName?: string;
 }

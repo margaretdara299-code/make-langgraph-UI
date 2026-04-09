@@ -13,6 +13,7 @@ import { HTTP_METHODS } from '@/constants';
 import type { CanvasNodeData, CanvasEdgeData, PropertiesDrawerProps } from '@/interfaces';
 import { useCategories, useCapabilities } from '@/hooks';
 import { loadGraphFromStorage, upsertNodeInStorage, upsertConnectionInStorage } from '@/services/skillGraphStorage.service';
+import DecisionPropertiesPanel from './DecisionPropertiesPanel';
 import './PropertiesDrawer.css';
 
 const { Title, Text } = Typography;
@@ -43,6 +44,9 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             return;
         }
 
+        // Always clear stale values from the previously selected node
+        form.resetFields();
+
         // Helper to normalize Object maps to Array of key-value objects for Form.List
         const prepareConfigsForForm = (rawConfigs: any) => {
             if (typeof rawConfigs !== 'object' || Array.isArray(rawConfigs) || !rawConfigs) return {};
@@ -72,6 +76,28 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             form.setFieldsValue({
                 label: sd.label,
                 description: sd.description || '',
+            });
+            return;
+        }
+
+        // For start nodes: read initial_state key-value pairs
+        if (selectedNode.type === 'start') {
+            const stored = versionId ? loadGraphFromStorage(versionId) : null;
+            const sd = (stored?.nodes?.[selectedNode.id]?.data || selectedNode.data) as any;
+            form.setFieldsValue({
+                label: sd.label || 'Start',
+                initial_state: Array.isArray(sd.initial_state) ? sd.initial_state : [],
+            });
+            return;
+        }
+
+        // For decision nodes: read from localStorage first, fallback to node.data
+        if (selectedNode.type === 'decision') {
+            const stored = versionId ? loadGraphFromStorage(versionId) : null;
+            const dd = (stored?.nodes?.[selectedNode.id]?.data || selectedNode.data) as any;
+            form.setFieldsValue({
+                label: dd.label || 'Decision',
+                rules: Array.isArray(dd.rules) ? dd.rules : [],
             });
             return;
         }
@@ -203,13 +229,33 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
 
             let updatedNode: any = null;
 
-            if (selectedNode.type === 'subflow') {
+            if (selectedNode.type === 'start') {
+                // Start node — persist initial_state key-value pairs
+                updatedNode = {
+                    ...currentNode,
+                    data: {
+                        ...currentNode.data,
+                        label: newValues.label || 'Start',
+                        initial_state: newValues.initial_state || [],
+                    },
+                };
+            } else if (selectedNode.type === 'subflow') {
                 updatedNode = {
                     ...currentNode,
                     data: {
                         ...currentNode.data,
                         label: newValues.label,
                         description: newValues.description,
+                    },
+                };
+            } else if (selectedNode.type === 'decision') {
+                // Decision node — store condition config directly on node.data
+                updatedNode = {
+                    ...currentNode,
+                    data: {
+                        ...currentNode.data,
+                        label: newValues.label || 'Decision',
+                        rules: newValues.rules || [],
                     },
                 };
             } else if (selectedNode.type === 'connector') {
@@ -278,7 +324,9 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                 upsertConnectionInStorage(versionId, selectedEdge.id, {
                     id: updatedEdge.id,
                     source: updatedEdge.source,
+                    sourceHandle: updatedEdge.sourceHandle,
                     target: updatedEdge.target,
+                    targetHandle: updatedEdge.targetHandle,
                     ...updatedEdge.data, // store routeType and conditionLabel
                 });
             }
@@ -422,9 +470,10 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     // Render forms based on what is selected
     const renderContent = () => {
         if (selectedNode) {
-            const isSubFlow = selectedNode.type === 'subflow';
+            const isSubFlow   = selectedNode.type === 'subflow';
             const isConnector = selectedNode.type === 'connector';
-            const isStart = selectedNode.type === 'start';
+            const isStart     = selectedNode.type === 'start';
+            const isDecision  = selectedNode.type === 'decision';
 
             if (isLoadingAction) {
                 return (
@@ -440,12 +489,20 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                     <div className="properties-drawer__meta" style={{ background: token.colorBgContainer, borderColor: token.colorBorderSecondary }}>
                         <div className="properties-drawer__meta-item">
                             <Text type="secondary">Type</Text>
-                            <Text strong>{isStart ? 'Workflow Entry' : isSubFlow ? 'Structure Group' : (nodeData?.categoryId ? (categoryMap[nodeData.categoryId] || 'Uncategorized') : (nodeData?.category || 'Uncategorized'))}</Text>
+                            <Text strong>
+                                {isStart    ? 'Workflow Entry'
+                                : isDecision ? 'Condition Router'
+                                : isSubFlow  ? 'Structure Group'
+                                : (nodeData?.categoryId ? (categoryMap[nodeData.categoryId] || 'Uncategorized') : (nodeData?.category || 'Uncategorized'))}
+                            </Text>
                         </div>
                         <div className="properties-drawer__meta-item">
                             <Text type="secondary">Capability</Text>
-                            <div className={`properties-drawer__capability-badge badge-${isSubFlow ? 'default' : nodeData?.capability}`}>
-                                {isStart ? 'ENTRY' : isSubFlow ? 'GROUP' : (nodeData?.capability || 'DEFAULT').toUpperCase()}
+                            <div className={`properties-drawer__capability-badge badge-${isSubFlow ? 'default' : isDecision ? 'decision' : nodeData?.capability}`}>
+                                {isStart    ? 'ENTRY'
+                                : isDecision ? 'DECISION'
+                                : isSubFlow  ? 'GROUP'
+                                : (nodeData?.capability || 'DEFAULT').toUpperCase()}
                             </div>
                         </div>
                         {!isSubFlow && !isStart && nodeData?.action_key && (
@@ -493,15 +550,67 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                             </Form.Item>
                         )}
 
-                        {isStart && (
+                        {isDecision && (
                             <>
                                 <div className="properties-drawer__divider" />
-                                <Title level={5} className="properties-drawer__section-title">State Management</Title>
-                                {renderStateManagement()}
+                                <DecisionPropertiesPanel form={form} />
                             </>
                         )}
 
-                        {!isSubFlow && !isConnector && !isStart && nodeData && (
+                        {isStart && (
+                            <>
+                                <div className="properties-drawer__divider" />
+                                <Title level={5} className="properties-drawer__section-title">Initial State Variables</Title>
+                                <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 12 }}>
+                                    These key-value pairs are injected as <code>saved_data</code> at the start of every workflow run.
+                                    All subsequent nodes can read these values automatically.
+                                </Text>
+                                <Form.List name="initial_state">
+                                    {(fields, { add, remove }) => (
+                                        <>
+                                            {fields.length === 0 && (
+                                                <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 12 }}>
+                                                    No variables defined. Add key-value pairs below.
+                                                </Text>
+                                            )}
+                                            {fields.map(({ key, name: fieldName, ...restField }) => (
+                                                <div key={key} className="properties-drawer__kv-row">
+                                                    <Form.Item
+                                                        {...restField}
+                                                        name={[fieldName, 'key']}
+                                                        className="properties-drawer__kv-field"
+                                                        rules={[{ required: true, message: 'Key required' }]}
+                                                    >
+                                                        <Input placeholder="e.g. case_id" style={{ fontFamily: 'monospace' }} />
+                                                    </Form.Item>
+                                                    <Form.Item
+                                                        {...restField}
+                                                        name={[fieldName, 'value']}
+                                                        className="properties-drawer__kv-field"
+                                                    >
+                                                        <Input placeholder="Default value (optional)" />
+                                                    </Form.Item>
+                                                    <DeleteOutlined
+                                                        className="properties-drawer__delete-icon"
+                                                        onClick={() => remove(fieldName)}
+                                                    />
+                                                </div>
+                                            ))}
+                                            <Button
+                                                type="dashed"
+                                                onClick={() => add({ key: '', value: '' })}
+                                                icon={<PlusOutlined />}
+                                                block
+                                            >
+                                                Add Variable
+                                            </Button>
+                                        </>
+                                    )}
+                                </Form.List>
+                            </>
+                        )}
+
+                        {!isSubFlow && !isConnector && !isStart && !isDecision && nodeData && (
                             <>
                                 {/* ── Configurations Section ── */}
                                 <div className="properties-drawer__divider" />

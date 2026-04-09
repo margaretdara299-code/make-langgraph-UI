@@ -1,24 +1,17 @@
-/**
- * SubFlowNode — custom React Flow node renderer for grouping.
- * Standardized for Top/Bottom connectivity.
- */
-
-import { Handle, Position, NodeResizer, useReactFlow } from '@xyflow/react';
+import { Handle, Position, useReactFlow } from '@xyflow/react';
 import { useParams } from 'react-router-dom';
-import { DeleteOutlined } from '@ant-design/icons';
 import type { NodeProps } from '@xyflow/react';
 import type { CanvasNode } from '@/interfaces';
 import { removeNodeFromStorage } from '@/services/skillGraphStorage.service';
-import './SubFlowNode.css';
+import { getNodeTheme } from '@/utils';
+import '../ActionNode/ActionNode.css';
 
-export default function SubFlowNode({ id, data, selected }: NodeProps<CanvasNode>) {
+export default function SubFlowNode({ id, data }: NodeProps<CanvasNode>) {
     const nodeData = data;
     const { setNodes } = useReactFlow();
     const { versionId } = useParams<{ versionId: string }>();
 
-    // Use a fixed accent color or derive from data if available
-    const accentColor = nodeData.color || 'var(--color-primary)';
-    const headerBg = accentColor;
+    const theme = getNodeTheme('skill', 'skill', nodeData.category);
 
     const handleDelete = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -27,59 +20,30 @@ export default function SubFlowNode({ id, data, selected }: NodeProps<CanvasNode
     };
 
     return (
-        <div 
-            className="subflow-node subflow-node--glow"
-            style={{ '--node-accent-glow': accentColor } as any}
-        >
-            <NodeResizer 
-                color={accentColor} 
-                isVisible={selected} 
-                minWidth={250} 
-                minHeight={150}
-                handleClassName="subflow-node__resize-handle"
-                lineClassName="subflow-node__resize-line"
-            />
+        <div className="modern-node-card" style={{ background: theme.bg, borderColor: theme.stroke }}>
+            <div className="modern-node-delete" onClick={handleDelete} title="Delete Node">×</div>
 
-            <Handle 
-                type="target" 
-                position={Position.Top} 
-                className="subflow-node__handle subflow-node__handle-target-top" 
-            />
+            <Handle type="target" position={Position.Top} className="modern-node-handle" />
 
-            <div className="subflow-node__border-wrapper">
-                <div className="subflow-node__content">
-                    <div 
-                        className="subflow-node__header" 
-                        style={{ 
-                            background: `linear-gradient(90deg, ${headerBg}, transparent)`
-                        }}
-                    >
-                        <span className="subflow-node__icon">📦</span>
-                        <span className="subflow-node__title" style={{ flex: 1 }}>
-                            {nodeData.label || 'Sub-Flow'}
-                        </span>
-                        <span
-                            className="subflow-node__delete"
-                            onClick={handleDelete}
-                            title="Delete Sub-Flow"
-                        >
-                            <DeleteOutlined />
-                        </span>
+            <div className="modern-node-content">
+                <div className="modern-node-left">
+                    <div className="modern-node-icon" style={{ background: theme.iconBg, color: theme.stroke }}>
+                        📦
                     </div>
-
-                    <div className="subflow-node__body">
-                        {nodeData.description && (
-                            <span className="subflow-node__description">{nodeData.description}</span>
-                        )}
+                    <div className="modern-node-text-col">
+                        <div className="modern-node-title">{nodeData.label || 'Group'}</div>
+                        <div className="modern-node-sub">{nodeData.description || 'Sub-flow'}</div>
                     </div>
+                </div>
+                <div className="modern-node-right">
+                    <span className="modern-node-badge" style={{ background: theme.badgeBg }}>
+                        GROUP
+                    </span>
+                    <span className="modern-node-dot" style={{ background: theme.stroke }}></span>
                 </div>
             </div>
 
-            <Handle 
-                type="source" 
-                position={Position.Bottom} 
-                className="subflow-node__handle subflow-node__handle-source-bottom" 
-            />
+            <Handle type="source" position={Position.Bottom} className="modern-node-handle" />
         </div>
     );
 }

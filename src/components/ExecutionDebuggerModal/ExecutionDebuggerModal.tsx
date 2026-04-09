@@ -1,6 +1,6 @@
-import { Modal, Typography, theme, Spin, Button, Tooltip } from 'antd';
+import { Modal, Typography, theme, Spin, Button, Tooltip, Input, message } from 'antd';
 import { useEffect, useState, useRef } from 'react';
-import { ReloadOutlined } from '@ant-design/icons';
+import { ReloadOutlined, PlayCircleOutlined, EditOutlined } from '@ant-design/icons';
 import { useExecutionStepper } from '@/hooks';
 import type { ExecutionDebuggerModalProps } from '@/interfaces';
 import './ExecutionDebuggerModal.css';
@@ -26,6 +26,10 @@ export default function ExecutionDebuggerModal({ isOpen, onClose, versionId, nod
     } = useExecutionStepper();
 
     const [selectedStepIndex, setSelectedStepIndex] = useState<number>(-1);
+
+    // Initial Data state for execution inputs
+    const [hasStarted, setHasStarted] = useState(false);
+    const [initialDataStr, setInitialDataStr] = useState<string>('{\n  "case_id": "1",\n  "claim_id": "123"\n}');
 
     // Changing Loader Texts
     const [loaderTextIndex, setLoaderTextIndex] = useState(0);
@@ -62,13 +66,12 @@ export default function ExecutionDebuggerModal({ isOpen, onClose, versionId, nod
     }, [completedStepsList.length]);
 
     useEffect(() => {
-        if (isOpen && versionId) {
-            runExecution(versionId, nodes, edges);
-        } else {
+        if (!isOpen) {
             resetStepper();
             setSelectedStepIndex(-1);
+            setHasStarted(false);
         }
-    }, [isOpen, versionId, nodes, edges, runExecution, resetStepper]);
+    }, [isOpen, resetStepper]);
 
     useEffect(() => {
         if (activeStepIndex >= 0) {
@@ -79,10 +82,25 @@ export default function ExecutionDebuggerModal({ isOpen, onClose, versionId, nod
     const handleClose = () => {
         stopExecution();
         onClose();
+        setHasStarted(false);
+    };
+
+    const handleStart = () => {
+        let parsed = {};
+        try {
+            parsed = JSON.parse(initialDataStr);
+        } catch (e) {
+            message.error("Invalid JSON input");
+            return;
+        }
+        setHasStarted(true);
+        runExecution(versionId, nodes, edges, parsed);
     };
 
     const handleReRun = () => {
-        runExecution(versionId, nodes, edges);
+        let parsed = {};
+        try { parsed = JSON.parse(initialDataStr); } catch (e) {}
+        runExecution(versionId, nodes, edges, parsed);
     };
 
     return (
@@ -92,11 +110,16 @@ export default function ExecutionDebuggerModal({ isOpen, onClose, versionId, nod
                     <Title level={4} style={{ margin: 0 }}>Workflow Execution Debugger</Title>
                     {isExecuting && !isFetching ? (
                         <Spin className="execution-modal__header-spin" />
-                    ) : (
-                        <Tooltip title="Re-Run Workflow">
-                            <Button type="text" icon={<ReloadOutlined />} onClick={handleReRun} disabled={isFetching} />
-                        </Tooltip>
-                    )}
+                    ) : hasStarted ? (
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <Tooltip title="Edit Inputs & Restart">
+                                <Button type="text" icon={<EditOutlined />} onClick={() => setHasStarted(false)} disabled={isFetching} />
+                            </Tooltip>
+                            <Tooltip title="Re-Run Workflow">
+                                <Button type="text" icon={<ReloadOutlined />} onClick={handleReRun} disabled={isFetching} />
+                            </Tooltip>
+                        </div>
+                    ) : null}
                 </div>
             }
             open={isOpen}
@@ -110,7 +133,21 @@ export default function ExecutionDebuggerModal({ isOpen, onClose, versionId, nod
             }}
         >
             <div className="execution-modal__layout" style={{ background: token.colorBgLayout }}>
-                {isFetching ? (
+                {!hasStarted ? (
+                    <div style={{ padding: '2rem', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                        <Title level={4}>Provide Initial Input Data (JSON)</Title>
+                        <Text type="secondary" style={{ marginBottom: '1rem', textAlign: 'center', maxWidth: '600px' }}>
+                            Pass initial contextual data into the workflow run. This simulates external events providing state to the Workflow Entry node.
+                        </Text>
+                        <Input.TextArea 
+                            value={initialDataStr} 
+                            onChange={(e) => setInitialDataStr(e.target.value)} 
+                            rows={15} 
+                            style={{ width: '80%', maxWidth: '800px', fontFamily: 'monospace', marginBottom: '1.5rem', fontSize: '14px', padding: '1rem', borderRadius: '8px' }} 
+                        />
+                        <Button type="primary" size="large" onClick={handleStart} icon={<PlayCircleOutlined />}>Start Execution</Button>
+                    </div>
+                ) : isFetching ? (
                     <div className="reactor-loader-container">
                         <div className="reactor-loader">
                             <div className="reactor-core"></div>

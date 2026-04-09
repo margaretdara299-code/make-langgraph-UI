@@ -43,7 +43,7 @@ export default function NodePalette({ className = '' }: NodePaletteProps) {
                                     label: (
                                         <span className="node-palette__section-label">
                                             <AppstoreFilled style={{ color: 'var(--node-palette-common-color)' }} /> Common
-                                            <span className="node-palette__category-count">1</span>
+                                            <span className="node-palette__category-count">3</span>
                                         </span>
                                     ),
                                     children: <StructureSection search="" />,

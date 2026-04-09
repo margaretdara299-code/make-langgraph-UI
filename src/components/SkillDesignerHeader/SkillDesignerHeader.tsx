@@ -67,8 +67,14 @@ export default function SkillDesignerHeader() {
         setIsGeneratingCode(true);
         try {
             const result: any = await generateCode(versionId);
-            const code = result?.code || result?.data?.code || '';
-            if (!code) throw new Error('No code available');
+            // The result is directly the files object, not wrapped in data
+            const code = result || {};
+            console.log('[View Code] API Result:', result);
+            
+            if (!code || typeof code !== 'object' || Object.keys(code).length === 0) {
+                throw new Error('No code available');
+            }
+            
             setGeneratedCode(code);
             setIsCodeViewerOpen(true);
         } catch (err: any) {

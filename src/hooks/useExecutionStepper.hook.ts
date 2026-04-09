@@ -31,7 +31,7 @@ export function useExecutionStepper() {
         shouldStop.current = false;
     }, []);
 
-    const runExecution = useCallback(async (versionId: string, nodes: Node[], edges: Edge[]) => {
+    const runExecution = useCallback(async (versionId: string, nodes: Node[], edges: Edge[], initialData?: Record<string, any>) => {
         if (!versionId || !nodes || nodes.length === 0) return;
         
         setIsExecuting(true);
@@ -44,7 +44,7 @@ export function useExecutionStepper() {
 
         try {
             // 1. Call the backend
-            const rawResponse = await engineService.runSkillWorkflow(versionId);
+            const rawResponse = await engineService.runSkillWorkflow(versionId, initialData);
 
             // Our http interceptor wraps the data in { data: transformedPayload, message } 
             // OR if it didn't match the envelope, it's just the original object.

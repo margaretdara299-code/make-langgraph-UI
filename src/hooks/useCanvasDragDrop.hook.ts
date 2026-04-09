@@ -107,6 +107,24 @@ export default function useCanvasDragDrop(
                 return;
             }
 
+            // ── Handle Decision node drop ──
+            if (data.nodeType === 'decision') {
+                const newNode: Node = {
+                    id: getNextNodeId(),
+                    type: 'decision',
+                    position,
+                    data: {
+                        label:          data.label || 'Decision',
+                        category:       'structure',
+                        icon:           '⚡',
+                        rules:          []
+                    } as any,
+                };
+                setNodes((nds) => [...nds, newNode]);
+                if (versionId) upsertNodeInStorage(versionId, newNode.id, newNode);
+                return;
+            }
+
             // ── Handle Connector node drop ──
             if (data.nodeType === 'connector') {
                 const parentSubFlow = findSubFlowAtPosition(position.x, position.y);

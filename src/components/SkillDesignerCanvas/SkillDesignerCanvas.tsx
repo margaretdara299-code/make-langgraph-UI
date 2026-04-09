@@ -16,6 +16,7 @@ import {
     type Node,
     type Edge,
     type ReactFlowInstance,
+    MarkerType,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import NodePalette from '@/components/NodePalette/NodePalette';
@@ -61,7 +62,10 @@ export default function SkillDesignerCanvas() {
             setEdges((eds) => addEdge({
                 ...params,
                 id: edgeId,
-                animated: true,
+                type: 'default',
+                animated: false,
+                markerEnd: { type: MarkerType.ArrowClosed, color: '#888' },
+                style: { stroke: '#888', strokeWidth: 1.5 },
             }, eds));
 
             // Sync to localStorage
@@ -69,7 +73,9 @@ export default function SkillDesignerCanvas() {
                 upsertConnectionInStorage(versionId, edgeId, {
                     id: edgeId,
                     source: params.source,
+                    sourceHandle: params.sourceHandle,
                     target: params.target,
+                    targetHandle: params.targetHandle,
                 });
             }
         },
@@ -99,6 +105,7 @@ export default function SkillDesignerCanvas() {
                     fitViewOptions={{ maxZoom: 1 }}
                     deleteKeyCode={['Backspace', 'Delete']}
                     onNodeClick={(_, node) => {
+                        if (node.type === 'end') return; // End node has no properties
                         setDrawerNodeId(node.id);
                         setDrawerEdgeId(null);
                     }}

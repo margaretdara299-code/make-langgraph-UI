@@ -167,3 +167,67 @@
     align-self: stretch;
     background-color: var(--color-border);
 }
+
+/* ── Capability badge decision variant ── */
+.badge-decision {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+/* ── Decision Properties Panel ── */
+.decision-props__banner {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 12px;
+    background: rgba(245, 158, 11, 0.06);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    border-radius: 6px;
+    margin-bottom: 4px;
+}
+
+.properties-drawer__subsection-label {
+    font-size: 13px;
+    margin-bottom: 8px !important;
+}
+
+.decision-props__condition-card {
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: rgba(245, 158, 11, 0.04);
+    position: relative;
+}
+
+.decision-props__condition-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.decision-props__condition-delete {
+    color: var(--color-error, #ff4d4f);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.decision-props__condition-delete:hover {
+    background: rgba(255, 77, 79, 0.1);
+}
+
+.decision-props__op-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.decision-props__op-row .ant-form-item {
+    flex: 1;
+    min-width: 0;
+}
+

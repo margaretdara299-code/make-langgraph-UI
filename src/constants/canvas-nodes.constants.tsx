@@ -9,15 +9,17 @@ import ConnectorNode from '@/components/ConnectorNode/ConnectorNode';
 import EndNode from '@/components/EndNode/EndNode';
 import SubFlowNode from '@/components/SubFlowNode/SubFlowNode';
 import StartNode from '@/components/StartNode/StartNode';
+import DecisionNode from '@/components/DecisionNode/DecisionNode';
 import DeletableEdge from '@/components/DeletableEdge/DeletableEdge';
 
 export const NODE_TYPES = {
-    action: ActionNode,
-    trigger: TriggerNode,
+    action:   ActionNode,
+    trigger:  TriggerNode,
     connector: ConnectorNode,
-    end: EndNode,
-    subflow: SubFlowNode,
-    start: StartNode,
+    end:      EndNode,
+    subflow:  SubFlowNode,
+    start:    StartNode,
+    decision: DecisionNode,
 };
 
 export const EDGE_TYPES = {

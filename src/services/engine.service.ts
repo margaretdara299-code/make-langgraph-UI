@@ -14,11 +14,11 @@ export const engineService = {
     /**
      * Executes the skill workflow and retrieves the full monolithic response (logs, node states).
      */
-    runSkillWorkflow: async (versionId: string): Promise<any> => {
+    runSkillWorkflow: async (versionId: string, initialData?: Record<string, any>): Promise<any> => {
         /**
          * apiClient.post returns the unwrapped data from the response interceptor:
          * { data: transformedPayload, message: string }
          */
-        return apiClient.post<any>(API_ENDPOINTS.ENGINE.RUN(versionId));
+        return apiClient.post<any>(API_ENDPOINTS.ENGINE.RUN(versionId), initialData || {});
     },
 };

@@ -41,7 +41,7 @@ export const ExecutionOutputsLogsPane: React.FC<ExecutionOutputsLogsPaneProps> =
                 </div>
             </div>
 
-            <div className="execution-modal__pane-split execution-modal__pane-split--bottom">
+            {/* <div className="execution-modal__pane-split execution-modal__pane-split--bottom">
                 <div className="execution-modal__pane-header">
                     <Text strong>System Logs</Text>
                 </div>
@@ -68,7 +68,7 @@ export const ExecutionOutputsLogsPane: React.FC<ExecutionOutputsLogsPaneProps> =
                         )
                     )}
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 };
