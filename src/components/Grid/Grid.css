@@ -1,0 +1,22 @@
+/* Grid utility styles to ensure cards take full height within columns */
+.ant-row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+}
+
+.ant-col {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.ant-col > div {
+  flex: 1 !important;
+  height: 100% !important;
+}
+
+/* Specific card overrides to ensure vertical fill */
+.skill-card-premium, .capability-card-premium, .category-card-premium {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}

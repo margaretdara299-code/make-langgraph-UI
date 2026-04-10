@@ -76,6 +76,7 @@ export default function CreateSkillModal({ isOpen, onClose, onCreated }: CreateS
             onCancel={handleClose}
             title="Create New Skill"
             width={640}
+            zIndex={1300}
             destroyOnHidden
             footer={
                 <CreateSkillFooter

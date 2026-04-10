@@ -1,16 +1,16 @@
 /**
- * Skills Library page — displays all skills with filters, search, and card grid.
- * Handles card actions (Edit, Test, Publish, Archive, Delete).
+ * Skills Library page — displays all skills with premium layout patterns.
+ * Exact replica of the high-fidelity design system.
  */
 
 import { useState } from 'react';
-import { Input, Spin, Empty, Button, Typography, Modal, message, Tabs, Badge, Space } from 'antd';
-import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Input, Typography, Modal, message, Tabs, Badge, Space, Empty } from 'antd';
+import { PlusOutlined, ExclamationCircleOutlined, SearchOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useSkills, useCategories } from '@/hooks';
 import { SkillCard, CreateSkillModal, EditSkillModal } from '@/components';
+import SkillCardSkeleton from '@/components/Skeletons/SkillCardSkeleton';
 import { STATUS_FILTER_OPTIONS, CARD_ACTION_KEYS } from '@/constants';
-
 import {
     deleteSkill,
     updateSkillVersionStatus,
@@ -19,7 +19,7 @@ import {
 import type { UseSkillsFilters } from '@/interfaces';
 import './SkillsLibraryPage.css';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 export default function SkillsLibraryPage() {
     const [activeStatus, setActiveStatus] = useState<string>('all');
@@ -28,7 +28,6 @@ export default function SkillsLibraryPage() {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingSkill, setEditingSkill] = useState<any>(null);
     const navigate = useNavigate();
-
 
     const { skills, isLoading, statusCounts, setFilters, refetch } = useSkills();
     const { categories } = useCategories();
@@ -67,6 +66,7 @@ export default function SkillsLibraryPage() {
                     content: 'Are you sure you want to delete this skill? This action cannot be undone.',
                     okText: 'Delete',
                     okType: 'danger',
+                    centered: true,
                     onOk: async () => {
                         const result = await deleteSkill(skillId);
                         if (result.success) {
@@ -93,23 +93,17 @@ export default function SkillsLibraryPage() {
                     } else {
                         message.error(result.error || 'Failed to update version status');
                     }
-                } else {
-                    message.warning('Cannot update status: No valid version ID found.');
                 }
                 break;
             }
-
 
             case CARD_ACTION_KEYS.BUILD_SKILL: {
                 const pubSkill = skills.find((s) => s.id === skillId);
                 if (pubSkill?.latestVersionId) {
                     navigate(`/skills/${skillId}/versions/${pubSkill.latestVersionId}/design`);
-                } else {
-                    message.warning('Cannot open designer: No valid version ID found.');
                 }
                 break;
             }
-
 
             case CARD_ACTION_KEYS.EDIT_SETTINGS:
                 const skillToEdit = skills.find((skill) => skill.id === skillId);
@@ -120,97 +114,103 @@ export default function SkillsLibraryPage() {
                 break;
 
             case CARD_ACTION_KEYS.TEST:
-                message.info('Coming in Phase 3...');
+                message.info('Coming soon...');
                 break;
         }
     };
 
-
     return (
-        <div className="skills-library">
-            {/* ── Page Header ── */}
-            <div className="skills-library__header">
-                <Title level={3} className="skills-library__title">Skills Library</Title>
-                <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    size="large"
-                    onClick={() => setIsCreateModalOpen(true)}
-                >
-                    Create Skill
-                </Button>
-            </div>
+        <div className="skills-library-page">
+            <header className="skills-library-header">
+                <div className="title-section">
+                    <div className="title-row">
+                        <Title level={2}>Skills Library</Title>
+                        <button 
+                            className="create-skill-btn-mini" 
+                            onClick={() => setIsCreateModalOpen(true)}
+                            title="Create New Skill"
+                        >
+                            <PlusOutlined />
+                        </button>
+                    </div>
+                    <Text type="secondary" style={{ fontSize: '13px', fontWeight: 400, color: 'var(--text-subtle)', display: 'block', marginTop: '4px' }}>
+                         Manage and deploy your automated skills and complex orchestration flows.
+                    </Text>
+                </div>
+            </header>
 
-            {/* ── Search Bar & Horizontal Filters ── */}
-            <div className="skills-library__toolbar">
-                <Input.Search
-                    placeholder="Search skills by name, key, or description..."
-                    size="large"
-                    allowClear
-                    value={searchValue}
-                    onChange={(e) => handleSearch(e.target.value)}
-                    className="skills-library__search"
-                />
-
+            <div className="skills-library-toolbar">
                 <Tabs
                     activeKey={activeStatus}
                     onChange={handleStatusFilter}
-                    className="skills-library__tabs"
+                    className="skills-library-tabs"
                     items={STATUS_FILTER_OPTIONS.map((option) => ({
                         key: option.key,
                         label: (
-                            <Space>
-                                <option.icon />
+                            <Space size={8}>
                                 <span>{option.label}</span>
                                 <Badge
                                     count={statusCounts[option.key] ?? 0}
                                     showZero
-                                    color={activeStatus === option.key ? 'var(--color-primary)' : '#d9d9d9'}
-                                    className="skills-library__count-tag"
+                                    overflowCount={999}
+                                    style={{ 
+                                        backgroundColor: activeStatus === option.key ? 'var(--accent)' : '#f0f0f0',
+                                        color: activeStatus === option.key ? '#fff' : '#8c8c8c',
+                                        boxShadow: 'none',
+                                        fontSize: '10px'
+                                    }}
                                 />
                             </Space>
                         ),
                     }))}
                 />
+
+                <div className="skills-library-search-container">
+                    <Input
+                        placeholder="Search skills..."
+                        prefix={<SearchOutlined style={{ color: 'var(--text-subtle)' }} />}
+                        className="skills-library-search"
+                        allowClear
+                        value={searchValue}
+                        onChange={(e) => handleSearch(e.target.value)}
+                    />
+                </div>
             </div>
 
-            {/* ── Main Content Area ── */}
-            <div className="skills-library__body">
-                {/* ── Card Grid ── */}
-                <main className="skills-library__grid-area">
-                    {isLoading ? (
-                        <div className="skills-library__loading">
-                            <Spin size="large" />
-                        </div>
-                    ) : skills.length === 0 ? (
-                        <div className="skills-library__empty">
-                            <Empty description="No skills match your filters" />
-                        </div>
-                    ) : (
-                        <div className="skills-library__grid">
-                            {skills.map((skill) => {
-                                const categoryName = categories.find((category) => category.categoryId === skill.categoryId)?.name || 'Unknown';
-                                return (
-                                    <SkillCard
-                                        key={skill.id}
-                                        skill={{ ...skill, category: categoryName }}
-                                        onAction={handleCardAction}
-                                    />
-                                );
-                            })}
-                        </div>
-                    )}
-                </main>
+            <div className="skills-library-body">
+                {isLoading ? (
+                    <div className="skills-library-grid">
+                        <span style={{ display: 'none' }}>GRID_LOADING_ACTIVE</span>
+                        {[1, 2, 3, 4, 5, 6].map((i) => (
+                            <SkillCardSkeleton key={i} />
+                        ))}
+                    </div>
+                ) : skills.length === 0 ? (
+                    <div className="skills-empty">
+                        <Empty description="No skills found" />
+                    </div>
+                ) : (
+                    <div className="skills-library-grid">
+                        {skills.map((skill) => {
+                            const categoryName = categories.find((cat) => cat.categoryId === skill.categoryId)?.name || 'General';
+                            return (
+                                <SkillCard
+                                    key={skill.id}
+                                    skill={{ ...skill, category: categoryName }}
+                                    onAction={handleCardAction}
+                                />
+                            );
+                        })}
+                    </div>
+                )}
             </div>
 
-            {/* ── Create Skill Modal ── */}
             <CreateSkillModal
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
                 onCreated={refetch}
             />
 
-            {/* ── Edit Skill Modal ── */}
             <EditSkillModal
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}

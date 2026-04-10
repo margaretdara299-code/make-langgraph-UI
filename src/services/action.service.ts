@@ -334,3 +334,16 @@ export async function updateActionDefinition(
         return { success: false, error: error instanceof Error ? error.message : 'Failed to update action definition' };
     }
 }
+
+/**
+ * Permanently deletes an action definition from the system.
+ * @param id The actionDefinitionId to delete.
+ */
+export async function deleteAction(id: string): Promise<ApiResponse<void>> {
+    try {
+        await apiClient.delete(API_ENDPOINTS.ACTIONS.DELETE(id));
+        return { success: true, message: 'Action deleted successfully' };
+    } catch (error) {
+        return { success: false, error: error instanceof Error ? error.message : 'Failed to delete action' };
+    }
+}

@@ -29,7 +29,7 @@ export const DashboardSkeleton: React.FC = () => {
                 ))}
             </Row>
 
-            {/* Activity Box Skeleton */}
+            {/* Activity Box Skeleton   */}
             <div className="skeleton-activity-box">
                 <div className="skeleton-box-header">
                     <Skeleton.Input active size="default" style={{ width: 150 }} />

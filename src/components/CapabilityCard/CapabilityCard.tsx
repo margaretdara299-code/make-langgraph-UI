@@ -1,48 +1,61 @@
 /**
  * CapabilityCard — displays a single capability as a grid card.
+ * Exact match to premium reference project.
  */
 
-import { Card, Typography, Dropdown } from 'antd';
-import { EllipsisOutlined, ThunderboltOutlined } from '@ant-design/icons';
-import { CARD_MENU_ITEMS } from '@/constants/ui.constants';
+import { useState } from 'react';
+import { Dropdown, Typography } from 'antd';
+import { MoreOutlined, EditOutlined, DeleteOutlined, RocketOutlined } from '@ant-design/icons';
+import { motion } from 'framer-motion';
 import type { CapabilityCardProps } from '@/interfaces';
 import './CapabilityCard.css';
 
-const { Text, Title } = Typography;
+const { Paragraph, Title } = Typography;
 
 export default function CapabilityCard({ capability, onAction }: CapabilityCardProps) {
-    const menuItems = CARD_MENU_ITEMS;
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
-        <Card className="capability-card" hoverable>
-            <div className="capability-card__header">
-                <div className="capability-card__icon">
-                    <ThunderboltOutlined />
+        <div className="capability-card-premium">
+            <div className="cc-premium-header">
+                <div className="cc-premium-icon-box">
+                    <RocketOutlined className="capability-icon" />
                 </div>
                 <Dropdown
                     menu={{
-                        items: menuItems,
-                        onClick: (e) => onAction?.(e.key, (capability as any).capabilityId ?? capability.capability_id),
+                        items: [
+                            { key: 'edit', icon: <EditOutlined />, label: 'Edit' },
+                            { type: 'divider' },
+                            { key: 'delete', icon: <DeleteOutlined />, label: 'Delete', danger: true },
+                        ],
+                        onClick: ({ domEvent, key }) => {
+                            domEvent.stopPropagation();
+                            setIsMenuOpen(false);
+                            onAction?.(key as string, (capability as any).capabilityId ?? capability.capability_id);
+                        }
                     }}
                     trigger={['click']}
                     placement="bottomRight"
+                    onOpenChange={(flag) => setIsMenuOpen(flag)}
                 >
-                    <div className="capability-card__menu-trigger" onClick={(e) => e.stopPropagation()}>
-                        <EllipsisOutlined />
-                    </div>
+                    <button className="cc-menu-btn" onClick={(e) => e.stopPropagation()}>
+                        <motion.div animate={{ rotate: isMenuOpen ? 90 : 0 }} transition={{ duration: 0.2 }}>
+                            <MoreOutlined />
+                        </motion.div>
+                    </button>
                 </Dropdown>
             </div>
 
-            <div className="capability-card__body">
-                <Title level={5} className="capability-card__title" ellipsis>
-                    {capability.name}
-                </Title>
-                <div className="capability-card__description">
-                    <Text type="secondary" ellipsis>
-                        {capability.description || 'No description'}
-                    </Text>
-                </div>
+            <div className="cc-premium-body">
+                <Title level={5} className="capability-name">{capability.name}</Title>
+                <Paragraph
+                    className="capability-desc"
+                    type="secondary"
+                    ellipsis={{ rows: 3, tooltip: true }}
+                >
+                    {capability.description || 'Define high-level system behaviors and interfaces.'}
+                </Paragraph>
             </div>
-        </Card>
+        </div>
     );
 }

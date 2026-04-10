@@ -54,6 +54,7 @@ export default function EditSkillModal({ isOpen, onClose, onUpdated, skill }: Ed
             onCancel={handleClose}
             title="Edit Skill Details"
             width={640}
+            zIndex={1300}
             destroyOnHidden
             className="edit-skill-modal"
             footer={

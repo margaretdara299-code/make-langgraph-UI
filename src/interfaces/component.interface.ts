@@ -225,3 +225,23 @@ export interface ExecutionOutputsLogsPaneProps {
     steps: import('./engine.interface').ExecutedNodeStep[];
     globalLogs: string[];
 }
+
+export interface GridColumns {
+    xs?: number;
+    sm?: number;
+    md?: number;
+    lg?: number;
+    xl?: number;
+}
+
+export interface GridProps<T> {
+    data?: T[];
+    isLoading?: boolean;
+    SkeletonComponent?: React.FC;
+    renderItem?: (item: T) => import('react').ReactNode;
+    count?: number;
+    gutter?: [number, number];
+    columns?: GridColumns;
+    keyExtractor?: (item: T) => string | number;
+    prependItems?: import('react').ReactNode[];
+}
