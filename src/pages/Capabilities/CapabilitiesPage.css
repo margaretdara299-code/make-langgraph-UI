@@ -3,128 +3,56 @@
     flex-direction: column;
     padding: 0;
     height: 100%;
-    background-color: var(--bg-page);
     animation: fadeIn var(--motion-base) var(--ease-out);
 }
 
 .capabilities-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: var(--space-4);
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-light);
 }
 
-.title-section .ant-typography {
-    display: block;
+.title-section {
+    display: flex;
+    flex-direction: column;
 }
 
 .title-row {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 4px;
-}
-
-.title-row .ant-typography {
-    color: var(--text-main) !important;
-    margin: 0 !important;
+    gap: 12px;
 }
 
 .create-capability-btn-mini {
-    width: 24px !important;
-    height: 24px !important;
-    min-width: 24px !important;
-    padding: 0 !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
     background-color: var(--accent) !important;
     border: none !important;
     color: white !important;
     box-shadow: 0 4px 10px var(--accent-soft);
     transition: all 0.2s ease;
     border-radius: 50% !important;
-}
-
-.create-capability-btn-mini .anticon {
-    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .create-capability-btn-mini:hover {
     transform: scale(1.1);
-    box-shadow: 0 6px 12px var(--accent-soft);
+    filter: brightness(1.1);
 }
 
 .capabilities-toolbar {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
-}
-
-.capabilities-search.ant-input-affix-wrapper {
-    width: 300px;
-    background: rgba(255, 255, 255, 0.6) !important;
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--border-medium) !important;
-    border-radius: 10px !important;
-    padding: 8px 12px !important;
-    box-shadow: var(--shadow-xs);
-    transition: all var(--motion-base) cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-.capabilities-search.ant-input-affix-wrapper:hover {
-    border-color: var(--accent) !important;
-    background: rgba(255, 255, 255, 0.8) !important;
-}
-
-.capabilities-search.ant-input-affix-wrapper-focused {
-    border-color: var(--accent) !important;
-    background: #ffffff !important;
-    box-shadow: 0 0 0 4px var(--accent-soft), var(--shadow-sm) !important;
-    transform: translateY(-1px);
-}
-
-.capabilities-search .ant-input-prefix {
-    margin-right: var(--space-1);
-    font-size: 14px;
-    transition: color var(--motion-fast) ease;
-}
-
-.capabilities-search.ant-input-affix-wrapper-focused .ant-input-prefix {
-    color: var(--accent) !important;
-}
-
-.capabilities-search input {
-    font-size: 14px !important;
-    font-weight: var(--weight-medium);
-    color: var(--text-main);
-    background: transparent !important;
 }
 
 .capabilities-body {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    padding-bottom: var(--space-4);
-}
-
-.capabilities-grid {
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    gap: 16px;
-    padding: var(--space-1) 0;
-}
-
-@media (min-width: 576px) {
-    .capabilities-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (min-width: 768px) {
-    .capabilities-grid { grid-template-columns: repeat(3, 1fr); }
-}
-
-@media (min-width: 1200px) {
-    .capabilities-grid { grid-template-columns: repeat(4, 1fr); }
+    padding: 4px 2px;
 }
 
 .capabilities-empty {
@@ -133,10 +61,9 @@
     justify-content: center;
     align-items: center;
     height: 300px;
-    background-color: var(--bg-card);
-    border-radius: var(--radius-lg);
-    border: 1px dashed var(--border-strong);
-    box-shadow: var(--shadow-sm);
+    background-color: #f8fafc;
+    border-radius: 12px;
+    border: 1px dashed #e2e8f0;
 }
 
 @keyframes fadeIn {
@@ -158,15 +85,11 @@
     width: 6px;
 }
 
-.capabilities-body::-webkit-scrollbar-track {
-    background: transparent;
-}
-
 .capabilities-body::-webkit-scrollbar-thumb {
-    background: var(--border-strong);
+    background: #e2e8f0;
     border-radius: 10px;
 }
 
 .capabilities-body::-webkit-scrollbar-thumb:hover {
-    background: var(--text-subtle);
+    background: #cbd5e1;
 }

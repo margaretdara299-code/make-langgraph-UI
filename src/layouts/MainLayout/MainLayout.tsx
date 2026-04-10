@@ -26,6 +26,20 @@ export default function MainLayout({ children }: MainLayoutProps) {
         navigate('/login');
     };
 
+    // Auto-collapse sidebar when entering the Designer route
+    React.useEffect(() => {
+        const isDesigner = location.pathname.includes('/design');
+        if (isDesigner) {
+            setCollapsed(true);
+        } else {
+            // Optional: Expand when leaving designer? 
+            // The user only asked to collapse when clicking build.
+            // setCollapsed(false); 
+        }
+    }, [location.pathname]);
+
+    const isDesigner = location.pathname.includes('/design');
+
     return (
         <div className="main-layout">
             <Sidebar 
@@ -34,27 +48,29 @@ export default function MainLayout({ children }: MainLayoutProps) {
                 onLogout={handleLogout} 
             />
 
-            <main className="main-layout__main">
-                <header className="main-layout__header">
-                    <div className="header-meta">
-                        <Breadcrumb
-                            items={[
-                                {
-                                    href: '/',
-                                    title: (
-                                        <>
-                                            <HomeOutlined />
-                                            <span>Home</span>
-                                        </>
-                                    ),
-                                },
-                                {
-                                    title: pageLabel,
-                                },
-                            ]}
-                        />
-                    </div>
-                </header>
+            <main className={`main-layout__main ${isDesigner ? 'is-designer' : ''}`}>
+                {!isDesigner && (
+                    <header className="main-layout__header">
+                        <div className="header-meta">
+                            <Breadcrumb
+                                items={[
+                                    {
+                                        href: '/',
+                                        title: (
+                                            <>
+                                                <HomeOutlined />
+                                                <span>Home</span>
+                                            </>
+                                        ),
+                                    },
+                                    {
+                                        title: pageLabel,
+                                    },
+                                ]}
+                            />
+                        </div>
+                    </header>
+                )}
                 
                 <Content className="main-layout__content">
                     {children}

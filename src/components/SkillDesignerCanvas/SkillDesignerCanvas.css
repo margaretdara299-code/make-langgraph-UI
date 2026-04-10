@@ -4,10 +4,11 @@
  */
 
 .skill-designer {
-    display: flex;
+    display: block; /* No longer flex since palette is absolute */
     flex: 1;
-    /* Take remaining space from page layout */
-    min-height: 0;
+    height: 100%;
+    width: 100%;
+    position: relative;
     overflow: hidden;
 }
 
@@ -16,7 +17,7 @@
     height: 100%;
     position: relative;
     overflow: hidden;
-    background: #ffffff;
+    background: #f9fafb;
 }
 
 

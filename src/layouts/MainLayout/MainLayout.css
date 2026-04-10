@@ -10,11 +10,19 @@
 }
 
 .main-layout__main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden; /* Added to keep content within bounds */
+}
+
+.main-layout__main.is-designer {
+    height: 100vh;
+}
+
+.main-layout__main.is-designer .main-layout__content {
+    padding: 0;
 }
 
 /* --- Header --- */

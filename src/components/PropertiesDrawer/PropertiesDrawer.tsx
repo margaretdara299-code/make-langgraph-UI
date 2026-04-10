@@ -4,6 +4,7 @@
  */
 
 import { Drawer, Input, Form, Typography, Select, Spin, theme, Button } from 'antd';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useReactFlow, useNodes, useEdges } from '@xyflow/react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -382,11 +383,11 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     );
 
     /** Render the Connector-specific fields */
-    const renderNodeConfig = (_nodeData: CanvasNodeData) => {
+    const renderNodeConfig = (nodeData: CanvasNodeData) => {
         return (
             <>
                 {/* ── Section 1: Endpoint ── */}
-                <Title level={5} className="properties-drawer__section-subtitle">Endpoint</Title>
+                <div className="properties-drawer__section-title">Endpoint</div>
                 <div className="properties-drawer__flex-row">
                     <Form.Item label="URL" name="url" className="properties-drawer__flex-item">
                         <Input placeholder="https://api.example.com/v1/resource" />
@@ -398,7 +399,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
 
                 {/* ── Section 2: Integration Parameters ── */}
                 <div className="properties-drawer__divider" />
-                <Title level={5} className="properties-drawer__section-subtitle">Integration Parameters</Title>
+                <div className="properties-drawer__section-title">Integration Parameters</div>
 
                 <DynamicParamList name="path_params" title="Path Parameters" emptyMessage="No path parameters." />
                 <DynamicParamList name="query_params" title="Query Parameters" emptyMessage="No query parameters." />
@@ -407,14 +408,14 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
 
                 {/* ── Section 3: Fallback Configuration ── */}
                 <div className="properties-drawer__divider" />
-                <Title level={5} className="properties-drawer__section-subtitle">Fallback Configuration</Title>
+                <div className="properties-drawer__section-title">Fallback Configuration</div>
                 <Form.Item name="fallback_message" label="Fallback Message">
                     <Input.TextArea placeholder="Enter a message to be used if the action fails..." rows={3} />
                 </Form.Item>
 
                 {/* ── Section 4: State Management ── */}
                 <div className="properties-drawer__divider" />
-                <Title level={5} className="properties-drawer__section-subtitle">State Management</Title>
+                <div className="properties-drawer__section-title">State Management</div>
                 {renderStateManagement()}
             </>
         );
@@ -484,40 +485,52 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             }
 
             return (
-                <div className="properties-drawer__content">
+                <motion.div 
+                    className="properties-drawer__content"
+                    key={selectedNode.id}
+                    initial="hidden"
+                    animate="visible"
+                    variants={{
+                        hidden: { opacity: 0 },
+                        visible: {
+                            opacity: 1,
+                            transition: { staggerChildren: 0.08 }
+                        }
+                    }}
+                >
                     {/* Node Metadata Card */}
-                    <div className="properties-drawer__meta">
+                    <motion.div 
+                        className="properties-drawer__meta"
+                        variants={{
+                            hidden: { opacity: 0, x: 16 },
+                            visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] } }
+                        }}
+                    >
                         <div className="properties-drawer__meta-item">
                             <span className="properties-drawer__meta-label">Type</span>
-                            <span className="properties-drawer__meta-value" style={{ background: '#fef3c7', color: '#92400e' }}>
+                            <span className="properties-drawer__meta-value">
                                 {isStart    ? 'Workflow Entry'
-                                : isDecision ? 'Condition Router'
-                                : isSubFlow  ? 'Structure Group'
-                                : (nodeData?.categoryId ? (categoryMap[nodeData.categoryId] || 'Uncategorized') : (nodeData?.category || 'Uncategorized'))}
+                                : isDecision ? 'Router'
+                                : isSubFlow  ? 'Group'
+                                : (nodeData?.category || 'Action')}
                             </span>
                         </div>
                         <div className="properties-drawer__meta-item">
-                            <span className="properties-drawer__meta-label">Capability</span>
-                            <div className={`properties-drawer__capability-badge badge-${isSubFlow ? 'default' : isDecision ? 'decision' : nodeData?.capability}`}>
-                                {isStart    ? 'ENTRY'
+                            <span className="properties-drawer__meta-label">ID</span>
+                            <span className="properties-drawer__meta-value" style={{ fontFamily: 'monospace' }}>
+                                {selectedNode.id}
+                            </span>
+                        </div>
+                        <div className="properties-drawer__meta-item">
+                            <span className="properties-drawer__meta-label">Engine</span>
+                            <div className={`properties-drawer__capability-badge badge-${isDecision ? 'decision' : nodeData?.capability}`}>
+                                {isStart    ? 'START'
                                 : isDecision ? 'DECISION'
-                                : isSubFlow  ? 'GROUP'
-                                : (nodeData?.capability || 'DEFAULT').toUpperCase()}
+                                : isSubFlow  ? 'STRUCTURE'
+                                : (nodeData?.capability || 'API').toUpperCase()}
                             </div>
                         </div>
-                        {!isSubFlow && !isStart && nodeData?.action_key && (
-                            <div className="properties-drawer__meta-item">
-                                <span className="properties-drawer__meta-label">Action ID</span>
-                                <span className="properties-drawer__meta-value">{nodeData.action_key}</span>
-                            </div>
-                        )}
-                        {!isSubFlow && nodeData?.action_version_id && (
-                            <div className="properties-drawer__meta-item">
-                                <span className="properties-drawer__meta-label">Version ID</span>
-                                <span className="properties-drawer__meta-value">{nodeData.action_version_id}</span>
-                            </div>
-                        )}
-                    </div>
+                    </motion.div>
 
                     <div className="properties-drawer__divider" />
 
@@ -530,8 +543,13 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                         className="properties-drawer__form"
                     >
                         {!isConnector && (
-                            <>
-                                <Title level={5} className="properties-drawer__section-title">General</Title>
+                            <motion.div
+                                variants={{
+                                    hidden: { opacity: 0, x: 12 },
+                                    visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] } }
+                                }}
+                            >
+                                <div className="properties-drawer__section-title">General</div>
                                 <Form.Item
                                     label="Node Label"
                                     name="label"
@@ -539,41 +557,52 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                 >
                                     <Input />
                                 </Form.Item>
-                            </>
+                            </motion.div>
                         )}
 
                         {isSubFlow && (
-                            <Form.Item
-                                label="Description"
-                                name="description"
+                            <motion.div
+                                variants={{
+                                    hidden: { opacity: 0, x: 12 },
+                                    visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] } }
+                                }}
                             >
-                                <Input.TextArea rows={4} placeholder="What does this group do?" />
-                            </Form.Item>
+                                <Form.Item
+                                    label="Description"
+                                    name="description"
+                                >
+                                    <Input.TextArea rows={4} placeholder="What does this group do?" />
+                                </Form.Item>
+                            </motion.div>
                         )}
 
                         {isDecision && (
-                            <>
+                            <motion.div
+                                variants={{
+                                    hidden: { opacity: 0, x: 12 },
+                                    visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] } }
+                                }}
+                            >
                                 <div className="properties-drawer__divider" />
                                 <DecisionPropertiesPanel form={form} />
-                            </>
+                            </motion.div>
                         )}
 
                         {isStart && (
-                            <>
+                            <motion.div
+                                variants={{
+                                    hidden: { opacity: 0, x: 12 },
+                                    visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] } }
+                                }}
+                            >
                                 <div className="properties-drawer__divider" />
-                                <Title level={5} className="properties-drawer__section-title">Initial State Variables</Title>
+                                <div className="properties-drawer__section-title">Initial State Variables</div>
                                 <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 12 }}>
                                     These key-value pairs are injected as <code>saved_data</code> at the start of every workflow run.
-                                    All subsequent nodes can read these values automatically.
                                 </Text>
                                 <Form.List name="initial_state">
                                     {(fields, { add, remove }) => (
                                         <>
-                                            {fields.length === 0 && (
-                                                <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 12 }}>
-                                                    No variables defined. Add key-value pairs below.
-                                                </Text>
-                                            )}
                                             {fields.map(({ key, name: fieldName, ...restField }) => (
                                                 <div key={key} className="properties-drawer__kv-row">
                                                     <Form.Item
@@ -608,87 +637,119 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                         </>
                                     )}
                                 </Form.List>
-                            </>
+                            </motion.div>
                         )}
 
                         {!isSubFlow && !isConnector && !isStart && !isDecision && nodeData && (
-                            <>
+                            <motion.div
+                                variants={{
+                                    hidden: { opacity: 0, x: 12 },
+                                    visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] } }
+                                }}
+                            >
                                 {/* ── Configurations Section ── */}
                                 <div className="properties-drawer__divider" />
-                                <Title level={5} className="properties-drawer__section-title">Configuration</Title>
+                                <div className="properties-drawer__section-title">Configuration</div>
                                 {renderNodeConfig(nodeData as CanvasNodeData)}
-                            </>
+                            </motion.div>
                         )}
-                        {isConnector && nodeData && renderNodeConfig(nodeData)}
+                        {isConnector && nodeData && (
+                            <motion.div
+                                variants={{
+                                    hidden: { opacity: 0, x: 12 },
+                                    visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] } }
+                                }}
+                            >
+                                {renderNodeConfig(nodeData)}
+                            </motion.div>
+                        )}
                     </Form>
 
-                </div>
+                </motion.div>
             );
         }
 
         if (selectedEdge) {
             return (
-                <div className="properties-drawer__content">
-                    <div className="properties-drawer__meta" style={{ background: token.colorBgContainer, borderColor: token.colorBorderSecondary }}>
+                <motion.div 
+                    className="properties-drawer__content"
+                    key={selectedEdge.id}
+                    initial="hidden"
+                    animate="visible"
+                    variants={{
+                        hidden: { opacity: 0 },
+                        visible: {
+                            opacity: 1,
+                            transition: { staggerChildren: 0.05 }
+                        }
+                    }}
+                >
+                    <motion.div 
+                        className="properties-drawer__meta" 
+                        variants={{
+                            hidden: { opacity: 0, x: -12 },
+                            visible: { opacity: 1, x: 0, transition: { duration: 0.15, ease: 'linear' } }
+                        }}
+                    >
                         <div className="properties-drawer__meta-item">
-                            <Text type="secondary">Connection</Text>
-                            <Text strong>Edge Route</Text>
-                        </div>
-                        <div className="properties-drawer__meta-item">
-                            <Text type="secondary">Current Route</Text>
+                            <span className="properties-drawer__meta-label">Route</span>
                             <div className="properties-drawer__capability-badge badge-default" style={{ textTransform: 'capitalize' }}>
                                 {edgeData?.routeType || 'unconditional'}
                             </div>
                         </div>
                         <div className="properties-drawer__meta-item">
-                            <Text type="secondary">From Node</Text>
-                            <Text code>{selectedEdge.source}</Text>
+                            <span className="properties-drawer__meta-label">ID</span>
+                            <span className="properties-drawer__meta-value" style={{ fontFamily: 'monospace' }}>
+                                {selectedEdge.id}
+                            </span>
                         </div>
-                        <div className="properties-drawer__meta-item">
-                            <Text type="secondary">To Node</Text>
-                            <Text code>{selectedEdge.target}</Text>
-                        </div>
-                    </div>
+                    </motion.div>
 
                     <div className="properties-drawer__divider" />
 
-                    <Title level={5} className="properties-drawer__section-title">Routing Configuration</Title>
-                    <Form
-                        form={form}
-                        layout="vertical"
-                        onValuesChange={handleValuesChange}
-                        className="properties-drawer__form"
-                        initialValues={{ routeType: 'unconditional' }}
+                    <motion.div 
+                        variants={{
+                            hidden: { opacity: 0, x: -8 },
+                            visible: { opacity: 1, x: 0, transition: { duration: 0.12, ease: 'linear' } }
+                        }}
                     >
-                        <Form.Item label="Route Type" name="routeType">
-                            <Select
-                                options={[
-                                    { value: 'unconditional', label: 'Unconditional (Always)' },
-                                    { value: 'conditional', label: 'Conditional' },
-                                    { value: 'fallback', label: 'Default / Fallback' },
-                                ]}
-                            />
-                        </Form.Item>
-
-                        {/* Render condition label input only when conditional route type is selected */}
-                        <Form.Item
-                            noStyle
-                            shouldUpdate={(prevValues, currentValues) => prevValues.routeType !== currentValues.routeType}
+                        <div className="properties-drawer__section-title">Routing Configuration</div>
+                        <Form
+                            form={form}
+                            layout="vertical"
+                            onValuesChange={handleValuesChange}
+                            className="properties-drawer__form"
+                            initialValues={{ routeType: 'unconditional' }}
                         >
-                            {({ getFieldValue }) =>
-                                getFieldValue('routeType') === 'conditional' ? (
-                                    <Form.Item
-                                        label="Condition Label"
-                                        name="conditionLabel"
-                                        rules={[{ required: true, message: 'Please provide a condition label' }]}
-                                    >
-                                        <Input placeholder="e.g. status == 'success'" />
-                                    </Form.Item>
-                                ) : null
-                            }
-                        </Form.Item>
-                    </Form>
-                </div>
+                            <Form.Item label="Route Type" name="routeType">
+                                <Select
+                                    options={[
+                                        { value: 'unconditional', label: 'Unconditional (Always)' },
+                                        { value: 'conditional', label: 'Conditional' },
+                                        { value: 'fallback', label: 'Default / Fallback' },
+                                    ]}
+                                />
+                            </Form.Item>
+
+                            <Form.Item
+                                noStyle
+                                shouldUpdate={(prevValues, currentValues) => prevValues.routeType !== currentValues.routeType}
+                            >
+                                {({ getFieldValue }) =>
+                                    getFieldValue('routeType') === 'conditional' ? (
+                                        <Form.Item
+                                            label="Condition Label"
+                                            name="conditionLabel"
+                                            rules={[{ required: true, message: 'Please provide a condition label' }]}
+                                        >
+                                            <Input placeholder="e.g. status == 'success'" />
+                                        </Form.Item>
+                                    ) : null
+                                }
+                            </Form.Item>
+                        </Form>
+                    </motion.div>
+                </motion.div>
             );
         }
 
@@ -721,7 +782,13 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                 body: { padding: '24px', background: '#ffffff' },
             }}
         >
-            {renderContent()}
+            <AnimatePresence mode="wait">
+                {isOpen && (
+                    <div style={{ height: '100%', overflowY: 'auto', overflowX: 'hidden' }}>
+                        {renderContent()}
+                    </div>
+                )}
+            </AnimatePresence>
         </Drawer>
 
 

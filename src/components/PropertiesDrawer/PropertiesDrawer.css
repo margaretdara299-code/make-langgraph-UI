@@ -1,47 +1,63 @@
 .properties-drawer {
     position: absolute !important;
-    font-family: 'Inter', -apple-system, system-ui, sans-serif;
 }
 
-/* Ensure the portal wrapper doesn't move outside the relative container */
 .properties-drawer .ant-drawer-content-wrapper {
     position: absolute !important;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.05) !important;
 }
 
+.properties-drawer .ant-drawer-header {
+    padding: 14px 20px !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+
+.properties-drawer .ant-drawer-body {
+    padding: 20px !important;
+    background: #ffffff !important;
+    font-family: 'Inter', sans-serif;
+}
 
 .properties-drawer__header {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .properties-drawer__icon {
-    font-size: 18px;
-    line-height: 1;
+    width: 28px;
+    height: 28px;
+    background: #f1f5f9;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
     color: #475569;
 }
 
 .properties-drawer__title-text {
-    font-weight: 700;
-    font-size: 15px;
-    color: #1e293b;
+    font-weight: 600;
+    font-size: 14px;
+    color: #0f172a;
     letter-spacing: -0.01em;
 }
 
 .properties-drawer__content {
     display: flex;
     flex-direction: column;
-    padding: 0;
 }
 
+/* --- Metadata Section --- */
 .properties-drawer__meta {
-    padding: 16px;
-    border-radius: 12px;
+    padding: 14px;
+    border-radius: 10px;
     background: #f8fafc;
     border: 1px solid #e2e8f0;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     margin-bottom: 24px;
 }
 
@@ -49,119 +65,72 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 12px;
 }
 
 .properties-drawer__meta-label {
     color: #64748b;
     font-weight: 500;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
 }
 
 .properties-drawer__meta-value {
-    color: #1e293b;
+    color: #334155;
     font-weight: 600;
-    font-family: 'JetBrains Mono', 'Monaco', monospace;
     font-size: 11px;
-    background: rgba(15, 23, 42, 0.05);
-    padding: 2px 6px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 1px 6px;
     border-radius: 4px;
+}
+
+/* --- Form Improvements --- */
+.properties-drawer__form .ant-form-item {
+    margin-bottom: 16px !important;
+}
+
+.properties-drawer__form .ant-form-item-label {
+    padding-bottom: 6px !important;
+}
+
+.properties-drawer__form .ant-form-item-label > label {
+    font-weight: 600 !important;
+    font-size: 12px !important;
+    color: #475569 !important;
+    height: auto !important;
 }
 
 .properties-drawer__divider {
     height: 1px;
     background-color: #f1f5f9;
-    margin: 20px 0;
+    margin: 20px -20px;
 }
 
 .properties-drawer__section-title {
     margin-top: 0 !important;
     margin-bottom: 12px !important;
-    font-size: 13px !important;
+    font-size: 11px !important;
     font-weight: 700 !important;
-    color: #334155 !important;
+    color: #94a3b8 !important;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
 }
 
-.properties-drawer__capability-badge {
-    font-size: 10px;
-    font-weight: 800;
-    padding: 2px 8px;
-    border-radius: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.032em;
-}
-
-.properties-drawer__empty-config {
-    padding: 32px 16px;
-    text-align: center;
-    background: #f8fafc;
-    border-radius: 12px;
-    border: 1px dashed #cbd5e1;
-    color: #94a3b8;
-    font-size: 13px;
-}
-
-.properties-drawer__form .ant-form-item-label {
-    padding-bottom: 4px !important;
-}
-
-.properties-drawer__form .ant-form-item-label>label {
-    font-weight: 600;
+/* --- Subsection Labels --- */
+.properties-drawer__subsection-label {
     font-size: 12px;
-    color: #475569;
-}
-
-/* ── Schema Tables (Inputs / Outputs) ── */
-.properties-drawer__schema-table {
-    margin-bottom: 12px;
-    border: 1px solid #f1f5f9;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.properties-drawer__schema-table .ant-table-thead > tr > th {
-    font-size: 10px;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 8px 12px;
-    background: #f8fafc;
-    color: #64748b;
-    border-bottom: 1px solid #f1f5f9;
-}
-
-.properties-drawer__schema-table .ant-table-tbody > tr > td {
-    font-size: 12px;
-    padding: 8px 12px;
     color: #334155;
-    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 10px !important;
+    display: block;
 }
 
-.properties-drawer__schema-table .ant-table-tbody > tr:last-child > td {
-    border-bottom: none;
-}
-
-/* ── Unified Config Form ── */
-.properties-drawer__flex-row {
-    display: flex;
-    gap: 12px;
-    align-items: flex-end;
-}
-
-.properties-drawer__flex-item {
-    flex: 1;
-}
-
-.properties-drawer__method-select {
-    width: 100px;
-    flex-shrink: 0;
-}
-
+/* --- Key-Value Rows --- */
 .properties-drawer__kv-row {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     margin-bottom: 6px;
 }
 
@@ -171,13 +140,12 @@
 }
 
 .properties-drawer__delete-icon {
-    color: #94a3b8;
+    color: #cbd5e1;
     font-size: 14px;
     cursor: pointer;
-    flex-shrink: 0;
+    padding: 6px;
+    border-radius: 6px;
     transition: all 0.2s ease;
-    padding: 4px;
-    border-radius: 4px;
 }
 
 .properties-drawer__delete-icon:hover {
@@ -185,18 +153,23 @@
     background: #fee2e2;
 }
 
-.properties-drawer__empty-hint {
-    display: block;
-    margin-bottom: 12px;
-    font-style: italic;
-    font-size: 11px;
-    color: #94a3b8;
+/* --- Custom Inputs --- */
+.ant-input, .ant-select-selector, .ant-input-textarea {
+    border-color: #e2e8f0 !important;
+    border-radius: 6px !important;
+    font-size: 13px !important;
 }
 
+.ant-input:focus, .ant-select-selector:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 2px var(--accent-soft) !important;
+}
+
+/* --- State Management --- */
 .properties-drawer__state-row {
     display: flex;
-    gap: 20px;
-    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 12px;
 }
 
 .properties-drawer__state-col {
@@ -204,78 +177,44 @@
     min-width: 0;
 }
 
-.properties-drawer__state-divider {
-    width: 1px;
-    align-self: stretch;
-    background-color: #f1f5f9;
-}
-
-/* ── Decision Properties Panel ── */
-.decision-props__banner {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 12px 14px;
-    background: #fffbeb;
-    border: 1px solid #fde68a;
-    border-radius: 8px;
+.properties-drawer__state-col > span {
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    display: block;
     margin-bottom: 8px;
 }
 
-.properties-drawer__subsection-label {
-    font-size: 12px;
+/* --- Capability Badges --- */
+.properties-drawer__capability-badge {
+    font-size: 9px;
     font-weight: 700;
-    color: #b45309;
-    margin-bottom: 10px !important;
-    display: block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: #eef2ff;
+    color: var(--accent);
+    border: 1px solid #e0e7ff;
 }
 
-.decision-props__condition-card {
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 14px;
-    margin-bottom: 12px;
-    background: #ffffff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-    position: relative;
-    transition: all 0.2s ease;
+.badge-decision {
+    background: #fffbe6;
+    color: #fa8c16;
+    border-color: #ffe58f;
 }
 
-.decision-props__condition-card:hover {
-    border-color: #fbbf24;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+/* --- Buttons --- */
+.ant-btn-dashed {
+    height: 32px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    border-color: #e2e8f0 !important;
+    color: #64748b !important;
+    border-radius: 6px !important;
 }
 
-.decision-props__condition-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
+.ant-btn-dashed:hover {
+    color: var(--accent) !important;
+    border-color: var(--accent) !important;
 }
-
-.decision-props__condition-delete {
-    color: #94a3b8;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 6px;
-    transition: all 0.2s;
-    font-size: 14px;
-}
-
-.decision-props__condition-delete:hover {
-    color: #ef4444;
-    background: #fee2e2;
-}
-
-.decision-props__op-row {
-    display: flex;
-    gap: 8px;
-    align-items: flex-start;
-}
-
-.decision-props__op-row .ant-form-item {
-    flex: 1;
-    min-width: 0;
-}
-
-

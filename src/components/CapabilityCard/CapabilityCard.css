@@ -1,31 +1,20 @@
 .capability-card-premium {
     position: relative;
-    background-color: var(--bg-card);
-    padding: 16px;
-    border-radius: 16px;
-    border: 1px solid var(--border-light);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
     height: 100%;
-    min-height: 140px;
-}
-
-@media (max-width: 576px) {
-    .capability-card-premium {
-        padding: 14px;
-        border-radius: 12px;
-        min-height: 130px;
-    }
 }
 
 .capability-card-premium:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
     border-color: var(--accent);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
 }
 
 .cc-premium-header {
@@ -37,23 +26,24 @@
 }
 
 .cc-premium-icon-box {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    background-color: var(--accent-soft);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background-color: #eef2ff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 16px;
     color: var(--accent);
-    border: 1px solid var(--border-light);
-    transition: all 0.3s ease;
+    border: 1px solid #e0e7ff;
+    transition: all 0.2s ease;
 }
 
 .capability-card-premium:hover .cc-premium-icon-box {
-    transform: scale(1.1) rotate(5deg);
     background-color: var(--accent);
     color: #ffffff;
+    border-color: var(--accent);
+    transform: scale(1.05);
 }
 
 .cc-menu-btn {
@@ -77,16 +67,16 @@
 }
 
 .capability-name {
-    margin: 0 0 6px 0 !important;
-    font-size: 15px !important;
+    margin: 4px 0 6px 0 !important;
+    font-size: 14px !important;
     font-weight: 700 !important;
-    color: var(--text-main) !important;
-    line-height: 1.2 !important;
+    color: #0f172a !important;
+    letter-spacing: -0.01em;
 }
 
 .capability-desc {
     margin: 0 !important;
-    font-size: 11.5px !important;
+    font-size: 12.5px !important;
     line-height: 1.5 !important;
-    color: var(--text-muted) !important;
+    color: #64748b !important;
 }
