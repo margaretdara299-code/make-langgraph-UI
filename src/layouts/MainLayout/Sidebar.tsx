@@ -17,6 +17,10 @@ export default function Sidebar({
     <aside
       className={`main-sidebar ${collapsed ? "collapsed" : ""} reveal-slide`}
     >
+      <button className="sidebar-toggle" onClick={onToggle}>
+        <ChevronLeft />
+      </button>
+
       <div className="brand-section">
         <div className="brand-logo-container">
           <img
@@ -26,9 +30,6 @@ export default function Sidebar({
           />
         </div>
         {!collapsed && <span className="brand-name">Tensaw Studio</span>}
-        <button className="sidebar-toggle" onClick={onToggle}>
-          <ChevronLeft />
-        </button>
       </div>
 
       <nav className="nav-links">

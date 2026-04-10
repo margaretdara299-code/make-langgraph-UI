@@ -242,6 +242,7 @@ export interface GridProps<T> {
     count?: number;
     gutter?: [number, number];
     columns?: GridColumns;
+    autoFitMinWidth?: number | string;
     keyExtractor?: (item: T) => string | number;
     prependItems?: import('react').ReactNode[];
 }
