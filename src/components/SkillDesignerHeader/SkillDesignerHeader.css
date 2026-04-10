@@ -55,7 +55,7 @@
 
 /* "Skills" - Parent link (Quieter) */
 .breadcrumb-item.link {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   color: #94a3b8; /* Lighter/Quieter */
   background: none;
@@ -73,7 +73,7 @@
 
 /* Separator styling (Quiet) */
 .breadcrumb-separator {
-  font-size: 11px;
+  font-size: 14px;
   color: #cbd5e1; /* Very light grey */
   font-weight: 400;
   user-select: none;
@@ -304,7 +304,7 @@
   align-items: center;
   gap: 8px;
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500; /* Slightly lighter for a more "lean" look */
   padding: 0 14px;
   height: 34px;

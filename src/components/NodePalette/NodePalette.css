@@ -48,7 +48,7 @@
 }
 
 .sidebar-title {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #0f172a;
   letter-spacing: -0.01em;
@@ -125,7 +125,7 @@
 
 .antd-tree-container .ant-tree-node-content-wrapper {
   background: transparent !important;
-  cursor: default;
+  cursor: pointer !important;
   padding: 0 !important;
   display: flex !important;
   align-items: center;

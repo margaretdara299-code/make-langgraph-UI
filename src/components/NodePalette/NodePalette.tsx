@@ -207,6 +207,8 @@ export default function NodePalette() {
                             switcherIcon={<ChevronDown size={14} />}
                             expandedKeys={expandedKeys}
                             onExpand={onExpand}
+                            expandAction="click"
+                            selectable={false}
                             treeData={[
                                 {
                                     title: (
