@@ -215,7 +215,7 @@ export default function ActionCatalogPage() {
                         SkeletonComponent={ActionCardSkeleton}
                         data={actions}
                         gutter={[20, 20]}
-                        columns={{ xs: 24, sm: 12, md: 8, lg: 6, xl: 6 }}
+                        autoFitMinWidth={280}
                         renderItem={(action) => (
                             <ActionCard 
                                 action={action} 

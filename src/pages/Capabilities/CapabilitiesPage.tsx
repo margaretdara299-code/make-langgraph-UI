@@ -127,7 +127,7 @@ export default function CapabilitiesPage() {
                         isLoading={isLoading}
                         SkeletonComponent={CapabilityCardSkeleton}
                         gutter={[16, 16]}
-                        columns={{ xs: 24, sm: 12, md: 8, lg: 6, xl: 6 }}
+                        autoFitMinWidth={260}
                         renderItem={(cap: Capability) => (
                             <CapabilityCard 
                                 capability={cap} 

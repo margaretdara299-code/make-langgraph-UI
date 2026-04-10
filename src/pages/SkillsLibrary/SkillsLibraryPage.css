@@ -116,21 +116,9 @@
 
 .skills-library-grid {
     display: grid;
-    grid-template-columns: repeat(1, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
     gap: 20px;
     padding: 4px 0;
-}
-
-@media (min-width: 768px) {
-    .skills-library-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (min-width: 1280px) {
-    .skills-library-grid { grid-template-columns: repeat(3, 1fr); }
-}
-
-@media (min-width: 1600px) {
-    .skills-library-grid { grid-template-columns: repeat(4, 1fr); }
 }
 
 .skills-empty {
