@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import {
   ChevronRight, ChevronDown, Loader2, Plus, Minus,
   Zap, Database
 } from 'lucide-react';
@@ -34,7 +34,7 @@ const NodeItem: React.FC<{ node: any }> = ({ node }) => {
 
   return (
     <div className="node-library-item-wrapper" draggable onDragStart={onDragStart}>
-      <motion.div 
+      <motion.div
         className="node-library-item"
         variants={{
           hidden: { opacity: 0, x: -10 },
@@ -63,7 +63,7 @@ const NodeItem: React.FC<{ node: any }> = ({ node }) => {
 };
 
 export default function NodePalette() {
-  const [isOpen, setIsOpen] = useState(false); 
+  const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [expandedCategory, setExpandedCategory] = useState<string | null>('Actions');
   const [expandedSub, setExpandedSub] = useState<Record<string, string | null>>({});
@@ -87,7 +87,7 @@ export default function NodePalette() {
   }, [actionsByCategory, connectorGroups]);
 
   const mainCategories = ['Actions', 'Connectors'];
-  const filtered = allNodes.filter(n => 
+  const filtered = allNodes.filter(n =>
     n.label.toLowerCase().includes(search.toLowerCase()) ||
     n.subCategory.toLowerCase().includes(search.toLowerCase())
   );
@@ -98,24 +98,24 @@ export default function NodePalette() {
   return (
     <>
       <div className="library-control-fixed">
-        <button 
+        <button
           className={`library-toggle-btn ${isOpen ? 'active' : ''}`}
           onClick={() => setIsOpen(!isOpen)}
         >
-           {isOpen ? <Minus size={14} /> : <Plus size={14} />}
+          {isOpen ? <Minus size={14} /> : <Plus size={14} />}
         </button>
       </div>
 
       <AnimatePresence>
         {isOpen && (
-          <motion.aside 
+          <motion.aside
             className="node-library-floating"
             initial={{ x: -28, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -28, opacity: 0 }}
             transition={{ duration: 0.14, ease: 'linear' }}
           >
-            <motion.div 
+            <motion.div
               className="sidebar-top"
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
@@ -123,15 +123,15 @@ export default function NodePalette() {
             >
               <div className="sidebar-title">Node Library</div>
               <div className="sidebar-search-wrap">
-                <SearchInput 
-                  placeholder="Search nodes..." 
-                  value={search} 
-                  onChange={setSearch} 
+                <SearchInput
+                  placeholder="Search nodes..."
+                  value={search}
+                  onChange={setSearch}
                 />
               </div>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               className="sidebar-scroll"
               initial="hidden"
               animate="visible"
@@ -151,7 +151,7 @@ export default function NodePalette() {
               )}
 
               {search ? (
-                <motion.div 
+                <motion.div
                   className="node-group"
                   initial="hidden"
                   animate="visible"
@@ -169,7 +169,7 @@ export default function NodePalette() {
                 </motion.div>
               ) : (
                 <>
-                  <motion.div 
+                  <motion.div
                     className="node-group"
                     variants={{
                       hidden: { opacity: 0, x: -10 },
@@ -183,15 +183,15 @@ export default function NodePalette() {
                       </div>
                     </button>
                     {expandedCategory === 'Common' && (
-                      <motion.div 
+                      <motion.div
                         className="group-content nested-groups"
                         initial="hidden" animate="visible"
                         variants={{
-                            hidden: { opacity: 0, x: -10 },
-                            visible: { opacity: 1, x: 0, transition: { duration: 0.12, ease: 'linear', staggerChildren: 0.04 } }
+                          hidden: { opacity: 0, x: -10 },
+                          visible: { opacity: 1, x: 0, transition: { duration: 0.12, ease: 'linear', staggerChildren: 0.04 } }
                         }}
                       >
-                         <StructureSection search="" />
+                        <StructureSection search="" />
                       </motion.div>
                     )}
                   </motion.div>
@@ -202,13 +202,13 @@ export default function NodePalette() {
                     const isExpanded = expandedCategory === cat;
                     const subGroups: Record<string, any[]> = {};
                     catItems.forEach(n => {
-                       if (!subGroups[n.subCategory]) subGroups[n.subCategory] = [];
-                       subGroups[n.subCategory].push(n);
+                      if (!subGroups[n.subCategory]) subGroups[n.subCategory] = [];
+                      subGroups[n.subCategory].push(n);
                     });
 
                     return (
-                      <motion.div 
-                        key={cat} 
+                      <motion.div
+                        key={cat}
                         className="node-group"
                         variants={{
                           hidden: { opacity: 0, x: -10 },
@@ -223,7 +223,7 @@ export default function NodePalette() {
                           <span className="gh-count">{catItems.length}</span>
                         </button>
                         {isExpanded && (
-                          <motion.div 
+                          <motion.div
                             className="group-content nested-groups"
                             initial="hidden" animate="visible"
                             variants={{
@@ -232,39 +232,39 @@ export default function NodePalette() {
                             }}
                           >
                             {Object.entries(subGroups).map(([subCat, items]) => {
-                                const isSubExpanded = expandedSub[cat] === subCat;
-                                return (
-                                  <motion.div 
-                                    key={subCat} 
-                                    className="sub-node-group"
-                                    variants={{
-                                      hidden: { opacity: 0, x: -8 },
-                                      visible: { opacity: 1, x: 0, transition: { duration: 0.1, ease: 'linear', staggerChildren: 0.015 } }
-                                    }}
-                                  >
-                                    <button className="sub-group-header" onClick={() => toggleSubExpand(cat, subCat)}>
-                                      {isSubExpanded ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
-                                      <span className="sub-group-label">{subCat}</span>
-                                      <span className="sub-group-line"></span>
-                                      <span className="sub-group-mini-count">{items.length}</span>
-                                    </button>
-                                    <AnimatePresence>
-                                      {isSubExpanded && (
-                                        <motion.div 
-                                          className="sub-group-items"
-                                          initial="hidden" animate="visible" exit="hidden"
-                                          variants={{
-                                            hidden: { height: 0, opacity: 0 },
-                                            visible: { height: 'auto', opacity: 1, transition: { height: { duration: 0.12, ease: 'linear' }, opacity: { duration: 0.08, ease: 'linear' }, staggerChildren: 0.01 } }
-                                          }}
-                                        >
-                                          {items.map(n => <NodeItem key={n.id + n.label} node={n} />)}
-                                        </motion.div>
-                                      )}
-                                    </AnimatePresence>
-                                  </motion.div>
-                                );
-                              })}
+                              const isSubExpanded = expandedSub[cat] === subCat;
+                              return (
+                                <motion.div
+                                  key={subCat}
+                                  className="sub-node-group"
+                                  variants={{
+                                    hidden: { opacity: 0, x: -8 },
+                                    visible: { opacity: 1, x: 0, transition: { duration: 0.1, ease: 'linear', staggerChildren: 0.015 } }
+                                  }}
+                                >
+                                  <button className="sub-group-header" onClick={() => toggleSubExpand(cat, subCat)}>
+                                    {isSubExpanded ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
+                                    <span className="sub-group-label">{subCat}</span>
+                                    <span className="sub-group-line"></span>
+                                    <span className="sub-group-mini-count">{items.length}</span>
+                                  </button>
+                                  <AnimatePresence>
+                                    {isSubExpanded && (
+                                      <motion.div
+                                        className="sub-group-items"
+                                        initial="hidden" animate="visible" exit="hidden"
+                                        variants={{
+                                          hidden: { height: 0, opacity: 0 },
+                                          visible: { height: 'auto', opacity: 1, transition: { height: { duration: 0.12, ease: 'linear' }, opacity: { duration: 0.08, ease: 'linear' }, staggerChildren: 0.01 } }
+                                        }}
+                                      >
+                                        {items.map(n => <NodeItem key={n.id + n.label} node={n} />)}
+                                      </motion.div>
+                                    )}
+                                  </AnimatePresence>
+                                </motion.div>
+                              );
+                            })}
                           </motion.div>
                         )}
                       </motion.div>
