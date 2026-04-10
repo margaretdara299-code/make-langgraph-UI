@@ -10,10 +10,7 @@ import { ICON_MAP, SUB_CAT_COLORS } from './nodePalette.constants';
 import StructureSection from './StructureSection';
 import './NodePalette.css';
 
-/** 
- * NodeItem — Draggable item in the palette.
- * Uses exact variants from the reference project.
- */
+
 const NodeItem: React.FC<{ node: any }> = ({ node }) => {
   const Icon = ICON_MAP[node.icon] ?? null;
   const colors = SUB_CAT_COLORS[node.subCategory] || SUB_CAT_COLORS['Common'];
