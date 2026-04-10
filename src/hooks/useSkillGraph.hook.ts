@@ -20,7 +20,7 @@ export function useSkillGraph() {
     const [initialEdges, setInitialEdges] = useState<Edge[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
-    // Load graph from backend on mount — always replaces localStorage
+    // Load graph from backend on mount; always replaces localStorage
     useEffect(() => {
         if (!versionId) return;
         setIsLoading(true);
@@ -33,6 +33,7 @@ export function useSkillGraph() {
                 const nodesMap: Record<string, any> = {};
                 const reactFlowNodes: Node[] = apiNodes.map((node: any) => {
                     nodesMap[node.id] = node;
+
                     // Preserve parentId and extent for sub-flow children
                     const rfNode: any = { ...node };
                     if (node.parentId || node.parentNode) {
@@ -71,30 +72,21 @@ export function useSkillGraph() {
                     };
                 });
 
-                // ── Auto-inject End node if none exists ──────────────────
-                const hasEnd = reactFlowNodes.some((n) => n.type === 'end');
-                if (!hasEnd) {
-                    // Find the lowest Y position among existing nodes
-                    const maxY = reactFlowNodes.reduce((acc, n) => {
-                        const y = (n.position?.y ?? 0);
-                        return y > acc ? y : acc;
-                    }, 0);
-                    const avgX = reactFlowNodes.reduce((acc, n) => acc + (n.position?.x ?? 0), 0)
-                        / Math.max(reactFlowNodes.length, 1);
-
-                    const endNodeId = `end-node-auto`;
-                    const endNode: Node = {
-                        id: endNodeId,
-                        type: 'end',
-                        position: { x: avgX - 60, y: maxY + 160 },
+                // For a brand-new graph, bootstrap only a Start node.
+                if (reactFlowNodes.length === 0) {
+                    const startNodeId = 'start-node-auto';
+                    const startNode: Node = {
+                        id: startNodeId,
+                        type: 'start',
+                        position: { x: 240, y: 120 },
                         data: {
-                            label: 'End',
-                            category: 'success',
-                            icon: '🏁',
+                            label: 'Start',
+                            category: 'structure',
+                            icon: 'play',
                         } as any,
                     };
-                    reactFlowNodes.push(endNode);
-                    nodesMap[endNodeId] = endNode;
+                    reactFlowNodes.push(startNode);
+                    nodesMap[startNodeId] = startNode;
                 }
 
                 // Seed localStorage (replaces any stale data)
@@ -110,7 +102,7 @@ export function useSkillGraph() {
             .finally(() => setIsLoading(false));
     }, [versionId]);
 
-    // Save current state to backend — reads from localStorage
+    // Save current state to backend; reads from localStorage
     const saveGraph = useCallback(async () => {
         if (!versionId) return { success: false, error: 'No version ID' };
 
@@ -119,11 +111,11 @@ export function useSkillGraph() {
 
         // Convert nodes map to array, strip internal-only fields
         const cleanNodes = Object.values(stored.nodes).map((node: any) => {
-            const { 
-                inputsSchemaJson, inputs_schema_json, 
-                outputsSchemaJson, outputs_schema_json, 
-                executionJson, execution_json, 
-                ...cleanData 
+            const {
+                inputsSchemaJson, inputs_schema_json,
+                outputsSchemaJson, outputs_schema_json,
+                executionJson, execution_json,
+                ...cleanData
             } = node.data || {};
             return { ...node, data: cleanData };
         });

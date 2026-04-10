@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tensaw Skills Studio UI"
+  short_description: "Project guide for the workflow builder UI"
+  default_prompt: "Use $tensaw-skills-studio-ui to modify the canvas, node properties, action APIs, or builder UI in this repo."
