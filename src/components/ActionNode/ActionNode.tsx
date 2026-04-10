@@ -4,6 +4,7 @@
  */
 
 import { Handle, Position, useReactFlow } from '@xyflow/react';
+import { Settings2 } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import IconRenderer from '@/components/IconRenderer/IconRenderer';
 import type { NodeProps } from '@xyflow/react';
@@ -41,7 +42,7 @@ export default function ActionNode({ id, data }: NodeProps<CanvasNode>) {
             <div className="modern-node-content">
                 <div className="modern-node-left">
                     <div className="modern-node-icon" style={{ background: theme.iconBg, color: theme.stroke }}>
-                        <IconRenderer iconName={nodeData.icon} size={13} fallback="⚙️" />
+                        <IconRenderer iconName={nodeData.icon} size={13} fallback={<Settings2 size={13} />} />
                     </div>
                     <div className="modern-node-text-col">
                         <div className="modern-node-title">{nodeData.label}</div>

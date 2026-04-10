@@ -1,5 +1,5 @@
-import React from 'react';
 import { motion } from 'framer-motion';
+import { Play } from 'lucide-react';
 
 const variants = {
   hidden: { opacity: 0, x: -10 },
@@ -16,7 +16,7 @@ export default function StartNodeItem() {
             nodeType: 'start',
             label: 'Start',
             category: 'structure',
-            icon: '▶️',
+            icon: 'Play',
         });
         e.dataTransfer.setData('application/reactflow', dragData);
         e.dataTransfer.effectAllowed = 'move';
@@ -26,10 +26,10 @@ export default function StartNodeItem() {
         <div className="node-library-item-wrapper" draggable onDragStart={handleStartDragStart}>
             <motion.div className="node-library-item" variants={variants} whileHover={{ x: 3 }}>
                 <div className="nli-icon" style={{ background: '#f6ffed' }}>
-                    <span style={{ fontSize: '13px', color: '#52c41a' }}>▶️</span>
+                    <Play size={12} color="#52c41a" fill="#52c41a" strokeWidth={2.4} />
                 </div>
                 <div className="nli-content">
-                    <span className="nli-label">Start Node</span>
+                    <span className="nli-label">Start Workflow</span>
                 </div>
                 <div className="nli-drag-hint">⠿</div>
             </motion.div>

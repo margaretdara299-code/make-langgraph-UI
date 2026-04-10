@@ -3,7 +3,7 @@ import { Space, Tooltip, message, Dropdown, Input, Divider, Spin } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
-  ChevronDown, Play, Save, Zap, Search
+  ChevronDown, Play, Save, Zap, Search, Code
 } from 'lucide-react';
 import { useReactFlow } from '@xyflow/react';
 
@@ -104,7 +104,6 @@ export default function SkillDesignerHeader() {
             <div className="builder-header-center">
                 <nav className="breadcrumb">
                   <button className="breadcrumb-item link" onClick={() => navigate(ROUTES.SKILLS_LIBRARY)}>
-                    <Zap size={14} className="mr-1" style={{ color: '#94a3b8' }} />
                     Skills
                   </button>
 
@@ -162,6 +161,16 @@ export default function SkillDesignerHeader() {
 
             {/* Right Side: Actions */}
             <div className="builder-header-right">
+                <motion.button
+                  className="hdr-btn hdr-btn-outline"
+                  whileTap={{ scale: 0.96 }}
+                  onClick={handleViewCode}
+                  disabled={isGeneratingCode || !versionId}
+                >
+                  {isGeneratingCode ? <Spin size="small" /> : <Code size={14} />}
+                  View Code
+                </motion.button>
+
                 <motion.button
                   className="hdr-btn hdr-btn-outline"
                   whileTap={{ scale: 0.96 }}

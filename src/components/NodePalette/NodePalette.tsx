@@ -45,7 +45,7 @@ const NodeItem: React.FC<{ node: any }> = ({ node }) => {
       >
         <div className="nli-icon" style={{ background: colors.bg }}>
           {Icon ? (
-            <Icon size={14} color={colors.color} strokeWidth={2.4} />
+            <Icon size={12} color={colors.color} strokeWidth={2.4} />
           ) : (
             <span style={{ fontSize: '12px' }}>{node.icon && node.icon.length <= 2 ? node.icon : '🧩'}</span>
           )}

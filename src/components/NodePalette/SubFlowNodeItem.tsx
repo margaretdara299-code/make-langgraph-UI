@@ -1,5 +1,5 @@
-import React from 'react';
 import { motion } from 'framer-motion';
+import { Layers } from 'lucide-react';
 
 const variants = {
   hidden: { opacity: 0, x: -10 },
@@ -14,9 +14,9 @@ export default function SubFlowNodeItem() {
     const handleSubFlowDragStart = (e: React.DragEvent) => {
         const dragData = JSON.stringify({
             nodeType: 'subflow',
-            label: 'SubFlow',
+            label: 'Group',
             category: 'structure',
-            icon: '🔄',
+            icon: 'Layers',
         });
         e.dataTransfer.setData('application/reactflow', dragData);
         e.dataTransfer.effectAllowed = 'move';
@@ -26,10 +26,10 @@ export default function SubFlowNodeItem() {
         <div className="node-library-item-wrapper" draggable onDragStart={handleSubFlowDragStart}>
             <motion.div className="node-library-item" variants={variants} whileHover={{ x: 3 }}>
                 <div className="nli-icon" style={{ background: '#e6f7ff' }}>
-                    <span style={{ fontSize: '13px', color: '#1890ff' }}>🔄</span>
+                    <Layers size={12} color="#1890ff" strokeWidth={2.4} />
                 </div>
                 <div className="nli-content">
-                    <span className="nli-label">Sub-Flow</span>
+                    <span className="nli-label">Group / Sub-Flow</span>
                 </div>
                 <div className="nli-drag-hint">⠿</div>
             </motion.div>

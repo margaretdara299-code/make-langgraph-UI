@@ -128,7 +128,12 @@ export default function ExecutionDebuggerModal({ isOpen, onClose, versionId, nod
             width="95vw"
             centered
             className="execution-modal"
+            zIndex={2000}
             styles={{
+                mask: {
+                    backdropFilter: 'blur(8px)',
+                    background: 'rgba(0, 0, 0, 0.45)'
+                },
                 body: { padding: 0 }
             }}
         >

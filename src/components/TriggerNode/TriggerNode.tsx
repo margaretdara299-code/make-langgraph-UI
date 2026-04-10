@@ -1,4 +1,5 @@
 import { Handle, Position, useReactFlow } from '@xyflow/react';
+import { Zap } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import IconRenderer from '@/components/IconRenderer/IconRenderer';
 import type { NodeProps } from '@xyflow/react';
@@ -27,7 +28,7 @@ export default function TriggerNode({ id, data }: NodeProps<CanvasNode>) {
             <div className="modern-node-content">
                 <div className="modern-node-left">
                     <div className="modern-node-icon" style={{ background: theme.iconBg, color: theme.stroke }}>
-                        <IconRenderer iconName={nodeData.icon} size={14} fallback="⚡" />
+                        <IconRenderer iconName={nodeData.icon} size={14} fallback={<Zap size={14} />} />
                     </div>
                     <div className="modern-node-text-col">
                         <div className="modern-node-title">{nodeData.label}</div>

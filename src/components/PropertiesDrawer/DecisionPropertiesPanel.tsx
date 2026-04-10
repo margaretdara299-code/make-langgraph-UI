@@ -12,6 +12,7 @@
 
 import { Form, Input, Select, Button, Typography, Tag, Divider, Space, Card } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Split } from 'lucide-react';
 
 const { Text, Title } = Typography;
 
@@ -42,8 +43,8 @@ export default function DecisionPropertiesPanel({ form }: DecisionPropertiesPane
         <div className="decision-props">
 
             {/* ── Info Banner ── */}
-            <div className="decision-props__banner" style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '10px 12px', background: 'rgba(245, 158, 11, 0.06)', border: '1px solid rgba(245, 158, 11, 0.25)', borderRadius: '6px', marginBottom: '4px' }}>
-                <Tag color="gold" style={{ marginBottom: 0, width: 'fit-content' }}>⚡ ROUTER ROUTER</Tag>
+            <div className="decision-props__banner" style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '12px', background: 'var(--color-warning-bg)', border: '1px solid var(--color-warning)', borderRadius: 'var(--radius-sm)', marginBottom: '8px' }}>
+                <Tag color="gold" icon={<Split size={12} />} style={{ marginBottom: 0, width: 'fit-content', display: 'flex', alignItems: 'center', gap: '4px' }}>ROUTER</Tag>
                 <Text type="secondary" style={{ fontSize: 12 }}>
                     Create multiple routing rules. Each rule generates a distinct output port on the canvas that you can connect to any target node.
                 </Text>
@@ -167,8 +168,17 @@ export default function DecisionPropertiesPanel({ form }: DecisionPropertiesPane
             <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 10 }}>
                 This is the fallback port that triggers when <strong>none</strong> of the rules match.
             </Text>
-            <div style={{ padding: '8px 12px', background: 'rgba(0,0,0,0.02)', border: '1px solid #d9d9d9', borderRadius: 6 }}>
-                <Text strong>Fallback / Default Branch</Text>
+            <div style={{ 
+                padding: '12px 14px', 
+                background: 'var(--bg-page)', 
+                border: '1px solid var(--border-medium)', 
+                borderRadius: 'var(--radius-sm)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+            }}>
+                <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--text-subtle)' }} />
+                <Text strong style={{ color: 'var(--text-main)', fontSize: '13px' }}>Fallback / Default Branch</Text>
             </div>
         </div>
     );

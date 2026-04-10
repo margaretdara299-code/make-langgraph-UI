@@ -2,7 +2,7 @@
   position: absolute;
   top: 16px;
   left: 20px;
-  z-index: 2010;
+  z-index: 1010;
 }
 
 .library-toggle-btn {
@@ -69,7 +69,7 @@
   display: flex;
   flex-direction: column;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
-  z-index: 2000;
+  z-index: 1000;
   overflow: hidden;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
@@ -202,15 +202,15 @@
 .node-library-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 12px 8px 36px; 
-  border-radius: 10px;
+  gap: 8px;
+  padding: 5px 12px 5px 32px; 
+  border-radius: 8px;
   cursor: grab;
   border: 1px solid transparent;
   background: transparent;
   transition: all 0.2s ease;
   width: 100%;
-  margin: 2px 0;
+  margin: 1px 0;
 }
 
 .node-library-item:hover {
@@ -224,18 +224,18 @@
 }
 
 .nli-icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .nli-label {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 500;
   color: #334155;
   letter-spacing: -0.01em;
@@ -253,7 +253,7 @@
 }
 
 .nli-drag-hint {
-  font-size: 14px;
+  font-size: 11px;
   color: var(--text-subtle);
   opacity: 0;
   transition: opacity 0.2s ease;

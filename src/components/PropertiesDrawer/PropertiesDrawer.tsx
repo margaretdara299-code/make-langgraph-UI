@@ -3,13 +3,14 @@
  * Slides out to show the properties of the currently selected React Flow node.
  */
 
-import { Drawer, Input, Form, Typography, Select, Spin, theme, Button } from 'antd';
+import { Drawer, Input, Form, Typography, Select, Spin, theme, Button, Tabs } from 'antd';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReactFlow, useNodes, useEdges } from '@xyflow/react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import IconRenderer from '@/components/IconRenderer/IconRenderer';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Settings2, GitBranchPlus, X } from 'lucide-react';
 import { HTTP_METHODS } from '@/constants';
 import type { CanvasNodeData, CanvasEdgeData, PropertiesDrawerProps } from '@/interfaces';
 import { useCategories, useCapabilities } from '@/hooks';
@@ -37,6 +38,27 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     const selectedNode = selectedNodeId ? nodes.find(node => node.id === selectedNodeId) || null : null;
     const selectedEdge = selectedEdgeId ? edges.find(edge => edge.id === selectedEdgeId) || null : null;
     const [form] = Form.useForm();
+
+    // Track state for the header to prevent it from resetting during the closing animation
+    const [headerInfo, setHeaderInfo] = useState<{ title: string; icon: React.ReactNode }>({
+        title: 'Properties',
+        icon: <Settings2 size={18} />
+    });
+
+    useEffect(() => {
+        if (selectedNode) {
+            const nodeData = selectedNode.data as any;
+            setHeaderInfo({
+                title: 'Node Properties',
+                icon: <IconRenderer iconName={nodeData?.icon} size={18} fallback={<Settings2 size={18} />} />
+            });
+        } else if (selectedEdge) {
+            setHeaderInfo({
+                title: 'Edge Properties',
+                icon: <GitBranchPlus size={18} />
+            });
+        }
+    }, [selectedNodeId, selectedEdgeId, nodes, edges]); // Depend on IDs and collections
 
     // When a node is selected, populate the form from localStorage
     useEffect(() => {
@@ -392,7 +414,9 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                     <Form.Item label="URL" name="url" className="properties-drawer__flex-item">
                         <Input placeholder="https://api.example.com/v1/resource" />
                     </Form.Item>
-                    <Form.Item label="Method" name="method" className="properties-drawer__method-select">
+                </div>
+                <div style={{ marginTop: 12 }}>
+                    <Form.Item label="HTTP Method" name="method">
                         <Select options={HTTP_METHODS} />
                     </Form.Item>
                 </div>
@@ -405,18 +429,6 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                 <DynamicParamList name="query_params" title="Query Parameters" emptyMessage="No query parameters." />
                 <DynamicParamList name="header_params" title="Header Parameters" emptyMessage="No header parameters." />
                 <DynamicParamList name="body_params" title="Body Parameters" emptyMessage="No body parameters." />
-
-                {/* ── Section 3: Fallback Configuration ── */}
-                <div className="properties-drawer__divider" />
-                <div className="properties-drawer__section-title">Fallback Configuration</div>
-                <Form.Item name="fallback_message" label="Fallback Message">
-                    <Input.TextArea placeholder="Enter a message to be used if the action fails..." rows={3} />
-                </Form.Item>
-
-                {/* ── Section 4: State Management ── */}
-                <div className="properties-drawer__divider" />
-                <div className="properties-drawer__section-title">State Management</div>
-                {renderStateManagement()}
             </>
         );
     };
@@ -476,6 +488,8 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             const isStart     = selectedNode.type === 'start';
             const isDecision  = selectedNode.type === 'decision';
 
+            const activeColor = isDecision ? '#f59e0b' : (isStart ? '#10b981' : 'var(--accent)');
+
             if (isLoadingAction) {
                 return (
                     <div style={{ display: 'flex', justifyContent: 'center', padding: '48px 0' }}>
@@ -494,177 +508,191 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                         hidden: { opacity: 0 },
                         visible: {
                             opacity: 1,
-                            transition: { staggerChildren: 0.08 }
+                            transition: { 
+                                staggerChildren: 0.12,
+                                delayChildren: 0.1 
+                            }
                         }
                     }}
                 >
-                    {/* Node Metadata Card */}
-                    <motion.div 
-                        className="properties-drawer__meta"
-                        variants={{
-                            hidden: { opacity: 0, x: 16 },
-                            visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] } }
-                        }}
-                    >
-                        <div className="properties-drawer__meta-item">
-                            <span className="properties-drawer__meta-label">Type</span>
-                            <span className="properties-drawer__meta-value">
-                                {isStart    ? 'Workflow Entry'
-                                : isDecision ? 'Router'
-                                : isSubFlow  ? 'Group'
-                                : (nodeData?.category || 'Action')}
-                            </span>
-                        </div>
-                        <div className="properties-drawer__meta-item">
-                            <span className="properties-drawer__meta-label">ID</span>
-                            <span className="properties-drawer__meta-value" style={{ fontFamily: 'monospace' }}>
-                                {selectedNode.id}
-                            </span>
-                        </div>
-                        <div className="properties-drawer__meta-item">
-                            <span className="properties-drawer__meta-label">Engine</span>
-                            <div className={`properties-drawer__capability-badge badge-${isDecision ? 'decision' : nodeData?.capability}`}>
-                                {isStart    ? 'START'
-                                : isDecision ? 'DECISION'
-                                : isSubFlow  ? 'STRUCTURE'
-                                : (nodeData?.capability || 'API').toUpperCase()}
-                            </div>
-                        </div>
-                    </motion.div>
-
-                    <div className="properties-drawer__divider" />
-
-
-                    {/* Node Configuration Form */}
-                    <Form
-                        form={form}
-                        layout="vertical"
-                        onValuesChange={handleValuesChange}
-                        className="properties-drawer__form"
-                    >
-                        {!isConnector && (
-                            <motion.div
-                                variants={{
-                                    hidden: { opacity: 0, x: 12 },
-                                    visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] } }
-                                }}
-                            >
-                                <div className="properties-drawer__section-title">General</div>
-                                <Form.Item
-                                    label="Node Label"
-                                    name="label"
-                                    rules={[{ required: true, message: 'Label is required' }]}
-                                >
-                                    <Input />
-                                </Form.Item>
-                            </motion.div>
-                        )}
-
-                        {isSubFlow && (
-                            <motion.div
-                                variants={{
-                                    hidden: { opacity: 0, x: 12 },
-                                    visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] } }
-                                }}
-                            >
-                                <Form.Item
-                                    label="Description"
-                                    name="description"
-                                >
-                                    <Input.TextArea rows={4} placeholder="What does this group do?" />
-                                </Form.Item>
-                            </motion.div>
-                        )}
-
-                        {isDecision && (
-                            <motion.div
-                                variants={{
-                                    hidden: { opacity: 0, x: 12 },
-                                    visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] } }
-                                }}
-                            >
-                                <div className="properties-drawer__divider" />
-                                <DecisionPropertiesPanel form={form} />
-                            </motion.div>
-                        )}
-
-                        {isStart && (
-                            <motion.div
-                                variants={{
-                                    hidden: { opacity: 0, x: 12 },
-                                    visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] } }
-                                }}
-                            >
-                                <div className="properties-drawer__divider" />
-                                <div className="properties-drawer__section-title">Initial State Variables</div>
-                                <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 12 }}>
-                                    These key-value pairs are injected as <code>saved_data</code> at the start of every workflow run.
-                                </Text>
-                                <Form.List name="initial_state">
-                                    {(fields, { add, remove }) => (
-                                        <>
-                                            {fields.map(({ key, name: fieldName, ...restField }) => (
-                                                <div key={key} className="properties-drawer__kv-row">
-                                                    <Form.Item
-                                                        {...restField}
-                                                        name={[fieldName, 'key']}
-                                                        className="properties-drawer__kv-field"
-                                                        rules={[{ required: true, message: 'Key required' }]}
-                                                    >
-                                                        <Input placeholder="e.g. case_id" style={{ fontFamily: 'monospace' }} />
-                                                    </Form.Item>
-                                                    <Form.Item
-                                                        {...restField}
-                                                        name={[fieldName, 'value']}
-                                                        className="properties-drawer__kv-field"
-                                                    >
-                                                        <Input placeholder="Default value (optional)" />
-                                                    </Form.Item>
-                                                    <DeleteOutlined
-                                                        className="properties-drawer__delete-icon"
-                                                        onClick={() => remove(fieldName)}
-                                                    />
+                    <Tabs
+                        defaultActiveKey="1"
+                        className="properties-drawer__tabs"
+                        items={[
+                            {
+                                key: '1',
+                                label: 'General',
+                                children: (
+                                    <motion.div
+                                        variants={{
+                                            hidden: { opacity: 0, x: -16 },
+                                            visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }
+                                        }}
+                                        style={{ padding: '0 4px' }}
+                                    >
+                                        {/* Node Metadata Card */}
+                                        <div className="properties-drawer__meta">
+                                            <div className="properties-drawer__meta-item">
+                                                <span className="properties-drawer__meta-label">Type</span>
+                                                <span className="properties-drawer__meta-value">
+                                                    {isStart    ? 'Workflow Entry'
+                                                    : isDecision ? 'Router'
+                                                    : isSubFlow  ? 'Group'
+                                                    : (nodeData?.category || 'Action')}
+                                                </span>
+                                            </div>
+                                            <div className="properties-drawer__meta-item">
+                                                <span className="properties-drawer__meta-label">ID</span>
+                                                <span className="properties-drawer__meta-value" style={{ fontFamily: 'monospace' }}>
+                                                    {selectedNode.id}
+                                                </span>
+                                            </div>
+                                            <div className="properties-drawer__meta-item">
+                                                <span className="properties-drawer__meta-label">Engine</span>
+                                                <div className={`properties-drawer__capability-badge badge-${isDecision ? 'decision' : nodeData?.capability}`}>
+                                                    {isStart    ? 'START'
+                                                    : isDecision ? 'DECISION'
+                                                    : isSubFlow  ? 'STRUCTURE'
+                                                    : (nodeData?.capability || 'API').toUpperCase()}
                                                 </div>
-                                            ))}
-                                            <Button
-                                                type="dashed"
-                                                onClick={() => add({ key: '', value: '' })}
-                                                icon={<PlusOutlined />}
-                                                block
-                                            >
-                                                Add Variable
-                                            </Button>
-                                        </>
-                                    )}
-                                </Form.List>
-                            </motion.div>
-                        )}
+                                            </div>
+                                        </div>
 
-                        {!isSubFlow && !isConnector && !isStart && !isDecision && nodeData && (
-                            <motion.div
-                                variants={{
-                                    hidden: { opacity: 0, x: 12 },
-                                    visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] } }
-                                }}
-                            >
-                                {/* ── Configurations Section ── */}
-                                <div className="properties-drawer__divider" />
-                                <div className="properties-drawer__section-title">Configuration</div>
-                                {renderNodeConfig(nodeData as CanvasNodeData)}
-                            </motion.div>
-                        )}
-                        {isConnector && nodeData && (
-                            <motion.div
-                                variants={{
-                                    hidden: { opacity: 0, x: 12 },
-                                    visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] } }
-                                }}
-                            >
-                                {renderNodeConfig(nodeData)}
-                            </motion.div>
-                        )}
-                    </Form>
+                                        <Form
+                                            form={form}
+                                            layout="vertical"
+                                            onValuesChange={handleValuesChange}
+                                            className="properties-drawer__form"
+                                        >
+                                            {!isConnector && (
+                                                <>
+                                                    <div className="properties-drawer__section-title">Identity</div>
+                                                    <Form.Item
+                                                        label="Node Label"
+                                                        name="label"
+                                                        rules={[{ required: true, message: 'Label is required' }]}
+                                                    >
+                                                        <Input placeholder="e.g. Process Claim" />
+                                                    </Form.Item>
+                                                </>
+                                            )}
 
+                                            {isSubFlow && (
+                                                <Form.Item
+                                                    label="Description"
+                                                    name="description"
+                                                >
+                                                    <Input.TextArea rows={4} placeholder="What does this group do?" />
+                                                </Form.Item>
+                                            )}
+
+                                            {isStart && (
+                                                <>
+                                                    <div className="properties-drawer__divider" />
+                                                    <div className="properties-drawer__section-title">Initial State Variables</div>
+                                                    <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 16, lineHeight: 1.5 }}>
+                                                        Injected as <code>saved_data</code> at the start of every run.
+                                                    </Text>
+                                                    <Form.List name="initial_state">
+                                                        {(fields, { add, remove }) => (
+                                                            <>
+                                                                {fields.map(({ key, name: fieldName, ...restField }) => (
+                                                                    <div key={key} className="properties-drawer__kv-row">
+                                                                        <Form.Item
+                                                                            {...restField}
+                                                                            name={[fieldName, 'key']}
+                                                                            className="properties-drawer__kv-field"
+                                                                            rules={[{ required: true, message: 'Key required' }]}
+                                                                        >
+                                                                            <Input placeholder="key" style={{ fontFamily: 'monospace' }} />
+                                                                        </Form.Item>
+                                                                        <Form.Item
+                                                                            {...restField}
+                                                                            name={[fieldName, 'value']}
+                                                                            className="properties-drawer__kv-field"
+                                                                        >
+                                                                            <Input placeholder="value" />
+                                                                        </Form.Item>
+                                                                        <DeleteOutlined
+                                                                            className="properties-drawer__delete-icon"
+                                                                            onClick={() => remove(fieldName)}
+                                                                        />
+                                                                    </div>
+                                                                ))}
+                                                                <Button
+                                                                    type="dashed"
+                                                                    onClick={() => add({ key: '', value: '' })}
+                                                                    icon={<PlusOutlined />}
+                                                                    block
+                                                                >
+                                                                    Add Variable
+                                                                </Button>
+                                                            </>
+                                                        )}
+                                                    </Form.List>
+                                                </>
+                                            )}
+                                        </Form>
+                                    </motion.div>
+                                ),
+                            },
+                            ...((!isSubFlow && !isStart) ? [{
+                                key: '2',
+                                label: 'Configuration',
+                                children: (
+                                    <motion.div
+                                        variants={{
+                                            hidden: { opacity: 0, x: -16 },
+                                            visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }
+                                        }}
+                                        style={{ padding: '0 4px' }}
+                                    >
+                                        <Form
+                                            form={form}
+                                            layout="vertical"
+                                            onValuesChange={handleValuesChange}
+                                            className="properties-drawer__form"
+                                        >
+                                            {isDecision ? (
+                                                <DecisionPropertiesPanel form={form} />
+                                            ) : (
+                                                renderNodeConfig(nodeData as CanvasNodeData)
+                                            )}
+                                        </Form>
+                                    </motion.div>
+                                )
+                            }] : []),
+                            ...((!isSubFlow && !isStart && !isDecision && !isConnector) ? [{
+                                key: '3',
+                                label: 'Settings',
+                                children: (
+                                    <motion.div
+                                        variants={{
+                                            hidden: { opacity: 0, x: -16 },
+                                            visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }
+                                        }}
+                                        style={{ padding: '0 4px' }}
+                                    >
+                                        <Form
+                                            form={form}
+                                            layout="vertical"
+                                            onValuesChange={handleValuesChange}
+                                            className="properties-drawer__form"
+                                        >
+                                            <div className="properties-drawer__section-title">Fallback Configuration</div>
+                                            <Form.Item name="fallback_message" label="Fallback Message">
+                                                <Input.TextArea placeholder="Used if action fails..." rows={4} />
+                                            </Form.Item>
+
+                                            <div className="properties-drawer__divider" />
+                                            <div className="properties-drawer__section-title">State Mapping</div>
+                                            {renderStateManagement()}
+                                        </Form>
+                                    </motion.div>
+                                )
+                            }] : []),
+                        ]}
+                    />
                 </motion.div>
             );
         }
@@ -761,15 +789,16 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             title={
                 <div className="properties-drawer__header">
                     <span className="properties-drawer__icon">
-                        {selectedNode ? <IconRenderer iconName={nodeData?.icon} size={18} fallback="⚙️" /> : selectedEdge ? '↪️' : ''}
+                        {headerInfo.icon}
                     </span>
                     <span className="properties-drawer__title-text">
-                        {selectedNode ? 'Node Properties' : 'Edge Properties'}
+                        {headerInfo.title}
                     </span>
                 </div>
             }
             placement="right"
             closable={true}
+            closeIcon={<X size={16} strokeWidth={2.5} />}
             onClose={onClose}
             open={isOpen}
             mask={false}
@@ -778,8 +807,8 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             zIndex={10}
             getContainer={false}
             styles={{
-                header: { padding: '16px 24px', borderBottom: '1px solid #f1f5f9' },
-                body: { padding: '24px', background: '#ffffff' },
+                header: { borderBottom: '1px solid var(--border-light)' },
+                body: { padding: '20px', background: 'var(--bg-card)' },
             }}
         >
             <AnimatePresence mode="wait">

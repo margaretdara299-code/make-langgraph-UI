@@ -157,8 +157,16 @@ export default function CodeViewerModal({
             open={isOpen}
             onCancel={onClose}
             width={isMobileView ? '95vw' : 1200}
+            centered
             className="code-viewer-modal"
-            bodyStyle={{ padding: 0, height: isMobileView ? '70vh' : '600px' }}
+            zIndex={2000}
+            styles={{
+                mask: {
+                    backdropFilter: 'blur(8px)',
+                    background: 'rgba(0, 0, 0, 0.45)'
+                },
+                body: { padding: 0 }
+            }}
             footer={
                 <div className="code-viewer-modal__footer">
                     <Button icon={<CopyOutlined />} onClick={handleCopy}>

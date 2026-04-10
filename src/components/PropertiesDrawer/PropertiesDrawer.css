@@ -8,39 +8,95 @@
 }
 
 .properties-drawer .ant-drawer-header {
+    padding: 0 !important;
+    background: var(--bg-card) !important;
+    border-bottom: 1px solid var(--border-light) !important;
+    position: relative !important;
+    min-height: 56px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* We override the inner header title box to be relative and full width */
+.properties-drawer .ant-drawer-header-title {
     padding: 14px 20px !important;
-    background: #ffffff !important;
-    border-bottom: 1px solid #f1f5f9 !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-direction: row !important;
+    /* Keep original order, but title is left, close is right via absolute */
+}
+
+/* --- Close Button Customization --- */
+.properties-drawer .ant-drawer-close {
+    width: 28px !important;
+    height: 28px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: var(--bg-page) !important;
+    border-radius: 50% !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    color: var(--text-muted) !important;
+    position: absolute !important;
+    right: 16px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    border: 1px solid var(--border-medium) !important;
+    line-height: 1 !important;
+    z-index: 10 !important;
+}
+
+.properties-drawer .ant-drawer-close .anticon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    font-size: 14px !important;
+}
+
+.properties-drawer .ant-drawer-close:hover {
+    background: var(--color-error-bg) !important;
+    color: var(--color-error) !important;
+    border-color: #fecaca !important;
+    transform: translateY(-50%) rotate(90deg) !important;
+}
+
+.properties-drawer .ant-drawer-title {
+    flex: 1 !important;
 }
 
 .properties-drawer .ant-drawer-body {
     padding: 20px !important;
-    background: #ffffff !important;
-    font-family: 'Inter', sans-serif;
+    background: var(--bg-card) !important;
+    font-family: var(--font-sans);
 }
 
 .properties-drawer__header {
     display: flex;
     align-items: center;
     gap: 10px;
+    padding-right: 32px;
 }
 
 .properties-drawer__icon {
     width: 28px;
     height: 28px;
-    background: #f1f5f9;
-    border-radius: 6px;
+    background: var(--border-light);
+    border-radius: var(--radius-xs);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 14px;
-    color: #475569;
+    color: var(--text-muted);
 }
 
 .properties-drawer__title-text {
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     font-size: 14px;
-    color: #0f172a;
+    color: var(--text-main);
     letter-spacing: -0.01em;
 }
 
@@ -52,9 +108,9 @@
 /* --- Metadata Section --- */
 .properties-drawer__meta {
     padding: 14px;
-    border-radius: 10px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-sm);
+    background: var(--bg-page);
+    border: 1px solid var(--border-medium);
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -68,21 +124,21 @@
 }
 
 .properties-drawer__meta-label {
-    color: #64748b;
-    font-weight: 500;
+    color: var(--text-muted);
+    font-weight: var(--weight-medium);
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.02em;
 }
 
 .properties-drawer__meta-value {
-    color: #334155;
-    font-weight: 600;
+    color: var(--text-main);
+    font-weight: var(--weight-semibold);
     font-size: 11px;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+    background: var(--bg-card);
+    border: 1px solid var(--border-medium);
     padding: 1px 6px;
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
 }
 
 /* --- Form Improvements --- */
@@ -94,10 +150,10 @@
     padding-bottom: 6px !important;
 }
 
-.properties-drawer__form .ant-form-item-label > label {
-    font-weight: 600 !important;
+.properties-drawer__form .ant-form-item-label>label {
+    font-weight: var(--weight-semibold) !important;
     font-size: 12px !important;
-    color: #475569 !important;
+    color: var(--text-muted) !important;
     height: auto !important;
 }
 
@@ -111,9 +167,9 @@
     margin-top: 0 !important;
     margin-bottom: 12px !important;
     font-size: 11px !important;
-    font-weight: 700 !important;
-    color: #94a3b8 !important;
-    text-transform: uppercase;
+    font-weight: var(--weight-bold) !important;
+    color: var(--text-subtle) !important;
+
     letter-spacing: 0.08em;
 }
 
@@ -124,6 +180,31 @@
     color: #334155;
     margin-bottom: 10px !important;
     display: block;
+}
+
+/* --- Tabs Refinement --- */
+.properties-drawer__tabs .ant-tabs-nav {
+    margin-bottom: 20px !important;
+}
+
+.properties-drawer__tabs .ant-tabs-tab {
+    padding: 8px 0 !important;
+    margin: 0 16px 0 0 !important;
+}
+
+.properties-drawer__tabs .ant-tabs-tab-btn {
+    font-size: 13px !important;
+    font-weight: var(--weight-semibold) !important;
+    color: var(--text-muted) !important;
+}
+
+.properties-drawer__tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: var(--accent) !important;
+}
+
+.properties-drawer__tabs .ant-tabs-ink-bar {
+    background: var(--accent) !important;
+    height: 2px !important;
 }
 
 /* --- Key-Value Rows --- */
@@ -154,13 +235,16 @@
 }
 
 /* --- Custom Inputs --- */
-.ant-input, .ant-select-selector, .ant-input-textarea {
+.ant-input,
+.ant-select-selector,
+.ant-input-textarea {
     border-color: #e2e8f0 !important;
     border-radius: 6px !important;
     font-size: 13px !important;
 }
 
-.ant-input:focus, .ant-select-selector:focus {
+.ant-input:focus,
+.ant-select-selector:focus {
     border-color: var(--accent) !important;
     box-shadow: 0 0 0 2px var(--accent-soft) !important;
 }
@@ -177,7 +261,7 @@
     min-width: 0;
 }
 
-.properties-drawer__state-col > span {
+.properties-drawer__state-col>span {
     font-size: 12px;
     font-weight: 600;
     color: #475569;

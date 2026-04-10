@@ -1,5 +1,5 @@
-import React from 'react';
 import { motion } from 'framer-motion';
+import { Split } from 'lucide-react';
 
 const variants = {
   hidden: { opacity: 0, x: -10 },
@@ -16,7 +16,7 @@ export default function DecisionNodeItem() {
             nodeType: 'decision',
             label: 'Decision',
             category: 'structure',
-            icon: '🔀',
+            icon: 'Split',
         });
         e.dataTransfer.setData('application/reactflow', dragData);
         e.dataTransfer.effectAllowed = 'move';
@@ -26,10 +26,10 @@ export default function DecisionNodeItem() {
         <div className="node-library-item-wrapper" draggable onDragStart={handleDecisionDragStart}>
             <motion.div className="node-library-item" variants={variants} whileHover={{ x: 3 }}>
                 <div className="nli-icon" style={{ background: '#fff7e6' }}>
-                    <span style={{ fontSize: '13px', color: '#fa8c16' }}>🔀</span>
+                    <Split size={12} color="#fa8c16" strokeWidth={2.4} />
                 </div>
                 <div className="nli-content">
-                    <span className="nli-label">Decision</span>
+                    <span className="nli-label">Decision Node</span>
                 </div>
                 <div className="nli-drag-hint">⠿</div>
             </motion.div>
