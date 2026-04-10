@@ -133,7 +133,7 @@ export default function SkillsLibraryPage() {
                             <PlusOutlined />
                         </button>
                     </div>
-                    <Text type="secondary" style={{ fontSize: '13px', fontWeight: 400, color: 'var(--text-subtle)', display: 'block', marginTop: '4px' }}>
+                    <Text type="secondary" style={{ fontSize: '12px', fontWeight: 500, color: '#64748b', display: 'block', marginTop: '4px' }}>
                          Manage and deploy your automated skills and complex orchestration flows.
                     </Text>
                 </div>

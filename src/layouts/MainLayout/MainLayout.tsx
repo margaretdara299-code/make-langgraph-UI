@@ -3,6 +3,8 @@ import { Layout, Breadcrumb } from 'antd';
 import { HomeOutlined } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SIDEBAR_MENU_ITEMS } from '@/constants/layout.constants';
+import { setAuthPersistence } from '@/utils/auth.utils';
+import { ROUTES } from '@/routes';
 import Sidebar from './Sidebar';
 import './MainLayout.css';
 
@@ -23,7 +25,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
     const pageLabel = currentMenuItem ? currentMenuItem.label : 'Dashboard';
 
     const handleLogout = () => {
-        navigate('/login');
+        setAuthPersistence(false);
+        navigate(ROUTES.LOGIN, { replace: true });
     };
 
     // Auto-collapse sidebar when entering the Designer route
