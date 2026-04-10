@@ -3,7 +3,7 @@ import { Space, Tooltip, message, Dropdown, Input, Divider, Spin } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
-  ChevronDown, Play, Save, Zap, Search, Code
+  ChevronDown, Play, Save, Zap, Search, Code, Check
 } from 'lucide-react';
 import { useReactFlow } from '@xyflow/react';
 
@@ -86,10 +86,9 @@ export default function SkillDesignerHeader() {
       label: (
         <div className="skill-dropdown-item" onClick={() => navigate(`/skills/${s.id}/versions/${s.latestVersionId || ''}/design`)}>
           <div className="skill-info">
-            <span className="skill-name">{s.name}</span>
-            <span className={`skill-status-tag ${s.status}`}>{s.status}</span>
+            <span className="skill-dropdown-name">{s.name}</span>
           </div>
-          {s.status === 'published' && <span className="status-dot published" />}
+          {s.id === skillId && <Check size={14} className="active-check-icon" />}
         </div>
       ),
     }));

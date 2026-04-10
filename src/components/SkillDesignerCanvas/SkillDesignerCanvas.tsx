@@ -124,7 +124,7 @@ export default function SkillDesignerCanvas() {
                     deleteKeyCode={['Backspace', 'Delete']}
                     onNodeClick={(_, node) => {
                         if (node.type === 'end') return; // End node has no properties
-                        setDrawerNodeId(node.id);
+                        setDrawerNodeId(prev => (prev === node.id ? null : node.id));
                         setDrawerEdgeId(null);
                     }}
                     onNodeDragStop={(_, node) => {
@@ -135,7 +135,7 @@ export default function SkillDesignerCanvas() {
                         }
                     }}
                     onEdgeClick={(_, edge) => {
-                        setDrawerEdgeId(edge.id);
+                        setDrawerEdgeId(prev => (prev === edge.id ? null : edge.id));
                         setDrawerNodeId(null);
                     }}
                     onPaneClick={() => {

@@ -24,9 +24,9 @@ export default function DecisionNodeItem() {
 
     return (
         <div className="node-library-item-wrapper" draggable onDragStart={handleDecisionDragStart}>
-            <motion.div className="node-library-item" variants={variants} whileHover={{ x: 3 }}>
-                <div className="nli-icon" style={{ background: '#fff7e6' }}>
-                    <Split size={12} color="#fa8c16" strokeWidth={2.4} />
+            <motion.div className="node-library-item" variants={variants}>
+                <div className="nli-icon" style={{ background: '#f8fafc' }}>
+                    <Split size={12} color="#000000" strokeWidth={2.4} />
                 </div>
                 <div className="nli-content">
                     <span className="nli-label">Decision Node</span>

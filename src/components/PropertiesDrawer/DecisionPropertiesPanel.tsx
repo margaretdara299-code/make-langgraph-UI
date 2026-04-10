@@ -50,14 +50,10 @@ export default function DecisionPropertiesPanel({ form }: DecisionPropertiesPane
                 </Text>
             </div>
 
-            <Divider style={{ margin: '24px 0' }} />
-
-            {/* ── Rules List ── */}
-            <Title level={5} style={{ marginTop: 0, marginBottom: 16 }}>
-                Routing Rules
-            </Title>
-            <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 12 }}>
-                Evaluated top-to-bottom. The first rule to match will be executed.
+            <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Routing Rules</div>
+            
+            <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 12, lineHeight: '1.5', padding: '0 4px' }}>
+                Evaluated top-to-bottom. Rules generate distinct output ports on the canvas. The first rule to match will be executed.
             </Text>
 
             <Form.List name="rules">
@@ -67,10 +63,12 @@ export default function DecisionPropertiesPanel({ form }: DecisionPropertiesPane
                             <Card 
                                 key={key} 
                                 size="small" 
-                                style={{ marginBottom: 16, borderColor: 'rgba(245, 158, 11, 0.4)', background: 'rgba(245, 158, 11, 0.01)' }}
+                                className="decision-props__rule-card"
                                 title={
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                        <Tag color="orange">Branch {index + 1}</Tag>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                        <div className="properties-drawer__meta-value" style={{ background: '#fff7ed', color: '#c2410c', borderColor: '#ffedd5', fontSize: '10px' }}>
+                                            BRANCH {index + 1}
+                                        </div>
                                         <Form.Item {...restField} name={[fieldName, 'id']} hidden><Input /></Form.Item>
                                         <Form.Item 
                                             {...restField} 
@@ -78,11 +76,11 @@ export default function DecisionPropertiesPanel({ form }: DecisionPropertiesPane
                                             style={{ margin: 0, flex: 1 }}
                                             rules={[{ required: true, message: 'Missing branch name' }]}
                                         >
-                                            <Input placeholder="Branch Name (e.g. High Risk)" size="small" variant="borderless" style={{ fontWeight: 600, padding: 0 }} />
+                                            <Input placeholder="Branch Name" variant="borderless" style={{ fontWeight: 700, padding: 0, fontSize: '13px' }} />
                                         </Form.Item>
                                     </div>
                                 }
-                                extra={<DeleteOutlined style={{ color: '#ff4d4f' }} onClick={() => remove(fieldName)} />}
+                                extra={<DeleteOutlined className="properties-drawer__delete-icon" onClick={() => remove(fieldName)} />}
                             >
                                 <Form.Item
                                     {...restField}
@@ -159,26 +157,18 @@ export default function DecisionPropertiesPanel({ form }: DecisionPropertiesPane
                 )}
             </Form.List>
 
-            <Divider style={{ margin: '24px 0' }} />
-
-            {/* ── Default fallback branch ── */}
-            <Title level={5} style={{ marginTop: 0, marginBottom: 16 }}>
-                Default Output
-            </Title>
-            <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 10 }}>
-                This is the fallback port that triggers when <strong>none</strong> of the rules match.
+            <div className="properties-drawer__section-title">Default Output</div>
+            <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 12, lineHeight: '1.5', padding: '0 4px' }}>
+                Triggers when <strong>none</strong> of the rules above match.
             </Text>
-            <div style={{ 
-                padding: '12px 14px', 
-                background: 'var(--bg-page)', 
-                border: '1px solid var(--border-medium)', 
-                borderRadius: 'var(--radius-sm)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-            }}>
-                <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--text-subtle)' }} />
-                <Text strong style={{ color: 'var(--text-main)', fontSize: '13px' }}>Fallback / Default Branch</Text>
+            <div className="properties-drawer__meta" style={{ margin: 0, background: 'var(--bg-card)' }}>
+                <div className="properties-drawer__meta-item">
+                    <span className="properties-drawer__meta-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--text-subtle)' }} />
+                        Default Path
+                    </span>
+                    <span className="properties-drawer__meta-value">FALLBACK</span>
+                </div>
             </div>
         </div>
     );

@@ -3,7 +3,7 @@
  * Slides out to show the properties of the currently selected React Flow node.
  */
 
-import { Drawer, Input, Form, Typography, Select, Spin, theme, Button, Tabs } from 'antd';
+import { Drawer, Input, Form, Typography, Select, Spin, theme, Button, Tabs, Collapse } from 'antd';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReactFlow, useNodes, useEdges } from '@xyflow/react';
 import { useEffect, useState } from 'react';
@@ -49,7 +49,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
         if (selectedNode) {
             const nodeData = selectedNode.data as any;
             setHeaderInfo({
-                title: 'Node Properties',
+                title: nodeData?.label || 'Node Properties',
                 icon: <IconRenderer iconName={nodeData?.icon} size={18} fallback={<Settings2 size={18} />} />
             });
         } else if (selectedEdge) {
@@ -356,9 +356,9 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
         }
     };
 
-    const DynamicParamList = ({ name, title, emptyMessage }: { name: string, title: string, emptyMessage: string }) => (
-        <div className="properties-drawer__param-group" style={{ marginBottom: 16 }}>
-            <Text strong className="properties-drawer__subsection-label" style={{ display: 'block', marginBottom: 8 }}>{title}</Text>
+    const DynamicParamList = ({ name, title, emptyMessage, hideTitle = false }: { name: string, title: string, emptyMessage: string, hideTitle?: boolean }) => (
+        <div className="properties-drawer__param-group" style={{ marginBottom: hideTitle ? 0 : 16 }}>
+            {!hideTitle && <Text strong className="properties-drawer__subsection-label" style={{ display: 'block', marginBottom: 8 }}>{title}</Text>}
             <Form.List name={name}>
                 {(fields, { add, remove }) => (
                     <>
@@ -404,12 +404,49 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
         </div>
     );
 
+    const AccordionLabel = ({ name, title, formInstance }: { name: string, title: string, formInstance: any }) => {
+        const data = Form.useWatch(name, formInstance);
+        const count = Array.isArray(data) ? data.filter((d: any) => d && d.key).length : 0;
+        return (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontWeight: 500 }}>{title}</span>
+                <AnimatePresence>
+                    {count > 0 && (
+                        <motion.div 
+                            initial={{ scale: 0, opacity: 0 }} 
+                            animate={{ scale: 1, opacity: 1 }} 
+                            exit={{ scale: 0, opacity: 0 }}
+                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                            style={{ 
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                minWidth: 20,
+                                height: 20,
+                                background: '#ecfdf5', 
+                                color: '#059669', 
+                                border: '1px solid #6ee7b7',
+                                fontSize: 11, 
+                                fontWeight: 700, 
+                                padding: '0 6px', 
+                                borderRadius: '10px',
+                                boxShadow: '0 1px 2px rgba(16, 185, 129, 0.1)',
+                            }}
+                        >
+                            {count}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+        );
+    };
+
     /** Render the Connector-specific fields */
     const renderNodeConfig = (nodeData: CanvasNodeData) => {
         return (
             <>
                 {/* ── Section 1: Endpoint ── */}
-                <div className="properties-drawer__section-title">Endpoint</div>
+                <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Endpoint</div>
                 <div className="properties-drawer__flex-row">
                     <Form.Item label="URL" name="url" className="properties-drawer__flex-item">
                         <Input placeholder="https://api.example.com/v1/resource" />
@@ -422,13 +459,20 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                 </div>
 
                 {/* ── Section 2: Integration Parameters ── */}
-                <div className="properties-drawer__divider" />
                 <div className="properties-drawer__section-title">Integration Parameters</div>
 
-                <DynamicParamList name="path_params" title="Path Parameters" emptyMessage="No path parameters." />
-                <DynamicParamList name="query_params" title="Query Parameters" emptyMessage="No query parameters." />
-                <DynamicParamList name="header_params" title="Header Parameters" emptyMessage="No header parameters." />
-                <DynamicParamList name="body_params" title="Body Parameters" emptyMessage="No body parameters." />
+                <Collapse
+                    accordion
+                    defaultActiveKey={['path_params']}
+                    ghost
+                    expandIconPosition="end"
+                    items={[
+                        { key: 'path_params', label: <AccordionLabel name="path_params" title="Path Parameters" formInstance={form} />, children: <DynamicParamList name="path_params" title="Path Parameters" emptyMessage="No path parameters." hideTitle /> },
+                        { key: 'query_params', label: <AccordionLabel name="query_params" title="Query Parameters" formInstance={form} />, children: <DynamicParamList name="query_params" title="Query Parameters" emptyMessage="No query parameters." hideTitle /> },
+                        { key: 'header_params', label: <AccordionLabel name="header_params" title="Header Parameters" formInstance={form} />, children: <DynamicParamList name="header_params" title="Header Parameters" emptyMessage="No header parameters." hideTitle /> },
+                        { key: 'body_params', label: <AccordionLabel name="body_params" title="Body Parameters" formInstance={form} />, children: <DynamicParamList name="body_params" title="Body Parameters" emptyMessage="No body parameters." hideTitle /> }
+                    ]}
+                />
             </>
         );
     };
@@ -510,7 +554,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                             opacity: 1,
                             transition: { 
                                 staggerChildren: 0.12,
-                                delayChildren: 0.1 
+                                delayChildren: 0.35 
                             }
                         }
                     }}
@@ -521,11 +565,11 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                         items={[
                             {
                                 key: '1',
-                                label: 'General',
+                                label: 'Overview',
                                 children: (
                                     <motion.div
                                         variants={{
-                                            hidden: { opacity: 0, x: -16 },
+                                            hidden: { opacity: 0, x: 16 },
                                             visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }
                                         }}
                                         style={{ padding: '0 4px' }}
@@ -566,7 +610,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                         >
                                             {!isConnector && (
                                                 <>
-                                                    <div className="properties-drawer__section-title">Identity</div>
+                                                    <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Identity</div>
                                                     <Form.Item
                                                         label="Node Label"
                                                         name="label"
@@ -642,7 +686,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                 children: (
                                     <motion.div
                                         variants={{
-                                            hidden: { opacity: 0, x: -16 },
+                                            hidden: { opacity: 0, x: 16 },
                                             visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }
                                         }}
                                         style={{ padding: '0 4px' }}
@@ -668,7 +712,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                 children: (
                                     <motion.div
                                         variants={{
-                                            hidden: { opacity: 0, x: -16 },
+                                            hidden: { opacity: 0, x: 16 },
                                             visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }
                                         }}
                                         style={{ padding: '0 4px' }}
@@ -679,7 +723,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                             onValuesChange={handleValuesChange}
                                             className="properties-drawer__form"
                                         >
-                                            <div className="properties-drawer__section-title">Fallback Configuration</div>
+                                            <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Fallback Settings</div>
                                             <Form.Item name="fallback_message" label="Fallback Message">
                                                 <Input.TextArea placeholder="Used if action fails..." rows={4} />
                                             </Form.Item>
@@ -708,14 +752,17 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                         hidden: { opacity: 0 },
                         visible: {
                             opacity: 1,
-                            transition: { staggerChildren: 0.05 }
+                            transition: { 
+                                staggerChildren: 0.08,
+                                delayChildren: 0.25 
+                            }
                         }
                     }}
                 >
                     <motion.div 
                         className="properties-drawer__meta" 
                         variants={{
-                            hidden: { opacity: 0, x: -12 },
+                            hidden: { opacity: 0, x: 16 },
                             visible: { opacity: 1, x: 0, transition: { duration: 0.15, ease: 'linear' } }
                         }}
                     >
@@ -733,11 +780,9 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                         </div>
                     </motion.div>
 
-                    <div className="properties-drawer__divider" />
-
                     <motion.div 
                         variants={{
-                            hidden: { opacity: 0, x: -8 },
+                            hidden: { opacity: 0, x: 12 },
                             visible: { opacity: 1, x: 0, transition: { duration: 0.12, ease: 'linear' } }
                         }}
                     >
@@ -785,41 +830,34 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     };
 
     return (
-        <Drawer
-            title={
-                <div className="properties-drawer__header">
-                    <span className="properties-drawer__icon">
-                        {headerInfo.icon}
-                    </span>
-                    <span className="properties-drawer__title-text">
-                        {headerInfo.title}
-                    </span>
-                </div>
-            }
-            placement="right"
-            closable={true}
-            closeIcon={<X size={16} strokeWidth={2.5} />}
-            onClose={onClose}
-            open={isOpen}
-            mask={false}
-            width={400}
-            className="properties-drawer"
-            zIndex={10}
-            getContainer={false}
-            styles={{
-                header: { borderBottom: '1px solid var(--border-light)' },
-                body: { padding: '20px', background: 'var(--bg-card)' },
-            }}
-        >
-            <AnimatePresence mode="wait">
-                {isOpen && (
-                    <div style={{ height: '100%', overflowY: 'auto', overflowX: 'hidden' }}>
+        <AnimatePresence>
+            {isOpen && (
+                <motion.aside
+                    className="properties-drawer-floating"
+                    initial={{ x: 30, opacity: 0, scale: 0.98 }}
+                    animate={{ x: 0, opacity: 1, scale: 1 }}
+                    exit={{ x: 30, opacity: 0, scale: 0.98 }}
+                    transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
+                >
+                    <div className="properties-drawer__drawer-header">
+                        <div className="properties-drawer__header-left">
+                            <span className="properties-drawer__icon">
+                                {headerInfo.icon}
+                            </span>
+                            <span className="properties-drawer__title-text">
+                                {headerInfo.title}
+                            </span>
+                        </div>
+                        <button className="properties-drawer__close-btn" onClick={onClose}>
+                            <X size={16} strokeWidth={2.5} />
+                        </button>
+                    </div>
+                    
+                    <div className="properties-drawer__drawer-body">
                         {renderContent()}
                     </div>
-                )}
-            </AnimatePresence>
-        </Drawer>
-
-
+                </motion.aside>
+            )}
+        </AnimatePresence>
     );
 }

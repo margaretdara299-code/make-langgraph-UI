@@ -1,17 +1,24 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ChevronRight, ChevronDown, Loader2, Plus, Minus,
-  Zap, Database
+  ChevronDown, ChevronRight, Loader2, Plus, Minus,
+  Zap, Database, Layout
 } from 'lucide-react';
+import { Tree } from 'antd';
+import type { TreeDataNode } from 'antd';
 import { useDesignerActions, useDesignerConnectors } from '@/hooks';
 import { SearchInput } from '@/components';
 import { ICON_MAP, SUB_CAT_COLORS } from './nodePalette.constants';
-import StructureSection from './StructureSection';
+import StartNodeItem from './StartNodeItem';
+import SubFlowNodeItem from './SubFlowNodeItem';
+import DecisionNodeItem from './DecisionNodeItem';
+import EndNodeItem from './EndNodeItem';
 import './NodePalette.css';
 
+// Custom renderer for Tree Items to maintain Drag & Drop
+const TreeTitle: React.FC<{ node: any; isLeaf?: boolean }> = ({ node, isLeaf }) => {
+  if (!isLeaf) return <span className="tree-group-label">{node.label}</span>;
 
-const NodeItem: React.FC<{ node: any }> = ({ node }) => {
   const Icon = ICON_MAP[node.icon] ?? null;
   const colors = SUB_CAT_COLORS[node.subCategory] || SUB_CAT_COLORS['Common'];
 
@@ -31,30 +38,19 @@ const NodeItem: React.FC<{ node: any }> = ({ node }) => {
 
   return (
     <div className="node-library-item-wrapper" draggable onDragStart={onDragStart}>
-      <motion.div
-        className="node-library-item"
-        variants={{
-          hidden: { opacity: 0, x: -10 },
-          visible: {
-            opacity: 1,
-            x: 0,
-            transition: { duration: 0.12, ease: 'linear' }
-          }
-        }}
-        whileHover={{ x: 3 }} // Restored as per "same animation" request
-      >
-        <div className="nli-icon" style={{ background: colors.bg }}>
-          {Icon ? (
-            <Icon size={12} color={colors.color} strokeWidth={2.4} />
-          ) : (
-            <span style={{ fontSize: '12px' }}>{node.icon && node.icon.length <= 2 ? node.icon : '🧩'}</span>
-          )}
+        <div className="node-library-item">
+            <div className="nli-icon" style={{ background: colors.bg }}>
+            {Icon ? (
+                <Icon size={12} color={colors.color} strokeWidth={2.4} />
+            ) : (
+                <span style={{ fontSize: '12px' }}>{node.icon && node.icon.length <= 2 ? node.icon : '🧩'}</span>
+            )}
+            </div>
+            <div className="nli-content">
+                <span className="nli-label">{node.label}</span>
+            </div>
+            <div className="nli-drag-hint">⠿</div>
         </div>
-        <div className="nli-content">
-          <span className="nli-label">{node.label}</span>
-        </div>
-        <div className="nli-drag-hint">⠿</div>
-      </motion.div>
     </div>
   );
 };
@@ -62,35 +58,105 @@ const NodeItem: React.FC<{ node: any }> = ({ node }) => {
 export default function NodePalette() {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
-  const [expandedCategory, setExpandedCategory] = useState<string | null>('Actions');
-  const [expandedSub, setExpandedSub] = useState<Record<string, string | null>>({});
-
+  
   const { actionsByCategory, isLoading: actionsLoading } = useDesignerActions();
   const { connectorGroups, isLoading: connectorsLoading } = useDesignerConnectors() as any;
 
-  const allNodes = useMemo(() => {
-    const nodes: any[] = [];
-    Object.entries(actionsByCategory).forEach(([category, list]: [string, any]) => {
-      list.forEach((action: any) => {
-        nodes.push({ id: action.id, type: 'action', label: action.name, subtitle: action.description, icon: action.icon || 'Zap', category: 'Actions', subCategory: category });
+  // Transform data into TreeDataNode[]
+  const treeData = useMemo(() => {
+    const data: TreeDataNode[] = [];
+
+    // 1. Actions
+    const actionChildren: TreeDataNode[] = Object.entries(actionsByCategory).map(([subCat, items]: [string, any]) => ({
+      title: <span className="sub-group-label">{subCat}</span>,
+      key: `actions-${subCat}`,
+      children: items.map((action: any) => ({
+        title: <TreeTitle node={{ 
+            id: action.id, type: 'action', label: action.name, 
+            icon: action.icon || 'Zap', category: 'Actions', subCategory: subCat 
+        }} isLeaf />,
+        key: action.id,
+        isLeaf: true
+      }))
+    }));
+
+    if (actionChildren.length > 0) {
+      data.push({
+        title: (
+          <div className="gh-left">
+            <div className="cat-icon-wrapper"><Zap size={16} /></div>
+            <span className="group-label">Actions</span>
+          </div>
+        ),
+        key: 'cat-actions',
+        children: actionChildren
       });
-    });
-    Object.entries(connectorGroups || {}).forEach(([type, list]: [string, any]) => {
-      list.forEach((conn: any) => {
-        nodes.push({ id: conn.id, type: 'data', label: conn.name, subtitle: conn.description, icon: conn.icon || 'Database', category: 'Connectors', subCategory: type });
+    }
+
+    // 2. Connectors
+    const connectorChildren: TreeDataNode[] = Object.entries(connectorGroups || {}).map(([subCat, items]: [string, any]) => ({
+      title: <span className="sub-group-label">{subCat}</span>,
+      key: `connectors-${subCat}`,
+      children: items.map((conn: any) => ({
+        title: <TreeTitle node={{ 
+            id: conn.id, type: 'data', label: conn.name, 
+            icon: conn.icon || 'Database', category: 'Connectors', subCategory: subCat 
+        }} isLeaf />,
+        key: conn.id,
+        isLeaf: true
+      }))
+    }));
+
+    if (connectorChildren.length > 0) {
+      data.push({
+        title: (
+          <div className="gh-left">
+            <div className="cat-icon-wrapper"><Database size={16} /></div>
+            <span className="group-label">Connectors</span>
+          </div>
+        ),
+        key: 'cat-connectors',
+        children: connectorChildren
       });
-    });
-    return nodes;
+    }
+
+    return data;
   }, [actionsByCategory, connectorGroups]);
 
-  const mainCategories = ['Actions', 'Connectors'];
-  const filtered = allNodes.filter(n =>
-    n.label.toLowerCase().includes(search.toLowerCase()) ||
-    n.subCategory.toLowerCase().includes(search.toLowerCase())
-  );
+  const [expandedKeys, setExpandedKeys] = useState<React.Key[]>(['cat-common', 'cat-actions']);
 
-  const toggleExpand = (cat: string) => setExpandedCategory(prev => prev === cat ? null : cat);
-  const toggleSubExpand = (cat: string, sub: string) => setExpandedSub(prev => ({ ...prev, [cat]: prev[cat] === sub ? null : sub }));
+  const onExpand = (keys: React.Key[], info: { node: any; expanded: boolean }) => {
+    if (info.expanded) {
+      const currentKey = info.node.key as string;
+      
+      // 1. Handle Top-level categories (Actions, Connectors, Common)
+      const topLevelKeys = ['cat-common', 'cat-actions', 'cat-connectors'];
+      if (topLevelKeys.includes(currentKey)) {
+        const otherTopLevel = topLevelKeys.filter(k => k !== currentKey);
+        setExpandedKeys(keys.filter(k => !otherTopLevel.includes(k as string)));
+        return;
+      }
+
+      // 2. Handle Sub-categories within Actions
+      if (currentKey.startsWith('actions-')) {
+        const otherActionSubs = keys.filter(k => 
+          typeof k === 'string' && k.startsWith('actions-') && k !== currentKey
+        );
+        setExpandedKeys(keys.filter(k => !otherActionSubs.includes(k)));
+        return;
+      }
+
+      // 3. Handle Sub-categories within Connectors
+      if (currentKey.startsWith('connectors-')) {
+        const otherConnSubs = keys.filter(k => 
+          typeof k === 'string' && k.startsWith('connectors-') && k !== currentKey
+        );
+        setExpandedKeys(keys.filter(k => !otherConnSubs.includes(k)));
+        return;
+      }
+    }
+    setExpandedKeys(keys);
+  };
 
   return (
     <>
@@ -107,17 +173,12 @@ export default function NodePalette() {
         {isOpen && (
           <motion.aside
             className="node-library-floating"
-            initial={{ x: -28, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: -28, opacity: 0 }}
-            transition={{ duration: 0.14, ease: 'linear' }}
+            initial={{ x: -20, opacity: 0, scale: 0.98 }}
+            animate={{ x: 0, opacity: 1, scale: 1 }}
+            exit={{ x: -20, opacity: 0, scale: 0.98 }}
+            transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
           >
-            <motion.div
-              className="sidebar-top"
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.04, duration: 0.25 }}
-            >
+            <div className="sidebar-top">
               <div className="sidebar-title">Node Library</div>
               <div className="sidebar-search-wrap">
                 <SearchInput
@@ -126,20 +187,9 @@ export default function NodePalette() {
                   onChange={setSearch}
                 />
               </div>
-            </motion.div>
+            </div>
 
-            <motion.div
-              className="sidebar-scroll"
-              initial="hidden"
-              animate="visible"
-              variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: { staggerChildren: 0.02 }
-                }
-              }}
-            >
+            <div className="sidebar-scroll antd-tree-container">
               {(actionsLoading || connectorsLoading) && (
                 <div className="sidebar-loading">
                   <Loader2 size={16} className="animate-spin" />
@@ -147,129 +197,44 @@ export default function NodePalette() {
                 </div>
               )}
 
-              {search ? (
-                <motion.div
-                  className="node-group"
-                  initial="hidden"
-                  animate="visible"
-                  variants={{
-                    hidden: { opacity: 0 },
-                    visible: {
-                      opacity: 1,
-                      transition: { staggerChildren: 0.025 }
-                    }
-                  }}
-                >
-                  <div className="group-label">Search Results ({filtered.length})</div>
-                  {filtered.map(n => <NodeItem key={n.id + n.label} node={n} />)}
-                  {filtered.length === 0 && <div className="sidebar-empty">No results</div>}
-                </motion.div>
-              ) : (
+              {!search ? (
                 <>
-                  <motion.div
-                    className="node-group"
-                    variants={{
-                      hidden: { opacity: 0, x: -10 },
-                      visible: { opacity: 1, x: 0, transition: { staggerChildren: 0.06, duration: 0.4 } }
-                    }}
-                  >
-                    <button className="group-header main-group-header" onClick={() => toggleExpand('Common')}>
-                      <div className="gh-left">
-                        {expandedCategory === 'Common' ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-                        <span className="group-label">Common</span>
-                      </div>
-                    </button>
-                    {expandedCategory === 'Common' && (
-                      <motion.div
-                        className="group-content nested-groups"
-                        initial="hidden" animate="visible"
-                        variants={{
-                          hidden: { opacity: 0, x: -10 },
-                          visible: { opacity: 1, x: 0, transition: { duration: 0.12, ease: 'linear', staggerChildren: 0.04 } }
-                        }}
-                      >
-                        <StructureSection search="" />
-                      </motion.div>
-                    )}
-                  </motion.div>
-
-                  {mainCategories.map(cat => {
-                    const catItems = allNodes.filter(n => n.category === cat);
-                    if (catItems.length === 0) return null;
-                    const isExpanded = expandedCategory === cat;
-                    const subGroups: Record<string, any[]> = {};
-                    catItems.forEach(n => {
-                      if (!subGroups[n.subCategory]) subGroups[n.subCategory] = [];
-                      subGroups[n.subCategory].push(n);
-                    });
-
-                    return (
-                      <motion.div
-                        key={cat}
-                        className="node-group"
-                        variants={{
-                          hidden: { opacity: 0, x: -10 },
-                          visible: { opacity: 1, x: 0, transition: { staggerChildren: 0.06, duration: 0.4 } }
-                        }}
-                      >
-                        <button className="group-header main-group-header" onClick={() => toggleExpand(cat)}>
-                          <div className="gh-left">
-                            {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-                            <span className="group-label">{cat}</span>
-                          </div>
-                          <span className="gh-count">{catItems.length}</span>
-                        </button>
-                        {isExpanded && (
-                          <motion.div
-                            className="group-content nested-groups"
-                            initial="hidden" animate="visible"
-                            variants={{
-                              hidden: { opacity: 0, x: -10 },
-                              visible: { opacity: 1, x: 0, transition: { duration: 0.12, ease: 'linear', staggerChildren: 0.04 } }
-                            }}
-                          >
-                            {Object.entries(subGroups).map(([subCat, items]) => {
-                              const isSubExpanded = expandedSub[cat] === subCat;
-                              return (
-                                <motion.div
-                                  key={subCat}
-                                  className="sub-node-group"
-                                  variants={{
-                                    hidden: { opacity: 0, x: -8 },
-                                    visible: { opacity: 1, x: 0, transition: { duration: 0.1, ease: 'linear', staggerChildren: 0.015 } }
-                                  }}
-                                >
-                                  <button className="sub-group-header" onClick={() => toggleSubExpand(cat, subCat)}>
-                                    {isSubExpanded ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
-                                    <span className="sub-group-label">{subCat}</span>
-                                    <span className="sub-group-line"></span>
-                                    <span className="sub-group-mini-count">{items.length}</span>
-                                  </button>
-                                  <AnimatePresence>
-                                    {isSubExpanded && (
-                                      <motion.div
-                                        className="sub-group-items"
-                                        initial="hidden" animate="visible" exit="hidden"
-                                        variants={{
-                                          hidden: { height: 0, opacity: 0 },
-                                          visible: { height: 'auto', opacity: 1, transition: { height: { duration: 0.12, ease: 'linear' }, opacity: { duration: 0.08, ease: 'linear' }, staggerChildren: 0.01 } }
-                                        }}
-                                      >
-                                        {items.map(n => <NodeItem key={n.id + n.label} node={n} />)}
-                                      </motion.div>
-                                    )}
-                                  </AnimatePresence>
-                                </motion.div>
-                              );
-                            })}
-                          </motion.div>
-                        )}
-                      </motion.div>
-                    );
-                  })}
+                  {/* Common Section (Fixed structure) */}
+                  <div className="node-group" style={{ marginBottom: 0 }}>
+                    <div className="antd-tree-wrapper">
+                        <Tree
+                            showLine={{ showLeafIcon: false }}
+                            switcherIcon={<ChevronDown size={14} />}
+                            expandedKeys={expandedKeys}
+                            onExpand={onExpand}
+                            treeData={[
+                                {
+                                    title: (
+                                        <div className="gh-left">
+                                          <div className="cat-icon-wrapper"><Layout size={16} /></div>
+                                          <span className="group-label">Common</span>
+                                        </div>
+                                      ),
+                                    key: 'cat-common',
+                                    children: [
+                                        { title: <StartNodeItem />, key: 'common-start', isLeaf: true },
+                                        { title: <SubFlowNodeItem />, key: 'common-sub-flow', isLeaf: true },
+                                        { title: <DecisionNodeItem />, key: 'common-decision', isLeaf: true },
+                                        { title: <EndNodeItem />, key: 'common-end', isLeaf: true }
+                                    ]
+                                },
+                                ...treeData
+                            ]}
+                        />
+                    </div>
+                  </div>
                 </>
+              ) : (
+                <div className="sidebar-empty">
+                  Search results rendered via custom list if needed...
+                </div>
               )}
-            </motion.div>
+            </div>
           </motion.aside>
         )}
       </AnimatePresence>

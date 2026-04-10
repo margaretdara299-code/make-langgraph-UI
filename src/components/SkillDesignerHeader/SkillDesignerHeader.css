@@ -184,10 +184,15 @@
 }
 
 .builder-dropdown .ant-dropdown-menu-item {
-  padding: 3px 8px !important; /* Tighter padding */
+  padding: 6px 10px !important;
   border-radius: 6px !important;
   margin: 1px 0 !important;
   font-size: 11px !important;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.builder-dropdown .ant-dropdown-menu-item:last-child {
+  border-bottom: none;
 }
 
 .builder-dropdown .ant-dropdown-menu-item-active,
@@ -237,18 +242,24 @@
   gap: 16px;
 }
 
+.active-check-icon {
+  color: var(--accent);
+  margin-left: auto;
+  opacity: 0.8;
+}
+
 .skill-info {
   display: flex;
   flex-direction: column;
   gap: 1px;
 }
 
-.skill-info .skill-name {
+.skill-dropdown-name {
   display: block;
-  font-size: 15px !important;
-  font-weight: 500;
+  font-size: 11.5px !important;
+  font-weight: 600;
   color: var(--text-main) !important;
-  margin-bottom: 2px !important;
+  margin-bottom: 0px !important;
   letter-spacing: -0.01em;
 }
 
@@ -293,7 +304,7 @@
   align-items: center;
   gap: 8px;
   font-family: var(--font-sans);
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 500; /* Slightly lighter for a more "lean" look */
   padding: 0 14px;
   height: 34px;

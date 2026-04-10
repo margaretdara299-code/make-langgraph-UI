@@ -33,5 +33,5 @@ export const SUB_CAT_COLORS: Record<string, { bg: string; color: string }> = {
   'OPERATIONS': { bg: '#f0fdf4', color: '#15803d' },
   'CUSTOMER SUPPORT': { bg: '#fdf4ff', color: '#c026d3' },
   'CONTENT MANAGEMENT': { bg: '#fffdf2', color: '#a16207' },
-  'Common': { bg: '#f1f5f9', color: '#64748b' },
+  'Common': { bg: '#f1f5f9', color: '#000000' },
 };

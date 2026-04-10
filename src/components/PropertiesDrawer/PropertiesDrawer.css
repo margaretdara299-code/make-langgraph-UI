@@ -1,85 +1,67 @@
-.properties-drawer {
-    position: absolute !important;
+/* Floating Properties Drawer */
+.properties-drawer-floating {
+  position: absolute;
+  right: 20px;
+  top: 72px;
+  bottom: 24px;
+  width: 380px; 
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0,0,0,0.02);
+  z-index: 1000;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
 }
 
-.properties-drawer .ant-drawer-content-wrapper {
-    position: absolute !important;
-    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.05) !important;
+.properties-drawer__drawer-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  background: #ffffff;
 }
 
-.properties-drawer .ant-drawer-header {
-    padding: 0 !important;
-    background: var(--bg-card) !important;
-    border-bottom: 1px solid var(--border-light) !important;
-    position: relative !important;
-    min-height: 56px !important;
-    display: flex !important;
-    align-items: center !important;
+.properties-drawer__header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-/* We override the inner header title box to be relative and full width */
-.properties-drawer .ant-drawer-header-title {
-    padding: 14px 20px !important;
-    width: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    flex-direction: row !important;
-    /* Keep original order, but title is left, close is right via absolute */
+.properties-drawer__close-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 0;
 }
 
-/* --- Close Button Customization --- */
-.properties-drawer .ant-drawer-close {
-    width: 28px !important;
-    height: 28px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: var(--bg-page) !important;
-    border-radius: 50% !important;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    color: var(--text-muted) !important;
-    position: absolute !important;
-    right: 16px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    border: 1px solid var(--border-medium) !important;
-    line-height: 1 !important;
-    z-index: 10 !important;
+.properties-drawer__close-btn:hover {
+  background: #fee2e2;
+  color: #ef4444;
+  border-color: #fecaca;
+  transform: rotate(90deg) scale(1.05);
 }
 
-.properties-drawer .ant-drawer-close .anticon {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    margin: 0 !important;
-    font-size: 14px !important;
+.properties-drawer__drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background: #ffffff;
 }
 
-.properties-drawer .ant-drawer-close:hover {
-    background: var(--color-error-bg) !important;
-    color: var(--color-error) !important;
-    border-color: #fecaca !important;
-    transform: translateY(-50%) rotate(90deg) !important;
-}
 
-.properties-drawer .ant-drawer-title {
-    flex: 1 !important;
-}
-
-.properties-drawer .ant-drawer-body {
-    padding: 20px !important;
-    background: var(--bg-card) !important;
-    font-family: var(--font-sans);
-}
-
-.properties-drawer__header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding-right: 32px;
-}
 
 .properties-drawer__icon {
     width: 28px;
@@ -90,13 +72,13 @@
     align-items: center;
     justify-content: center;
     font-size: 14px;
-    color: var(--text-muted);
+    color: #000000;
 }
 
 .properties-drawer__title-text {
-    font-weight: var(--weight-semibold);
-    font-size: 14px;
-    color: var(--text-main);
+    font-weight: 600;
+    font-size: 16px;
+    color: #0f172a;
     letter-spacing: -0.01em;
 }
 
@@ -124,21 +106,22 @@
 }
 
 .properties-drawer__meta-label {
-    color: var(--text-muted);
-    font-weight: var(--weight-medium);
-    font-size: 11px;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 10px;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    letter-spacing: 0.02em;
 }
 
 .properties-drawer__meta-value {
-    color: var(--text-main);
-    font-weight: var(--weight-semibold);
+    color: #1e293b;
+    font-weight: 600;
     font-size: 11px;
     background: var(--bg-card);
     border: 1px solid var(--border-medium);
-    padding: 1px 6px;
+    padding: 2px 8px;
     border-radius: var(--radius-xs);
+    font-family: var(--font-mono);
 }
 
 /* --- Form Improvements --- */
@@ -151,10 +134,11 @@
 }
 
 .properties-drawer__form .ant-form-item-label>label {
-    font-weight: var(--weight-semibold) !important;
+    font-weight: 600 !important;
     font-size: 12px !important;
-    color: var(--text-muted) !important;
+    color: #475569 !important;
     height: auto !important;
+    letter-spacing: -0.01em;
 }
 
 .properties-drawer__divider {
@@ -164,19 +148,27 @@
 }
 
 .properties-drawer__section-title {
-    margin-top: 0 !important;
-    margin-bottom: 12px !important;
-    font-size: 11px !important;
-    font-weight: var(--weight-bold) !important;
-    color: var(--text-subtle) !important;
-
-    letter-spacing: 0.08em;
+    margin-top: 24px !important;
+    margin-bottom: 16px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #475569 !important;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-/* --- Subsection Labels --- */
+.properties-drawer__section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-light);
+}
+
 .properties-drawer__subsection-label {
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: 600;
     color: #334155;
     margin-bottom: 10px !important;
     display: block;
@@ -194,8 +186,8 @@
 
 .properties-drawer__tabs .ant-tabs-tab-btn {
     font-size: 13px !important;
-    font-weight: var(--weight-semibold) !important;
-    color: var(--text-muted) !important;
+    font-weight: 500 !important;
+    color: #64748b !important;
 }
 
 .properties-drawer__tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
@@ -301,4 +293,23 @@
 .ant-btn-dashed:hover {
     color: var(--accent) !important;
     border-color: var(--accent) !important;
+}
+
+/* --- Decision Rules Card --- */
+.decision-props__rule-card {
+    border-radius: var(--radius-sm) !important;
+    border: 1px solid #fed7aa !important; /* Subtle orange border */
+    background: #fffcf9 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+    margin-bottom: 16px !important;
+}
+
+.decision-props__rule-card .ant-card-head {
+    background: #fff8f1 !important;
+    border-bottom: 1px solid #ffedd5 !important;
+    min-height: 40px !important;
+}
+
+.decision-props__rule-card .ant-card-body {
+    padding: 12px !important;
 }
