@@ -1,16 +1,6 @@
-@keyframes edge-dash-move {
-    from {
-        stroke-dashoffset: 100;
-    }
-    to {
-        stroke-dashoffset: 0;
-    }
-}
-
-/* Apply animation to all custom deletable edges */
+/* Apply stroke styles to all custom deletable edges */
 .react-flow__edge-path {
     stroke-dasharray: 5, 5;
-    animation: edge-dash-move 3s linear infinite;
 }
 
 .deletable-edge__wrapper {
@@ -57,11 +47,11 @@
     z-index: 5;
 }
 
-.react-flow__edge:hover + .react-flow__edgelabel-renderer .deletable-edge__btn,
-.deletable-edge__wrapper:hover .deletable-edge__btn {
-    opacity: 1;
-    transform: scale(1);
-    margin-left: 4px; /* Move out on hover */
+/* Button is hidden by default; React state adds --visible when path is hovered */
+.deletable-edge__btn--visible {
+    opacity: 1 !important;
+    transform: scale(1) !important;
+    margin-left: 4px !important;
 }
 
 .deletable-edge__btn:hover {

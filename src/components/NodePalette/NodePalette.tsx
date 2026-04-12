@@ -48,8 +48,7 @@ const TreeTitle: React.FC<{ node: any; isLeaf?: boolean }> = ({ node, isLeaf }) 
             </div>
             <div className="nli-content">
                 <span className="nli-label">{node.label}</span>
-            </div>
-            <div className="nli-drag-hint">⠿</div>
+            </div>            
         </div>
     </div>
   );

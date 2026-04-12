@@ -30,8 +30,7 @@ export default function DecisionNodeItem() {
                 </div>
                 <div className="nli-content">
                     <span className="nli-label">Decision Node</span>
-                </div>
-                <div className="nli-drag-hint">⠿</div>
+                </div>                
             </motion.div>
         </div>
     );

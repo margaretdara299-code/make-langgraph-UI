@@ -184,11 +184,41 @@
     background: #aaa !important;
 }
 
-/* React Flow overrides for positioned handles inside rows */
-.decision-node__row .react-flow__handle {
-    position: relative !important;
-    top: auto !important;
-    right: -7px !important;
-    transform: rotate(45deg) !important;
-    margin-left: auto;
+/* ── Bottom source handles for DecisionNode ──
+ *
+ * IMPORTANT: handles are ALWAYS VISIBLE (opacity: 1).
+ *
+ * The CSS :hover pattern (opacity 0 → 1 on card hover) does NOT work reliably
+ * inside a React Flow canvas because the canvas SVG layer sits on top of the
+ * node DOM and intercepts pointer events before :hover fires on the card div.
+ *
+ * This matches the official @xyflow/react examples — handles are always shown.
+ * Only VISUAL properties are set here (size, color, shape).
+ * NEVER override: position, bottom, top, left, right, transform, pointer-events.
+ */
+.decision-node__source-handle {
+    width: 10px !important;
+    height: 10px !important;
+    border-radius: 2px !important;
+    background: #fff !important;
+    border: 2px solid var(--color-node-decision) !important;
+    box-shadow: 0 0 4px rgba(245, 158, 11, 0.4) !important;
+    opacity: 1 !important;           /* always visible — see note above */
+    transition: background 0.15s !important;
+    cursor: crosshair;
 }
+
+.decision-node__source-handle:hover {
+    background: var(--color-node-decision) !important;
+}
+
+/* Default handle — grey to signal "fallback path" */
+.decision-node__source-handle--default {
+    border-color: #aaa !important;
+    box-shadow: none !important;
+}
+
+.decision-node__source-handle--default:hover {
+    background: #aaa !important;
+}
+

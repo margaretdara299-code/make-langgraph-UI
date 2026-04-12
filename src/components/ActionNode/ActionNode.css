@@ -3,179 +3,198 @@
  * Matches the user reference design: Horizontal layout, specific colors, and animations.
  */
 
-@keyframes activeGlow { 
-    0%, 100% { opacity: 0.5; } 
-    50% { opacity: 1; } 
+@keyframes activeGlow {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
-@keyframes nodePop { 
-    0% { transform: scale(0.85); opacity: 0; } 
-    60% { transform: scale(1.04); } 
-    100% { transform: scale(1); opacity: 1; } 
+@keyframes nodePop {
+  0% {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .modern-node-card:not(.dragging):hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
 }
 
 /* Disable transitions and lift-effects entirely while dragging for zero latency */
 .react-flow__node.dragging .modern-node-card {
-    transition: none !important;
-    transform: none !important;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15) !important;
+  transition: none !important;
+  transform: none !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15) !important;
 }
 
 /* Base Card */
 .modern-node-card {
-    position: relative;
-    width: 260px;
-    border-radius: 12px;
-    border-width: 1.5px;
-    border-style: solid;
-    padding: 12px 14px;
-    cursor: pointer;
-    user-select: none;
-    transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
-    animation: nodePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    font-family: 'Inter', -apple-system, system-ui, sans-serif;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  position: relative;
+  width: auto;
+  border-radius: 12px;
+  border-width: 1.5px;
+  border-style: solid;
+  padding: 12px 14px;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease;
+  animation: nodePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  font-family:
+    "Inter",
+    -apple-system,
+    system-ui,
+    sans-serif;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
-
 
 /* Hidden Delete Button shown on hover */
 .modern-node-delete {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    width: 22px;
-    height: 22px;
-    background: #ff4d4f;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    line-height: 1;
-    cursor: pointer;
-    opacity: 0;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 8px rgba(255, 77, 79, 0.25);
-    z-index: 10;
-    border: 2px solid #fff;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 22px;
+  height: 22px;
+  background: #ff4d4f;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(255, 77, 79, 0.25);
+  z-index: 10;
+  border: 2px solid #fff;
 }
 .modern-node-card:hover .modern-node-delete {
-    opacity: 1;
+  opacity: 1;
 }
 .modern-node-delete:hover {
-    transform: scale(1.1);
-    background: #cf1322;
+  transform: scale(1.1);
+  background: #cf1322;
 }
 
 /* Layout */
 .modern-node-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 .modern-node-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex: 1;
-    min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
 }
 
 .modern-node-right {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 /* Elements */
 .modern-node-icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    flex-shrink: 0;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
-
 .modern-node-text-col {
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
 .modern-node-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: #1a1a1a;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    letter-spacing: -0.01em;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a1a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
 }
 
 .modern-node-sub {
-    font-size: 11px;
-    font-weight: 400;
-    color: #64748b;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  font-size: 11px;
+  font-weight: 400;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .modern-node-badge {
-    font-size: 10px;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 6px;
-    color: #fff;
-    white-space: nowrap;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  color: #fff;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .modern-node-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    background-color: var(--node-stroke);
-    box-shadow: 0 0 8px currentColor;
-    opacity: 0.6;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background-color: var(--node-stroke);
+  box-shadow: 0 0 8px currentColor;
+  opacity: 0.6;
 }
 
 /* Override React Flow Handles */
 .modern-node-handle {
-    width: 10px !important;
-    height: 10px !important;
-    background: #fff !important;
-    border: 2px solid currentColor !important;
-    opacity: 0;
-    transition: all 0.2s ease;
+  width: 10px !important;
+  height: 10px !important;
+  background: #fff !important;
+  border: 2px solid currentColor !important;
+  opacity: 0;
+  transition: all 0.2s ease;
 }
 
 .modern-node-card:hover .modern-node-handle {
-    opacity: 1;
+  opacity: 1;
 }
 
 .modern-node-handle:hover {
-    transform: scale(1.2);
-    box-shadow: 0 0 8px rgba(0,0,0,0.1);
-}
+  transform: scale(1.2);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}

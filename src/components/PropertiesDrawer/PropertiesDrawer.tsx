@@ -114,6 +114,20 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             return;
         }
 
+        // For end nodes
+        if (selectedNode.type === 'end') {
+            const stored = versionId ? loadGraphFromStorage(versionId) : null;
+            const ed = (stored?.nodes?.[selectedNode.id]?.data || selectedNode.data) as any;
+            form.setFieldsValue({
+                label: ed.label || 'End',
+                response_format: ed.response_format || 'auto',
+                custom_message: ed.custom_message || '',
+                fail_status_code: ed.fail_status_code || 500,
+                fail_message: ed.fail_message || '',
+            });
+            return;
+        }
+
         // For decision nodes: read from localStorage first, fallback to node.data
         if (selectedNode.type === 'decision') {
             const stored = versionId ? loadGraphFromStorage(versionId) : null;
@@ -260,6 +274,18 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                         ...currentNode.data,
                         label: newValues.label || 'Start',
                         initial_state: newValues.initial_state || [],
+                    },
+                };
+            } else if (selectedNode.type === 'end') {
+                updatedNode = {
+                    ...currentNode,
+                    data: {
+                        ...currentNode.data,
+                        label: newValues.label || 'End',
+                        response_format: newValues.response_format,
+                        custom_message: newValues.custom_message,
+                        fail_status_code: newValues.fail_status_code,
+                        fail_message: newValues.fail_message,
                     },
                 };
             } else if (selectedNode.type === 'subflow') {
@@ -531,8 +557,9 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             const isConnector = selectedNode.type === 'connector';
             const isStart     = selectedNode.type === 'start';
             const isDecision  = selectedNode.type === 'decision';
+            const isEnd       = selectedNode.type === 'end';
 
-            const activeColor = isDecision ? '#f59e0b' : (isStart ? '#10b981' : 'var(--accent)');
+            const activeColor = isDecision ? '#f59e0b' : ((isStart || isEnd) ? '#10b981' : 'var(--accent)');
 
             if (isLoadingAction) {
                 return (
@@ -581,21 +608,24 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                 <span className="properties-drawer__meta-value">
                                                     {isStart    ? 'Workflow Entry'
                                                     : isDecision ? 'Router'
+                                                    : isEnd      ? 'Workflow Exit'
                                                     : isSubFlow  ? 'Group'
                                                     : (nodeData?.category || 'Action')}
                                                 </span>
                                             </div>
                                             <div className="properties-drawer__meta-item">
-                                                <span className="properties-drawer__meta-label">ID</span>
+                                                <span className="properties-drawer__meta-label">Key</span>
                                                 <span className="properties-drawer__meta-value" style={{ fontFamily: 'monospace' }}>
-                                                    {selectedNode.id}
+                                                    {selectedNode.id} 
+                                                   {/* <pre>{JSON.stringify(nodeData,null)}</pre> */}
                                                 </span>
                                             </div>
                                             <div className="properties-drawer__meta-item">
-                                                <span className="properties-drawer__meta-label">Engine</span>
+                                                <span className="properties-drawer__meta-label">Capability</span>
                                                 <div className={`properties-drawer__capability-badge badge-${isDecision ? 'decision' : nodeData?.capability}`}>
                                                     {isStart    ? 'START'
                                                     : isDecision ? 'DECISION'
+                                                    : isEnd      ? 'END'
                                                     : isSubFlow  ? 'STRUCTURE'
                                                     : (nodeData?.capability || 'API').toUpperCase()}
                                                 </div>
@@ -635,7 +665,8 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                     <div className="properties-drawer__divider" />
                                                     <div className="properties-drawer__section-title">Initial State Variables</div>
                                                     <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 16, lineHeight: 1.5 }}>
-                                                        Injected as <code>saved_data</code> at the start of every run.
+                                                        State is used to store and pass data between all nodes in a workflow so 
+                                                        they can share and update information.
                                                     </Text>
                                                     <Form.List name="initial_state">
                                                         {(fields, { add, remove }) => (
@@ -698,7 +729,26 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                             className="properties-drawer__form"
                                         >
                                             {isDecision ? (
-                                                <DecisionPropertiesPanel form={form} />
+                                                <DecisionPropertiesPanel form={form} nodes={nodes} />
+                                            ) : isEnd ? (
+                                                <>
+                                                    <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Response Formatting</div>
+                                                    <Form.Item label="Response Format" name="response_format">
+                                                        <Select options={[
+                                                            { label: 'Whatever provider node returned (auto)', value: 'auto' },
+                                                            { label: 'Make response format (custom)', value: 'custom' },
+                                                        ]} />
+                                                    </Form.Item>
+                                                    <Form.Item noStyle shouldUpdate={(prevValues, currentValues) => prevValues.response_format !== currentValues.response_format}>
+                                                        {({ getFieldValue }) => {
+                                                            return getFieldValue('response_format') === 'custom' ? (
+                                                                <Form.Item label="Message / Raw JSON" name="custom_message">
+                                                                    <Input.TextArea rows={6} style={{ fontFamily: 'monospace' }} placeholder="{\n  &quot;status&quot;: &quot;success&quot;\n}" />
+                                                                </Form.Item>
+                                                            ) : null;
+                                                        }}
+                                                    </Form.Item>
+                                                </>
                                             ) : (
                                                 renderNodeConfig(nodeData as CanvasNodeData)
                                             )}
@@ -723,14 +773,33 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                             onValuesChange={handleValuesChange}
                                             className="properties-drawer__form"
                                         >
-                                            <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Fallback Settings</div>
-                                            <Form.Item name="fallback_message" label="Fallback Message">
-                                                <Input.TextArea placeholder="Used if action fails..." rows={4} />
-                                            </Form.Item>
+                                            {isEnd ? (
+                                                <>
+                                                    <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Failure Settings</div>
+                                                    <Text type="secondary" style={{ fontSize: 13, display: 'block', marginBottom: 16 }}>
+                                                        If the workflow fails before naturally reaching an exit, define the error response mapping.
+                                                    </Text>
+                                                    <div className="properties-drawer__flex-row">
+                                                        <Form.Item label="Status Code" name="fail_status_code" className="properties-drawer__flex-item">
+                                                            <Input type="number" placeholder="500" />
+                                                        </Form.Item>
+                                                    </div>
+                                                    <Form.Item label="Failure Message" name="fail_message">
+                                                        <Input.TextArea rows={3} placeholder="Internal Server Error" />
+                                                    </Form.Item>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Fallback Settings</div>
+                                                    <Form.Item name="fallback_message" label="Fallback Message">
+                                                        <Input.TextArea placeholder="Used if action fails..." rows={4} />
+                                                    </Form.Item>
 
-                                            <div className="properties-drawer__divider" />
-                                            <div className="properties-drawer__section-title">State Mapping</div>
-                                            {renderStateManagement()}
+                                                    <div className="properties-drawer__divider" />
+                                                    <div className="properties-drawer__section-title">State Mapping</div>
+                                                    {renderStateManagement()}
+                                                </>
+                                            )}
                                         </Form>
                                     </motion.div>
                                 )

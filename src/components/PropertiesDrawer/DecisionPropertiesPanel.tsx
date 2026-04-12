@@ -36,9 +36,16 @@ const OPERATORS = [
 
 interface DecisionPropertiesPanelProps {
     form: any;
+    nodes?: any[];
 }
 
-export default function DecisionPropertiesPanel({ form }: DecisionPropertiesPanelProps) {
+export default function DecisionPropertiesPanel({ form, nodes = [] }: DecisionPropertiesPanelProps) {
+    // Extract unique output keys from all provided nodes
+    const availableOutputKeys = Array.from(new Set(
+        nodes
+            .map(n => n.data?.configurations_json?.output_key)
+            .filter(key => typeof key === 'string' && key.trim() !== '')
+    )).map(key => ({ label: key, value: key }));
     return (
         <div className="decision-props">
 
@@ -95,48 +102,109 @@ export default function DecisionPropertiesPanel({ form }: DecisionPropertiesPane
                                 <Form.List name={[fieldName, 'conditions']}>
                                     {(condFields, { add: addCond, remove: removeCond }) => (
                                         <div style={{ paddingLeft: 8, borderLeft: '2px solid rgba(245,158,11,0.2)' }}>
-                                            {condFields.map((cField) => (
-                                                <div key={cField.key} style={{ display: 'flex', gap: 6, marginBottom: 8, alignItems: 'flex-start' }}>
-                                                    <Form.Item 
-                                                        {...cField} 
-                                                        name={[cField.name, 'field']} 
-                                                        style={{ margin: 0, flex: 2 }}
-                                                        rules={[{ required: true, message: 'Req' }]}
-                                                    >
-                                                        <Input placeholder="e.g. data.age" size="small" />
-                                                    </Form.Item>
-                                                    <Form.Item 
-                                                        {...cField} 
-                                                        name={[cField.name, 'operator']} 
-                                                        style={{ margin: 0, flex: 2 }}
-                                                        initialValue="=="
-                                                    >
-                                                        <Select options={OPERATORS} size="small" />
-                                                    </Form.Item>
+                                            {condFields.map(({ key, name: cName, ...restCField }) => (
+                                                <div key={key} style={{ display: 'flex', flexDirection: 'column', gap: 0, marginBottom: 12, paddingBottom: 12, borderBottom: '1px dashed var(--border-color)' }}>
+                                                    <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
+                                                        <Form.Item 
+                                                            {...restCField} 
+                                                            name={[cName, 'source_type']} 
+                                                            label={<span style={{ fontSize: 11, color: 'var(--text-subtle)' }}>Condition Source</span>}
+                                                            style={{ marginBottom: 8, flex: 1 }}
+                                                            initialValue="custom"
+                                                        >
+                                                            <Select size="small" options={[
+                                                                { label: 'State Output (Node Key)', value: 'output_key' },
+                                                                { label: 'Custom Parameter', value: 'custom' },
+                                                            ]} />
+                                                        </Form.Item>
+                                                        <Button type="text" size="small" danger icon={<DeleteOutlined />} onClick={() => removeCond(cName)} style={{ marginTop: 22, padding: '0 4px' }} />
+                                                    </div>
+
                                                     <Form.Item
                                                         noStyle
                                                         shouldUpdate={(prev, cur) =>
-                                                            prev.rules?.[fieldName]?.conditions?.[cField.name]?.operator !== cur.rules?.[fieldName]?.conditions?.[cField.name]?.operator
+                                                            prev.rules?.[fieldName]?.conditions?.[cName]?.source_type !== cur.rules?.[fieldName]?.conditions?.[cName]?.source_type
                                                         }
                                                     >
                                                         {({ getFieldValue }) => {
-                                                            const op = getFieldValue(['rules', fieldName, 'conditions', cField.name, 'operator']);
-                                                            const noVal = op === 'exists' || op === 'is_true' || op === 'is_false';
-                                                            return !noVal ? (
-                                                                <Form.Item 
-                                                                    {...cField} 
-                                                                    name={[cField.name, 'value']} 
-                                                                    style={{ margin: 0, flex: 2 }}
-                                                                >
-                                                                    <Input placeholder="Val" size="small" />
-                                                                </Form.Item>
-                                                            ) : <div style={{ flex: 2 }}></div>;
+                                                            const sType = getFieldValue(['rules', fieldName, 'conditions', cName, 'source_type']) || 'custom';
+                                                            
+                                                            return sType === 'output_key' ? (
+                                                                <div style={{ display: 'flex', gap: 6 }}>
+                                                                    <Form.Item 
+                                                                        {...restCField} 
+                                                                        name={[cName, 'root_key']} 
+                                                                        label={<span style={{ fontSize: 11, color: 'var(--text-subtle)' }}>Variable Output</span>}
+                                                                        style={{ marginBottom: 8, flex: 1 }}
+                                                                        rules={[{ required: true, message: 'Req' }]}
+                                                                    >
+                                                                        <Select 
+                                                                            placeholder="Output Key" 
+                                                                            size="small" 
+                                                                            options={availableOutputKeys}
+                                                                            showSearch
+                                                                        />
+                                                                    </Form.Item>
+                                                                    <Form.Item 
+                                                                        {...restCField} 
+                                                                        name={[cName, 'path_suffix']} 
+                                                                        label={<span style={{ fontSize: 11, color: 'var(--text-subtle)' }}>Sub Path (Opt)</span>}
+                                                                        style={{ marginBottom: 8, flex: 1 }}
+                                                                    >
+                                                                        <Input placeholder="e.g. data.value" size="small" />
+                                                                    </Form.Item>
+                                                                </div>
+                                                            ) : (
+                                                                <div style={{ display: 'flex', gap: 6 }}>
+                                                                    <Form.Item 
+                                                                        {...restCField} 
+                                                                        name={[cName, 'field']} 
+                                                                        label={<span style={{ fontSize: 11, color: 'var(--text-subtle)' }}>Variable Path</span>}
+                                                                        style={{ marginBottom: 8, flex: 1 }}
+                                                                        rules={[{ required: true, message: 'Req' }]}
+                                                                    >
+                                                                        <Input placeholder="e.g. data.age" size="small" />
+                                                                    </Form.Item>
+                                                                </div>
+                                                            );
                                                         }}
                                                     </Form.Item>
-                                                    <Button type="text" size="small" danger icon={<DeleteOutlined />} onClick={() => removeCond(cField.name)} style={{ padding: '0 4px', marginTop: 2 }} />
+
+                                                    <div style={{ display: 'flex', gap: 6 }}>
+                                                        <Form.Item 
+                                                            {...restCField} 
+                                                            name={[cName, 'operator']} 
+                                                            label={<span style={{ fontSize: 11, color: 'var(--text-subtle)' }}>Operator</span>}
+                                                            style={{ margin: 0, flex: 1 }}
+                                                            initialValue="=="
+                                                        >
+                                                            <Select options={OPERATORS} size="small" />
+                                                        </Form.Item>
+                                                        <Form.Item
+                                                            noStyle
+                                                            shouldUpdate={(prev, cur) =>
+                                                                prev.rules?.[fieldName]?.conditions?.[cName]?.operator !== cur.rules?.[fieldName]?.conditions?.[cName]?.operator
+                                                            }
+                                                        >
+                                                            {({ getFieldValue }) => {
+                                                                const op = getFieldValue(['rules', fieldName, 'conditions', cName, 'operator']);
+                                                                const noVal = op === 'exists' || op === 'is_true' || op === 'is_false';
+                                                                return !noVal ? (
+                                                                    <Form.Item 
+                                                                        {...restCField} 
+                                                                        name={[cName, 'value']} 
+                                                                        label={<span style={{ fontSize: 11, color: 'var(--text-subtle)' }}>Value</span>}
+                                                                        style={{ margin: 0, flex: 1 }}
+                                                                    >
+                                                                        <Input placeholder="Val" size="small" />
+                                                                    </Form.Item>
+                                                                ) : <div style={{ flex: 1 }}></div>;
+                                                            }}
+                                                        </Form.Item>
+                                                    </div>
                                                 </div>
                                             ))}
-                                            <Button type="dashed" size="small" onClick={() => addCond({ field: '', operator: '==', value: '' })} icon={<PlusOutlined />} block>
+                                            <Button type="dashed" size="small" onClick={() => addCond({ source_type: 'custom', field: '', root_key: '', path_suffix: '', operator: '==', value: '' })} icon={<PlusOutlined />} block>
                                                 Add Condition
                                             </Button>
                                         </div>

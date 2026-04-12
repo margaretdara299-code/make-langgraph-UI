@@ -23,5 +23,7 @@ export const NODE_TYPES = {
 };
 
 export const EDGE_TYPES = {
-    default: DeletableEdge,
+    default:    DeletableEdge,
+    smoothstep: DeletableEdge,   // uses our custom renderer with smooth-step path
 };
+

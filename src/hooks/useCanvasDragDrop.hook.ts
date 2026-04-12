@@ -107,6 +107,27 @@ export default function useCanvasDragDrop(
                 return;
             }
 
+            // ── Handle End node drop ──
+            if (data.nodeType === 'end') {
+                const newNode: Node = {
+                    id: getNextNodeId(),
+                    type: 'end',
+                    position,
+                    data: {
+                        label: data.label || 'End',
+                        category: data.category || 'structure',
+                        icon: data.icon || 'Square',
+                        response_format: 'auto',
+                        fail_response_format: 'json',
+                        fail_status_code: 500,
+                        fail_message: '',
+                    } as any,
+                };
+                setNodes((nds) => [...nds, newNode]);
+                if (versionId) upsertNodeInStorage(versionId, newNode.id, newNode);
+                return;
+            }
+
             // ── Handle Decision node drop ──
             if (data.nodeType === 'decision') {
                 const newNode: Node = {
