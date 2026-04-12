@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&display=swap');
+
 /**
  * Global application styles — CSS reset only.
  * Design tokens are now managed by AntD's ConfigProvider in theme.config.ts.
@@ -5,168 +8,116 @@
  */
 
 :root {
-  /* Colors – Dark Nav */
-  --color-nav-bg: #1a2332;
-  --color-nav-bg-hover: #252f3f;
-  --color-nav-text: #e2e8f0;
-  --color-nav-text-bold: #ffffff;
-  --color-nav-accent: #60a5fa;
-  --color-nav-input-bg: #ffffff;
-  --color-nav-input-border: #334155;
-  --color-nav-input-text: #1e293b;
-  --color-nav-input-placeholder: #94a3b8;
-  --color-nav-badge-bg: #334155;
-  --color-nav-badge-text: #94a3b8;
+  /* --- Typography --- */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: var(--font-sans);
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
 
-  /* Colors – Surfaces */
-  --color-bg-white: #ffffff;
-  --color-bg-hover: #f5f7fa;
-  --color-bg-active: #dbeafe;
-  --color-bg-footer: #fafbfc;
-  --color-bg-canvas: #f8fafc;
-  
-  /* Semi-transparent surface layering */
-  --color-surface-element: rgba(0, 0, 0, 0.04);
-  --color-surface-element-hover: rgba(0, 0, 0, 0.08);
-  --color-surface-border: rgba(0, 0, 0, 0.05);
-  --color-surface-border-strong: rgba(0, 0, 0, 0.1);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
 
-  /* Colors - Text */
-  --color-text-white: #ffffff;
+  --text-xs: 11px;
+  --text-sm: 14px;
+  --text-base: 14px;
+  --text-lg: 16px;
+  --text-xl: 18px;
+  --text-2xl: 24px;
+  --text-3xl: 32px;
 
-  /* Colors – Brand */
-  --color-primary: #3b82f6;
-  --color-primary-rgb: 59, 130, 246;
-  --color-primary-hover: #2563eb;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
 
-  /* Colors - Text / Slate */
-  --color-text-white: #ffffff;
-  --color-text-secondary: #64748b;
-  --color-slate-400-rgb: 148, 163, 184;
+  /* --- Spacing System (8px base) --- */
+  --space-05: 4px;
+  --space-1: 8px;
+  --space-1-5: 12px;
+  --space-2: 16px;
+  --space-2-5: 20px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 40px;
+  --space-6: 48px;
+  --space-8: 64px;
 
-  /* Colors - Status */
+  /* --- Core Palette --- */
+  --bg-page: #f9fafb;
+  --bg-card: #ffffff;
+  --bg-sidebar: #ffffff;
+  --bg-header: rgba(255, 255, 255, 0.85);
+
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-blur: blur(20px);
+
+  --accent: #4f46e5;
+  --accent-soft: rgba(79, 70, 229, 0.08);
+  --accent-hover: #4338ca;
+  --accent-contrast: #ffffff;
+
+  --text-main: #111827;
+  --text-muted: #4b5563;
+  --text-subtle: #9ca3af;
+  --text-inverse: #ffffff;
+
+  --border-light: #f3f4f6;
+  --border-medium: #e5e7eb;
+  --border-strong: #d1d5db;
+
+  /* --- Semantic Colors --- */
   --color-success: #10b981;
+  --color-success-bg: #ecfdf5;
   --color-success-text: #047857;
+
   --color-error: #ef4444;
-  --color-error-rgb: 239, 68, 68;
-  --color-error-hover: #d32f2f;
+  --color-error-bg: #fef2f2;
   --color-error-text: #b91c1c;
 
-  /* Colors - Node Types */
+  --color-warning: #f59e0b;
+  --color-warning-bg: #fffbeb;
+  --color-warning-text: #b45309;
+
+  --color-info: #3b82f6;
+  --color-info-bg: #eff6ff;
+  --color-info-text: #1d4ed8;
+
+  /* --- Node-specific semantic tokens (preserving original concept) --- */
   --color-node-trigger: #8b5cf6;
   --color-node-trigger-bg: #f3e8ff;
   --color-node-trigger-text: #4c1d95;
   --color-node-connector: #0ea5e9;
   --color-node-connector-bg: #e0f2fe;
   --color-node-connector-text: #0369a1;
-  --color-node-start: #52c41a;
-  --color-node-start-bg: rgba(82, 196, 26, 0.2);
+  --color-node-common: #722ed1;
+  --color-node-common-bg: #f9f0ff;
+  --color-node-common-text: #531dab;
 
-  /* Colors - Capability Badges */
-  --color-badge-bg-api: #e0f2fe;
-  --color-badge-text-api: #0369a1;
-  --color-badge-bg-ai: #f3e8ff;
-  --color-badge-text-ai: #6b21a8;
-  --color-badge-bg-rpa: #ffedd5;
-  --color-badge-text-rpa: #c2410c;
-  --color-badge-bg-human: #dcfce7;
-  --color-badge-text-human: #15803d;
-  --color-badge-bg-rules: #fef08a;
-  --color-badge-text-rules: #854d0e;
-  --color-badge-bg-database: #dcfce7;
-  --color-badge-text-database: #15803d;
-  --color-badge-bg-message: #ccfbf1;
-  --color-badge-text-message: #0f766e;
-  --color-badge-bg-default: #f1f5f9;
-  --color-badge-text-default: #475569;
+  /* --- Elevation & Radius --- */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
 
-  /* Colors – Borders */
-  --color-border: #e2e8f0;
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
-  /* Shadows */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --shadow-sm-strong: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.14);
-  /* ── Turbo Mode Theme (Adaptive) ── */
-  --turbo-bg-tint: rgba(255, 255, 255, 0.95);
-  --turbo-border-radius: 10px;
-  --turbo-font-mono: 'Fira Code', 'Fira Mono', monospace;
-  --turbo-glow-primary: rgba(42, 138, 246, 0.4);
-  --turbo-glow-secondary: rgba(233, 42, 103, 0.4);
-
-  /* Base Colors */
-  --color-base-black: #000000;
-  --color-base-white: #ffffff;
-  --color-base-black-rgb: 0, 0, 0;
-  --color-base-white-rgb: 255, 255, 255;
-
-  /* Semantic Node Tokens */
-  --color-surface-white-glass: rgba(var(--color-base-white-rgb), 0.4);
-  --color-surface-white-glass-less: rgba(var(--color-base-white-rgb), 0.3);
-  --color-surface-white-subtle: rgba(var(--color-base-white-rgb), 0.1);
-  --color-node-shadow: rgba(var(--color-base-black-rgb), 0.05);
-  --color-node-shadow-strong: rgba(var(--color-base-black-rgb), 0.1);
-  --color-node-shadow-hover: rgba(var(--color-base-black-rgb), 0.12);
-  --color-node-shadow-glow: rgba(var(--color-base-black-rgb), 0.08);
-
-  /* Node Palette Design Tokens */
-  --node-palette-root-bg: #e8edf3;
-  --node-palette-child-bg: #f3f5f8;
-  --node-palette-content-bg: #ffffff;
-  --node-palette-border-subtle: rgba(0, 0, 0, 0.05);
-  --node-palette-common-color: #722ed1;
-  --node-palette-actions-color: #fa8c16;
-  --node-palette-connectors-color: #1890ff;
+  /* --- Motion --- */
+  --motion-fast: 120ms;
+  --motion-base: 180ms;
+  --motion-slow: 240ms;
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
 }
 
-* {
-    scrollbar-color: #a6a6a6;
-    scrollbar-width: auto;
-    scrollbar-color: beige !important;
-}
-
-::-webkit-scrollbar {
-    height: 4px !important;
-    width: 4px;
-    width: 4px !important;
-}
-
-::-webkit-scrollbar-track {
-    background: #fff;
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: #cac9c9;
-    border: 1px solid #e4e2e2;
-    border-radius: 10px;
-}
-
-/* ── Animations ── */
-@keyframes spin {
-  from {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
-}
-
-@keyframes handle-pulse-turbo {
-  0% {
-    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2);
-  }
-  70% {
-    box-shadow: 0 0 0 8px rgba(0, 0, 0, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-  }
-}
-
-/* ── CSS Reset ── */
-*,
-*::before,
-*::after {
+/* --- Base Styles --- */
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -178,43 +129,57 @@ html {
 }
 
 body {
-  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font-sans);
+  background-color: var(--bg-page);
+  color: var(--text-main);
   line-height: 1.5;
+  font-size: var(--text-base);
 }
 
-/* ── Global Utilities ── */
-
-.badge-api {
-  background: var(--color-badge-bg-api);
-  color: var(--color-badge-text-api);
+/* --- Scrollbar --- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-.badge-ai {
-  background: var(--color-badge-bg-ai);
-  color: var(--color-badge-text-ai);
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.badge-rpa {
-  background: var(--color-badge-bg-rpa);
-  color: var(--color-badge-text-rpa);
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: var(--radius-full);
 }
 
-.badge-human {
-  background: var(--color-badge-bg-human);
-  color: var(--color-badge-text-human);
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-subtle);
 }
 
-.badge-rules {
-  background: var(--color-badge-bg-rules);
-  color: var(--color-badge-text-rules);
+/* --- Global Utilities --- */
+.glass {
+  backdrop-filter: blur(12px);
+  background: var(--bg-header);
 }
 
-.badge-message {
-  background: var(--color-badge-bg-message);
-  color: var(--color-badge-text-message);
+.card-elevated {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--motion-base) var(--ease-out), box-shadow var(--motion-base) var(--ease-out), border-color var(--motion-base) var(--ease-out);
 }
 
-.badge-default {
-  background: var(--color-badge-bg-default);
-  color: var(--color-badge-text-default);
+.card-elevated:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-medium);
 }
+
+/* --- Semantic Badge Classes (Legacy Support) --- */
+.badge-api { background: var(--color-node-connector-bg); color: var(--color-node-connector-text); }
+.badge-ai { background: var(--color-node-trigger-bg); color: var(--color-node-trigger-text); }
+.badge-rpa { background: #ffedd5; color: #c2410c; }
+.badge-human { background: #dcfce7; color: #15803d; }
+.badge-rules { background: #fef08a; color: #854d0e; }
+.badge-message { background: #ccfbf1; color: #0f766e; }
+.badge-default { background: var(--border-light); color: var(--text-muted); }

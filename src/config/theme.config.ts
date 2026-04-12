@@ -9,11 +9,11 @@ import type { ThemeConfig } from 'antd';
 export const antdTheme: ThemeConfig = {
     token: {
         // Brand colors
-        colorPrimary: '#3b82f6',
+        colorPrimary: '#4f46e5',
         colorSuccess: '#10b981',
         colorWarning: '#f59e0b',
         colorError: '#ef4444',
-        colorInfo: '#3b82f6',
+        colorInfo: '#4f46e5',
 
         // Text colors
         colorText: '#1e293b',
@@ -27,7 +27,7 @@ export const antdTheme: ThemeConfig = {
         colorBorderSecondary: '#f0f0f0',
 
         // Typography
-        fontFamily: "'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
         fontSize: 14,
 
         // Borders

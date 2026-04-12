@@ -1,10 +1,11 @@
 /**
- * SkillCard — displays a single skill as a card in the Skills Library grid.
- * Includes a dropdown action menu for Edit, Test, Publish, Archive, Delete.
+ * SkillCard — Premium, high-density card architectural pattern.
+ * Uses div-based layout and framer-motion for industry-level feel.
  */
 
-import { Card, Tag, Typography, Space, Tooltip, Dropdown } from 'antd';
+import { Tag, Typography, Space, Tooltip, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
+import { motion } from 'framer-motion';
 import {
     ClockCircleOutlined,
     BranchesOutlined,
@@ -31,71 +32,76 @@ export default function SkillCard({ skill, onClick, onAction }: SkillCardProps) 
     };
 
     return (
-        <Card
-            hoverable
-            className="skill-card"
+        <motion.div
+            className="skill-card-premium"
             onClick={onClick}
+            whileHover={{ y: -4, boxShadow: 'var(--shadow-md)', borderColor: 'var(--accent)' }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
         >
-            <div className="skill-card__header">
-                <div className="skill-card__header-left">
+            <div className="skill-card-header">
+                <div className="header-badges">
                     <StatusPill status={skill.status} />
-                    <Tag color="blue">{skill.environment.toUpperCase()}</Tag>
+                    <div className="env-badge">{skill.environment.toUpperCase()}</div>
                 </div>
+                
                 <Dropdown
                     menu={{ items: getMenuItems(skill.status, skill.id, skill.latestVersionId), onClick: handleMenuClick }}
                     trigger={['click']}
                     placement="bottomRight"
                 >
-                    <MoreOutlined
-                        className="skill-card__actions-btn"
+                    <div 
+                        className="card-actions-trigger"
                         onClick={(e) => e.stopPropagation()}
-                    />
+                    >
+                        <MoreOutlined />
+                    </div>
                 </Dropdown>
             </div>
 
-            <Text strong className="skill-card__name">{skill.name}</Text>
-            <Text type="secondary" className="skill-card__key">{skill.skillKey}</Text>
+            <div className="skill-card-body">
+                <Text strong className="skill-name">{skill.name}</Text>
+                <div className="skill-key-badge">{skill.skillKey}</div>
 
-            <Paragraph
-                type="secondary"
-                className="skill-card__description"
-                ellipsis={{ rows: 2 }}
-            >
-                {skill.description}
-            </Paragraph>
-
-            <div className="skill-card__meta">
-                <Space size={4}>
-                    <TagOutlined className="skill-card__meta-icon" />
-                    <Text type="secondary">{skill.category}</Text>
-                </Space>
-                <Space size={4}>
-                    <BranchesOutlined className="skill-card__meta-icon" />
-                    <Tag color="geekblue" bordered={false} className="skill-card__version-tag">
-                        v{skill.version || '1.0.0'}
-                    </Tag>
-                </Space>
+                <Paragraph
+                    className="skill-description"
+                    ellipsis={{ rows: 2 }}
+                >
+                    {skill.description}
+                </Paragraph>
             </div>
 
-            <div className="skill-card__footer">
+            <div className="skill-card-meta">
+                <div className="meta-item">
+                    <TagOutlined className="meta-icon" />
+                    <span>{skill.category}</span>
+                </div>
+                <div className="meta-item">
+                    <BranchesOutlined className="meta-icon" />
+                    <span className="version-text">v{skill.version || '1.0.0'}</span>
+                </div>
+            </div>
+
+            <div className="skill-card-footer">
                 <Tooltip title={`Last updated: ${updatedDate}`}>
-                    <Space size={4}>
-                        <ClockCircleOutlined className="skill-card__meta-icon" />
-                        <Text type="secondary" className="skill-card__date">{updatedDate}</Text>
-                    </Space>
+                    <div className="updated-date">
+                        <ClockCircleOutlined className="meta-icon" />
+                        <span>{updatedDate}</span>
+                    </div>
                 </Tooltip>
 
-                <div className="skill-card__tags">
+                <div className="footer-tags">
                     {skill.tags.slice(0, 2).map((tag) => (
-                        <Tag key={tag} className="skill-card__tag">{tag}</Tag>
+                        <div key={tag} className="mini-tag">{tag}</div>
                     ))}
                     {skill.tags.length > 2 && (
                         <Tooltip title={skill.tags.slice(2).join(', ')}>
-                            <Tag className="skill-card__tag">+{skill.tags.length - 2}</Tag>
+                            <div className="mini-tag count">+{skill.tags.length - 2}</div>
                         </Tooltip>
                     )}
                 </div>
             </div>
-        </Card>
+        </motion.div>
     );
 }

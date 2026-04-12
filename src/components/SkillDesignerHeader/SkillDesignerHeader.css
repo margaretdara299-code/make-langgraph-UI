@@ -1,47 +1,344 @@
 /**
- * SkillDesignerHeader styles.
- * Sub-header sits flush under the global MainLayout header.
+ * SkillDesignerHeader.css
+ * High-fidelity, production-ready polish for the builder header.
+ * Focusing on hierarchy: Skills (quiet) -> Skill Name (strong) -> v1.0.1 (secondary) -> Status (compact)
  */
 
-.skill-designer-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 24px;
-    background: var(--color-bg-container);
-    border-bottom: 1px solid var(--color-border);
-    box-shadow: var(--shadow-sm);
-    z-index: 10;
+.builder-header {
+  height: 64px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  flex-shrink: 0;
+  z-index: 1000;
+  position: sticky;
+  top: 0;
+  width: 100%;
 }
 
-.skill-designer-header__context {
-    display: flex;
-    align-items: center;
+.builder-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 180px;
 }
 
-.skill-designer-header__back-btn {
-    color: var(--color-text-secondary);
-    font-size: 16px;
-    margin-right: 8px;
+.builder-header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.skill-designer-header__back-btn:hover {
-    color: var(--color-primary);
-    background: var(--color-bg-subtle);
+/* --- Breadcrumb System --- */
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Balanced spacing */
 }
 
-.skill-designer-header__titles {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+/* Generic item handling */
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  font-family: var(--font-sans);
+  font-weight: 500;
 }
 
-.skill-designer-header__meta {
-    margin-top: 2px;
-    font-size: 13px;
+/* "Skills" - Parent link (Quieter) */
+.breadcrumb-item.link {
+  font-size: 14px;
+  font-weight: 500;
+  color: #94a3b8; /* Lighter/Quieter */
+  background: none;
+  border: none;
+  padding: 4px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
 }
 
-.skill-designer-header__actions {
-    display: flex;
-    align-items: center;
+.breadcrumb-item.link:hover {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+/* Separator styling (Quiet) */
+.breadcrumb-separator {
+  font-size: 14px;
+  color: #cbd5e1; /* Very light grey */
+  font-weight: 400;
+  user-select: none;
+  margin: 0 -2px; /* Pull items closer to separators */
+}
+
+.breadcrumb-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* "Skill-6" - Current Item (Strongest) */
+.breadcrumb-item.skill-name {
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: transparent;
+  transition: all 0.15s ease;
+  gap: 4px;
+}
+
+.breadcrumb-item.skill-name.clickable {
+  cursor: pointer;
+}
+
+.breadcrumb-item.skill-name.clickable:hover {
+  background: #f1f5f9;
+}
+
+.breadcrumb-item.skill-name .dropdown-arrow {
+  color: #94a3b8; /* Quieter arrow */
+  margin-top: 1px;
+}
+
+/* "v1.0.1" - Version Label (Secondary) */
+.version-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #6366f1; /* Brand accent color */
+  background: #eef2ff; /* Very soft brand wash */
+  padding: 1px 7px;
+  border-radius: 5px;
+  font-family: var(--font-mono); /* Technical feel */
+  letter-spacing: -0.01em;
+  border: 1px solid #e0e7ff;
+}
+
+/* "Draft" - Status Indicator (Compact Badge) */
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  margin-left: 8px;
+  background: #f1f5f9;
+  border: 1px solid transparent;
+}
+
+.status-indicator.published {
+  background-color: #f0fdf4;
+  color: #166534;
+  border-color: #dcfce7;
+  box-shadow: 0 1px 2px rgba(22, 101, 52, 0.05);
+}
+
+.status-indicator.draft {
+  background-color: #fffbeb;
+  color: #92400e;
+  border-color: #fef3c7;
+  box-shadow: 0 1px 2px rgba(146, 64, 14, 0.05);
+}
+
+.status-badge {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.status-dot-mini {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.status-indicator.published .status-dot-mini {
+  box-shadow: 0 0 6px rgba(22, 101, 52, 0.4);
+}
+
+/* --- Dropdown UI Refinement --- */
+
+.builder-dropdown .ant-dropdown-menu {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
+  padding: 4px !important;
+}
+
+.builder-dropdown .ant-dropdown-menu-item {
+  padding: 6px 10px !important;
+  border-radius: 6px !important;
+  margin: 1px 0 !important;
+  font-size: 11px !important;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.builder-dropdown .ant-dropdown-menu-item:last-child {
+  border-bottom: none;
+}
+
+.builder-dropdown .ant-dropdown-menu-item-active,
+.builder-dropdown .ant-dropdown-menu-item:hover {
+  background-color: #f1f5f9 !important;
+}
+
+.dropdown-content-wrapper {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  min-width: 240px;
+}
+
+.dropdown-search-wrapper {
+  padding: 8px 12px;
+  background: #f8fafc;
+}
+
+.compact-search,
+.compact-search input {
+  font-size: 10.5px !important;
+  font-weight: 500 !important;
+}
+
+.search-icon {
+  color: #94a3b8;
+  margin-right: 4px;
+  width: 11px;
+  height: 11px;
+}
+
+.dropdown-scroll-area {
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+/* Dropdown Item Content */
+.skill-dropdown-item {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 16px;
+}
+
+.active-check-icon {
+  color: var(--accent);
+  margin-left: auto;
+  opacity: 0.8;
+}
+
+.skill-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.skill-dropdown-name {
+  display: block;
+  font-size: 11.5px !important;
+  font-weight: 600;
+  color: var(--text-main) !important;
+  margin-bottom: 0px !important;
+  letter-spacing: -0.01em;
+}
+
+.skill-status-tag {
+  font-size: 8px; /* Tiny badge */
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  padding: 0px 4px;
+  border-radius: 3px;
+  width: fit-content;
+  opacity: 0.8;
+}
+
+.skill-status-tag.published { background: #ecfdf5; color: #059669; }
+.skill-status-tag.draft { background: #fffbeb; color: #d97706; }
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #cbd5e1;
+}
+
+.status-dot.published {
+  background: #10b981;
+  box-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
+}
+
+/* --- Header Actions (Right) --- */
+
+.builder-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 180px;
+  justify-content: flex-end;
+}
+
+.hdr-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500; /* Slightly lighter for a more "lean" look */
+  padding: 0 14px;
+  height: 34px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: none;
+}
+
+.hdr-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.hdr-btn-outline {
+  background: white;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.hdr-btn-outline:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+
+.hdr-btn-primary {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+}
+
+.hdr-btn-primary:hover:not(:disabled) {
+  filter: brightness(1.05);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.25);
+  transform: translateY(-1px);
 }

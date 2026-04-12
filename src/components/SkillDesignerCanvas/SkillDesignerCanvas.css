@@ -4,18 +4,29 @@
  */
 
 .skill-designer {
-    display: flex;
+    display: block; /* No longer flex since palette is absolute */
     flex: 1;
-    /* Take remaining space from page layout */
-    min-height: 0;
+    height: 100%;
+    width: 100%;
+    position: relative;
     overflow: hidden;
 }
 
 .skill-designer__canvas {
-    flex: 1;
-    min-width: 0;
-    background: var(--color-bg-canvas);
+    flex-grow: 1;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    background: #f9fafb;
 }
+
+
+
+/* Hide React Flow attribution watermark */
+.react-flow__attribution {
+    display: none !important;
+}
+
 
 /* React Flow overrides */
 .skill-designer__canvas .react-flow__pane {

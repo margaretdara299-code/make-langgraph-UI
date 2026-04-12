@@ -1,63 +1,76 @@
-import { Handle, Position, useReactFlow } from '@xyflow/react';
-import { useParams } from 'react-router-dom';
-import { DeleteOutlined } from '@ant-design/icons';
-import type { NodeProps } from '@xyflow/react';
-import type { CanvasNode } from '@/interfaces';
-import { removeNodeFromStorage } from '@/services/skillGraphStorage.service';
-import './StartNode.css';
+import { Handle, Position, useReactFlow } from "@xyflow/react";
+import { useParams } from "react-router-dom";
+import type { NodeProps } from "@xyflow/react";
+import type { CanvasNode } from "@/interfaces";
+import { removeNodeFromStorage } from "@/services/skillGraphStorage.service";
+import { getNodeTheme } from "@/utils";
+import "../ActionNode/ActionNode.css";
 
 export default function StartNode({ id, data }: NodeProps<CanvasNode>) {
-    const nodeData = data;
-    const { setNodes } = useReactFlow();
-    const { versionId } = useParams<{ versionId: string }>();
+  const nodeData = data;
+  const { setNodes } = useReactFlow();
+  const { versionId } = useParams<{ versionId: string }>();
 
-    const glowColor = 'var(--color-node-start)'; // Clean green from design tokens
+  const theme = getNodeTheme("start");
 
-    const handleDelete = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        setNodes((nodes) => nodes.filter((node) => node.id !== id));
-        if (versionId) removeNodeFromStorage(versionId, id);
-    };
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setNodes((nodes) => nodes.filter((node) => node.id !== id));
+    if (versionId) removeNodeFromStorage(versionId, id);
+  };
 
-    return (
-        <div
-            className="start-node start-node--glow"
-            style={{ '--node-accent-glow': glowColor } as any}
-        >
-            <div className="start-node__border-wrapper">
-                <div className="start-node__content">
-                    <div
-                        className="start-node__header"
-                        style={{
-                            background: `linear-gradient(90deg, var(--color-node-start-bg), transparent)`
-                        }}
-                    >
-                        <span className="start-node__icon" style={{ color: glowColor }}>
-                            ▶️
-                        </span>
-                        <span className="start-node__title" style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            {nodeData.label || 'Start'}
-                        </span>
-                        <span
-                            className="start-node__delete"
-                            onClick={handleDelete}
-                            title="Delete Node"
-                        >
-                            <DeleteOutlined />
-                        </span>
-                    </div>
+  return (
+    <div
+      className="modern-node-card"
+      style={
+        {
+          background: theme.bg,
+          borderColor: theme.stroke,
+          color: theme.stroke,
+          width: 200,
+        } as any
+      }
+    >
+      <div
+        className="modern-node-delete"
+        onClick={handleDelete}
+        title="Delete Node"
+      >
+        ×
+      </div>
 
-                    <div className="start-node__footer">
-                        <span className="start-node__capability-badge">ENTRY POINT</span>
-                    </div>
-                </div>
-            </div>
-
-            <Handle
-                type="source"
-                position={Position.Bottom}
-                className="start-node__handle start-node__handle-source-bottom"
-            />
+      <div className="modern-node-content">
+        <div className="modern-node-left">
+          <div
+            className="modern-node-icon"
+            style={{ background: theme.iconBg, color: theme.stroke }}
+          >
+            🏁
+          </div>
+          <div className="modern-node-text-col">
+            <div className="modern-node-title">{nodeData.label || "Start"}</div>
+            <div className="modern-node-sub">Trigger</div>
+          </div>
         </div>
-    );
+        <div className="modern-node-right">
+          <span
+            className="modern-node-badge"
+            style={{ background: theme.badgeBg }}
+          >
+            START
+          </span>
+          <span
+            className="modern-node-dot"
+            style={{ background: theme.stroke }}
+          ></span>
+        </div>
+      </div>
+
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        className="modern-node-handle"
+      />
+    </div>
+  );
 }

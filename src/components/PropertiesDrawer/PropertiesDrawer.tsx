@@ -3,20 +3,22 @@
  * Slides out to show the properties of the currently selected React Flow node.
  */
 
-import { Drawer, Input, Form, Typography, Select, Spin, theme, Button } from 'antd';
+import { Drawer, Input, Form, Typography, Select, Spin, theme, Button, Tabs, Collapse } from 'antd';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useReactFlow, useNodes, useEdges } from '@xyflow/react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import IconRenderer from '@/components/IconRenderer/IconRenderer';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Settings2, GitBranchPlus, X } from 'lucide-react';
 import { HTTP_METHODS } from '@/constants';
 import type { CanvasNodeData, CanvasEdgeData, PropertiesDrawerProps } from '@/interfaces';
 import { useCategories, useCapabilities } from '@/hooks';
 import { loadGraphFromStorage, upsertNodeInStorage, upsertConnectionInStorage } from '@/services/skillGraphStorage.service';
+import DecisionPropertiesPanel from './DecisionPropertiesPanel';
 import './PropertiesDrawer.css';
 
 const { Title, Text } = Typography;
-
 
 export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClose }: PropertiesDrawerProps) {
     const { token } = theme.useToken();
@@ -37,12 +39,36 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     const selectedEdge = selectedEdgeId ? edges.find(edge => edge.id === selectedEdgeId) || null : null;
     const [form] = Form.useForm();
 
+    // Track state for the header to prevent it from resetting during the closing animation
+    const [headerInfo, setHeaderInfo] = useState<{ title: string; icon: React.ReactNode }>({
+        title: 'Properties',
+        icon: <Settings2 size={18} />
+    });
+
+    useEffect(() => {
+        if (selectedNode) {
+            const nodeData = selectedNode.data as any;
+            setHeaderInfo({
+                title: nodeData?.label || 'Node Properties',
+                icon: <IconRenderer iconName={nodeData?.icon} size={18} fallback={<Settings2 size={18} />} />
+            });
+        } else if (selectedEdge) {
+            setHeaderInfo({
+                title: 'Edge Properties',
+                icon: <GitBranchPlus size={18} />
+            });
+        }
+    }, [selectedNodeId, selectedEdgeId, nodes, edges]); // Depend on IDs and collections
+
     // When a node is selected, populate the form from localStorage
     useEffect(() => {
         if (!selectedNode) {
             form.resetFields();
             return;
         }
+
+        // Always clear stale values from the previously selected node
+        form.resetFields();
 
         // Helper to normalize Object maps to Array of key-value objects for Form.List
         const prepareConfigsForForm = (rawConfigs: any) => {
@@ -73,6 +99,42 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             form.setFieldsValue({
                 label: sd.label,
                 description: sd.description || '',
+            });
+            return;
+        }
+
+        // For start nodes: read initial_state key-value pairs
+        if (selectedNode.type === 'start') {
+            const stored = versionId ? loadGraphFromStorage(versionId) : null;
+            const sd = (stored?.nodes?.[selectedNode.id]?.data || selectedNode.data) as any;
+            form.setFieldsValue({
+                label: sd.label || 'Start',
+                initial_state: Array.isArray(sd.initial_state) ? sd.initial_state : [],
+            });
+            return;
+        }
+
+        // For end nodes
+        if (selectedNode.type === 'end') {
+            const stored = versionId ? loadGraphFromStorage(versionId) : null;
+            const ed = (stored?.nodes?.[selectedNode.id]?.data || selectedNode.data) as any;
+            form.setFieldsValue({
+                label: ed.label || 'End',
+                response_format: ed.response_format || 'auto',
+                custom_message: ed.custom_message || '',
+                fail_status_code: ed.fail_status_code || 500,
+                fail_message: ed.fail_message || '',
+            });
+            return;
+        }
+
+        // For decision nodes: read from localStorage first, fallback to node.data
+        if (selectedNode.type === 'decision') {
+            const stored = versionId ? loadGraphFromStorage(versionId) : null;
+            const dd = (stored?.nodes?.[selectedNode.id]?.data || selectedNode.data) as any;
+            form.setFieldsValue({
+                label: dd.label || 'Decision',
+                rules: Array.isArray(dd.rules) ? dd.rules : [],
             });
             return;
         }
@@ -145,12 +207,12 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                 // Ignore parse errors
             }
             if (queryParams.length > 0 || urlStr.includes('?')) {
-                 newValues.query_params = queryParams;
+                newValues.query_params = queryParams;
             }
 
-            form.setFieldsValue({ 
-                path_params: newValues.path_params, 
-                query_params: newValues.query_params 
+            form.setFieldsValue({
+                path_params: newValues.path_params,
+                query_params: newValues.query_params
             });
         }
 
@@ -161,7 +223,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             const queryParams = newValues.query_params || [];
 
             let [basePath] = baseUrl.split('?');
-            
+
             const formPathKeys = pathParams.map((param: any) => param?.key).filter(Boolean);
             const currentPathKeys = [...basePath.matchAll(/:([a-zA-Z0-9_]+)/g)].map(match => match[1]);
 
@@ -204,13 +266,45 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
 
             let updatedNode: any = null;
 
-            if (selectedNode.type === 'subflow') {
+            if (selectedNode.type === 'start') {
+                // Start node — persist initial_state key-value pairs
+                updatedNode = {
+                    ...currentNode,
+                    data: {
+                        ...currentNode.data,
+                        label: newValues.label || 'Start',
+                        initial_state: newValues.initial_state || [],
+                    },
+                };
+            } else if (selectedNode.type === 'end') {
+                updatedNode = {
+                    ...currentNode,
+                    data: {
+                        ...currentNode.data,
+                        label: newValues.label || 'End',
+                        response_format: newValues.response_format,
+                        custom_message: newValues.custom_message,
+                        fail_status_code: newValues.fail_status_code,
+                        fail_message: newValues.fail_message,
+                    },
+                };
+            } else if (selectedNode.type === 'subflow') {
                 updatedNode = {
                     ...currentNode,
                     data: {
                         ...currentNode.data,
                         label: newValues.label,
                         description: newValues.description,
+                    },
+                };
+            } else if (selectedNode.type === 'decision') {
+                // Decision node — store condition config directly on node.data
+                updatedNode = {
+                    ...currentNode,
+                    data: {
+                        ...currentNode.data,
+                        label: newValues.label || 'Decision',
+                        rules: newValues.rules || [],
                     },
                 };
             } else if (selectedNode.type === 'connector') {
@@ -271,7 +365,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                     return edge;
                 })
             );
-            
+
             // Sync to localStorage
             if (versionId && updatedEdge) {
                 // To avoid React Flow specific internal props (like selected) blowing up storage,
@@ -279,16 +373,18 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                 upsertConnectionInStorage(versionId, selectedEdge.id, {
                     id: updatedEdge.id,
                     source: updatedEdge.source,
+                    sourceHandle: updatedEdge.sourceHandle,
                     target: updatedEdge.target,
+                    targetHandle: updatedEdge.targetHandle,
                     ...updatedEdge.data, // store routeType and conditionLabel
                 });
             }
         }
     };
 
-    const DynamicParamList = ({ name, title, emptyMessage }: { name: string, title: string, emptyMessage: string }) => (
-        <div className="properties-drawer__param-group" style={{ marginBottom: 16 }}>
-            <Text strong className="properties-drawer__subsection-label" style={{ display: 'block', marginBottom: 8 }}>{title}</Text>
+    const DynamicParamList = ({ name, title, emptyMessage, hideTitle = false }: { name: string, title: string, emptyMessage: string, hideTitle?: boolean }) => (
+        <div className="properties-drawer__param-group" style={{ marginBottom: hideTitle ? 0 : 16 }}>
+            {!hideTitle && <Text strong className="properties-drawer__subsection-label" style={{ display: 'block', marginBottom: 8 }}>{title}</Text>}
             <Form.List name={name}>
                 {(fields, { add, remove }) => (
                     <>
@@ -304,7 +400,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                 </Form.Item>
                                 <Form.Item
                                     noStyle
-                                    shouldUpdate={(prevValues, currentValues) => 
+                                    shouldUpdate={(prevValues, currentValues) =>
                                         prevValues[name]?.[fieldName]?.key !== currentValues[name]?.[fieldName]?.key
                                     }
                                 >
@@ -334,41 +430,75 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
         </div>
     );
 
+    const AccordionLabel = ({ name, title, formInstance }: { name: string, title: string, formInstance: any }) => {
+        const data = Form.useWatch(name, formInstance);
+        const count = Array.isArray(data) ? data.filter((d: any) => d && d.key).length : 0;
+        return (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontWeight: 500 }}>{title}</span>
+                <AnimatePresence>
+                    {count > 0 && (
+                        <motion.div 
+                            initial={{ scale: 0, opacity: 0 }} 
+                            animate={{ scale: 1, opacity: 1 }} 
+                            exit={{ scale: 0, opacity: 0 }}
+                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                            style={{ 
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                minWidth: 20,
+                                height: 20,
+                                background: '#ecfdf5', 
+                                color: '#059669', 
+                                border: '1px solid #6ee7b7',
+                                fontSize: 11, 
+                                fontWeight: 700, 
+                                padding: '0 6px', 
+                                borderRadius: '10px',
+                                boxShadow: '0 1px 2px rgba(16, 185, 129, 0.1)',
+                            }}
+                        >
+                            {count}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+        );
+    };
+
     /** Render the Connector-specific fields */
-    const renderNodeConfig = (_nodeData: CanvasNodeData) => {
+    const renderNodeConfig = (nodeData: CanvasNodeData) => {
         return (
             <>
                 {/* ── Section 1: Endpoint ── */}
-                <Title level={5} className="properties-drawer__section-subtitle">Endpoint</Title>
+                <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Endpoint</div>
                 <div className="properties-drawer__flex-row">
                     <Form.Item label="URL" name="url" className="properties-drawer__flex-item">
                         <Input placeholder="https://api.example.com/v1/resource" />
                     </Form.Item>
-                    <Form.Item label="Method" name="method" className="properties-drawer__method-select">
+                </div>
+                <div style={{ marginTop: 12 }}>
+                    <Form.Item label="HTTP Method" name="method">
                         <Select options={HTTP_METHODS} />
                     </Form.Item>
                 </div>
 
                 {/* ── Section 2: Integration Parameters ── */}
-                <div className="properties-drawer__divider" />
-                <Title level={5} className="properties-drawer__section-subtitle">Integration Parameters</Title>
-                
-                <DynamicParamList name="path_params" title="Path Parameters" emptyMessage="No path parameters." />
-                <DynamicParamList name="query_params" title="Query Parameters" emptyMessage="No query parameters." />
-                <DynamicParamList name="header_params" title="Header Parameters" emptyMessage="No header parameters." />
-                <DynamicParamList name="body_params" title="Body Parameters" emptyMessage="No body parameters." />
+                <div className="properties-drawer__section-title">Integration Parameters</div>
 
-                {/* ── Section 3: Fallback Configuration ── */}
-                <div className="properties-drawer__divider" />
-                <Title level={5} className="properties-drawer__section-subtitle">Fallback Configuration</Title>
-                <Form.Item name="fallback_message" label="Fallback Message">
-                    <Input.TextArea placeholder="Enter a message to be used if the action fails..." rows={3} />
-                </Form.Item>
-
-                {/* ── Section 4: State Management ── */}
-                <div className="properties-drawer__divider" />
-                <Title level={5} className="properties-drawer__section-subtitle">State Management</Title>
-                {renderStateManagement()}
+                <Collapse
+                    accordion
+                    defaultActiveKey={['path_params']}
+                    ghost
+                    expandIconPosition="end"
+                    items={[
+                        { key: 'path_params', label: <AccordionLabel name="path_params" title="Path Parameters" formInstance={form} />, children: <DynamicParamList name="path_params" title="Path Parameters" emptyMessage="No path parameters." hideTitle /> },
+                        { key: 'query_params', label: <AccordionLabel name="query_params" title="Query Parameters" formInstance={form} />, children: <DynamicParamList name="query_params" title="Query Parameters" emptyMessage="No query parameters." hideTitle /> },
+                        { key: 'header_params', label: <AccordionLabel name="header_params" title="Header Parameters" formInstance={form} />, children: <DynamicParamList name="header_params" title="Header Parameters" emptyMessage="No header parameters." hideTitle /> },
+                        { key: 'body_params', label: <AccordionLabel name="body_params" title="Body Parameters" formInstance={form} />, children: <DynamicParamList name="body_params" title="Body Parameters" emptyMessage="No body parameters." hideTitle /> }
+                    ]}
+                />
             </>
         );
     };
@@ -423,9 +553,13 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     // Render forms based on what is selected
     const renderContent = () => {
         if (selectedNode) {
-            const isSubFlow = selectedNode.type === 'subflow';
+            const isSubFlow   = selectedNode.type === 'subflow';
             const isConnector = selectedNode.type === 'connector';
-            const isStart = selectedNode.type === 'start';
+            const isStart     = selectedNode.type === 'start';
+            const isDecision  = selectedNode.type === 'decision';
+            const isEnd       = selectedNode.type === 'end';
+
+            const activeColor = isDecision ? '#f59e0b' : ((isStart || isEnd) ? '#10b981' : 'var(--accent)');
 
             if (isLoadingAction) {
                 return (
@@ -436,150 +570,328 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             }
 
             return (
-                <div className="properties-drawer__content">
-                    {/* Node Metadata Card */}
-                    <div className="properties-drawer__meta" style={{ background: token.colorBgContainer, borderColor: token.colorBorderSecondary }}>
-                        <div className="properties-drawer__meta-item">
-                            <Text type="secondary">Type</Text>
-                            <Text strong>{isStart ? 'Workflow Entry' : isSubFlow ? 'Structure Group' : (nodeData?.categoryId ? (categoryMap[nodeData.categoryId] || 'Uncategorized') : (nodeData?.category || 'Uncategorized'))}</Text>
-                        </div>
-                        <div className="properties-drawer__meta-item">
-                            <Text type="secondary">Capability</Text>
-                            <div className={`properties-drawer__capability-badge badge-${isSubFlow ? 'default' : nodeData?.capability}`}>
-                                {isStart ? 'ENTRY' : isSubFlow ? 'GROUP' : (nodeData?.capability || 'DEFAULT').toUpperCase()}
-                            </div>
-                        </div>
-                        {!isSubFlow && !isStart && nodeData?.action_key && (
-                            <div className="properties-drawer__meta-item">
-                                <Text type="secondary">Action ID</Text>
-                                <Text code>{nodeData.action_key}</Text>
-                            </div>
-                        )}
-                        {!isSubFlow && nodeData?.action_version_id && (
-                            <div className="properties-drawer__meta-item">
-                                <Text type="secondary">Version ID</Text>
-                                <Text code style={{ fontSize: 11 }}>{nodeData.action_version_id}</Text>
-                            </div>
-                        )}
-                    </div>
+                <motion.div 
+                    className="properties-drawer__content"
+                    key={selectedNode.id}
+                    initial="hidden"
+                    animate="visible"
+                    variants={{
+                        hidden: { opacity: 0 },
+                        visible: {
+                            opacity: 1,
+                            transition: { 
+                                staggerChildren: 0.12,
+                                delayChildren: 0.35 
+                            }
+                        }
+                    }}
+                >
+                    <Tabs
+                        defaultActiveKey="1"
+                        className="properties-drawer__tabs"
+                        items={[
+                            {
+                                key: '1',
+                                label: 'Overview',
+                                children: (
+                                    <motion.div
+                                        variants={{
+                                            hidden: { opacity: 0, x: 16 },
+                                            visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }
+                                        }}
+                                        style={{ padding: '0 4px' }}
+                                    >
+                                        {/* Node Metadata Card */}
+                                        <div className="properties-drawer__meta">
+                                            <div className="properties-drawer__meta-item">
+                                                <span className="properties-drawer__meta-label">Type</span>
+                                                <span className="properties-drawer__meta-value">
+                                                    {isStart    ? 'Workflow Entry'
+                                                    : isDecision ? 'Router'
+                                                    : isEnd      ? 'Workflow Exit'
+                                                    : isSubFlow  ? 'Group'
+                                                    : (nodeData?.category || 'Action')}
+                                                </span>
+                                            </div>
+                                            <div className="properties-drawer__meta-item">
+                                                <span className="properties-drawer__meta-label">Key</span>
+                                                <span className="properties-drawer__meta-value" style={{ fontFamily: 'monospace' }}>
+                                                    {selectedNode.id} 
+                                                   {/* <pre>{JSON.stringify(nodeData,null)}</pre> */}
+                                                </span>
+                                            </div>
+                                            <div className="properties-drawer__meta-item">
+                                                <span className="properties-drawer__meta-label">Capability</span>
+                                                <div className={`properties-drawer__capability-badge badge-${isDecision ? 'decision' : nodeData?.capability}`}>
+                                                    {isStart    ? 'START'
+                                                    : isDecision ? 'DECISION'
+                                                    : isEnd      ? 'END'
+                                                    : isSubFlow  ? 'STRUCTURE'
+                                                    : (nodeData?.capability || 'API').toUpperCase()}
+                                                </div>
+                                            </div>
+                                        </div>
 
-                    <div className="properties-drawer__divider" />
+                                        <Form
+                                            form={form}
+                                            layout="vertical"
+                                            onValuesChange={handleValuesChange}
+                                            className="properties-drawer__form"
+                                        >
+                                            {!isConnector && (
+                                                <>
+                                                    <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Identity</div>
+                                                    <Form.Item
+                                                        label="Node Label"
+                                                        name="label"
+                                                        rules={[{ required: true, message: 'Label is required' }]}
+                                                    >
+                                                        <Input placeholder="e.g. Process Claim" />
+                                                    </Form.Item>
+                                                </>
+                                            )}
 
-                    {/* Node Configuration Form */}
-                    <Form
-                        form={form}
-                        layout="vertical"
-                        onValuesChange={handleValuesChange}
-                        className="properties-drawer__form"
-                    >
-                        {!isConnector && (
-                            <>
-                                <Title level={5} className="properties-drawer__section-title">General</Title>
-                                <Form.Item
-                                    label="Node Label"
-                                    name="label"
-                                    rules={[{ required: true, message: 'Label is required' }]}
-                                >
-                                    <Input />
-                                </Form.Item>
-                            </>
-                        )}
+                                            {isSubFlow && (
+                                                <Form.Item
+                                                    label="Description"
+                                                    name="description"
+                                                >
+                                                    <Input.TextArea rows={4} placeholder="What does this group do?" />
+                                                </Form.Item>
+                                            )}
 
-                        {isSubFlow && (
-                            <Form.Item
-                                label="Description"
-                                name="description"
-                            >
-                                <Input.TextArea rows={4} placeholder="What does this group do?" />
-                            </Form.Item>
-                        )}
+                                            {isStart && (
+                                                <>
+                                                    <div className="properties-drawer__divider" />
+                                                    <div className="properties-drawer__section-title">Initial State Variables</div>
+                                                    <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 16, lineHeight: 1.5 }}>
+                                                        State is used to store and pass data between all nodes in a workflow so 
+                                                        they can share and update information.
+                                                    </Text>
+                                                    <Form.List name="initial_state">
+                                                        {(fields, { add, remove }) => (
+                                                            <>
+                                                                {fields.map(({ key, name: fieldName, ...restField }) => (
+                                                                    <div key={key} className="properties-drawer__kv-row">
+                                                                        <Form.Item
+                                                                            {...restField}
+                                                                            name={[fieldName, 'key']}
+                                                                            className="properties-drawer__kv-field"
+                                                                            rules={[{ required: true, message: 'Key required' }]}
+                                                                        >
+                                                                            <Input placeholder="key" style={{ fontFamily: 'monospace' }} />
+                                                                        </Form.Item>
+                                                                        <Form.Item
+                                                                            {...restField}
+                                                                            name={[fieldName, 'value']}
+                                                                            className="properties-drawer__kv-field"
+                                                                        >
+                                                                            <Input placeholder="value" />
+                                                                        </Form.Item>
+                                                                        <DeleteOutlined
+                                                                            className="properties-drawer__delete-icon"
+                                                                            onClick={() => remove(fieldName)}
+                                                                        />
+                                                                    </div>
+                                                                ))}
+                                                                <Button
+                                                                    type="dashed"
+                                                                    onClick={() => add({ key: '', value: '' })}
+                                                                    icon={<PlusOutlined />}
+                                                                    block
+                                                                >
+                                                                    Add Variable
+                                                                </Button>
+                                                            </>
+                                                        )}
+                                                    </Form.List>
+                                                </>
+                                            )}
+                                        </Form>
+                                    </motion.div>
+                                ),
+                            },
+                            ...((!isSubFlow && !isStart) ? [{
+                                key: '2',
+                                label: 'Configuration',
+                                children: (
+                                    <motion.div
+                                        variants={{
+                                            hidden: { opacity: 0, x: 16 },
+                                            visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }
+                                        }}
+                                        style={{ padding: '0 4px' }}
+                                    >
+                                        <Form
+                                            form={form}
+                                            layout="vertical"
+                                            onValuesChange={handleValuesChange}
+                                            className="properties-drawer__form"
+                                        >
+                                            {isDecision ? (
+                                                <DecisionPropertiesPanel form={form} nodes={nodes} />
+                                            ) : isEnd ? (
+                                                <>
+                                                    <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Response Formatting</div>
+                                                    <Form.Item label="Response Format" name="response_format">
+                                                        <Select options={[
+                                                            { label: 'Whatever provider node returned (auto)', value: 'auto' },
+                                                            { label: 'Make response format (custom)', value: 'custom' },
+                                                        ]} />
+                                                    </Form.Item>
+                                                    <Form.Item noStyle shouldUpdate={(prevValues, currentValues) => prevValues.response_format !== currentValues.response_format}>
+                                                        {({ getFieldValue }) => {
+                                                            return getFieldValue('response_format') === 'custom' ? (
+                                                                <Form.Item label="Message / Raw JSON" name="custom_message">
+                                                                    <Input.TextArea rows={6} style={{ fontFamily: 'monospace' }} placeholder="{\n  &quot;status&quot;: &quot;success&quot;\n}" />
+                                                                </Form.Item>
+                                                            ) : null;
+                                                        }}
+                                                    </Form.Item>
+                                                </>
+                                            ) : (
+                                                renderNodeConfig(nodeData as CanvasNodeData)
+                                            )}
+                                        </Form>
+                                    </motion.div>
+                                )
+                            }] : []),
+                            ...((!isSubFlow && !isStart && !isDecision && !isConnector) ? [{
+                                key: '3',
+                                label: 'Settings',
+                                children: (
+                                    <motion.div
+                                        variants={{
+                                            hidden: { opacity: 0, x: 16 },
+                                            visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }
+                                        }}
+                                        style={{ padding: '0 4px' }}
+                                    >
+                                        <Form
+                                            form={form}
+                                            layout="vertical"
+                                            onValuesChange={handleValuesChange}
+                                            className="properties-drawer__form"
+                                        >
+                                            {isEnd ? (
+                                                <>
+                                                    <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Failure Settings</div>
+                                                    <Text type="secondary" style={{ fontSize: 13, display: 'block', marginBottom: 16 }}>
+                                                        If the workflow fails before naturally reaching an exit, define the error response mapping.
+                                                    </Text>
+                                                    <div className="properties-drawer__flex-row">
+                                                        <Form.Item label="Status Code" name="fail_status_code" className="properties-drawer__flex-item">
+                                                            <Input type="number" placeholder="500" />
+                                                        </Form.Item>
+                                                    </div>
+                                                    <Form.Item label="Failure Message" name="fail_message">
+                                                        <Input.TextArea rows={3} placeholder="Internal Server Error" />
+                                                    </Form.Item>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Fallback Settings</div>
+                                                    <Form.Item name="fallback_message" label="Fallback Message">
+                                                        <Input.TextArea placeholder="Used if action fails..." rows={4} />
+                                                    </Form.Item>
 
-                        {isStart && (
-                            <>
-                                <div className="properties-drawer__divider" />
-                                <Title level={5} className="properties-drawer__section-title">State Management</Title>
-                                {renderStateManagement()}
-                            </>
-                        )}
-
-                        {!isSubFlow && !isConnector && !isStart && nodeData && (
-                            <>
-                                {/* ── Configurations Section ── */}
-                                <div className="properties-drawer__divider" />
-                                <Title level={5} className="properties-drawer__section-title">Configuration</Title>
-                                {renderNodeConfig(nodeData as CanvasNodeData)}
-                            </>
-                        )}
-                        {isConnector && nodeData && renderNodeConfig(nodeData)}
-                    </Form>
-
-                </div>
+                                                    <div className="properties-drawer__divider" />
+                                                    <div className="properties-drawer__section-title">State Mapping</div>
+                                                    {renderStateManagement()}
+                                                </>
+                                            )}
+                                        </Form>
+                                    </motion.div>
+                                )
+                            }] : []),
+                        ]}
+                    />
+                </motion.div>
             );
         }
 
         if (selectedEdge) {
             return (
-                <div className="properties-drawer__content">
-                    <div className="properties-drawer__meta" style={{ background: token.colorBgContainer, borderColor: token.colorBorderSecondary }}>
+                <motion.div 
+                    className="properties-drawer__content"
+                    key={selectedEdge.id}
+                    initial="hidden"
+                    animate="visible"
+                    variants={{
+                        hidden: { opacity: 0 },
+                        visible: {
+                            opacity: 1,
+                            transition: { 
+                                staggerChildren: 0.08,
+                                delayChildren: 0.25 
+                            }
+                        }
+                    }}
+                >
+                    <motion.div 
+                        className="properties-drawer__meta" 
+                        variants={{
+                            hidden: { opacity: 0, x: 16 },
+                            visible: { opacity: 1, x: 0, transition: { duration: 0.15, ease: 'linear' } }
+                        }}
+                    >
                         <div className="properties-drawer__meta-item">
-                            <Text type="secondary">Connection</Text>
-                            <Text strong>Edge Route</Text>
-                        </div>
-                        <div className="properties-drawer__meta-item">
-                            <Text type="secondary">Current Route</Text>
+                            <span className="properties-drawer__meta-label">Route</span>
                             <div className="properties-drawer__capability-badge badge-default" style={{ textTransform: 'capitalize' }}>
                                 {edgeData?.routeType || 'unconditional'}
                             </div>
                         </div>
                         <div className="properties-drawer__meta-item">
-                            <Text type="secondary">From Node</Text>
-                            <Text code>{selectedEdge.source}</Text>
+                            <span className="properties-drawer__meta-label">ID</span>
+                            <span className="properties-drawer__meta-value" style={{ fontFamily: 'monospace' }}>
+                                {selectedEdge.id}
+                            </span>
                         </div>
-                        <div className="properties-drawer__meta-item">
-                            <Text type="secondary">To Node</Text>
-                            <Text code>{selectedEdge.target}</Text>
-                        </div>
-                    </div>
+                    </motion.div>
 
-                    <div className="properties-drawer__divider" />
-
-                    <Title level={5} className="properties-drawer__section-title">Routing Configuration</Title>
-                    <Form
-                        form={form}
-                        layout="vertical"
-                        onValuesChange={handleValuesChange}
-                        className="properties-drawer__form"
-                        initialValues={{ routeType: 'unconditional' }}
+                    <motion.div 
+                        variants={{
+                            hidden: { opacity: 0, x: 12 },
+                            visible: { opacity: 1, x: 0, transition: { duration: 0.12, ease: 'linear' } }
+                        }}
                     >
-                        <Form.Item label="Route Type" name="routeType">
-                            <Select
-                                options={[
-                                    { value: 'unconditional', label: 'Unconditional (Always)' },
-                                    { value: 'conditional', label: 'Conditional' },
-                                    { value: 'fallback', label: 'Default / Fallback' },
-                                ]}
-                            />
-                        </Form.Item>
-
-                        {/* Render condition label input only when conditional route type is selected */}
-                        <Form.Item
-                            noStyle
-                            shouldUpdate={(prevValues, currentValues) => prevValues.routeType !== currentValues.routeType}
+                        <div className="properties-drawer__section-title">Routing Configuration</div>
+                        <Form
+                            form={form}
+                            layout="vertical"
+                            onValuesChange={handleValuesChange}
+                            className="properties-drawer__form"
+                            initialValues={{ routeType: 'unconditional' }}
                         >
-                            {({ getFieldValue }) =>
-                                getFieldValue('routeType') === 'conditional' ? (
-                                    <Form.Item
-                                        label="Condition Label"
-                                        name="conditionLabel"
-                                        rules={[{ required: true, message: 'Please provide a condition label' }]}
-                                    >
-                                        <Input placeholder="e.g. status == 'success'" />
-                                    </Form.Item>
-                                ) : null
-                            }
-                        </Form.Item>
-                    </Form>
-                </div>
+                            <Form.Item label="Route Type" name="routeType">
+                                <Select
+                                    options={[
+                                        { value: 'unconditional', label: 'Unconditional (Always)' },
+                                        { value: 'conditional', label: 'Conditional' },
+                                        { value: 'fallback', label: 'Default / Fallback' },
+                                    ]}
+                                />
+                            </Form.Item>
+
+                            <Form.Item
+                                noStyle
+                                shouldUpdate={(prevValues, currentValues) => prevValues.routeType !== currentValues.routeType}
+                            >
+                                {({ getFieldValue }) =>
+                                    getFieldValue('routeType') === 'conditional' ? (
+                                        <Form.Item
+                                            label="Condition Label"
+                                            name="conditionLabel"
+                                            rules={[{ required: true, message: 'Please provide a condition label' }]}
+                                        >
+                                            <Input placeholder="e.g. status == 'success'" />
+                                        </Form.Item>
+                                    ) : null
+                                }
+                            </Form.Item>
+                        </Form>
+                    </motion.div>
+                </motion.div>
             );
         }
 
@@ -587,31 +899,34 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     };
 
     return (
-        <Drawer
-            title={
-                <div className="properties-drawer__header">
-                    <span className="properties-drawer__icon">
-                        {selectedNode ? <IconRenderer iconName={nodeData?.icon} size={18} fallback="⚙️" /> : selectedEdge ? '↪️' : ''}
-                    </span>
-                    <span className="properties-drawer__title-text">
-                        {selectedNode ? 'Node Properties' : 'Edge Properties'}
-                    </span>
-                </div>
-            }
-            placement="right"
-            closable={true}
-            onClose={onClose}
-            open={isOpen}
-            mask={false} // Allow interacting with the canvas while drawer is open
-            width={380}
-            className="properties-drawer"
-            zIndex={10} // Keep it above the canvas but below modals
-            styles={{
-                header: { padding: '16px 20px', background: token.colorBgContainer },
-                body: { padding: '20px', background: token.colorBgLayout },
-            }}
-        >
-            {renderContent()}
-        </Drawer>
+        <AnimatePresence>
+            {isOpen && (
+                <motion.aside
+                    className="properties-drawer-floating"
+                    initial={{ x: 30, opacity: 0, scale: 0.98 }}
+                    animate={{ x: 0, opacity: 1, scale: 1 }}
+                    exit={{ x: 30, opacity: 0, scale: 0.98 }}
+                    transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
+                >
+                    <div className="properties-drawer__drawer-header">
+                        <div className="properties-drawer__header-left">
+                            <span className="properties-drawer__icon">
+                                {headerInfo.icon}
+                            </span>
+                            <span className="properties-drawer__title-text">
+                                {headerInfo.title}
+                            </span>
+                        </div>
+                        <button className="properties-drawer__close-btn" onClick={onClose}>
+                            <X size={16} strokeWidth={2.5} />
+                        </button>
+                    </div>
+                    
+                    <div className="properties-drawer__drawer-body">
+                        {renderContent()}
+                    </div>
+                </motion.aside>
+            )}
+        </AnimatePresence>
     );
 }

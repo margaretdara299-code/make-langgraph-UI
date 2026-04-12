@@ -1,0 +1,42 @@
+/* Grid utility styles to ensure cards take full height within columns */
+.app-grid__row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+}
+
+.app-grid__col {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.app-grid__col > div {
+  flex: 1 !important;
+  height: 100% !important;
+}
+
+.app-grid__auto {
+  --app-grid-min-width: 280px;
+  --app-grid-gap-x: 16px;
+  --app-grid-gap-y: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--app-grid-min-width)), 1fr));
+  column-gap: var(--app-grid-gap-x);
+  row-gap: var(--app-grid-gap-y);
+}
+
+.app-grid__auto-item {
+  display: flex;
+  min-width: 0;
+}
+
+.app-grid__auto-item > div {
+  flex: 1;
+  height: 100%;
+}
+
+/* Specific card overrides to ensure vertical fill */
+.skill-card-premium, .capability-card-premium, .category-card-premium {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}

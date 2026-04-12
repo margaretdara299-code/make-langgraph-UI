@@ -1,36 +1,41 @@
-/**
- * StartNodeItem — Draggable Start Node item for the Node Palette.
- */
+import { motion } from "framer-motion";
+import { Play } from "lucide-react";
+
+const variants = {
+  hidden: { opacity: 0, x: -10 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.12, ease: "linear" },
+  },
+};
 
 export default function StartNodeItem() {
-    const handleStartDragStart = (e: React.DragEvent) => {
-        const dragData = JSON.stringify({
-            nodeType: 'start',
-            label: 'Start',
-            category: 'structure',
-            icon: '▶️',
-        });
-        e.dataTransfer.setData('application/reactflow', dragData);
-        e.dataTransfer.effectAllowed = 'move';
-    };
+  const handleStartDragStart = (e: React.DragEvent) => {
+    const dragData = JSON.stringify({
+      nodeType: "start",
+      label: "Start",
+      category: "structure",
+      icon: "Play",
+    });
+    e.dataTransfer.setData("application/reactflow", dragData);
+    e.dataTransfer.effectAllowed = "move";
+  };
 
-    return (
-        <div
-            className="node-palette-item"
-            draggable
-            onDragStart={handleStartDragStart}
-        >
-            <span className="node-palette-item__icon node-palette-item__icon--primary" style={{ color: '#52c41a' }}>
-                ▶️
-            </span>
-            <div className="node-palette-item__info">
-                <span className="node-palette-item__name node-palette-item__name--primary">
-                    Start
-                </span>
-                <span className="node-palette-item__badge node-palette-item__badge--group" style={{ background: '#52c41a' }}>
-                    ENTRY
-                </span>
-            </div>
+  return (
+    <div
+      className="node-library-item-wrapper"
+      draggable
+      onDragStart={handleStartDragStart}
+    >
+      <motion.div className="node-library-item" variants={variants}>
+        <div className="nli-icon" style={{ background: "#f8fafc" }}>
+          <Play size={12} color="#000000" fill="#000000" strokeWidth={2.4} />
         </div>
-    );
+        <div className="nli-content">
+          <span className="nli-label">Start Node</span>
+        </div>        
+      </motion.div>
+    </div>
+  );
 }

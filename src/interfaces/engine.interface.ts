@@ -18,3 +18,12 @@ export interface DashboardCounts {
         draftVersions: number;
     };
 }
+
+export type NodeExecutionStatus = 'idle' | 'running' | 'success' | 'error';
+
+export interface ExecutedNodeStep {
+    node: import('@xyflow/react').Node;
+    status: NodeExecutionStatus;
+    data?: any;
+    inputData?: any;
+}

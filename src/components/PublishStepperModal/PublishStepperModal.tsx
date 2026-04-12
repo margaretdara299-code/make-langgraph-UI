@@ -181,9 +181,17 @@ export default function PublishStepperModal({
             open={isOpen}
             onCancel={onClose}
             width={650}
+            centered
             className="publish-stepper-modal"
             footer={null}
             destroyOnClose
+            zIndex={2000}
+            styles={{
+                mask: {
+                    backdropFilter: 'blur(8px)',
+                    background: 'rgba(0, 0, 0, 0.45)'
+                }
+            }}
         >
             <Steps
                 current={currentStep}

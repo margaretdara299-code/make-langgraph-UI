@@ -1,50 +1,80 @@
-/**
- * EndNode — custom React Flow node renderer for termination points.
- * Standardized for Top/Bottom connectivity.
- */
+import { Handle, Position, useReactFlow } from "@xyflow/react";
+import { useParams } from "react-router-dom";
+import type { NodeProps } from "@xyflow/react";
+import type { CanvasNode } from "@/interfaces";
+import { getNodeTheme } from "@/utils";
+import "../ActionNode/ActionNode.css";
 
-import { Handle, Position } from '@xyflow/react';
-import IconRenderer from '@/components/IconRenderer/IconRenderer';
-import type { NodeProps } from '@xyflow/react';
-import type { CanvasNode } from '@/interfaces';
-import './EndNode.css';
+export default function EndNode({ id, data }: NodeProps<CanvasNode>) {
+  const nodeData = data;
+  const { setNodes } = useReactFlow();
 
-export default function EndNode({ data }: NodeProps<CanvasNode>) {
-    const nodeData = data;
+  const theme = getNodeTheme("end", "", nodeData.category);
 
-    // Determine the color intent based on the category (Success vs Error)
-    const isError = nodeData.category.toLowerCase().includes('error');
-    const colorClass = isError ? 'end-node--error' : 'end-node--success';
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setNodes((nodes) => nodes.filter((node) => node.id !== id));
+  };
 
-    return (
-        <div className={`end-node ${colorClass}`}>
-            <Handle 
-                type="target" 
-                position={Position.Top} 
-                className="end-node__handle end-node__handle-target-top" 
-            />
+  return (
+    <div
+      className="modern-node-card"
+      style={
+        {
+          background: theme.bg,
+          borderColor: theme.stroke,
+          color: theme.stroke,
+        } as any
+      }
+    >
+      <div
+        className="modern-node-delete"
+        onClick={handleDelete}
+        title="Delete Node"
+      >
+        ×
+      </div>
 
-            <div className="end-node__border-wrapper">
-                <div className="end-node__content">
-                    <div className="end-node__header">
-                        <span className="end-node__icon">
-                            <IconRenderer iconName={nodeData.icon} size={18} fallback="🛑" />
-                        </span>
-                        <span className="end-node__title">{nodeData.label}</span>
-                    </div>
+      <Handle
+        type="target"
+        position={Position.Top}
+        className="modern-node-handle"
+      />
 
-                    <div className="end-node__footer">
-                        <span className="end-node__badge">{isError ? 'ERROR' : 'END'}</span>
-                        <span className="end-node__category">{nodeData.category}</span>
-                    </div>
-                </div>
+      <div className="modern-node-content">
+        <div className="modern-node-left">
+          <div
+            className="modern-node-icon"
+            style={{ background: theme.iconBg, color: theme.stroke }}
+          >
+            🏁
+          </div>
+          <div className="modern-node-text-col">
+            <div className="modern-node-title">{nodeData.label || "End"}</div>
+            <div className="modern-node-sub">
+              {nodeData.category || "Termination"}
             </div>
-
-            <Handle 
-                type="source" 
-                position={Position.Bottom} 
-                className="end-node__handle end-node__handle-source-bottom" 
-            />
+          </div>
         </div>
-    );
+        <div className="modern-node-right">
+          <span
+            className="modern-node-badge"
+            style={{ background: theme.badgeBg }}
+          >
+            END
+          </span>
+          <span
+            className="modern-node-dot"
+            style={{ background: theme.stroke }}
+          ></span>
+        </div>
+      </div>
+
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        className="modern-node-handle"
+      />
+    </div>
+  );
 }

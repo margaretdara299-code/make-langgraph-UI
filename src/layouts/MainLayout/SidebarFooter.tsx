@@ -1,36 +1,42 @@
 import { Tooltip } from 'antd';
-import { LogoutOutlined, RightOutlined } from '@ant-design/icons';
+import { LogoutOutlined } from '@ant-design/icons';
 import type { SidebarFooterProps } from '@/interfaces';
 
 export default function SidebarFooter({
     collapsed,
-    onToggleCollapse,
     onLogout,
 }: SidebarFooterProps) {
     return (
-        <div className="main-layout__sidebar-footer">
-            <Tooltip title={collapsed ? 'Logout' : ''} placement="right">
-                <div
-                    className="main-layout__sidebar-logout"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onLogout();
-                    }}
-                    id="sidebar-logout-btn"
-                >
-                    <LogoutOutlined />
-                    {!collapsed && <span>Logout</span>}
+        <div className="sidebar-user-section">
+            <div className="user-info-row">
+                <div className="user-avatar-small">
+                    RO
                 </div>
-            </Tooltip>
-            <div
-                className="main-layout__sidebar-collapse"
-                onClick={onToggleCollapse}
-            >
-                <RightOutlined
-                    className={`main-layout__sidebar-collapse-icon ${collapsed ? '' : 'rotated'
-                        }`}
-                />
+                {!collapsed && (
+                    <div className="user-details">
+                        <span className="user-name">Roshan</span>
+                        <span className="user-badge">PRO</span>
+                    </div>
+                )}
+                {!collapsed && (
+                    <Tooltip title="Logout">
+                        <button className="minimal-logout-btn" onClick={onLogout}>
+                            <LogoutOutlined />
+                        </button>
+                    </Tooltip>
+                )}
             </div>
+            {collapsed && (
+                <Tooltip title="Logout" placement="right">
+                    <button 
+                        className="minimal-logout-btn" 
+                        onClick={onLogout}
+                        style={{ margin: '8px auto', display: 'flex' }}
+                    >
+                        <LogoutOutlined />
+                    </button>
+                </Tooltip>
+            )}
         </div>
     );
 }

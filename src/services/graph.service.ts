@@ -15,6 +15,7 @@ export async function loadSkillGraph(skillVersionId: string) {
         status: string;
         nodes: unknown[];
         connections: Record<string, unknown>;
+        viewport_json?: { x: number; y: number; zoom: number };
     }>(API_ENDPOINTS.SKILL_GRAPH.GRAPH(skillVersionId)).then(res => res.data);
 }
 
@@ -27,11 +28,13 @@ export async function loadSkillGraph(skillVersionId: string) {
 export async function saveSkillGraph(
     skillVersionId: string,
     nodes: unknown[],
-    connections: Record<string, unknown>
+    connections: Record<string, unknown>,
+    viewport_json?: { x: number; y: number; zoom: number }
 ) {
     return apiClient.put(API_ENDPOINTS.SKILL_GRAPH.GRAPH(skillVersionId), {
         nodes,
         connections,
+        viewport_json,
     });
 }
 

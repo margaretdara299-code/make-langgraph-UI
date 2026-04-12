@@ -1,208 +1,241 @@
 /**
- * Placeholder for the Action Catalog page.
- * Will be implemented in Phase 4 of the roadmap.
+ * ActionCatalogPage — High-fidelity replica of the premium design system.
+ * Comprehensive library for browsing and managing action definitions.
  */
 
 import { useState } from 'react';
-import { Input, Select, Button, Typography, Spin, Empty, message, Tabs, Badge, Space } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Typography, message, Modal, Empty, Tabs, Space, Badge, Select, Button } from 'antd';
+import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useActions, useCategories, useCapabilities } from '@/hooks';
-import { ActionCard, CreateActionModal } from '@/components';
-import { ACTION_STATUS_FILTER_OPTIONS, CARD_ACTION_KEYS } from '@/constants';
-import { fetchActionById } from '@/services/action.service';
-import type { ActionFilters, ActionDefinition } from '@/interfaces';
+import { 
+    ActionCard, 
+    ActionCardSkeleton, 
+    Grid, 
+    CreateActionModal, 
+    SearchInput 
+} from '@/components';
+import { fetchActionById, deleteAction } from '@/services';
 import './ActionCatalogPage.css';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 export default function ActionCatalogPage() {
     const [searchValue, setSearchValue] = useState('');
-    const [activeStatus, setActiveStatus] = useState<string>('all');
-    const [activeCapability, setActiveCapability] = useState<string>('all');
-    const [activeCategory, setActiveCategory] = useState<string>('all');
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const [initialModalStep, setInitialModalStep] = useState(0);
-    const [actionToEdit, setActionToEdit] = useState<ActionDefinition | undefined>(undefined);
+    const { 
+        actions, 
+        statusCounts, 
+        isLoading, 
+        filters, 
+        setFilters,
+        refetch
+    } = useActions();
+    
+    const { categories } = useCategories();
+    const { capabilities } = useCapabilities();
 
-    const { actions, statusCounts, categoryCounts, capabilityCounts, isLoading: isActionsLoading, setFilters, refetch } = useActions();
-    const { categories, isLoading: isCategoriesLoading } = useCategories();
-    const { capabilities, isLoading: isCapabilitiesLoading } = useCapabilities();
+    const [modalOpen, setModalOpen] = useState(false);
+    const [actionToEdit, setActionToEdit] = useState<any>(null);
+    const [initialStep, setInitialStep] = useState(0);
 
-    /** Handle search input */
     const handleSearch = (value: string) => {
         setSearchValue(value);
-        updateFilters(value, activeStatus, activeCapability, activeCategory);
+        setFilters((prev) => ({ ...prev, search: value }));
     };
 
-    /** Handle status filter click */
-    const handleStatusFilter = (statusKey: string) => {
-        setActiveStatus(statusKey);
-        updateFilters(searchValue, statusKey, activeCapability, activeCategory);
+    const handleStatusFilter = (status: string) => {
+        setFilters((prev) => ({ ...prev, status: status === 'all' ? undefined : status }));
     };
 
-    /** Handle capability dropdown change */
-    const handleCapabilityFilter = (capabilityValue: string) => {
-        setActiveCapability(capabilityValue);
-        updateFilters(searchValue, activeStatus, capabilityValue, activeCategory);
+    const handleCategoryFilter = (categoryId: string) => {
+        setFilters((prev) => ({ ...prev, category: categoryId === 'all' ? undefined : categoryId }));
     };
 
-    /** Handle category filter click */
-    const handleCategoryFilter = (categoryKey: string) => {
-        // Toggle off if clicking the already active category
-        const newCategory = activeCategory === categoryKey ? 'all' : categoryKey;
-        setActiveCategory(newCategory);
-        updateFilters(searchValue, activeStatus, activeCapability, newCategory);
+    const handleCapabilityFilter = (capabilityId: string) => {
+        setFilters((prev) => ({ ...prev, capability: capabilityId === 'all' ? undefined : capabilityId }));
     };
 
-    /** Apply all filters to the hook */
-    const updateFilters = (search: string, status: string, capability: string, category: string) => {
-        const newFilters: ActionFilters = {
-            search: search || undefined,
-            status: status !== 'all' ? status : undefined,
-            capability: capability !== 'all' ? capability : undefined,
-            category: category !== 'all' ? category : undefined,
-        };
-        setFilters(newFilters);
-    };
-
-    /** Handle action menu selections */
-    const handleCardAction = (actionKey: string, actionId: string) => {
-        if (actionKey === CARD_ACTION_KEYS.EDIT_SETTINGS || actionKey === CARD_ACTION_KEYS.TEST) {
-            // Fetch full action data with JSON blobs
-            fetchActionById(actionId).then((result: Awaited<ReturnType<typeof fetchActionById>>) => {
-                if (result.success) {
-                    setActionToEdit(result.data);
-                    setInitialModalStep(actionKey === CARD_ACTION_KEYS.TEST ? 1 : 0);
-                    setIsCreateModalOpen(true);
+    const handleAction = async (actionKey: string, actionId: string) => {
+        if (actionKey === 'edit' || actionKey === 'test') {
+            try {
+                const response = await fetchActionById(actionId);
+                if (response.success) {
+                    setActionToEdit(response.data);
+                    setInitialStep(actionKey === 'test' ? 1 : 0);
+                    setModalOpen(true);
                 } else {
-                    message.error(result.error || 'Failed to load action for editing');
+                    message.error(response.error || 'Failed to load action details');
                 }
-            }).catch(() => {
-                message.error('Failed to load action for editing');
+            } catch (err) {
+                message.error('Failed to load action details');
+            }
+        } else if (actionKey === 'delete') {
+            Modal.confirm({
+                title: 'Delete Action',
+                icon: <ExclamationCircleOutlined />,
+                content: 'Are you sure you want to delete this action? This cannot be undone.',
+                okText: 'Delete',
+                okType: 'danger',
+                cancelText: 'Cancel',
+                centered: true,
+                onOk: async () => {
+                    try {
+                        const result = await deleteAction(actionId);
+                        if (result.success) {
+                            message.success(result.message || 'Action deleted successfully');
+                            refetch();
+                        } else {
+                            message.error(result.error || 'Failed to delete action');
+                        }
+                    } catch (err) {
+                        message.error('Failed to delete action');
+                    }
+                },
             });
-        } else if (actionKey === CARD_ACTION_KEYS.DELETE) {
-            message.info('Delete coming soon...');
-        } else {
-            refetch();
         }
     };
 
     return (
-        <div className="action-catalog">
-            <CreateActionModal
-                isOpen={isCreateModalOpen}
-                initialStep={initialModalStep}
-                onClose={() => { setIsCreateModalOpen(false); setActionToEdit(undefined); setInitialModalStep(0); }}
-                onCreated={() => refetch()}
-                actionToEdit={actionToEdit}
-            />
+        <div className="action-catalog-page">
+            <header className="catalog-header">
+                <div className="catalog-header-top">
+                    <div className="title-section">
+                        <div className="title-row">
+                            <Title level={2} style={{ margin: 0, fontSize: '28px', fontWeight: 700, letterSpacing: '-0.022em' }}>Action Catalog</Title>
+                            <Button 
+                                type="primary" 
+                                shape="circle"
+                                icon={<PlusOutlined />} 
+                                onClick={() => {
+                                    setActionToEdit(null);
+                                    setInitialStep(0);
+                                    setModalOpen(true);
+                                }}
+                                className="create-btn-mini"
+                            />
+                        </div>
+                        <Text type="secondary" style={{ fontSize: '13px', fontWeight: 400, color: 'var(--text-subtle)', display: 'block', marginTop: '4px' }}>
+                            Browse and manage available action definitions for your skills.
+                        </Text>
+                    </div>
 
-            {/* ── Page Header ── */}
-            <div className="action-catalog__header">
-                <Title level={3} className="action-catalog__title">Action Catalog</Title>
-                <Button type="primary" icon={<PlusOutlined />} size="large" onClick={() => setIsCreateModalOpen(true)}>
-                    Create Action
-                </Button>
-            </div>
-
-            {/* ── Search Bar & Quick Filters ── */}
-            <div className="action-catalog__toolbar">
-                <div className="action-catalog__search-row">
-                    <Input.Search
-                        placeholder="Search actions by name, key, or description..."
-                        size="large"
-                        allowClear
-                        value={searchValue}
-                        onChange={(e) => handleSearch(e.target.value)}
-                        className="action-catalog__search-input"
-                    />
-
-                    <div className="action-catalog__toolbar-selects">
-                         
-
-                        <Select
-                            size="large"
-                            value={activeCategory}
-                            onChange={handleCategoryFilter}
-                            className="action-catalog__dropdown"
-                            placeholder="All Categories"
-                            loading={isCategoriesLoading}
-                            options={[
-                                { value: 'all', label: `All Categories (${Object.values(categoryCounts).reduce((a, b) => a + b, 0)})` },
-                                ...categories.map((category:any) => ({
-                                    value: (category.categoryId ?? category.id ?? 0).toString(),
-                                    label: `${category.name}`
-                                }))
-                            ]}
-                        />
-                        <Select
-                            size="large"
-                            value={activeCapability}
-                            onChange={handleCapabilityFilter}
-                            className="action-catalog__dropdown"
-                            placeholder="All Capabilities"
-                            loading={isCapabilitiesLoading}
-                            options={[
-                                { value: 'all', label: `All Capabilities (${statusCounts['all'] || 0})` },
-                                ...capabilities.map((capability:any) => ({
-                                    value: capability.capabilityId.toString(),
-                                    label: `${capability.name}`
-                                }))
-                            ]}
-                        />
+                    <div className="catalog-filters-row">
+                        <div className="catalog-search-wrap">
+                            <SearchInput
+                                placeholder="Search by name or key..."
+                                value={searchValue}
+                                onChange={handleSearch}
+                            />
+                        </div>
+                        <div className="catalog-options-row">
+                            <Select
+                                placeholder="All Categories"
+                                defaultValue="all"
+                                onChange={handleCategoryFilter}
+                                options={[
+                                    { value: 'all', label: 'All Categories' },
+                                    ...categories.map((c: any) => ({ value: c.categoryId?.toString() || '', label: c.name }))
+                                ]}
+                            />
+                            <Select
+                                placeholder="All Capabilities"
+                                defaultValue="all"
+                                onChange={handleCapabilityFilter}
+                                options={[
+                                    { value: 'all', label: 'All Capabilities' },
+                                    ...capabilities.map((c: any) => ({ value: c.capabilityId?.toString() || '', label: c.name }))
+                                ]}
+                            />
+                        </div>
                     </div>
                 </div>
 
-                <div className="action-catalog__filter-bar">
-                    <Tabs
-                        activeKey={activeStatus}
+                <div className="catalog-toolbar">
+                   <Tabs
+                        activeKey={filters.status || 'all'}
                         onChange={handleStatusFilter}
-                        className="action-catalog__tabs"
-                        items={ACTION_STATUS_FILTER_OPTIONS.map((option) => ({
-                            key: option.key,
-                            label: (
-                                <Space>
-                                    <option.icon />
-                                    <span>{option.label}</span>
-                                        <Badge
-                                            count={statusCounts[option.key] ?? 0}
-                                            showZero
-                                            color={activeStatus === option.key ? 'var(--color-primary)' : '#d9d9d9'}
-                                            className="action-catalog__count-tag"
+                        className="status-tabs"
+                        items={[
+                            { 
+                                key: 'all', 
+                                label: (
+                                    <Space size={8}>
+                                        <span>All</span>
+                                        <Badge 
+                                            count={statusCounts.all || 0} 
+                                            showZero 
+                                            style={{ backgroundColor: (filters.status || 'all') === 'all' ? 'var(--accent)' : '#f1f5f9', color: (filters.status || 'all') === 'all' ? '#fff' : '#64748b' }}
                                         />
-                                </Space>
-                            ),
-                        }))}
+                                    </Space>
+                                ) 
+                            },
+                            { 
+                                key: 'published', 
+                                label: (
+                                    <Space size={8}>
+                                        <span>Published</span>
+                                        <Badge 
+                                            count={statusCounts.published || 0} 
+                                            showZero 
+                                            style={{ backgroundColor: filters.status === 'published' ? 'var(--accent)' : '#f1f5f9', color: filters.status === 'published' ? '#fff' : '#64748b' }}
+                                        />
+                                    </Space>
+                                ) 
+                            },
+                            { 
+                                key: 'draft', 
+                                label: (
+                                    <Space size={8}>
+                                        <span>Draft</span>
+                                        <Badge 
+                                            count={statusCounts.draft || 0} 
+                                            showZero 
+                                            style={{ backgroundColor: filters.status === 'draft' ? 'var(--accent)' : '#f1f5f9', color: filters.status === 'draft' ? '#fff' : '#64748b' }}
+                                        />
+                                    </Space>
+                                ) 
+                            },
+                        ]}
                     />
                 </div>
+            </header>
+
+            <div className="catalog-body">
+                {actions.length === 0 && !isLoading ? (
+                    <div className="catalog-empty reveal-up">
+                        <Empty 
+                            image={Empty.PRESENTED_IMAGE_SIMPLE} 
+                            description={searchValue ? "No matching actions found" : "No actions available in the catalog"}
+                        >
+                            {searchValue && <Button type="link" onClick={() => handleSearch('')}>Clear filters</Button>}
+                        </Empty>
+                    </div>
+                ) : (
+                    <Grid 
+                        isLoading={isLoading}
+                        SkeletonComponent={ActionCardSkeleton}
+                        data={actions}
+                        gutter={[20, 20]}
+                        autoFitMinWidth={280}
+                        renderItem={(action) => (
+                            <ActionCard 
+                                action={action} 
+                                onAction={handleAction} 
+                            />
+                        )}
+                    />
+                )}
             </div>
 
-            {/* ── Main Content Area ── */}
-            <div className="action-catalog__body">
-
-                {/* ── Card Grid ── */}
-                <main className="action-catalog__grid-area">
-                    {isActionsLoading ? (
-                        <div className="action-catalog__loading">
-                            <Spin size="large" />
-                        </div>
-                    ) : actions.length === 0 ? (
-                        <div className="action-catalog__empty">
-                            <Empty description="No actions match your filters" />
-                        </div>
-                    ) : (
-                        <div className="action-catalog__grid">
-                            {actions.map((action) => (
-                                <ActionCard
-                                    key={action.id}
-                                    action={action}
-                                    onAction={handleCardAction}
-                                />
-                            ))}
-                        </div>
-                    )}
-                </main>
-            </div>
+            <CreateActionModal 
+                isOpen={modalOpen}
+                onClose={() => setModalOpen(false)}
+                onCreated={() => {
+                    refetch();
+                    setModalOpen(false);
+                }}
+                actionToEdit={actionToEdit}
+                initialStep={initialStep}
+            />
         </div>
     );
 }

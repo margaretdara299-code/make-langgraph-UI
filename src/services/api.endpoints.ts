@@ -41,5 +41,6 @@ export const API_ENDPOINTS = {
     ENGINE: {
         COUNTS: `${API_V1_BASE}/engine/counts`,
         GENERATE_CODE: (versionId: string) => `${API_V1_BASE}/engine/generate-code/${versionId}`,
+        RUN: (versionId: string) => `${API_V1_BASE}/engine/run/${versionId}`,
     },
 } as const;

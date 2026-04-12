@@ -161,6 +161,7 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
             destroyOnClose
             className="create-action-modal"
             centered
+            zIndex={1300}
         >
             <div className="create-action-modal__layout">
                 {/* ── Left Side: Steps Navigation & Form ── */}

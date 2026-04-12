@@ -1,32 +1,85 @@
-/**
- * PropertiesDrawer styles.
- */
-
-.properties-drawer {
-    /* We override the AntD drawer position because mask={false} on a full screen 
-       can sometimes push layout oddly unless bound to its container.
-       We manage absolute positioning inside the main pane wrapper. */
-    position: absolute !important;
+/* Floating Properties Drawer */
+.properties-drawer-floating {
+  position: absolute;
+  right: 20px;
+  top: 72px;
+  bottom: 24px;
+  width: 380px; 
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0,0,0,0.02);
+  z-index: 1000;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
 }
 
-/* Ensure the wrapper doesn't capture clicks when the drawer is open with mask={false} */
-.ant-drawer-inline {
-    position: absolute;
+.properties-drawer__drawer-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  background: #ffffff;
 }
 
-.properties-drawer__header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+.properties-drawer__header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
+
+.properties-drawer__close-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 0;
+}
+
+.properties-drawer__close-btn:hover {
+  background: #fee2e2;
+  color: #ef4444;
+  border-color: #fecaca;
+  transform: rotate(90deg) scale(1.05);
+}
+
+.properties-drawer__drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background: #ffffff;
+}
+
+
 
 .properties-drawer__icon {
-    font-size: 20px;
-    line-height: 1;
+    width: 28px;
+    height: 28px;
+    background: var(--border-light);
+    border-radius: var(--radius-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #000000;
 }
 
 .properties-drawer__title-text {
     font-weight: 600;
+    font-size: 14px;
+    color: #0f172a;
+    letter-spacing: -0.01em;
 }
 
 .properties-drawer__content {
@@ -34,97 +87,124 @@
     flex-direction: column;
 }
 
+/* --- Metadata Section --- */
 .properties-drawer__meta {
-    padding: 16px;
-    border-radius: 8px;
-    border: 1px solid;
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-page);
+    border: 1px solid var(--border-medium);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
+    margin-bottom: 24px;
 }
 
 .properties-drawer__meta-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 13px;
+}
+
+.properties-drawer__meta-label {
+    color: #64748b;
+    font-weight: 600;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.properties-drawer__meta-value {
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 11px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-medium);
+    padding: 2px 8px;
+    border-radius: var(--radius-xs);
+    font-family: var(--font-mono);
+}
+
+/* --- Form Improvements --- */
+.properties-drawer__form .ant-form-item {
+    margin-bottom: 16px !important;
+}
+
+.properties-drawer__form .ant-form-item-label {
+    padding-bottom: 6px !important;
+}
+
+.properties-drawer__form .ant-form-item-label>label {
+    font-weight: 600 !important;
+    font-size: 12px !important;
+    color: #475569 !important;
+    height: auto !important;
+    letter-spacing: -0.01em;
 }
 
 .properties-drawer__divider {
     height: 1px;
-    background-color: var(--color-border);
-    margin: 24px 0;
+    background-color: #f1f5f9;
+    margin: 20px -20px;
 }
 
 .properties-drawer__section-title {
-    margin-top: 0 !important;
+    margin-top: 24px !important;
     margin-bottom: 16px !important;
-}
-
-.properties-drawer__capability-badge {
-    font-size: 11px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 4px;
-}
-
-.properties-drawer__empty-config {
-    padding: 24px 0;
-    text-align: center;
-    background: rgba(0, 0, 0, 0.02);
-    border-radius: 8px;
-    border: 1px dashed var(--color-border);
-}
-
-.properties-drawer__form .ant-form-item-label>label {
-    font-weight: 500;
-    font-size: 13px;
-}
-
-/* ── Schema Tables (Inputs / Outputs) ── */
-.properties-drawer__schema-table {
-    margin-bottom: 8px;
-}
-
-.properties-drawer__schema-table .ant-table-thead > tr > th {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 6px 8px;
-    background: rgba(0, 0, 0, 0.02);
-}
-
-.properties-drawer__schema-table .ant-table-tbody > tr > td {
-    font-size: 12px;
-    padding: 5px 8px;
-}
-
-.properties-drawer__schema-table .ant-table-tbody > tr:last-child > td {
-    border-bottom: none;
-}
-
-/* ── Unified Config Form ── */
-
-.properties-drawer__flex-row {
-    display: flex;
-    gap: 12px;
-}
-
-.properties-drawer__flex-item {
-    flex: 1;
-}
-
-.properties-drawer__method-select {
-    width: 140px;
-    flex-shrink: 0;
-}
-
-.properties-drawer__kv-row {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #475569 !important;
+    letter-spacing: -0.01em;
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 8px;
+}
+
+.properties-drawer__section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-light);
+}
+
+.properties-drawer__subsection-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 10px !important;
+    display: block;
+}
+
+/* --- Tabs Refinement --- */
+.properties-drawer__tabs .ant-tabs-nav {
+    margin-bottom: 20px !important;
+}
+
+.properties-drawer__tabs .ant-tabs-tab {
+    padding: 8px 0 !important;
+    margin: 0 16px 0 0 !important;
+}
+
+.properties-drawer__tabs .ant-tabs-tab-btn {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #64748b !important;
+}
+
+.properties-drawer__tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: var(--accent) !important;
+}
+
+.properties-drawer__tabs .ant-tabs-ink-bar {
+    background: var(--accent) !important;
+    height: 2px !important;
+}
+
+/* --- Key-Value Rows --- */
+.properties-drawer__kv-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
 }
 
 .properties-drawer__kv-field {
@@ -133,28 +213,39 @@
 }
 
 .properties-drawer__delete-icon {
-    color: var(--color-error);
+    color: #cbd5e1;
     font-size: 14px;
     cursor: pointer;
-    flex-shrink: 0;
-    transition: color 0.2s ease;
+    padding: 6px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
 }
 
 .properties-drawer__delete-icon:hover {
-    color: var(--color-error-hover, #ff7875);
+    color: #ef4444;
+    background: #fee2e2;
 }
 
-.properties-drawer__empty-hint {
-    display: block;
-    margin-bottom: 8px;
-    font-style: italic;
-    font-size: 12px;
+/* --- Custom Inputs --- */
+.ant-input,
+.ant-select-selector,
+.ant-input-textarea {
+    border-color: #e2e8f0 !important;
+    border-radius: 6px !important;
+    font-size: 13px !important;
 }
 
+.ant-input:focus,
+.ant-select-selector:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 2px var(--accent-soft) !important;
+}
+
+/* --- State Management --- */
 .properties-drawer__state-row {
     display: flex;
     gap: 16px;
-    align-items: flex-start;
+    margin-bottom: 12px;
 }
 
 .properties-drawer__state-col {
@@ -162,8 +253,63 @@
     min-width: 0;
 }
 
-.properties-drawer__state-divider {
-    width: 1px;
-    align-self: stretch;
-    background-color: var(--color-border);
+.properties-drawer__state-col>span {
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* --- Capability Badges --- */
+.properties-drawer__capability-badge {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: #eef2ff;
+    color: var(--accent);
+    border: 1px solid #e0e7ff;
+}
+
+.badge-decision {
+    background: #fffbe6;
+    color: #fa8c16;
+    border-color: #ffe58f;
+}
+
+/* --- Buttons --- */
+.ant-btn-dashed {
+    height: 32px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    border-color: #e2e8f0 !important;
+    color: #64748b !important;
+    border-radius: 6px !important;
+}
+
+.ant-btn-dashed:hover {
+    color: var(--accent) !important;
+    border-color: var(--accent) !important;
+}
+
+/* --- Decision Rules Card --- */
+.decision-props__rule-card {
+    border-radius: var(--radius-sm) !important;
+    border: 1px solid #fed7aa !important; /* Subtle orange border */
+    background: #fffcf9 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+    margin-bottom: 16px !important;
+}
+
+.decision-props__rule-card .ant-card-head {
+    background: #fff8f1 !important;
+    border-bottom: 1px solid #ffedd5 !important;
+    min-height: 40px !important;
+}
+
+.decision-props__rule-card .ant-card-body {
+    padding: 12px !important;
 }

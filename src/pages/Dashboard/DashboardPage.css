@@ -1,28 +1,176 @@
-.dashboard-page {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+.dashboard-content {
+  padding: var(--space-1);
 }
 
-.dashboard-page__header {
-    margin-bottom: 24px;
+.dashboard-loading {
+  height: calc(100vh - 128px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.dashboard-page__title {
-    margin-bottom: 0 !important;
-    color: var(--color-nav-input-text) !important;
-    font-weight: 600 !important;
+/* Greeting Card - Minimalist Style */
+.greeting-card {
+  padding: 32px 0 24px;
+  margin-bottom: var(--space-2);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 1.5px solid var(--border-light);
+  position: relative;
 }
 
-.dashboard-page__loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    min-height: 400px;
+.greeting-text h1 {
+  color: #000000 !important;
+  margin-bottom: 4px !important;
+  font-weight: 700 !important;
+  font-size: 28px !important;
+  letter-spacing: -0.02em !important;
 }
 
-.dashboard-page__body {
-    flex: 1;
+.greeting-text span, 
+.greeting-text .ant-typography {
+  color: #000000 !important;
+  opacity: 0.8;
+  font-size: 15px;
+  font-weight: 500;
 }
 
+/* Metrics Grid */
+.metrics-grid {
+  margin-bottom: var(--space-4);
+}
+
+/* Activity Box */
+.activity-box {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+}
+
+.box-header {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.box-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+.box-title-icon {
+  font-size: 20px;
+  color: var(--accent);
+}
+
+.box-title {
+  margin: 0 !important;
+  font-weight: 700 !important;
+}
+
+.text-btn {
+  color: var(--accent);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-sm);
+  padding: var(--space-05) var(--space-1);
+  border-radius: var(--radius-sm);
+}
+
+.text-btn:hover {
+  background-color: var(--accent-soft);
+}
+
+.activity-stream {
+  padding: var(--space-2);
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  transition: all var(--motion-fast);
+}
+
+.activity-item:hover {
+  background-color: var(--bg-page);
+}
+
+.activity-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.activity-icon-wrap.info {
+  background-color: var(--accent-soft);
+  color: var(--accent);
+}
+
+.activity-details {
+  flex: 1;
+}
+
+.activity-msg {
+  display: flex;
+  flex-direction: column;
+}
+
+.activity-skill-name {
+  font-weight: var(--weight-bold);
+  color: var(--text-main);
+  font-size: var(--text-base);
+}
+
+.activity-subtext {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.activity-tag {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.activity-tag.status-published {
+  background-color: var(--color-success-bg);
+  color: var(--color-success-text);
+}
+
+.activity-tag.status-draft {
+  background-color: var(--color-info-bg);
+  color: var(--color-info-text);
+}
+
+.empty-state {
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--text-subtle);
+}
+
+/* Animations */
+.reveal-up {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: revealUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes revealUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

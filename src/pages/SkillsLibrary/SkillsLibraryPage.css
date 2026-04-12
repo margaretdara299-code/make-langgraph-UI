@@ -1,86 +1,147 @@
-/**
- * Skills Library page styles.
- * Filter item styles are in StatusFilterItem component.
- * All colors use CSS variables or AntD theme tokens.
- */
-
-.skills-library {
+.skills-library-page {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    height: calc(100vh - 112px);
-    /* 64px header + 24px top padding + 24px bottom padding */
+    padding: 0;
+    height: 100%;
+    background-color: var(--bg-page);
+    animation: fadeIn var(--motion-base) var(--ease-out);
 }
 
-/* ── Page Header ── */
+.skills-library-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
 
-.skills-library__header {
+.title-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 10px;
 }
 
-.skills-library__title {
+.title-row .ant-typography {
+    color: var(--text-main) !important;
     margin: 0 !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em;
 }
 
-/* ── Search & Filters ── */
- 
- .skills-library__toolbar {
-     display: flex;
-     flex-direction: column;
-     gap: 16px;
-     margin-bottom: 8px;
- }
- 
- .skills-library__search {
-     max-width: 480px;
- }
- 
- .skills-library__filter-bar {
-     display: flex;
-     gap: 12px;
-     flex-wrap: wrap;
-     padding: 4px 0;
- }
- 
- /* ── Body (sidebar + grid) ── */
- 
- .skills-library__body {
-     display: flex;
-     flex: 1;
-     min-height: 0;
- }
- 
- /* ── Sidebar Filters (REMOVED) ── */
-
-/* ── Grid ── */
-
-.skills-library__grid-area {
-    flex: 1;
-    min-width: 0;
-    overflow-y: auto;
-    /* Make only the grid area scrollable */
-    padding-right: 12px;
-    /* Breathing room for scrollbar */
-}
-
-.skills-library__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 20px;
-}
-
-/* ── Loading / Empty ── */
-
-.skills-library__loading,
-.skills-library__empty {
+.create-skill-btn-mini {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    padding: 0 !important;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 300px;
+    background-color: var(--accent) !important;
+    border: none !important;
+    color: white !important;
+    box-shadow: 0 4px 10px var(--accent-soft);
+    transition: all 0.2s ease;
+    border-radius: 50% !important;
+    margin-top: 4px;
 }
 
-.skills-library__count-tag {
-    font-size: 10px !important;
-}
+.create-skill-btn-mini:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px var(--accent-soft);
+}
+
+.skills-library-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 2px;
+}
+
+.skills-library-tabs.ant-tabs {
+    margin-bottom: -2px; /* Pull down to overlay the border-bottom */
+}
+
+.skills-library-tabs .ant-tabs-nav {
+    margin: 0 !important;
+}
+
+.skills-library-tabs .ant-tabs-tab {
+    padding: 12px 16px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    color: var(--text-subtle) !important;
+    transition: all 0.3s ease !important;
+}
+
+.skills-library-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: var(--accent) !important;
+}
+
+.skills-library-tabs .ant-tabs-ink-bar {
+    height: 3px !important;
+    background: var(--accent) !important;
+    border-radius: 3px 3px 0 0;
+}
+
+.skills-library-search-container {
+    margin-bottom: 6px;
+}
+
+.skills-library-search.ant-input-affix-wrapper {
+    width: 320px;
+    background: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-medium) !important;
+    border-radius: 10px !important;
+    padding: 8px 12px !important;
+    box-shadow: var(--shadow-xs);
+    transition: all 0.3s ease !important;
+}
+
+.skills-library-search.ant-input-affix-wrapper-focused {
+    border-color: var(--accent) !important;
+    background: #ffffff !important;
+    box-shadow: 0 0 0 4px var(--accent-soft), var(--shadow-sm) !important;
+}
+
+.skills-library-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: 32px;
+    padding-right: 8px; /* For scrollbar breathing room */
+}
+
+.skills-library-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: 20px;
+    padding: 4px 0;
+}
+
+.skills-empty {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    background-color: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 1px dashed var(--border-strong);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Custom Scrollbar */
+.skills-library-body::-webkit-scrollbar {
+    width: 6px;
+}
+.skills-library-body::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 10px;
+}

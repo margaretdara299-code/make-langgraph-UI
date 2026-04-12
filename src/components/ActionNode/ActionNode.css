@@ -1,187 +1,200 @@
 /**
- * ActionNode Color-Themed Turbo Style.
+ * Modern Node Styles
+ * Matches the user reference design: Horizontal layout, specific colors, and animations.
  */
 
-.action-node {
-    background: transparent;
-    border-radius: var(--turbo-border-radius);
-    min-width: 200px;
-    max-width: 280px;
-    font-family: var(--turbo-font-mono);
-    position: relative;
-    padding: 0;
-    overflow: visible; 
-    transition: all 0.3s ease;
+@keyframes activeGlow {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
-/* Border Wrapper */
-.action-node__border-wrapper {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    border-radius: var(--turbo-border-radius);
-    overflow: hidden; 
-    padding: 1px; 
-    background: var(--color-bg-white);
-    z-index: 1;
-}
-
-/* Animated Gradient Border Layer */
-.action-node__border-wrapper::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 200%;
-    height: 200%;
-    aspect-ratio: 1;
-    background: conic-gradient(
-        from 0deg,
-        transparent 0 300deg,
-        var(--node-accent-glow) 360deg
-    );
-    animation: spin 4s linear infinite;
-    z-index: 0;
-}
-
-/* Internal Content Wrapper - Tinted */
-.action-node__content {
-    background: color-mix(in srgb, var(--node-accent-glow), var(--color-bg-white) 93%);
-    border: 1px solid color-mix(in srgb, var(--node-accent-glow), transparent 70%); 
-    border-radius: calc(var(--turbo-border-radius) - 1px);
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    z-index: 1;
-}
-
-.action-node--glow {
-    box-shadow: 
-        0 8px 24px var(--color-node-shadow-glow),
-        0 0 15px -3px var(--node-accent-glow);
-}
-
-.action-node:hover {
-    box-shadow: 
-        0 12px 30px var(--color-node-shadow-hover),
-        0 0 20px -2px var(--node-accent-glow);
-}
-
-/* ── Header ── */
-.action-node__header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--color-surface-border);
-    background: var(--color-surface-white-glass);
-}
-
-.action-node__icon {
-    font-size: 18px;
-    line-height: 1;
-    color: var(--node-accent-glow);
-}
-
-.action-node__title {
-    font-size: 14px;
-    font-weight: 700;
-    color: color-mix(in srgb, var(--node-accent-glow), var(--color-base-black) 60%);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.3;
-    word-break: break-word;
-}
-
-.action-node__delete {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-text-danger, #ff4d4f);
+@keyframes nodePop {
+  0% {
+    transform: scale(0.85);
     opacity: 0;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    padding: 4px;
-    border-radius: 4px;
+  }
+  60% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-.action-node__header:hover .action-node__delete {
-    opacity: 0.7;
+.modern-node-card:not(.dragging):hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
 }
 
-.action-node__delete:hover {
-    opacity: 1 !important;
-    background: rgba(255, 77, 79, 0.1);
+/* Disable transitions and lift-effects entirely while dragging for zero latency */
+.react-flow__node.dragging .modern-node-card {
+  transition: none !important;
+  transform: none !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15) !important;
 }
 
-/* ── Footer ── */
-.action-node__footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    padding: 8px 12px;
+/* Base Card */
+.modern-node-card {
+  position: relative;
+  width: auto;
+  border-radius: 12px;
+  border-width: 1.5px;
+  border-style: solid;
+  padding: 12px 14px;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease;
+  animation: nodePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  font-family:
+    "Inter",
+    -apple-system,
+    system-ui,
+    sans-serif;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.action-node__capability-badge {
-    font-size: 10px;
-    font-weight: 800;
-    padding: 2px 6px;
-    border-radius: 4px;
-    background: color-mix(in srgb, var(--node-accent-glow), transparent 85%);
-    color: color-mix(in srgb, var(--node-accent-glow), var(--color-base-black) 40%) !important;
-    border: 1px solid color-mix(in srgb, var(--node-accent-glow), transparent 70%);
-    letter-spacing: 0.5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex: 0 1 auto;
-    max-width: 60%;
+/* Hidden Delete Button shown on hover */
+.modern-node-delete {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 22px;
+  height: 22px;
+  background: #ff4d4f;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(255, 77, 79, 0.25);
+  z-index: 10;
+  border: 2px solid #fff;
+}
+.modern-node-card:hover .modern-node-delete {
+  opacity: 1;
+}
+.modern-node-delete:hover {
+  transform: scale(1.1);
+  background: #cf1322;
 }
 
-.action-node__category {
-    font-size: 11px;
-    color: color-mix(in srgb, var(--node-accent-glow), var(--color-base-black) 40%);
-    opacity: 0.7;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: right;
-    min-width: 0;
-    flex: 1 1 auto;
+/* Layout */
+.modern-node-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
 
-/* ── Handles (Turbo Style) ── */
-.action-node__handle {
-    width: 14px !important;
-    height: 8px !important;
-    border-radius: 4px !important;
-    background: var(--node-accent-glow) !important;
-    border: 2px solid var(--color-bg-white) !important;
-    z-index: 10 !important;
-    transition: all 0.2s ease !important;
-    box-shadow: 0 0 10px var(--node-accent-glow) !important;
+.modern-node-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
 }
 
-.action-node__handle-target-top {
-    top: -4px !important; 
-    left: 50% !important;
-    transform: translateX(-50%) !important;
+.modern-node-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
-.action-node__handle-source-bottom {
-    bottom: -4px !important; 
-    left: 50% !important;
-    transform: translateX(-50%) !important;
+/* Elements */
+.modern-node-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
-.action-node__handle:hover {
-    transform: translateX(-50%) scale(1.2) !important;
-    box-shadow: 0 0 15px var(--node-accent-glow) !important;
+.modern-node-text-col {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.modern-node-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a1a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
+}
+
+.modern-node-sub {
+  font-size: 11px;
+  font-weight: 400;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modern-node-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  color: #fff;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modern-node-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background-color: var(--node-stroke);
+  box-shadow: 0 0 8px currentColor;
+  opacity: 0.6;
+}
+
+/* Override React Flow Handles */
+.modern-node-handle {
+  width: 10px !important;
+  height: 10px !important;
+  background: #fff !important;
+  border: 2px solid currentColor !important;
+  opacity: 0;
+  transition: all 0.2s ease;
+}
+
+.modern-node-card:hover .modern-node-handle {
+  opacity: 1;
+}
+
+.modern-node-handle:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 }

@@ -6,7 +6,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { type Node, type Edge } from '@xyflow/react';
+import { type Node, type Edge, MarkerType } from '@xyflow/react';
 import { loadSkillGraph, saveSkillGraph } from '@/services/graph.service';
 import {
     loadGraphFromStorage,
@@ -18,9 +18,10 @@ export function useSkillGraph() {
     const { versionId } = useParams<{ versionId: string }>();
     const [initialNodes, setInitialNodes] = useState<Node[]>([]);
     const [initialEdges, setInitialEdges] = useState<Edge[]>([]);
+    const [initialViewport, setInitialViewport] = useState<{ x: number, y: number, zoom: number }>({ x: 0, y: 0, zoom: 1 });
     const [isLoading, setIsLoading] = useState(false);
 
-    // Load graph from backend on mount — always replaces localStorage
+    // Load graph from backend on mount; always replaces localStorage
     useEffect(() => {
         if (!versionId) return;
         setIsLoading(true);
@@ -33,6 +34,7 @@ export function useSkillGraph() {
                 const nodesMap: Record<string, any> = {};
                 const reactFlowNodes: Node[] = apiNodes.map((node: any) => {
                     nodesMap[node.id] = node;
+
                     // Preserve parentId and extent for sub-flow children
                     const rfNode: any = { ...node };
                     if (node.parentId || node.parentNode) {
@@ -55,23 +57,63 @@ export function useSkillGraph() {
                 const connectionsMap: Record<string, any> = {};
                 const reactFlowEdges: Edge[] = Object.entries(connectionsObj).map(([key, conn]: [string, any]) => {
                     const edgeId = conn.id || key;
+                    
+                    // We must map sourceHandle/targetHandle into our storage payload
+                    // so the next Save doesn't erase them (posting null to backend).
                     connectionsMap[edgeId] = {
                         id: edgeId,
                         source: conn.source,
                         target: conn.target,
+                        sourceHandle: conn.sourceHandle,
+                        targetHandle: conn.targetHandle,
                     };
+                    
+                    // A decision-branch edge originates from a named rule handle.
+                    // Must explicitly exclude "default" — Boolean("default") === true,
+                    // which would incorrectly style the fallback path as a branch edge.
+                    const fromDecision = Boolean(conn.sourceHandle) && conn.sourceHandle !== 'default';
+
                     return {
                         id: edgeId,
                         source: conn.source,
+                        sourceHandle: conn.sourceHandle,
                         target: conn.target,
-                        type: 'default',
-                        animated: true,
+                        targetHandle: conn.targetHandle,
+                        type: 'smoothstep', // Ensure loaded edges use smoothstep (runs through DeletableEdge)
+                        animated: false,
+                        data: { fromDecision },
+                        markerEnd: fromDecision 
+                            ? undefined 
+                            : { type: MarkerType.ArrowClosed, color: '#888' },
+                        style: { 
+                            stroke: fromDecision ? '#f59e0b' : '#888', 
+                            strokeWidth: fromDecision ? 2 : 1.5 
+                        },
                     };
                 });
 
-                // Seed localStorage (replaces any stale data)
-                saveGraphToStorage(versionId, nodesMap, connectionsMap);
+                // For a brand-new graph, bootstrap only a Start node.
+                if (reactFlowNodes.length === 0) {
+                    const startNodeId = 'start-node-auto';
+                    const startNode: Node = {
+                        id: startNodeId,
+                        type: 'start',
+                        position: { x: 240, y: 120 },
+                        data: {
+                            label: 'Start',
+                            category: 'structure',
+                            icon: 'play',
+                        } as any,
+                    };
+                    reactFlowNodes.push(startNode);
+                    nodesMap[startNodeId] = startNode;
+                }
 
+                // Seed localStorage (replaces any stale data)
+                const viewportObj = data.viewport_json || { x: 0, y: 0, zoom: 1 };
+                saveGraphToStorage(versionId, nodesMap, connectionsMap, viewportObj);
+
+                setInitialViewport(viewportObj);
                 setInitialNodes(reactFlowNodes);
                 setInitialEdges(reactFlowEdges);
             })
@@ -82,7 +124,7 @@ export function useSkillGraph() {
             .finally(() => setIsLoading(false));
     }, [versionId]);
 
-    // Save current state to backend — reads from localStorage
+    // Save current state to backend; reads from localStorage
     const saveGraph = useCallback(async () => {
         if (!versionId) return { success: false, error: 'No version ID' };
 
@@ -91,21 +133,24 @@ export function useSkillGraph() {
 
         // Convert nodes map to array, strip internal-only fields
         const cleanNodes = Object.values(stored.nodes).map((node: any) => {
-            const { 
-                inputsSchemaJson, inputs_schema_json, 
-                outputsSchemaJson, outputs_schema_json, 
-                executionJson, execution_json, 
-                ...cleanData 
+            const {
+                inputsSchemaJson, inputs_schema_json,
+                outputsSchemaJson, outputs_schema_json,
+                executionJson, execution_json,
+                ...cleanData
             } = node.data || {};
             return { ...node, data: cleanData };
         });
 
-        return saveSkillGraph(versionId, cleanNodes, stored.connections);
+        const viewportToSave = stored.viewport || { x: 0, y: 0, zoom: 1 };
+
+        return saveSkillGraph(versionId, cleanNodes, stored.connections, viewportToSave);
     }, [versionId]);
 
     return {
         initialNodes,
         initialEdges,
+        initialViewport,
         saveGraph,
         isLoading,
         versionId: versionId || '',

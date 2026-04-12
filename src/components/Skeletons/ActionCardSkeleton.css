@@ -1,0 +1,62 @@
+.action-card-skeleton {
+    cursor: default !important;
+    pointer-events: none;
+    background-color: var(--bg-card);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Matching the "Premium" layout tokens */
+.action-card-skeleton .ac-premium-icon-box.skeleton-box {
+    background: var(--border-light) !important;
+    border: none;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-card-skeleton .ac-desc-placeholder {
+    margin-top: 12px;
+}
+
+/* Industry-Level Shimmer Animation */
+.action-card-skeleton::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0,
+        rgba(255, 255, 255, 0.4) 20%,
+        rgba(255, 255, 255, 0.7) 60%,
+        rgba(255, 255, 255, 0)
+    );
+    animation: action-shimmer 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+    z-index: 5;
+}
+
+@keyframes action-shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Force AntD Skeletons into project theme */
+.action-card-skeleton .ant-skeleton-input,
+.action-card-skeleton .ant-skeleton-button,
+.action-card-skeleton .ant-skeleton-avatar,
+.action-card-skeleton .ant-skeleton-paragraph > li {
+    background: var(--border-light) !important;
+}
+
+.action-card-skeleton .ant-skeleton.ant-skeleton-active .ant-skeleton-input,
+.action-card-skeleton .ant-skeleton.ant-skeleton-active .ant-skeleton-button,
+.action-card-skeleton .ant-skeleton.ant-skeleton-active .ant-skeleton-paragraph > li {
+    background: linear-gradient(90deg, var(--border-light) 25%, #f1f5f9 37%, var(--border-light) 63%) !important;
+    background-size: 400% 100% !important;
+}
