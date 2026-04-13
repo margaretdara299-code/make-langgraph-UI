@@ -8,6 +8,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { type Node, type Edge, MarkerType } from '@xyflow/react';
 import { loadSkillGraph, saveSkillGraph } from '@/services/graph.service';
+import { getNodeStrokeColor } from '@/utils';
 import {
     loadGraphFromStorage,
     saveGraphToStorage,
@@ -57,6 +58,8 @@ export function useSkillGraph() {
                 const connectionsMap: Record<string, any> = {};
                 const reactFlowEdges: Edge[] = Object.entries(connectionsObj).map(([key, conn]: [string, any]) => {
                     const edgeId = conn.id || key;
+                    const sourceNode = reactFlowNodes.find((node) => node.id === conn.source);
+                    const edgeColor = getNodeStrokeColor(sourceNode);
                     
                     // We must map sourceHandle/targetHandle into our storage payload
                     // so the next Save doesn't erase them (posting null to backend).
@@ -84,9 +87,9 @@ export function useSkillGraph() {
                         data: { fromDecision },
                         markerEnd: fromDecision 
                             ? undefined 
-                            : { type: MarkerType.ArrowClosed, color: '#888' },
+                            : { type: MarkerType.ArrowClosed, color: edgeColor },
                         style: { 
-                            stroke: fromDecision ? '#f59e0b' : '#888', 
+                            stroke: edgeColor,
                             strokeWidth: fromDecision ? 2 : 1.5 
                         },
                     };

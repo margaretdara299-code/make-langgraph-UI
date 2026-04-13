@@ -3,10 +3,9 @@ import { BaseEdge, EdgeLabelRenderer, getSmoothStepPath, useReactFlow, useNodesD
 import type { EdgeProps } from '@xyflow/react';
 import { removeConnectionFromStorage } from '@/services/skillGraphStorage.service';
 import { useParams } from 'react-router-dom';
+import { getNodeStrokeColor } from '@/utils';
 
 import './DeletableEdge.css';
-
-const DIAMOND_MARKER_ID = 'rf-decision-diamond-end';
 
 export default function DeletableEdge(props: EdgeProps) {
     const {
@@ -25,17 +24,18 @@ export default function DeletableEdge(props: EdgeProps) {
     const [hovered, setHovered] = useState(false);
 
     const fromDecision = Boolean((data as any)?.fromDecision);
+    const edgeColor = getNodeStrokeColor(sourceNodeData);
 
     // Compute dynamic label for Decision edges
     let computedLabel = props.label as string;
-    if (fromDecision || props.sourceHandle === 'default') {
-        if (props.sourceHandle === 'default') {
+    if (fromDecision || props.sourceHandleId === 'default') {
+        if (props.sourceHandleId === 'default') {
             computedLabel = 'FALLBACK';
         } else if (sourceNodeData && sourceNodeData.data) {
             const rules = (sourceNodeData.data as any)?.rules || [];
             const rule = rules.find((r: any, idx: number) => {
                 const hid = r?.id && String(r.id).trim() ? String(r.id) : `rule_${idx}`;
-                return hid === props.sourceHandle;
+                return hid === props.sourceHandleId;
             });
             if (rule) {
                 // Parse conditions
@@ -81,9 +81,9 @@ export default function DeletableEdge(props: EdgeProps) {
                 markerEnd={markerEnd}
                 style={{
                     ...style,
-                    strokeDasharray: '5,5', 
-                    stroke: '#94a3b8', 
-                    strokeWidth: 2,
+                    strokeDasharray: 'none',
+                    stroke: edgeColor,
+                    strokeWidth: style?.strokeWidth ?? 2,
                 }}
             />
 

@@ -45,7 +45,10 @@ export default function DecisionNode({ id, data }: NodeProps<CanvasNode>) {
      * first render and never needed re-registration.
      */
     useLayoutEffect(() => {
-        updateNodeInternals(id);
+        const timeout = setTimeout(() => {
+            updateNodeInternals(id);
+        }, 50);
+        return () => clearTimeout(timeout);
     }, [rules.length, id, updateNodeInternals]);
 
     const handleDelete = (e: React.MouseEvent) => {

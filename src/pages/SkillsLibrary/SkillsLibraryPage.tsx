@@ -192,7 +192,7 @@ export default function SkillsLibraryPage() {
                 ) : (
                     <div className="skills-library-grid">
                         {skills.map((skill) => {
-                            const categoryName = categories.find((cat) => cat.categoryId === skill.categoryId)?.name || 'General';
+                            const categoryName = categories.find((cat) => cat.category_id === skill.categoryId)?.name || 'General';
                             return (
                                 <SkillCard
                                     key={skill.id}
@@ -208,7 +208,10 @@ export default function SkillsLibraryPage() {
             <CreateSkillModal
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
-                onCreated={refetch}
+                onCreated={() => {
+                    setFilters({});
+                    refetch();
+                }}
             />
 
             <EditSkillModal

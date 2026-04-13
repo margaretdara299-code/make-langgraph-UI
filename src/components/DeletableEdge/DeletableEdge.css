@@ -1,6 +1,6 @@
 /* Apply stroke styles to all custom deletable edges */
 .react-flow__edge-path {
-    stroke-dasharray: 5, 5;
+    stroke-dasharray: none;
 }
 
 .deletable-edge__wrapper {
