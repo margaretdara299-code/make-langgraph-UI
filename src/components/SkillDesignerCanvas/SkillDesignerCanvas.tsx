@@ -32,6 +32,7 @@ import {
     removeConnectionFromStorage,
     upsertViewportInStorage,
 } from '@/services/skillGraphStorage.service';
+import { getNodeStrokeColor } from '@/utils';
 import './SkillDesignerCanvas.css';
 
 export default function SkillDesignerCanvas() {
@@ -85,6 +86,8 @@ export default function SkillDesignerCanvas() {
      */
     const onConnect: OnConnect = useCallback(
         (params) => {
+            const sourceNode = reactFlowInstance?.getNode(params.source);
+            const edgeColor = getNodeStrokeColor(sourceNode);
             const edgeId = [
                 'edge',
                 params.source,
@@ -109,9 +112,9 @@ export default function SkillDesignerCanvas() {
                 // Regular edges: grey arrow
                 markerEnd: fromDecision
                     ? undefined
-                    : { type: MarkerType.ArrowClosed, color: '#888' },
+                    : { type: MarkerType.ArrowClosed, color: edgeColor },
                 style: {
-                    stroke: fromDecision ? '#f59e0b' : '#888',
+                    stroke: edgeColor,
                     strokeWidth: fromDecision ? 2 : 1.5,
                 },
             }, eds));
@@ -126,7 +129,7 @@ export default function SkillDesignerCanvas() {
                 });
             }
         },
-        [setEdges, versionId]
+        [reactFlowInstance, setEdges, versionId]
     );
 
 
@@ -157,7 +160,7 @@ export default function SkillDesignerCanvas() {
                     minZoom={0.5}
                     maxZoom={2.0}
                     defaultViewport={initialViewport || { x: 0, y: 0, zoom: 1.0 }}
-                    onMoveEnd={(event, viewport) => {
+                    onMoveEnd={(_, viewport) => {
                         if (versionId) {
                             upsertViewportInStorage(versionId, viewport);
                         }
