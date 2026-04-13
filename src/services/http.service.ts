@@ -44,9 +44,9 @@ export function snakeToCamel<T>(data: unknown): T {
       data as Record<string, unknown>,
     )) {
       const newKey = snakeKeyToCamel(key);
-      // Skip recursion if the key indicates it's a JSON blob (configurations_json, nodes, edges, etc.)
+      // Skip recursion if the key indicates it's a JSON blob (configurations_json, nodes, edges, connections, etc.)
       const isJsonBlob =
-        key.endsWith("_json") || key === "nodes" || key === "edges";
+        key.endsWith("_json") || key === "nodes" || key === "edges" || key === "connections";
       transformed[newKey] = isJsonBlob ? value : snakeToCamel(value);
     }
     return transformed as T;
@@ -68,9 +68,9 @@ export function camelToSnake<T>(data: unknown): T {
       data as Record<string, unknown>,
     )) {
       const newKey = camelKeyToSnake(key);
-      // Skip recursion if the key indicates it's a JSON blob (configurationsJson, nodes, edges, etc.)
+      // Skip recursion if the key indicates it's a JSON blob (configurationsJson, nodes, edges, connections, etc.)
       const isJsonBlob =
-        key.endsWith("Json") || key === "nodes" || key === "edges";
+        key.endsWith("Json") || key === "nodes" || key === "edges" || key === "connections";
       transformed[newKey] = isJsonBlob ? value : camelToSnake(value);
     }
     return transformed as T;
