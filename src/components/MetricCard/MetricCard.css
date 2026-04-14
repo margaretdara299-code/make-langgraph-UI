@@ -64,8 +64,7 @@
 .metric-card__label {
   font-size: var(--text-sm);
   color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
   font-weight: var(--weight-medium);
   margin-bottom: var(--space-1) !important;
 }

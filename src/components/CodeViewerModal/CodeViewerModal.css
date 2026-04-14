@@ -228,7 +228,7 @@
 
 .code-viewer-modal__editor-header .ant-typography {
   color: #cccccc !important;
-  font-family: "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-sans);
 }
 
 .code-viewer-modal__editor-wrapper .monaco-editor {

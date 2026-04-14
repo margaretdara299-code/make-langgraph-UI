@@ -6,7 +6,7 @@
     margin-bottom: 32px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 5px;
 }
 
 .catalog-header-top {
@@ -87,26 +87,32 @@
     border-bottom: 1px solid var(--border-light) !important;
 }
 
+.status-tabs.ant-tabs {
+    margin-bottom: -1px;
+}
+
 .status-tabs .ant-tabs-tab {
-    padding: 0 16px 12px !important;
+    padding: 12px 27px !important;
     margin: 0 !important;
-    font-size: 13.5px;
-    font-weight: 500;
+    font-size: 14px;
+    /* font-weight: 600 !important; */
+    color: var(--text-subtle) !important;
+    transition: all 0.3s ease !important;
 }
 
 .status-tabs .ant-tabs-ink-bar {
-    height: 2px !important;
+    height: 3px !important;
     background: var(--accent) !important;
+    border-radius: 3px 3px 0 0;
 }
 
 .status-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
     color: var(--accent) !important;
-    font-weight: 600;
 }
 
 .catalog-body {
     position: relative;
-    padding-top: 10px;
+
 }
 
 .catalog-empty {
@@ -125,12 +131,12 @@
         align-items: flex-start;
         gap: 24px;
     }
-    
+
     .catalog-filters-row {
         width: 100%;
         flex-wrap: wrap;
     }
-    
+
     .catalog-search-wrap {
         width: 100%;
         max-width: 100%;

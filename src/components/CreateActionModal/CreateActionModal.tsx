@@ -2,8 +2,9 @@
  * CreateActionModal — The main state container and modal shell for the 7-step wizard.
  */
 
-import { useState, useEffect } from 'react';
-import { Modal, Steps, Button, Space, message, Form } from 'antd';
+import { useState, useEffect, useCallback } from 'react';
+import { Modal, Steps, Button, Space, message, Form, Typography } from 'antd';
+const { Text } = Typography;
 import { ActionPreviewPanel, TestApiModal } from '@/components';
 import { useApiTest } from '@/hooks/useApiTest';
 import { createAction, updateActionDefinition } from '@/services';
@@ -52,25 +53,76 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
         }
     }, [isOpen, actionToEdit, overviewForm, initialStep]);
 
-    const { 
-        isTestPopupOpen, 
-        setIsTestPopupOpen, 
-        testState, 
-        testResponse, 
-        testInputPayload, 
-        handleTestApi 
-    } = useApiTest(actionDraft, configForm);
+    const handleStepChange = useCallback(async (step: number) => {
+        // Validate current step before allowing navigation
+        let hasErrors = false;
 
-    const handleNext = async () => {
-        // Validate the Overview form before allowing step advancement
-        if (currentStep === 0) {
+        // Validate Overview form when moving to Configuration or Review step
+        if (currentStep === 0 && step >= 1) {
             try {
                 await overviewForm.validateFields();
             } catch {
-                return; // Validation failed — don't advance
+                hasErrors = true;
             }
         }
-        setCurrentStep(prev => prev + 1);
+
+        // Validate Configuration form when moving to Review step
+        if (currentStep === 1 && step >= 2) {
+            try {
+                await configForm.validateFields();
+            } catch {
+                hasErrors = true;
+            }
+
+        }
+
+        // Validate Overview form when going back from Configuration or Review step
+        if (step < currentStep) {
+            if (currentStep >= 1) {
+                try {
+                    await overviewForm.validateFields();
+                } catch {
+                    hasErrors = true;
+                }
+            }
+
+            if (currentStep === 2) {
+                try {
+                    await configForm.validateFields();
+                } catch {
+                    hasErrors = true;
+                }
+
+            }
+        }
+
+        if (hasErrors) return;
+
+        setCurrentStep(step);
+    }, [currentStep, overviewForm, configForm]);
+
+    const {
+        isTestPopupOpen,
+        setIsTestPopupOpen,
+        testState,
+        testResponse,
+        testInputPayload,
+        handleTestApi
+    } = useApiTest(actionDraft, configForm);
+
+    const handleNext = async () => {
+        // Validate the current form before allowing step advancement
+        try {
+            if (currentStep === 0) {
+                await overviewForm.validateFields();
+            } else if (currentStep === 1) {
+                await configForm.validateFields();
+            }
+            // If validation passes, advance to next step
+            setCurrentStep(prev => prev + 1);
+        } catch {
+            return;
+        }
     };
 
     const handleBack = () => {
@@ -78,6 +130,21 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
     };
 
     const handlePublish = async () => {
+        // Validate all forms before publishing
+        try {
+            await overviewForm.validateFields();
+        } catch {
+            setCurrentStep(0);
+            return;
+        }
+
+        try {
+            await configForm.validateFields();
+        } catch {
+            setCurrentStep(1);
+            return;
+        }
+
         setIsSubmitting(true);
         try {
             // Clean configurations_json: strip empty rows/fields before sending to backend
@@ -125,9 +192,9 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
                     message.success(res.message || 'Action created successfully!');
                 }
             }
-            
+
             if (res.success) {
-                onCreated(); // Triggers a refetch in the parent table
+                await onCreated(); // Triggers a refetch in the parent table
                 handleClose();
             } else {
                 message.error(res.error || 'Failed to save action.');
@@ -146,67 +213,92 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
 
     // Form steps configuration
     const steps = [
-        { title: 'Overview', content: <CreateActionOverview draft={actionDraft} setDraft={setActionDraft} form={overviewForm} /> },
-        { title: 'Configuration', content: <CreateActionConfigStep draft={actionDraft} setDraft={setActionDraft} form={configForm} /> },
-        { title: 'Publish', content: <CreateActionReviewStep draft={actionDraft} setDraft={setActionDraft} /> },
+        {
+            title: 'Overview',
+            description: 'Provide basic details and categorization for the action.',
+            content: <CreateActionOverview draft={actionDraft} setDraft={setActionDraft} form={overviewForm} />
+        },
+        {
+            title: 'Configuration',
+            description: 'Configure API endpoints and technical parameters.',
+            content: <CreateActionConfigStep draft={actionDraft} setDraft={setActionDraft} form={configForm} onTestClick={handleTestApi} isTesting={testState === 'loading'} />
+        },
+        {
+            title: 'Review & Publish',
+            description: 'Review all details before publishing to the catalog.',
+            content: <CreateActionReviewStep draft={actionDraft} setDraft={setActionDraft} />
+        },
     ];
+
+    const getStepDescription = () => {
+        if (currentStep === 0) return "Provide basic details and categorization for the action.";
+        if (currentStep === 1) return "Configure API endpoints and technical parameters.";
+        if (currentStep === 2) return "Review all details before publishing to the catalog.";
+        return "";
+    };
 
     return (
         <Modal
-            title={actionToEdit ? "Edit Action" : "Create New Action"}
+            title={null}
             open={isOpen}
             onCancel={handleClose}
-            width={1280}
+            width={1000}
             footer={null}
             destroyOnClose
             className="create-action-modal"
             centered
             zIndex={1300}
+            bodyStyle={{ padding: 0 }}
+            styles={{ body: { padding: 0 } }}
         >
             <div className="create-action-modal__layout">
-                {/* ── Left Side: Steps Navigation & Form ── */}
-                <div className="create-action-modal__form-col">
-                    <div className="create-action-modal__stepper">
-                        <Steps current={currentStep} items={steps.map(s => ({ title: s.title }))} size="small" />
+                {/* -- Left Side: Vertical Progress Stepper -- */}
+                <div className="create-action-modal__stepper-col">
+                    <div style={{ marginBottom: 40 }}>
+                        <Text strong style={{ fontSize: '18px', fontWeight: 700, display: 'block', marginTop: 5, marginBottom: 9, color: 'rgb(15, 23, 42)', letterSpacing: '-0.02em', maxWidth: 241 }}>
+                            {actionToEdit ? 'Edit Action' : 'Create New Action'}
+                        </Text>
+                        <Text style={{ fontSize: '12px', color: 'rgb(100, 116, 139)', display: 'block', lineHeight: 1.5, paddingRight: '10px' }}>
+                            Provide basic details and categorization for the action.
+                        </Text>
                     </div>
+                    <div className="create-action-modal__stepper">
+                        <Steps
+                            current={currentStep}
+                            items={steps.map(s => ({ title: s.title }))}
+                            size="small"
+                            direction="vertical"
+                            onChange={handleStepChange}
+                            className="create-action-stepper"
+                        />
+                    </div>
+                </div>
 
+                {/* -- Right Side: Form Content -- */}
+                <div className="create-action-modal__form-col">
                     <div className="create-action-modal__step-content">
                         {steps[currentStep].content}
                     </div>
 
                     <div className="create-action-modal__footer">
+                        <div></div>
                         <Space>
                             <Button onClick={handleClose}>Cancel</Button>
                             <Button>Save as Draft</Button>
-                        </Space>
-                        <Space>
-                            {currentStep > 0 && (
-                                <Button onClick={handleBack}>
-                                    Back
-                                </Button>
-                            )}
                             {currentStep < steps.length - 1 && (
                                 <Button type="primary" onClick={handleNext}>
                                     Continue
                                 </Button>
                             )}
                             {currentStep === steps.length - 1 && (
-                                    <Button type="primary" onClick={handlePublish} loading={isSubmitting}>
-                                        {actionToEdit ? 'Publish Updates' : 'Publish Action'}
-                                    </Button>
+                                <Button type="primary" onClick={handlePublish} loading={isSubmitting}>
+                                    {actionToEdit ? 'Publish Updates' : 'Publish Action'}
+                                </Button>
                             )}
                         </Space>
                     </div>
                 </div>
 
-                {/* ── Right Side: Live Preview ── */}
-                <div className="create-action-modal__preview-col">
-                    <ActionPreviewPanel
-                        actionDef={actionDraft}
-                        currentStep={currentStep + 1}
-                        onTestApiClick={handleTestApi}
-                    />
-                </div>
             </div>
 
             {/* ── Test API Popup ── */}

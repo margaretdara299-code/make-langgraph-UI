@@ -86,7 +86,7 @@
 /* Code viewers */
 .execution-modal__code-viewer {
     margin: 0;
-    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', Courier, monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     line-height: 1.5;
     background-color: var(--color-bg-white);
@@ -101,7 +101,7 @@
 
 .execution-modal__logs-viewer {
     margin: 0;
-    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', Courier, monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     line-height: 1.5;
     background-color: transparent;

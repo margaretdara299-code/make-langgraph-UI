@@ -3,9 +3,9 @@
  */
 
 .create-action-modal .ant-modal-content {
-    padding: 0;
-    overflow: hidden;
-    border-radius: 12px;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border-radius: 12px !important;
 }
 
 .create-action-modal .ant-modal-header {
@@ -15,27 +15,71 @@
 }
 
 .create-action-modal .ant-modal-body {
-    padding: 0;
+    padding: 0 !important;
 }
 
 .create-action-modal__layout {
     display: flex;
+    align-items: stretch;
     height: 700px;
+    margin: 0 !important;
 }
 
-/* ── Form Column (Left) ── */
+.create-action-modal__stepper-col {
+    width: 230px;
+    padding: 40px 32px;
+    background-color: #F4F5F7;
+    border-right: 1px solid #E2E8F0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex-shrink: 0;
+}
 
+.create-action-modal__stepper {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    margin-top: 24px;
+}
+
+/* ── Custom Stepper Overrides ── */
+.create-action-stepper.ant-steps-vertical .ant-steps-item {
+    padding-bottom: 32px;
+}
+
+.create-action-stepper.ant-steps-vertical .ant-steps-item-container {
+    cursor: pointer;
+}
+
+/* Icon / Circle Styling Override (just colors and alignment, no forced sizing) */
+.create-action-stepper .ant-steps-item-icon {
+    margin-right: 12px !important;
+    margin-top: 2px !important;
+}
+
+/* Text Styling */
+.create-action-stepper .ant-steps-item-title {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    line-height: normal !important;
+    margin-bottom: 0 !important;
+    margin-top: 3px !important; 
+}
+
+/* Hover effects */
+.create-action-stepper .ant-steps-item:hover {
+    opacity: 0.8;
+}
+
+/* -- Form Column (Right) -- */
 .create-action-modal__form-col {
     flex: 1;
     display: flex;
     flex-direction: column;
     padding: 32px;
-    overflow-y: auto;
+    overflow: hidden;
     background-color: var(--color-bg-container);
-}
-
-.create-action-modal__stepper {
-    margin-bottom: 40px;
 }
 
 .create-action-modal__step-content {

@@ -13,7 +13,7 @@
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0,0,0,0.02);
   z-index: 1000;
   overflow: hidden;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
 }
 
 .properties-drawer__drawer-header {

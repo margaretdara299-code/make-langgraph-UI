@@ -32,7 +32,7 @@ export function useApiTest(actionDraft: Partial<ActionDefinition>, configForm?: 
         console.log('[API Test] Current Draft:', currentDraft);
         console.log('[API Test] Extracted Config:', rawConfig);
 
-        setIsTestPopupOpen(true);
+
 
         if (!rawConfig.url || !rawConfig.method) {
             message.error("URL and Method are required in the configuration form to run a test.");
@@ -45,6 +45,7 @@ export function useApiTest(actionDraft: Partial<ActionDefinition>, configForm?: 
                 latency: 0
             });
             setTestInputPayload({ url: rawConfig.url || 'Missing', method: rawConfig.method || 'Missing' });
+            setIsTestPopupOpen(true);
             return;
         }
 
@@ -121,6 +122,7 @@ export function useApiTest(actionDraft: Partial<ActionDefinition>, configForm?: 
                 latency 
             });
             setTestState('success');
+            setIsTestPopupOpen(true);
         } catch (error: any) {
             const latency = Date.now() - startTime;
             let errorData = error.message;
@@ -137,6 +139,7 @@ export function useApiTest(actionDraft: Partial<ActionDefinition>, configForm?: 
             
             setTestResponse({ status, statusText, headers: formattedHeaders, data: errorData, latency });
             setTestState('error');
+            setIsTestPopupOpen(true);
         }
     };
 
