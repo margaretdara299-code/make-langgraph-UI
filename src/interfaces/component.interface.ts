@@ -123,7 +123,7 @@ export interface CreateActionModalProps {
     isOpen: boolean;
     initialStep?: number;
     onClose: () => void;
-    onCreated: () => void;
+    onCreated: () => void | Promise<void>;
     actionToEdit?: import('./action.interface').ActionDefinition;
 }
 
@@ -138,6 +138,8 @@ export interface CreateActionStepProps {
     draft: Partial<import('./action.interface').ActionDefinition>;
     setDraft: import('react').Dispatch<import('react').SetStateAction<Partial<import('./action.interface').ActionDefinition>>>;
     form?: import('antd').FormInstance;
+    onTestClick?: () => void;
+    isTesting?: boolean;
 }
 
 export interface PlaceholderStepProps {

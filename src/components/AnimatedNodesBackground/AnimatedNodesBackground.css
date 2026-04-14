@@ -39,7 +39,7 @@
 
 .animated-nodes-bg__node-label {
     font-size: 1.2px;
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-sans);
     font-weight: 500;
     pointer-events: none;
     user-select: none;

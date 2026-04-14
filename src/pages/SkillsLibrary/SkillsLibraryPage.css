@@ -11,7 +11,7 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 24px;
+
 }
 
 .title-row {
@@ -60,7 +60,8 @@
 }
 
 .skills-library-tabs.ant-tabs {
-    margin-bottom: -2px; /* Pull down to overlay the border-bottom */
+    margin-bottom: -2px;
+    /* Pull down to overlay the border-bottom */
 }
 
 .skills-library-tabs .ant-tabs-nav {
@@ -68,8 +69,8 @@
 }
 
 .skills-library-tabs .ant-tabs-tab {
-    padding: 12px 16px !important;
-    font-weight: 600 !important;
+    padding: 12px 27px !important;
+    /* font-weight: 600 !important; */
     font-size: 14px !important;
     color: var(--text-subtle) !important;
     transition: all 0.3s ease !important;
@@ -111,7 +112,8 @@
     min-height: 0;
     overflow-y: auto;
     padding-bottom: 32px;
-    padding-right: 8px; /* For scrollbar breathing room */
+    padding-right: 8px;
+    /* For scrollbar breathing room */
 }
 
 .skills-library-grid {
@@ -133,14 +135,22 @@
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Custom Scrollbar */
 .skills-library-body::-webkit-scrollbar {
     width: 6px;
 }
+
 .skills-library-body::-webkit-scrollbar-thumb {
     background: var(--border-strong);
     border-radius: 10px;

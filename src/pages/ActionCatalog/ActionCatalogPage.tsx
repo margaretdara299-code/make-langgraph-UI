@@ -229,8 +229,8 @@ export default function ActionCatalogPage() {
             <CreateActionModal 
                 isOpen={modalOpen}
                 onClose={() => setModalOpen(false)}
-                onCreated={() => {
-                    refetch();
+                onCreated={async () => {
+                    await refetch();
                     setModalOpen(false);
                 }}
                 actionToEdit={actionToEdit}

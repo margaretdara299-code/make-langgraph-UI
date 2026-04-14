@@ -9,36 +9,93 @@
   justify-content: center;
 }
 
-/* Greeting Card - Minimalist Style */
+/* Greeting Card - Glassmorphism Style */
 .greeting-card {
-  padding: 32px 0 24px;
-  margin-bottom: var(--space-2);
+ 
+  padding: 40px;
+  margin-top: 12px;
+  margin-bottom: 24px;
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  border-bottom: 1.5px solid var(--border-light);
+  align-items: center;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.greeting-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
+  opacity: 0.5;
+  filter: blur(40px);
+}
+
+.greeting-content {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  justify-content: flex-start;
+}
+
+.greeting-logo-wrap {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
   position: relative;
 }
 
-.greeting-text h1 {
-  color: #000000 !important;
-  margin-bottom: 4px !important;
-  font-weight: 700 !important;
-  font-size: 28px !important;
-  letter-spacing: -0.02em !important;
+.greeting-logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  border-radius: 8px;
 }
 
-.greeting-text span, 
-.greeting-text .ant-typography {
-  color: #000000 !important;
-  opacity: 0.8;
-  font-size: 15px;
-  font-weight: 500;
+.greeting-text h1 {
+  background: linear-gradient(135deg, #1e293b 0%, #475569 50%, #64748b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px !important;
+  font-weight: 800 !important;
+  font-size: 32px !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.2 !important;
+}
+
+.greeting-text .subtitle {
+  color: #64748b !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  max-width: 600px !important;
+  line-height: 1.6 !important;
+  margin-top: 4px !important;
 }
 
 /* Metrics Grid */
-.metrics-grid {
-  margin-bottom: var(--space-4);
+.dashboard-main-row {
+    margin-top: 8px;
+}
+
+.metrics-section {
+    margin-bottom: var(--space-4);
+}
+
+.updates-section {
+    margin-bottom: var(--space-4);
 }
 
 /* Activity Box */
