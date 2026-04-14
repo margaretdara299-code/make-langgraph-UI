@@ -15,9 +15,11 @@ import {
     Grid, 
     SearchInput 
 } from '@/components';
+import { PAGE_HEADER_CONTENT } from '@/constants/ui.constants';
 import './CapabilitiesPage.css';
 
 const { Title, Text } = Typography;
+const { CAPABILITIES } = PAGE_HEADER_CONTENT;
 
 export default function CapabilitiesPage() {
     const [capabilities, setCapabilities] = useState<Capability[]>([]);
@@ -85,7 +87,7 @@ export default function CapabilitiesPage() {
             <header className="capabilities-header">
                 <div className="title-section">
                     <div className="title-row">
-                        <Title level={2} style={{ margin: 0, fontSize: '28px', fontWeight: 700, letterSpacing: '-0.022em' }}>Capabilities</Title>
+                        <Title level={2} style={{ margin: 0, fontSize: '28px', fontWeight: 700, letterSpacing: '-0.022em' }}>{CAPABILITIES.title}</Title>
                         <Button 
                             type="primary" 
                             shape="circle"
@@ -95,7 +97,7 @@ export default function CapabilitiesPage() {
                         />
                     </div>
                     <Text type="secondary" style={{ fontSize: '13px', fontWeight: 400, color: 'var(--text-subtle)', display: 'block', marginTop: '4px' }}>
-                        Manage your platform capabilities and core service connectors.
+                        {CAPABILITIES.description}
                     </Text>
                 </div>
                 <div className="capabilities-toolbar">

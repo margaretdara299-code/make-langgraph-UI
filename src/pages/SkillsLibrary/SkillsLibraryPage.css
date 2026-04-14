@@ -43,6 +43,7 @@
     transition: all 0.2s ease;
     border-radius: 50% !important;
     margin-top: 4px;
+    cursor: pointer;
 }
 
 .create-skill-btn-mini:hover {

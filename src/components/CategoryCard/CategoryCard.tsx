@@ -16,7 +16,10 @@ export default function CategoryCard({ category, onAction }: CategoryCardProps) 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
-        <div className="category-card-premium">
+        <div 
+            className="category-card-premium" 
+            onDoubleClick={() => onAction?.('edit', (category as any).categoryId ?? category.category_id)}
+        >
             <div className="cc-premium-header">
                 <div className="cc-premium-icon-box">
                     <FolderOutlined className="category-icon" />

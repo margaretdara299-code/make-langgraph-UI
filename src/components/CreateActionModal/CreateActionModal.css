@@ -6,6 +6,22 @@
     padding: 0 !important;
     overflow: hidden !important;
     border-radius: 12px !important;
+    background: linear-gradient(90deg, #F0F8FF 280px, #FFFFFF 280px) !important;
+    height: 700px !important;
+    min-height: 700px !important;
+    max-height: 700px !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.create-action-modal .ant-modal-container {
+    position: relative !important;
+    background-color: #d8d8d8 !important;
+    background-clip: padding-box !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    padding: 0 !important; /* Forces edge-to-edge child positioning */
 }
 
 .create-action-modal .ant-modal-header {
@@ -16,31 +32,32 @@
 
 .create-action-modal .ant-modal-body {
     padding: 0 !important;
-}
-
-.create-action-modal__layout {
-    display: flex;
-    align-items: stretch;
-    height: 700px;
-    margin: 0 !important;
+    display: flex !important;
+    align-items: stretch !important;
+    flex: 1 !important;
 }
 
 .create-action-modal__stepper-col {
-    width: 230px;
+    width: 280px;
     padding: 40px 32px;
-    background-color: #F4F5F7;
+    background-color: transparent;
     border-right: 1px solid #E2E8F0;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     flex-shrink: 0;
+    height: 100% !important;
+}
+
+.create-action-modal__logo {
+    margin-bottom: 48px;
+    padding-left: 4px;
 }
 
 .create-action-modal__stepper {
     display: flex;
     align-items: flex-start;
     width: 100%;
-    margin-top: 24px;
 }
 
 /* ── Custom Stepper Overrides ── */
@@ -56,15 +73,56 @@
 .create-action-stepper .ant-steps-item-icon {
     margin-right: 12px !important;
     margin-top: 2px !important;
+    background: transparent !important;
+    border-color: #E2E8F0 !important;
+}
+
+.create-action-stepper .ant-steps-item-process .ant-steps-item-icon {
+    background: var(--accent) !important;
+    border-color: var(--accent) !important;
+    position: relative;
+}
+
+.create-action-stepper .ant-steps-item-process .ant-steps-item-icon .ant-steps-icon {
+    display: none !important;
+    /* Hide the number */
+}
+
+.create-action-stepper .ant-steps-item-process .ant-steps-item-icon::after {
+    content: "";
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #FFFFFF;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 /* Text Styling */
+.create-action-stepper .ant-steps-item-content {
+    min-height: 48px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    margin-top: -6px !important;
+    font-size: 11px;
+}
+
 .create-action-stepper .ant-steps-item-title {
-    font-size: 13px !important;
-    font-weight: 600 !important;
-    line-height: normal !important;
-    margin-bottom: 0 !important;
-    margin-top: 3px !important; 
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #111827 !important;
+    line-height: 1.2 !important;
+    margin-bottom: 2px !important;
+}
+
+.create-action-stepper .ant-steps-item-description {
+    font-size: 12px !important;
+    color: #64748B !important;
+    line-height: 1.5 !important;
+    max-width: 180px;
 }
 
 /* Hover effects */
@@ -77,26 +135,80 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 32px;
+    padding: 32px 40px;
+    border-radius: 0 12px 12px 0;
+    background-color: #FFFFFF;
+    height: 100%;
     overflow: hidden;
-    background-color: var(--color-bg-container);
+}
+
+.create-action-modal__header {
+    margin-bottom: 24px;
+    flex-shrink: 0;
+}
+
+.create-action-modal__step-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.create-action-modal__icon-shell {
+    width: 32px;
+    height: 32px;
+    background: #FEF3C7;
+    /* Soft yellow matching the reference */
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.create-action-modal__step-count {
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748B;
+    text-transform: capitalize;
 }
 
 .create-action-modal__step-content {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 32px;
+    overflow-y: auto;
+    padding-right: 12px;
+    margin-bottom: 8px;
 }
 
 /* ── Footer / Actions ── */
 
 .create-action-modal__footer {
+    flex-shrink: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding-top: 24px;
     border-top: 1px solid var(--color-border);
+}
+
+.create-action-modal__footer .ant-btn-primary {
+    /* Uses default primary blue */
+    height: 38px;
+    padding: 0 24px;
+    font-weight: 600;
+}
+
+.create-action-modal__footer .ant-btn-default {
+    height: 38px;
+    padding: 0 24px;
+    font-weight: 600;
+    color: #64748B;
+    border-color: #E2E8F0;
+}
+
+.create-action-modal__footer .ant-btn-default:hover {
+    color: #0F172A !important;
+    border-color: #0F172A !important;
 }
 
 /* ── Preview Column (Right) ── */
@@ -108,3 +220,5 @@
     padding: 32px;
     overflow-y: auto;
 }
+
+/* Monochrome Stepper Lines - Defaulted back to theme */

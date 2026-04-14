@@ -1,10 +1,10 @@
 .capability-card-premium {
     position: relative;
-    background-color: #ffffff;
+    background-color: var(--bg-card);
     padding: 20px;
     border-radius: 12px;
-    border: 1px solid #e2e8f0;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid var(--border-medium);
+    transition: all var(--motion-base) var(--ease-in-out);
     cursor: pointer;
     display: flex;
     flex-direction: column;
@@ -13,7 +13,7 @@
 
 .capability-card-premium:hover {
     border-color: var(--accent);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-card);
     transform: translateY(-2px);
 }
 
@@ -29,19 +29,19 @@
     width: 36px;
     height: 36px;
     border-radius: 8px;
-    background-color: #eef2ff;
+    background-color: var(--accent-soft);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 16px;
     color: var(--accent);
-    border: 1px solid #e0e7ff;
-    transition: all 0.2s ease;
+    border: 1px solid var(--border-light);
+    transition: all var(--motion-base) ease;
 }
 
 .capability-card-premium:hover .cc-premium-icon-box {
     background-color: var(--accent);
-    color: #ffffff;
+    color: var(--accent-contrast);
     border-color: var(--accent);
     transform: scale(1.05);
 }
@@ -70,7 +70,7 @@
     margin: 4px 0 6px 0 !important;
     font-size: 14px !important;
     font-weight: 700 !important;
-    color: #0f172a !important;
+    color: var(--text-main) !important;
     letter-spacing: -0.01em;
 }
 
@@ -78,5 +78,5 @@
     margin: 0 !important;
     font-size: 12.5px !important;
     line-height: 1.5 !important;
-    color: #64748b !important;
+    color: var(--text-muted) !important;
 }

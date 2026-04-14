@@ -70,7 +70,6 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
 
     return (
         <div className="create-action-overview">
-            <Title level={4} className="create-action-overview__title">Action Overview</Title>
 
             <Form
                 form={form}

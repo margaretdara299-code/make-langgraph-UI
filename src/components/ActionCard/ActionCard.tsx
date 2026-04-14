@@ -35,7 +35,7 @@ export default function ActionCard({ action, onAction }: ActionCardProps) {
   };
 
   return (
-    <div className="action-card-premium" onClick={() => onAction?.('edit', action.id)}>
+    <div className="action-card-premium" onDoubleClick={() => onAction?.('edit', action.id)}>
       <div className="ac-premium-header">
         <div className="ac-premium-icon-box">
           {action.icon ? (

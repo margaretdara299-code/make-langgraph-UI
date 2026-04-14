@@ -6,7 +6,8 @@
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
-import { antdTheme } from '@/config';
+import { antdTheme, darkTheme } from '@/config';
+import { ThemeProvider, useTheme } from '@/context/ThemeContext';
 import MainLayout from '@/layouts/MainLayout/MainLayout';
 import SkillsLibraryPage from '@/pages/SkillsLibrary/SkillsLibraryPage';
 import DashboardPage from '@/pages/Dashboard/DashboardPage';
@@ -21,9 +22,11 @@ import PublicRoute from '@/components/PublicRoute/PublicRoute';
 import { ROUTES } from '@/routes';
 import AppInitializer from '@/components/AppInitializer/AppInitializer';
 
-function App() {
+function AppContent() {
+  const { isDark } = useTheme();
+
   return (
-    <ConfigProvider theme={antdTheme}>
+    <ConfigProvider theme={isDark ? darkTheme : antdTheme}>
       <AppInitializer>
         <BrowserRouter>
           <Routes>
@@ -65,6 +68,14 @@ function App() {
         </BrowserRouter>
       </AppInitializer>
     </ConfigProvider>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 }
 

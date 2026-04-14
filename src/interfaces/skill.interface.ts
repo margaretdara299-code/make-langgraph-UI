@@ -4,7 +4,7 @@
  */
 
 export interface Skill {
-    id: string;
+    id: string | number;
     name: string;
     skillKey: string;
     version?: string;

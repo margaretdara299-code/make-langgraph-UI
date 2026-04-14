@@ -16,7 +16,7 @@ export default function TestApiModal({
 
     // Use testResponse or fallback mapping
     const result = testResponse || {};
-    
+
     // Attempt to determine success purely from status or testState
     const isSuccess = testState === 'success' || (result.status >= 200 && result.status < 300) || result.status === 'success';
     const statusColor = isSuccess ? '#10b981' : (testState === 'error' ? '#ef4444' : '#f59e0b');
@@ -55,73 +55,75 @@ export default function TestApiModal({
             onCancel={onClose}
             footer={null}
             width={720}
-            zIndex={2000}
+            zIndex={3000}
             centered
+            destroyOnClose
+            getContainer={() => document.body}
             bodyStyle={{ padding: '0 24px 24px 24px' }}
         >
             <div style={{ marginTop: 20 }}>
-                <Tabs 
-                    defaultActiveKey="response" 
+                <Tabs
+                    defaultActiveKey="response"
                     size="small"
                     style={{ marginTop: 0 }}
                     tabBarExtraContent={
                         <Space size={16} style={{ marginBottom: 6 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <div style={{ 
-                                    width: '6px', 
-                                    height: '6px', 
-                                    borderRadius: '50%', 
-                                    background: statusColor 
+                                <div style={{
+                                    width: '6px',
+                                    height: '6px',
+                                    borderRadius: '50%',
+                                    background: statusColor
                                 }} />
                                 <Text style={{ fontSize: '12px', color: '#64748b', fontWeight: 500 }}>
-                                   Status: <span style={{ color: statusColor, fontWeight: 700 }}>{result?.status || (testState === 'loading' ? 'PENDING' : (testState === 'error' ? 'ERROR' : 'UNKNOWN'))}</span>
+                                    Status: <span style={{ color: statusColor, fontWeight: 700 }}>{result?.status || (testState === 'loading' ? 'PENDING' : (testState === 'error' ? 'ERROR' : 'UNKNOWN'))}</span>
                                 </Text>
                             </div>
                             <div style={{ width: '1px', height: '12px', background: '#e2e8f0' }} />
                             <Text style={{ fontSize: '11px', color: '#94a3b8' }}>
-                               Time: <span style={{ color: '#475569', fontWeight: 600 }}>{result?.latency || result?.time || '0'} ms</span>
+                                Time: <span style={{ color: '#475569', fontWeight: 600 }}>{result?.latency || result?.time || '0'} ms</span>
                             </Text>
                         </Space>
                     }
                 >
-                    <Tabs.TabPane 
-                        tab={<span style={{ fontSize: '12px', fontWeight: 600 }}>Body</span>} 
+                    <Tabs.TabPane
+                        tab={<span style={{ fontSize: '12px', fontWeight: 600 }}>Body</span>}
                         key="response"
                     >
-                        <div style={{ 
+                        <div style={{
                             height: '450px',
-                            overflow: 'hidden', 
-                            border: '1px solid #1e293b', 
+                            overflow: 'hidden',
+                            border: '1px solid #1e293b',
                             borderRadius: 12,
-                            background: '#0f172a' 
+                            background: '#0f172a'
                         }}>
                             {renderJson(result?.data || result?.body || (result && Object.keys(result).length > 0 ? result : null))}
                         </div>
                     </Tabs.TabPane>
-                    <Tabs.TabPane 
-                        tab={<span style={{ fontSize: '12px', fontWeight: 600 }}>Headers</span>} 
+                    <Tabs.TabPane
+                        tab={<span style={{ fontSize: '12px', fontWeight: 600 }}>Headers</span>}
                         key="resp-headers"
                     >
-                        <div style={{ 
+                        <div style={{
                             height: '450px',
-                            overflow: 'hidden', 
-                            border: '1px solid #1e293b', 
+                            overflow: 'hidden',
+                            border: '1px solid #1e293b',
                             borderRadius: 12,
-                            background: '#0f172a' 
+                            background: '#0f172a'
                         }}>
                             {renderJson(result?.headers)}
                         </div>
                     </Tabs.TabPane>
-                    <Tabs.TabPane 
-                        tab={<span style={{ fontSize: '12px', fontWeight: 600 }}>Request Payload</span>} 
+                    <Tabs.TabPane
+                        tab={<span style={{ fontSize: '12px', fontWeight: 600 }}>Request Payload</span>}
                         key="request-payload"
                     >
-                        <div style={{ 
+                        <div style={{
                             height: '450px',
-                            overflow: 'hidden', 
-                            border: '1px solid #1e293b', 
+                            overflow: 'hidden',
+                            border: '1px solid #1e293b',
                             borderRadius: 12,
-                            background: '#0f172a' 
+                            background: '#0f172a'
                         }}>
                             {renderJson(testInputPayload)}
                         </div>

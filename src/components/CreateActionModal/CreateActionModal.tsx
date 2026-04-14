@@ -53,6 +53,8 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
         }
     }, [isOpen, actionToEdit, overviewForm, initialStep]);
 
+
+
     const handleStepChange = useCallback(async (step: number) => {
         // Validate current step before allowing navigation
         let hasErrors = false;
@@ -195,7 +197,7 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
 
             if (res.success) {
                 await onCreated(); // Triggers a refetch in the parent table
-                handleClose();
+                onClose();
             } else {
                 message.error(res.error || 'Failed to save action.');
             }
@@ -207,11 +209,8 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
         }
     };
 
-    const handleClose = () => {
-        onClose();
-    };
 
-    // Form steps configuration
+
     const steps = [
         {
             title: 'Overview',
@@ -220,52 +219,47 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
         },
         {
             title: 'Configuration',
-            description: 'Configure API endpoints and technical parameters.',
+            description: 'Configure API endpoints, methods, and parameters.',
             content: <CreateActionConfigStep draft={actionDraft} setDraft={setActionDraft} form={configForm} onTestClick={handleTestApi} isTesting={testState === 'loading'} />
         },
         {
             title: 'Review & Publish',
-            description: 'Review all details before publishing to the catalog.',
+            description: 'Double check all settings before taking the action live.',
             content: <CreateActionReviewStep draft={actionDraft} setDraft={setActionDraft} />
         },
     ];
 
-    const getStepDescription = () => {
-        if (currentStep === 0) return "Provide basic details and categorization for the action.";
-        if (currentStep === 1) return "Configure API endpoints and technical parameters.";
-        if (currentStep === 2) return "Review all details before publishing to the catalog.";
-        return "";
-    };
+    const currentStepObj = steps[currentStep];
 
     return (
-        <Modal
-            title={null}
-            open={isOpen}
-            onCancel={handleClose}
-            width={1000}
-            footer={null}
-            destroyOnClose
-            className="create-action-modal"
-            centered
-            zIndex={1300}
-            bodyStyle={{ padding: 0 }}
-            styles={{ body: { padding: 0 } }}
-        >
-            <div className="create-action-modal__layout">
-                {/* -- Left Side: Vertical Progress Stepper -- */}
+        <>
+            <Modal
+                title={null}
+                open={isOpen}
+                onCancel={onClose}
+                width={1100}
+                footer={null}
+                destroyOnClose
+                className="create-action-modal"
+                centered
+                zIndex={1300}
+                bodyStyle={{ padding: 0 }}
+                styles={{ body: { padding: 0, height: 800, display: 'flex', flexDirection: 'row' } }}
+            >
+                {/* -- Left Side: Pure Vertical Navigator -- */}
                 <div className="create-action-modal__stepper-col">
-                    <div style={{ marginBottom: 40 }}>
-                        <Text strong style={{ fontSize: '18px', fontWeight: 700, display: 'block', marginTop: 5, marginBottom: 9, color: 'rgb(15, 23, 42)', letterSpacing: '-0.02em', maxWidth: 241 }}>
+                    <div style={{ marginBottom: 32, paddingLeft: 4 }}>
+                         <span style={{ fontSize: '17px', fontWeight: 700, color: '#0F172A', display: 'block' }}>
                             {actionToEdit ? 'Edit Action' : 'Create New Action'}
-                        </Text>
-                        <Text style={{ fontSize: '12px', color: 'rgb(100, 116, 139)', display: 'block', lineHeight: 1.5, paddingRight: '10px' }}>
-                            Provide basic details and categorization for the action.
-                        </Text>
+                         </span>
                     </div>
                     <div className="create-action-modal__stepper">
                         <Steps
                             current={currentStep}
-                            items={steps.map(s => ({ title: s.title }))}
+                            items={steps.map(s => ({
+                                title: s.title,
+                                description: s.description
+                            }))}
                             size="small"
                             direction="vertical"
                             onChange={handleStepChange}
@@ -274,8 +268,20 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
                     </div>
                 </div>
 
-                {/* -- Right Side: Form Content -- */}
+                {/* -- Right Side: Dedicated Form Panel -- */}
                 <div className="create-action-modal__form-col">
+                    <div className="create-action-modal__header">
+                        <span style={{ fontSize: '11px', fontWeight: 600, color: '#64748B', display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>
+                            Step {currentStep + 1} / {steps.length}
+                        </span>
+                        <Text strong style={{ fontSize: '22px', fontWeight: 700, display: 'block', marginBottom: 4, color: '#0F172A', letterSpacing: '-0.02em' }}>
+                            {currentStepObj.title}
+                        </Text>
+                        <Text style={{ fontSize: '12px', color: '#64748B', display: 'block', lineHeight: 1.5 }}>
+                            {currentStepObj.description}
+                        </Text>
+                    </div>
+
                     <div className="create-action-modal__step-content">
                         {steps[currentStep].content}
                     </div>
@@ -283,7 +289,7 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
                     <div className="create-action-modal__footer">
                         <div></div>
                         <Space>
-                            <Button onClick={handleClose}>Cancel</Button>
+                            <Button onClick={onClose}>Cancel</Button>
                             <Button>Save as Draft</Button>
                             {currentStep < steps.length - 1 && (
                                 <Button type="primary" onClick={handleNext}>
@@ -298,10 +304,9 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
                         </Space>
                     </div>
                 </div>
+            </Modal>
 
-            </div>
-
-            {/* ── Test API Popup ── */}
+            {/* ── Test API Popup — Moved outside the wizard root ── */}
             <TestApiModal
                 isOpen={isTestPopupOpen}
                 onClose={() => setIsTestPopupOpen(false)}
@@ -309,6 +314,6 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
                 testResponse={testResponse}
                 testInputPayload={testInputPayload}
             />
-        </Modal>
+        </>
     );
 }

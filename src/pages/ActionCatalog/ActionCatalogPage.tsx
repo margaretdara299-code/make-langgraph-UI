@@ -15,9 +15,11 @@ import {
     SearchInput 
 } from '@/components';
 import { fetchActionById, deleteAction } from '@/services';
+import { PAGE_HEADER_CONTENT } from '@/constants/ui.constants';
 import './ActionCatalogPage.css';
 
 const { Title, Text } = Typography;
+const { ACTION_CATALOG } = PAGE_HEADER_CONTENT;
 
 export default function ActionCatalogPage() {
     const [searchValue, setSearchValue] = useState('');
@@ -100,7 +102,7 @@ export default function ActionCatalogPage() {
                 <div className="catalog-header-top">
                     <div className="title-section">
                         <div className="title-row">
-                            <Title level={2} style={{ margin: 0, fontSize: '28px', fontWeight: 700, letterSpacing: '-0.022em' }}>Action Catalog</Title>
+                            <Title level={2} style={{ margin: 0, fontSize: '28px', fontWeight: 700, letterSpacing: '-0.022em' }}>{ACTION_CATALOG.title}</Title>
                             <Button 
                                 type="primary" 
                                 shape="circle"
@@ -114,7 +116,7 @@ export default function ActionCatalogPage() {
                             />
                         </div>
                         <Text type="secondary" style={{ fontSize: '13px', fontWeight: 400, color: 'var(--text-subtle)', display: 'block', marginTop: '4px' }}>
-                            Browse and manage available action definitions for your skills.
+                            {ACTION_CATALOG.description}
                         </Text>
                     </div>
 
