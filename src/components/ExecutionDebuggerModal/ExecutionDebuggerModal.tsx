@@ -1,5 +1,5 @@
 import { Modal, Typography, theme, Spin, Button, Tooltip, Input, message } from 'antd';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { ReloadOutlined, PlayCircleOutlined, EditOutlined } from '@ant-design/icons';
 import { useExecutionStepper } from '@/hooks';
 import type { ExecutionDebuggerModalProps } from '@/interfaces';
@@ -27,9 +27,21 @@ export default function ExecutionDebuggerModal({ isOpen, onClose, versionId, nod
 
     const [selectedStepIndex, setSelectedStepIndex] = useState<number>(-1);
 
+    // Derive initial JSON from the Start node's initial_state variables
+    const derivedInitialJson = useMemo(() => {
+        const startNode = nodes?.find((node: any) => node.type === 'start');
+        const initialState: Array<{ key: string; value: string }> = startNode?.data?.initial_state || [];
+        if (initialState.length === 0) return '{}';
+        const obj: Record<string, string> = {};
+        for (const item of initialState) {
+            if (item.key) obj[item.key] = item.value ?? '';
+        }
+        return JSON.stringify(obj, null, 2);
+    }, [nodes]);
+
     // Initial Data state for execution inputs
     const [hasStarted, setHasStarted] = useState(false);
-    const [initialDataStr, setInitialDataStr] = useState<string>('{\n  "case_id": "1",\n  "claim_id": "123"\n}');
+    const [initialDataStr, setInitialDataStr] = useState<string>(derivedInitialJson);
 
     // Changing Loader Texts
     const [loaderTextIndex, setLoaderTextIndex] = useState(0);
@@ -70,8 +82,11 @@ export default function ExecutionDebuggerModal({ isOpen, onClose, versionId, nod
             resetStepper();
             setSelectedStepIndex(-1);
             setHasStarted(false);
+        } else {
+            // Sync initial data with the latest Start node variables when modal opens
+            setInitialDataStr(derivedInitialJson);
         }
-    }, [isOpen, resetStepper]);
+    }, [isOpen, resetStepper, derivedInitialJson]);
 
     useEffect(() => {
         if (activeStepIndex >= 0) {
