@@ -19,6 +19,6 @@ export const engineService = {
          * apiClient.post returns the unwrapped data from the response interceptor:
          * { data: transformedPayload, message: string }
          */
-        return apiClient.post<any>(API_ENDPOINTS.ENGINE.RUN(versionId), initialData || {});
+        return apiClient.post<any>(API_ENDPOINTS.ENGINE.RUN(versionId), initialData || {}, { timeout: 120000 });
     },
 };
