@@ -38,3 +38,31 @@ export function getNodeTheme(type: string, capability?: string, category?: strin
     return { bg: '#EFF6FF', stroke: '#2563EB', badgeBg: '#2563EB', iconBg: '#FFFFFF' };
 }
 
+type NodeColorSource = {
+    type?: string;
+    data?: {
+        capability?: string;
+        category?: string;
+    };
+} | null | undefined;
+
+export function getNodeStrokeColor(node: NodeColorSource): string {
+    const nodeType = (node?.type || 'action').toLowerCase();
+    const capability = node?.data?.capability;
+    const category = node?.data?.category;
+
+    if (nodeType === 'connector') {
+        return getNodeTheme('connector', 'database', category).stroke;
+    }
+
+    if (nodeType === 'subflow') {
+        return getNodeTheme('skill', 'skill', category).stroke;
+    }
+
+    if (nodeType === 'decision' || nodeType === 'router') {
+        return getNodeTheme('decision', capability, category).stroke;
+    }
+
+    return getNodeTheme(nodeType, capability, category).stroke;
+}
+

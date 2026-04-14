@@ -299,12 +299,17 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                 };
             } else if (selectedNode.type === 'decision') {
                 // Decision node — store condition config directly on node.data
+                const finalRules = (newValues.rules || []).map((r: any, i: number) => ({
+                    ...r,
+                    id: r.id || (currentNode.data.rules?.[i]?.id) || `branch_${Date.now()}_${i}`
+                }));
+
                 updatedNode = {
                     ...currentNode,
                     data: {
                         ...currentNode.data,
                         label: newValues.label || 'Decision',
-                        rules: newValues.rules || [],
+                        rules: finalRules,
                     },
                 };
             } else if (selectedNode.type === 'connector') {
