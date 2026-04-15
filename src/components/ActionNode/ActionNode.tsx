@@ -86,10 +86,6 @@ export default function ActionNode({ id, data }: NodeProps<CanvasNode>) {
           >
             {badgeLabel}
           </span>
-          <span
-            className="modern-node-dot"
-            style={{ background: theme.stroke }}
-          ></span>
         </div>
       </div>
 

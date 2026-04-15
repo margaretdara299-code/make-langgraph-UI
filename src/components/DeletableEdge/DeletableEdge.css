@@ -12,13 +12,13 @@
 }
 
 .deletable-edge__label {
-    background-color: #ffffff;
-    border: 1px solid #e2e8f0;
+    background-color: #222222;
+    border: 1px solid #ffffff;
     border-radius: 6px;
     padding: 2px 8px;
     font-size: 10px;
     font-weight: 600;
-    color: #64748b;
+    color: #ffffff;
     pointer-events: all;
     box-shadow: 0 2px 4px rgba(0,0,0,0.04);
     white-space: nowrap;

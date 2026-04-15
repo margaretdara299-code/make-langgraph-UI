@@ -563,6 +563,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             const isStart     = selectedNode.type === 'start';
             const isDecision  = selectedNode.type === 'decision';
             const isEnd       = selectedNode.type === 'end';
+            const isAction    = selectedNode.type === 'action';
 
             const activeColor = isDecision ? '#f59e0b' : ((isStart || isEnd) ? '#10b981' : 'var(--accent)');
 
@@ -610,21 +611,23 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                         <div className="properties-drawer__meta">
                                             <div className="properties-drawer__meta-item">
                                                 <span className="properties-drawer__meta-label">Type</span>
-                                                <span className="properties-drawer__meta-value">
-                                                    {isStart    ? 'Workflow Entry'
-                                                    : isDecision ? 'Router'
+                                                <span className="properties-drawer__meta-value" style={{ fontWeight: 'bold', fontStyle: 'italic', fontSize: '12px' }}>
+                                                    {isStart     ? 'Workflow Entry'
                                                     : isEnd      ? 'Workflow Exit'
+                                                    : isAction   ? 'Action'
+                                                    : isDecision ? 'Router'
                                                     : isSubFlow  ? 'Group'
                                                     : (nodeData?.category || 'Action')}
-                                                </span>
+                                                </span>                                                
                                             </div>
-                                            <div className="properties-drawer__meta-item">
-                                                <span className="properties-drawer__meta-label">Key</span>
-                                                <span className="properties-drawer__meta-value" style={{ fontFamily: 'monospace' }}>
-                                                    {selectedNode.id} 
-                                                   {/* <pre>{JSON.stringify(nodeData,null)}</pre> */}
-                                                </span>
-                                            </div>
+                                            {isAction && (
+                                                <div className="properties-drawer__meta-item">
+                                                    <span className="properties-drawer__meta-label">Key</span>
+                                                    <span className="properties-drawer__meta-value" style={{ fontFamily: 'monospace', fontWeight: 'bold', fontStyle: 'italic', fontSize: '12px' }}>
+                                                        {nodeData?.action_key}                                                     
+                                                    </span>                                                 
+                                                </div>
+                                            )}
                                             <div className="properties-drawer__meta-item">
                                                 <span className="properties-drawer__meta-label">Capability</span>
                                                 <div className={`properties-drawer__capability-badge badge-${isDecision ? 'decision' : nodeData?.capability}`}>
