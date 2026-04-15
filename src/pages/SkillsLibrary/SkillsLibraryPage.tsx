@@ -1,7 +1,4 @@
-/**
- * Skills Library page — displays all skills with premium layout patterns.
- * Exact replica of the high-fidelity design system.
- */
+
 
 import { useState } from 'react';
 import { Input, Typography, Modal, message, Tabs, Badge, Space, Empty } from 'antd';
@@ -9,6 +6,7 @@ import { PlusOutlined, ExclamationCircleOutlined, SearchOutlined } from '@ant-de
 import { useNavigate } from 'react-router-dom';
 import { useSkills, useCategories } from '@/hooks';
 import { SkillCard, CreateSkillModal, EditSkillModal } from '@/components';
+import { PAGE_HEADER_CONTENT } from '@/constants/ui.constants';
 import SkillCardSkeleton from '@/components/Skeletons/SkillCardSkeleton';
 import { STATUS_FILTER_OPTIONS, CARD_ACTION_KEYS } from '@/constants';
 import {
@@ -20,6 +18,7 @@ import type { UseSkillsFilters } from '@/interfaces';
 import './SkillsLibraryPage.css';
 
 const { Title, Text } = Typography;
+const { SKILLS_LIBRARY } = PAGE_HEADER_CONTENT;
 
 export default function SkillsLibraryPage() {
     const [activeStatus, setActiveStatus] = useState<string>('all');
@@ -31,6 +30,7 @@ export default function SkillsLibraryPage() {
 
     const { skills, isLoading, statusCounts, setFilters, refetch } = useSkills();
     const { categories } = useCategories();
+    console.log("🚀 ~ SkillsLibraryPage ~ categories:", categories)
 
     /** Handle status filter click */
     const handleStatusFilter = (statusKey: string) => {
@@ -124,9 +124,9 @@ export default function SkillsLibraryPage() {
             <header className="skills-library-header">
                 <div className="title-section">
                     <div className="title-row">
-                        <Title level={2}>Skills Library</Title>
-                        <button 
-                            className="create-skill-btn-mini" 
+                        <Title level={2}>{SKILLS_LIBRARY.title}</Title>
+                        <button
+                            className="create-skill-btn-mini"
                             onClick={() => setIsCreateModalOpen(true)}
                             title="Create New Skill"
                         >
@@ -134,7 +134,7 @@ export default function SkillsLibraryPage() {
                         </button>
                     </div>
                     <Text type="secondary" style={{ fontSize: '12px', fontWeight: 500, color: '#64748b', display: 'block', marginTop: '4px' }}>
-                         Manage and deploy your automated skills and complex orchestration flows.
+                        {SKILLS_LIBRARY.description}
                     </Text>
                 </div>
             </header>
@@ -153,7 +153,7 @@ export default function SkillsLibraryPage() {
                                     count={statusCounts[option.key] ?? 0}
                                     showZero
                                     overflowCount={999}
-                                    style={{ 
+                                    style={{
                                         backgroundColor: activeStatus === option.key ? 'var(--accent)' : '#f0f0f0',
                                         color: activeStatus === option.key ? '#fff' : '#8c8c8c',
                                         boxShadow: 'none',
@@ -192,12 +192,14 @@ export default function SkillsLibraryPage() {
                 ) : (
                     <div className="skills-library-grid">
                         {skills.map((skill) => {
-                            const categoryName = categories.find((cat) => cat.category_id === skill.categoryId)?.name || 'General';
+                            const categoryName = categories.find((cat) => cat?.categoryId === skill.categoryId)?.name || 'General';
+                            console.log("🚀 ~ SkillsLibraryPage ~ categoryName:", categoryName)
                             return (
                                 <SkillCard
                                     key={skill.id}
                                     skill={{ ...skill, category: categoryName }}
                                     onAction={handleCardAction}
+                                    onClick={() => handleCardAction(CARD_ACTION_KEYS.EDIT_SETTINGS, skill.id)}
                                 />
                             );
                         })}

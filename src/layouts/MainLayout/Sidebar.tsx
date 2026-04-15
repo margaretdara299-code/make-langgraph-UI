@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { ChevronLeft, LogOut } from "lucide-react";
 import { SIDEBAR_MENU_ITEMS } from "@/constants/layout.constants";
+import ThemeToggle from "@/components/ThemeToggle/ThemeToggle";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -47,21 +48,34 @@ export default function Sidebar({
       </nav>
 
       <div className="sidebar-user-section">
-        <div className="user-info-row">
+        <ThemeToggle collapsed={collapsed} />
+        <div className="user-info-row" style={{ flexDirection: collapsed ? 'column' : 'row', gap: '12px' }}>
+          {collapsed && (
+            <button
+              className="minimal-logout-btn"
+              title="Logout"
+              onClick={onLogout}
+            >
+              <LogOut size={18} />
+            </button>
+          )}
+          
           <div className="user-avatar-small">U</div>
+          
           {!collapsed && (
             <div className="user-details">
               <span className="user-name">User</span>
               <span className="user-badge">PRO</span>
             </div>
           )}
+          
           {!collapsed && (
             <button
               className="minimal-logout-btn"
               title="Logout"
               onClick={onLogout}
             >
-              <LogOut />
+              <LogOut size={18} />
             </button>
           )}
         </div>

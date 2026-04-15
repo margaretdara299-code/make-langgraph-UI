@@ -49,20 +49,16 @@ export const MetricCard: React.FC<MetricCardProps> = ({
 }) => {
     return (
         <Card className="metric-card" bordered={false}>
-            <div className="metric-card__accent" style={{ backgroundColor: color }} />
-            <div className="metric-card__header">
+            <div className="metric-card__content">
                 <div className="metric-card__icon-box" style={{ color: color, backgroundColor: `${color}15` }}>
-                    <Icon style={{ fontSize: '18px' }} />
+                    <Icon style={{ fontSize: '24px' }} />
                 </div>
-                <div className={`metric-card__badge ${isPositive ? 'pos' : 'neg'}`}>
-                    {subtext}
+                <div className="metric-card__info">
+                    <Text className="metric-card__label">{label}</Text>
+                    <Title level={4} className="metric-card__value">
+                        <CountUp end={value} />
+                    </Title>
                 </div>
-            </div>
-            <div className="metric-card__body">
-                <Text className="metric-card__label">{label}</Text>
-                <Title level={2} className="metric-card__value">
-                    <CountUp end={value} />
-                </Title>
             </div>
         </Card>
     );

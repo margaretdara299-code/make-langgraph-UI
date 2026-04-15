@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Form, Input, Select, Row, Col, Typography, Space, Button, Tabs, Radio, message, Divider } from 'antd';
+import { Form, Input, Select, Row, Col, Typography, Space, Button, Tabs, Radio, message, Divider, Collapse } from 'antd';
 import { PlusOutlined, DeleteOutlined, SendOutlined } from '@ant-design/icons';
 import { ACTION_HTTP_METHODS } from '@/constants/action.constants';
 import type { CreateActionStepProps } from '@/interfaces';
@@ -70,7 +70,7 @@ interface ParameterSectionProps {
 const ParameterSection: React.FC<ParameterSectionProps> = ({ name, form, config }) => {
     const bodyType = Form.useWatch(`${name}_type`, form) || 'form-data';
     const isBody = name === 'body_params';
-    
+
     const initialValue = React.useMemo(() => {
         const list = Object.entries((config as any)[name] || {}).map(([k, v]) => ({ key: k, value: v }));
         return list.length > 0 ? list : [{ key: '', value: '' }];
@@ -117,8 +117,8 @@ const ParameterSection: React.FC<ParameterSectionProps> = ({ name, form, config 
 
             {isBody && bodyType === 'raw' && (
                 <Form.Item name={`${name}_raw`} style={{ marginBottom: 0 }}>
-                    <Input.TextArea 
-                        placeholder='{"key": "value"}' 
+                    <Input.TextArea
+                        placeholder='{"key": "value"}'
                         rows={8}
                         className="request-raw-body-input custom-scrollbar"
                     />
@@ -236,7 +236,7 @@ export default function CreateActionConfigStep({ draft, setDraft, form: external
             const queryRows = UrlUtils.extractQueryRows(newUrl);
             const currentQueryStr = UrlUtils.buildUrlFromRows('', allValues.query_params_list || []).split('?')[1] || '';
             const newQueryStr = UrlUtils.parse(newUrl).query;
-            
+
             if (newQueryStr !== currentQueryStr) {
                 updatedConfig.query_params_list = queryRows;
                 form.setFieldsValue({ query_params_list: queryRows });
@@ -265,7 +265,7 @@ export default function CreateActionConfigStep({ draft, setDraft, form: external
         // Debounced Parent Update
         if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
         const isTypingField = changedKey === 'body_params_raw' || changedKey === 'url' || changedKey === 'fallback_message' || (changedKey?.endsWith('_list'));
-        
+
         const updateParent = () => setDraft(prev => ({ ...prev, configurations_json: updatedConfig }));
 
         if (isTypingField) {
@@ -280,19 +280,25 @@ export default function CreateActionConfigStep({ draft, setDraft, form: external
         return () => {
             if (debounceTimeout.current) {
                 clearTimeout(debounceTimeout.current);
-                // We need the latest config from the form
+                // We pull the latest values directly from the form instance
                 const currentValues = form.getFieldsValue();
-                const latestConfig = { ...config, ...currentValues };
+                const latestConfig = { ...currentValues }; // Sync form values
+                
+                // Manually serialize param lists to objects for the final draft
                 ['query_params', 'header_params', 'body_params', 'path_params'].forEach((key) => {
                     const listName = `${key}_list`;
                     if (currentValues[listName]) {
                         (latestConfig as any)[key] = UrlUtils.toObject(currentValues[listName]);
                     }
                 });
-                setDraft(prev => ({ ...prev, configurations_json: latestConfig }));
+                
+                setDraft(prev => ({ 
+                    ...prev, 
+                    configurations_json: { ...(prev.configurations_json || {}), ...latestConfig } 
+                }));
             }
         };
-    }, [form, setDraft, config]);
+    }, [form, setDraft]); // Removed 'config' dependency to break the loop
 
     const hasItems = (key: string) => {
         // Fallback check against the saved configuration object
@@ -330,45 +336,45 @@ export default function CreateActionConfigStep({ draft, setDraft, form: external
             className="premium-form request-config-form"
         >
             <Row gutter={24}>
-                <Col span={16} className="request-main-col">
+                <Col span={24} className="request-main-col">
                     <div className="request-panel">
                         {/* Method & URL Bar */}
                         <div className="request-bar-wrapper">
                             <div className="request-bar">
                                 <Form.Item name="method" initialValue="POST" noStyle>
-                                <Select 
-                                    size="middle" 
-                                    variant="borderless" 
-                                    className="request-method-select"
-                                    options={ACTION_HTTP_METHODS}
-                                    popupClassName="action-config-step__method-dropdown"
-                                />
-                            </Form.Item>
-
-                            <div className="request-url-slot">
-                                <Form.Item 
-                                    name="url" 
-                                    rules={[{ required: true, message: 'URL is required.' }]}
-                                >
-                                    <Input 
-                                        placeholder="https://api.example.com/v1/:id" 
-                                        variant="borderless" 
-                                        className="request-url-input"
+                                    <Select
+                                        size="middle"
+                                        variant="borderless"
+                                        className="request-method-select"
+                                        options={ACTION_HTTP_METHODS}
+                                        popupClassName="action-config-step__method-dropdown"
                                     />
                                 </Form.Item>
-                            </div>
 
-                            <Button 
-                                type="primary" 
-                                onClick={onTestClick} 
-                                loading={isTesting} 
-                                icon={<SendOutlined />} 
-                                className="request-send-btn"
-                                disabled={!watchedUrl || !watchedUrl.trim()}
-                            >
-                                Send
-                            </Button>
-                        </div>
+                                <div className="request-url-slot">
+                                    <Form.Item
+                                        name="url"
+                                        rules={[{ required: true, message: 'URL is required.' }]}
+                                    >
+                                        <Input
+                                            placeholder="https://api.example.com/v1/:id"
+                                            variant="borderless"
+                                            className="request-url-input"
+                                        />
+                                    </Form.Item>
+                                </div>
+
+                                <Button
+                                    type="primary"
+                                    onClick={onTestClick}
+                                    loading={isTesting}
+                                    icon={<SendOutlined />}
+                                    className="request-send-btn"
+                                    disabled={!watchedUrl || !watchedUrl.trim()}
+                                >
+                                    Send
+                                </Button>
+                            </div>
                         </div>
 
                         {/* Configuration Tabs */}
@@ -391,30 +397,36 @@ export default function CreateActionConfigStep({ draft, setDraft, form: external
                                 }))}
                             />
                         </div>
-                    </div>
-                </Col>
 
-                <Col span={8} className="request-side-col">
-                    <div className="request-side-panel">
-
-
-                        {/* Fallback Message */}
-                        <div className="request-side-card">
-                            <div className="request-side-card-top">
-                                <span className="request-side-label">Fallback Config</span>
-                            </div>
-                            <Text className="request-help-text" style={{ marginBottom: 12 }}>Displayed to the user if the API request fails.</Text>
-                            
-                            <Form.Item
-                                name="fallback_message"
-                                style={{ marginBottom: 0 }}
-                            >
-                                <Input.TextArea
-                                    placeholder="e.g. Service unavailable..."
-                                    autoSize={{ minRows: 3, maxRows: 4 }}
-                                    className="request-fallback-input"
-                                />
-                            </Form.Item>
+                        {/* Fallback Message moved here */}
+                        <div className="request-accordion-shell" style={{ marginTop: '12px' }}>
+                            <Collapse
+                                ghost
+                                items={[{
+                                    key: 'fallback',
+                                    label: (
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <span className="request-side-label" style={{ marginBottom: 0 }}>Fallback Config</span>
+                                            <Text type="secondary" style={{ fontSize: '11px', fontWeight: 400 }}>(Display if request fails)</Text>
+                                        </div>
+                                    ),
+                                    children: (
+                                        <div style={{ padding: '0 4px' }}>
+                                            <Form.Item
+                                                name="fallback_message"
+                                                style={{ marginBottom: 0 }}
+                                            >
+                                                <Input.TextArea
+                                                    placeholder="e.g. Service unavailable..."
+                                                    autoSize={{ minRows: 3, maxRows: 4 }}
+                                                    className="request-fallback-input"
+                                                />
+                                            </Form.Item>
+                                        </div>
+                                    )
+                                }]}
+                                className="request-collapse"
+                            />
                         </div>
                     </div>
                 </Col>
