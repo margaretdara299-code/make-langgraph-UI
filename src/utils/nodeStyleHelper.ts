@@ -6,7 +6,7 @@ export function getNodeTheme(type: string, capability?: string, category?: strin
 
     if (type === 'decision' || type === 'router') {
         // Orange / Routing
-        return { bg: '#FFF7ED', stroke: '#EA580C', badgeBg: '#EA580C', iconBg: '#FFFFFF' };
+        return { bg: '#FFF7ED', stroke: '#EA580C', badgeBg: '#EA580C', iconBg: '#EA580C' };
     }
     
     if (type === 'start') {
@@ -14,14 +14,14 @@ export function getNodeTheme(type: string, capability?: string, category?: strin
     }
     
     if (type === 'end') {
-        return { bg: '#F8FAFC', stroke: '#475569', badgeBg: '#475569', iconBg: '#FFFFFF' };
+        return { bg: '#F8FAFC', stroke: '#000000', badgeBg: '#27272A', iconBg: '#FFFFFF' };
     }
 
     const cap = (capability || '').toLowerCase();
     
-    // DB / Connector - Green
+    // DB / Connector - Bright Sky Blue (User approved)
     if (cap === 'database' || cap.includes('db')) {
-        return { bg: '#ECFDF5', stroke: '#10B981', badgeBg: '#10B981', iconBg: '#FFFFFF' };
+        return { bg: '#F0F9FF', stroke: '#0369A1', badgeBg: '#0369A1', iconBg: '#FFFFFF' };
     }
     
     // Skill - Pink/Magenta

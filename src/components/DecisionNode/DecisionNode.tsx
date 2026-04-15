@@ -84,8 +84,7 @@ export default function DecisionNode({ id, data }: NodeProps<CanvasNode>) {
             {/* ── Node body ── */}
             <div className="modern-node-content">
                 <div className="modern-node-left">
-                    <div className="modern-node-icon" style={{ background: theme.iconBg, color: theme.stroke }}>
-                        ⚡
+                    <div className="modern-node-icon decision-node__icon-diamond" style={{ background: theme.iconBg, color: theme.stroke, borderColor: theme.stroke }}>
                     </div>
                     <div className="modern-node-text-col">
                         <div className="modern-node-title">{nodeData.label || 'Decision'}</div>
@@ -94,7 +93,6 @@ export default function DecisionNode({ id, data }: NodeProps<CanvasNode>) {
                 </div>
                 <div className="modern-node-right">
                     <span className="modern-node-badge" style={{ background: theme.badgeBg }}>ROUTE</span>
-                    <span className="modern-node-dot" style={{ background: theme.stroke }}></span>
                 </div>
             </div>
 

@@ -92,11 +92,11 @@ export default function DecisionPropertiesPanel({ form, nodes = [] }: DecisionPr
                                 <Form.Item
                                     {...restField}
                                     name={[fieldName, 'match_type']}
-                                    label="Match Condition"
+                                    label={<span style={{ fontSize: 12, color: 'var(--text-subtle)' }}>Match Condition</span>}
                                     initialValue="AND"
                                     style={{ marginBottom: 12 }}
                                 >
-                                    <Select options={MATCH_TYPES} size="small" />
+                                    <Select options={MATCH_TYPES} size="small" style={{ fontSize: 12 }} />
                                 </Form.Item>
 
                                 <Form.List name={[fieldName, 'conditions']}>
@@ -108,11 +108,11 @@ export default function DecisionPropertiesPanel({ form, nodes = [] }: DecisionPr
                                                         <Form.Item 
                                                             {...restCField} 
                                                             name={[cName, 'source_type']} 
-                                                            label={<span style={{ fontSize: 11, color: 'var(--text-subtle)' }}>Condition Source</span>}
+                                                            label={<span style={{ fontSize: 12, color: 'var(--text-subtle)' }}>Condition Source</span>}
                                                             style={{ marginBottom: 8, flex: 1 }}
                                                             initialValue="custom"
                                                         >
-                                                            <Select size="small" options={[
+                                                            <Select size="small" style={{ fontSize: 12 }} options={[
                                                                 { label: 'State Output (Node Key)', value: 'output_key' },
                                                                 { label: 'Custom Parameter', value: 'custom' },
                                                             ]} />
@@ -134,24 +134,17 @@ export default function DecisionPropertiesPanel({ form, nodes = [] }: DecisionPr
                                                                     <Form.Item 
                                                                         {...restCField} 
                                                                         name={[cName, 'root_key']} 
-                                                                        label={<span style={{ fontSize: 11, color: 'var(--text-subtle)' }}>Variable Output</span>}
+                                                                        label={<span style={{ fontSize: 12, color: 'var(--text-subtle)' }}>Variable Output</span>}
                                                                         style={{ marginBottom: 8, flex: 1 }}
                                                                         rules={[{ required: true, message: 'Req' }]}
                                                                     >
                                                                         <Select 
                                                                             placeholder="Output Key" 
                                                                             size="small" 
+                                                                            style={{ fontSize: 12 }}
                                                                             options={availableOutputKeys}
                                                                             showSearch
                                                                         />
-                                                                    </Form.Item>
-                                                                    <Form.Item 
-                                                                        {...restCField} 
-                                                                        name={[cName, 'path_suffix']} 
-                                                                        label={<span style={{ fontSize: 11, color: 'var(--text-subtle)' }}>Sub Path (Opt)</span>}
-                                                                        style={{ marginBottom: 8, flex: 1 }}
-                                                                    >
-                                                                        <Input placeholder="e.g. data.value" size="small" />
                                                                     </Form.Item>
                                                                 </div>
                                                             ) : (
@@ -159,26 +152,35 @@ export default function DecisionPropertiesPanel({ form, nodes = [] }: DecisionPr
                                                                     <Form.Item 
                                                                         {...restCField} 
                                                                         name={[cName, 'field']} 
-                                                                        label={<span style={{ fontSize: 11, color: 'var(--text-subtle)' }}>Variable Path</span>}
+                                                                        label={<span style={{ fontSize: 12, color: 'var(--text-subtle)' }}>Variable Path</span>}
                                                                         style={{ marginBottom: 8, flex: 1 }}
                                                                         rules={[{ required: true, message: 'Req' }]}
                                                                     >
-                                                                        <Input placeholder="e.g. data.age" size="small" />
+                                                                        <Input placeholder="e.g. data.age" size="small" style={{ fontSize: 12 }} />
                                                                     </Form.Item>
                                                                 </div>
                                                             );
                                                         }}
                                                     </Form.Item>
 
+                                                    <Form.Item 
+                                                        {...restCField} 
+                                                        name={[cName, 'path_suffix']} 
+                                                        label={<span style={{ fontSize: 12, color: 'var(--text-subtle)' }}>Sub Path</span>}
+                                                        style={{ marginBottom: 8, flex: 1 }}
+                                                    >
+                                                        <Input placeholder="e.g. data.value" size="small" style={{ fontSize: 12 }} />
+                                                    </Form.Item>
+
                                                     <div style={{ display: 'flex', gap: 6 }}>
                                                         <Form.Item 
                                                             {...restCField} 
                                                             name={[cName, 'operator']} 
-                                                            label={<span style={{ fontSize: 11, color: 'var(--text-subtle)' }}>Operator</span>}
+                                                            label={<span style={{ fontSize: 12, color: 'var(--text-subtle)' }}>Operator</span>}
                                                             style={{ margin: 0, flex: 1 }}
                                                             initialValue="=="
                                                         >
-                                                            <Select options={OPERATORS} size="small" />
+                                                            <Select options={OPERATORS} size="small" style={{ fontSize: 12 }} />
                                                         </Form.Item>
                                                         <Form.Item
                                                             noStyle
@@ -193,10 +195,10 @@ export default function DecisionPropertiesPanel({ form, nodes = [] }: DecisionPr
                                                                     <Form.Item 
                                                                         {...restCField} 
                                                                         name={[cName, 'value']} 
-                                                                        label={<span style={{ fontSize: 11, color: 'var(--text-subtle)' }}>Value</span>}
+                                                                        label={<span style={{ fontSize: 12, color: 'var(--text-subtle)' }}>Value</span>}
                                                                         style={{ margin: 0, flex: 1 }}
                                                                     >
-                                                                        <Input placeholder="Val" size="small" />
+                                                                        <Input placeholder="Val" size="small" style={{ fontSize: 12 }} />
                                                                     </Form.Item>
                                                                 ) : <div style={{ flex: 1 }}></div>;
                                                             }}

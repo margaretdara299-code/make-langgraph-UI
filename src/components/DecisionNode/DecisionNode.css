@@ -38,10 +38,28 @@
     border-bottom: 1px solid rgba(245, 158, 11, 0.2);
 }
 
-.decision-node__icon {
-    font-size: 14px;
-    color: var(--color-node-decision);
+/* Diamond Icon for Decision Node */
+.decision-node__icon-diamond {
+    transform: rotate(45deg);
+    border-radius: 3px !important;
+    border: 1.5px solid currentColor !important;
+    width: 22px !important;
+    height: 22px !important;
+    margin-left: 5px;
+    margin-right: 5px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.decision-node__icon-inner {
+    transform: rotate(-45deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
 }
 
 .decision-node__title {
