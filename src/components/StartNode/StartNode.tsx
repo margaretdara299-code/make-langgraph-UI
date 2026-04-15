@@ -21,7 +21,7 @@ export default function StartNode({ id, data }: NodeProps<CanvasNode>) {
 
   return (
     <div
-      className="modern-node-card"
+      className={`modern-node-card ${nodeData.executionStatus ? `node-exec-${nodeData.executionStatus}` : ""}`}
       style={
         {
           background: theme.bg,

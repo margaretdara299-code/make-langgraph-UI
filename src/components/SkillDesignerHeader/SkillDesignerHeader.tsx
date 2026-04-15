@@ -16,7 +16,7 @@ import type { Skill } from '@/interfaces';
 
 import CodeViewerModal from '@/components/CodeViewerModal/CodeViewerModal';
 import PublishStepperModal from '@/components/PublishStepperModal/PublishStepperModal';
-import ExecutionDebuggerModal from '@/components/ExecutionDebuggerModal/ExecutionDebuggerModal';
+import ExecutionPromptModal from '@/components/ExecutionPromptModal/ExecutionPromptModal';
 
 import './SkillDesignerHeader.css';
 
@@ -213,7 +213,7 @@ export default function SkillDesignerHeader() {
                 }} 
             />
             {versionId && (
-                <ExecutionDebuggerModal 
+                <ExecutionPromptModal 
                     isOpen={isDebuggerOpen}
                     onClose={() => setIsDebuggerOpen(false)}
                     versionId={versionId}

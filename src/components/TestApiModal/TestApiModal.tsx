@@ -31,7 +31,7 @@ export default function TestApiModal({
             <pre className="custom-scrollbar" style={{
                 margin: 0,
                 padding: '16px',
-                fontSize: '12px',
+                fontSize: 'var(--text-sm)',
                 lineHeight: '1.6',
                 background: 'transparent',
                 borderRadius: '12px',
@@ -50,7 +50,7 @@ export default function TestApiModal({
 
     return (
         <Modal
-            title={<span style={{ fontWeight: 700, fontSize: '15px', color: '#1e293b' }}>Response Details</span>}
+            title={<span style={{ fontWeight: 700, fontSize: 'var(--text-base)', color: '#1e293b' }}>Response Details</span>}
             open={isOpen}
             onCancel={onClose}
             footer={null}
@@ -75,19 +75,19 @@ export default function TestApiModal({
                                     borderRadius: '50%',
                                     background: statusColor
                                 }} />
-                                <Text style={{ fontSize: '12px', color: '#64748b', fontWeight: 500 }}>
+                                <Text style={{ fontSize: 'var(--text-sm)', color: '#64748b', fontWeight: 500 }}>
                                     Status: <span style={{ color: statusColor, fontWeight: 700 }}>{result?.status || (testState === 'loading' ? 'PENDING' : (testState === 'error' ? 'ERROR' : 'UNKNOWN'))}</span>
                                 </Text>
                             </div>
                             <div style={{ width: '1px', height: '12px', background: '#e2e8f0' }} />
-                            <Text style={{ fontSize: '11px', color: '#94a3b8' }}>
+                            <Text style={{ fontSize: 'var(--text-xs)', color: '#94a3b8' }}>
                                 Time: <span style={{ color: '#475569', fontWeight: 600 }}>{result?.latency || result?.time || '0'} ms</span>
                             </Text>
                         </Space>
                     }
                 >
                     <Tabs.TabPane
-                        tab={<span style={{ fontSize: '12px', fontWeight: 600 }}>Body</span>}
+                        tab={<span style={{ fontSize: 'var(--text-sm)', fontWeight: 600 }}>Body</span>}
                         key="response"
                     >
                         <div style={{
@@ -101,7 +101,7 @@ export default function TestApiModal({
                         </div>
                     </Tabs.TabPane>
                     <Tabs.TabPane
-                        tab={<span style={{ fontSize: '12px', fontWeight: 600 }}>Headers</span>}
+                        tab={<span style={{ fontSize: 'var(--text-sm)', fontWeight: 600 }}>Headers</span>}
                         key="resp-headers"
                     >
                         <div style={{
@@ -115,7 +115,7 @@ export default function TestApiModal({
                         </div>
                     </Tabs.TabPane>
                     <Tabs.TabPane
-                        tab={<span style={{ fontSize: '12px', fontWeight: 600 }}>Request Payload</span>}
+                        tab={<span style={{ fontSize: 'var(--text-sm)', fontWeight: 600 }}>Request Payload</span>}
                         key="request-payload"
                     >
                         <div style={{

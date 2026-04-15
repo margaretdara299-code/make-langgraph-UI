@@ -24,6 +24,7 @@ import '@xyflow/react/dist/style.css';
 import NodePalette from '@/components/NodePalette/NodePalette';
 import PropertiesDrawer from '@/components/PropertiesDrawer/PropertiesDrawer';
 import { NODE_TYPES, EDGE_TYPES } from '@/constants';
+import { useExecution } from '@/contexts';
 import { useCanvasDragDrop, useSkillGraph } from '@/hooks';
 import {
     upsertNodeInStorage,
@@ -138,6 +139,79 @@ export default function SkillDesignerCanvas() {
     const nodeTypes = useMemo(() => NODE_TYPES, []);
     const edgeTypes = useMemo(() => EDGE_TYPES, []);
 
+    // ── Live Execution Animation Interception ──
+    const { steps, isExecuting, isSimulationDone } = useExecution();
+
+    const displayNodes = useMemo(() => {
+        if (!isExecuting && !isSimulationDone) return nodes;
+
+        return nodes.map(node => {
+            const step = steps.find(s => s.node.id === node.id);
+            if (!step) return node;
+
+            return {
+                ...node,
+                data: {
+                    ...node.data,
+                    executionStatus: step.status // Used by Custom Nodes to glow or show badges
+                }
+            };
+        });
+    }, [nodes, steps, isExecuting, isSimulationDone]);
+
+    const displayEdges = useMemo(() => {
+        if (!isExecuting && !isSimulationDone) return edges;
+
+        return edges.map(edge => {
+            let isPathActive = false;
+            let status = 'idle';
+
+            for (let i = 0; i < steps.length - 1; i++) {
+                // If this edge connects an executed sequence step to the exact next executed sequence step
+                if (steps[i].node.id === edge.source && steps[i+1].node.id === edge.target) {
+                    // Additionally, if the edge is a rule branch (Decision node), we check if the path used the exact handle
+                    // The backend `useExecutionStepper` doesn't explicitly return the handle used. 
+                    // However, we know step[i+1] is the target. If an edge connects them, it's the executed path.
+                    // This creates a perfect visual chain for the paths actually taken.
+                    isPathActive = true;
+                    status = steps[i+1].status;
+                    break;
+                }
+            }
+
+            if (!isPathActive) {
+                // Gray out paths not taken
+                return {
+                    ...edge,
+                    animated: false,
+                    style: { ...edge.style, stroke: 'var(--color-border)', opacity: 0.3 }
+                };
+            }
+
+            if (status === 'running') {
+                return {
+                    ...edge,
+                    animated: true,
+                    style: { ...edge.style, stroke: 'var(--color-primary)', strokeWidth: 3, opacity: 1, filter: 'drop-shadow(0 0 4px var(--color-primary))' }
+                };
+            } else if (status === 'success') {
+                return {
+                    ...edge,
+                    animated: false,
+                    style: { ...edge.style, stroke: 'var(--color-success)', strokeWidth: 3, opacity: 1, filter: 'drop-shadow(0 0 4px var(--color-success))' }
+                };
+            } else if (status === 'error') {
+                return {
+                    ...edge,
+                    animated: false,
+                    style: { ...edge.style, stroke: 'var(--color-error)', strokeWidth: 3, opacity: 1, filter: 'drop-shadow(0 0 4px var(--color-error))' }
+                };
+            }
+
+            return edge;
+        });
+    }, [edges, steps, isExecuting, isSimulationDone]);
+
     return (
         <div className="skill-designer" ref={reactFlowWrapper}>
             <NodePalette />
@@ -145,8 +219,8 @@ export default function SkillDesignerCanvas() {
 
                 {/* <pre>{JSON.stringify(edges, null, 2)}</pre> */}
                 <ReactFlow
-                    nodes={nodes}
-                    edges={edges}
+                    nodes={displayNodes}
+                    edges={displayEdges}
                     onNodesChange={onNodesChange}
                     onEdgesChange={onEdgesChange}
                     onConnect={onConnect}

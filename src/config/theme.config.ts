@@ -28,7 +28,7 @@ export const antdTheme: ThemeConfig = {
 
         // Typography
         fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-        fontSize: 14,
+        fontSize: 'var(--text-base)',
 
         // Borders
         borderRadius: 8,

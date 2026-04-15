@@ -81,11 +81,18 @@ export default function DeletableEdge(props: EdgeProps) {
                 markerEnd={markerEnd}
                 style={{
                     ...style,
-                    strokeDasharray: 'none',
+                    strokeDasharray: props.animated ? '8,4' : 'none',
                     stroke: edgeColor,
                     strokeWidth: style?.strokeWidth ?? 2,
                 }}
             />
+
+            {/* ── Animated Ball Overlay ── */}
+            {props.animated && (
+                <circle r="6" fill="var(--color-bg-white)" stroke={style?.stroke || 'var(--color-primary)'} strokeWidth="3" style={{ filter: `drop-shadow(0 0 6px ${style?.stroke || 'var(--color-primary)'})` }}>
+                    <animateMotion dur="1.2s" repeatCount="indefinite" path={edgePath} />
+                </circle>
+            )}
 
             {/*
              * ── Invisible wide interaction path ──
