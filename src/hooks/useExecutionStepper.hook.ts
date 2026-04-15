@@ -58,7 +58,7 @@ export function useExecutionStepper() {
 
             setIsFetching(false);
 
-            // 2. Flatten the graph (Topological Sort / BFS) to create the stepper sequence
+            // 2. Build the Stepper Sequence based on Actual Execution Logs
             const startNode = nodes.find(n => n.type === 'start');
             if (!startNode) {
                 message.error('Execution requires a Workflow Entry (Start) node.');
@@ -66,22 +66,58 @@ export function useExecutionStepper() {
                 return;
             }
 
-            const sequence: Node[] = [];
-            const visited = new Set<string>();
-            const queue: Node[] = [startNode];
+            let sequence: Node[] = [];
 
-            while (queue.length > 0) {
-                const current = queue.shift()!;
-                if (!visited.has(current.id)) {
-                    visited.add(current.id);
-                    sequence.push(current);
-                    
-                    // Add children that haven't been visited
-                    const childrenEdges = edges.filter(e => e.source === current.id);
-                    for (const currEdge of childrenEdges) {
-                        const childNode = nodes.find(n => n.id === currEdge.target);
-                        if (childNode && !visited.has(childNode.id)) {
-                            queue.push(childNode);
+            // Attempt to trace the exact chronological path by reading the strict backend logs.
+            // Backend outputs: "▶ [Node Label] (node_type)" before executing each node.
+            if (logs && logs.length > 0) {
+                for (const log of logs) {
+                    const match = log.match(/^▶ \[(.*?)\] \(/);
+                    if (match) {
+                        const labelHit = match[1];
+                        // Find candidate nodes matching the exact label
+                        const candidateNodes = nodes.filter(n => String(n.data?.label || '').trim() === labelHit.trim() || n.id === labelHit.trim());
+                        
+                        if (sequence.length === 0) {
+                            const firstMatch = candidateNodes.find(c => c.type === 'start') || candidateNodes[0];
+                            if (firstMatch) sequence.push(firstMatch);
+                        } else {
+                            const lastNode = sequence[sequence.length - 1];
+                            // Find candidate that directly connects downstream from the last node (to handle duplicate labels)
+                            const connectedCandidate = candidateNodes.find(c => {
+                                // Direct child check
+                                const isDirectChild = edges.some(e => e.source === lastNode.id && e.target === c.id);
+                                if (isDirectChild) return true;
+                                
+                                // One step hop check (in case backend skipped logging a silent structural node)
+                                const childrenEdges = edges.filter(e => e.source === lastNode.id);
+                                return childrenEdges.some(ce => edges.some(e2 => e2.source === ce.target && e2.target === c.id));
+                            });
+                            
+                            const nextNode = connectedCandidate || candidateNodes[0];
+                            if (nextNode) sequence.push(nextNode);
+                        }
+                    }
+                }
+            }
+
+            // Fallback: If logs failed or were empty, use structural BFS path, but we prune dead branches
+            if (sequence.length === 0) {
+                const visited = new Set<string>();
+                const queue: Node[] = [startNode];
+
+                while (queue.length > 0) {
+                    const current = queue.shift()!;
+                    if (!visited.has(current.id)) {
+                        visited.add(current.id);
+                        sequence.push(current);
+                        
+                        const childrenEdges = edges.filter(e => e.source === current.id);
+                        for (const currEdge of childrenEdges) {
+                            const childNode = nodes.find(n => n.id === currEdge.target);
+                            if (childNode && !visited.has(childNode.id)) {
+                                queue.push(childNode);
+                            }
                         }
                     }
                 }

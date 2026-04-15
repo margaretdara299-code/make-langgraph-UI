@@ -14,6 +14,7 @@ import { Settings2, GitBranchPlus, X } from 'lucide-react';
 import { HTTP_METHODS } from '@/constants';
 import type { CanvasNodeData, CanvasEdgeData, PropertiesDrawerProps } from '@/interfaces';
 import { useCategories, useCapabilities } from '@/hooks';
+import { useExecution } from '@/contexts';
 import { loadGraphFromStorage, upsertNodeInStorage, upsertConnectionInStorage } from '@/services/skillGraphStorage.service';
 import DecisionPropertiesPanel from './DecisionPropertiesPanel';
 import './PropertiesDrawer.css';
@@ -38,6 +39,10 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     const selectedNode = selectedNodeId ? nodes.find(node => node.id === selectedNodeId) || null : null;
     const selectedEdge = selectedEdgeId ? edges.find(edge => edge.id === selectedEdgeId) || null : null;
     const [form] = Form.useForm();
+    
+    // Check if the current node has been executed in the active stepper session
+    const { steps } = useExecution();
+    const executionStep = selectedNodeId ? steps.find(s => s.node.id === selectedNodeId) : null;
 
     // Track state for the header to prevent it from resetting during the closing animation
     const [headerInfo, setHeaderInfo] = useState<{ title: string; icon: React.ReactNode }>({
@@ -394,7 +399,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                 {(fields, { add, remove }) => (
                     <>
                         {fields.length === 0 && (
-                            <Text type="secondary" className="properties-drawer__empty-hint" style={{ display: 'block', marginBottom: 8, fontSize: 13 }}>
+                            <Text type="secondary" className="properties-drawer__empty-hint" style={{ display: 'block', marginBottom: 8, fontSize: 'var(--text-sm)' }}>
                                 {emptyMessage}
                             </Text>
                         )}
@@ -457,7 +462,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                 background: '#ecfdf5', 
                                 color: '#059669', 
                                 border: '1px solid #6ee7b7',
-                                fontSize: 11, 
+                                fontSize: 'var(--text-xs)', 
                                 fontWeight: 700, 
                                 padding: '0 6px', 
                                 borderRadius: '10px',
@@ -611,7 +616,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                         <div className="properties-drawer__meta">
                                             <div className="properties-drawer__meta-item">
                                                 <span className="properties-drawer__meta-label">Type</span>
-                                                <span className="properties-drawer__meta-value" style={{ fontWeight: 'bold', fontStyle: 'italic', fontSize: '12px' }}>
+                                                <span className="properties-drawer__meta-value" style={{ fontWeight: 'bold', fontStyle: 'italic', fontSize: 'var(--text-sm)' }}>
                                                     {isStart     ? 'Workflow Entry'
                                                     : isEnd      ? 'Workflow Exit'
                                                     : isAction   ? 'Action'
@@ -623,7 +628,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                             {isAction && (
                                                 <div className="properties-drawer__meta-item">
                                                     <span className="properties-drawer__meta-label">Key</span>
-                                                    <span className="properties-drawer__meta-value" style={{ fontFamily: 'monospace', fontWeight: 'bold', fontStyle: 'italic', fontSize: '12px' }}>
+                                                    <span className="properties-drawer__meta-value" style={{ fontFamily: 'monospace', fontWeight: 'bold', fontStyle: 'italic', fontSize: 'var(--text-sm)' }}>
                                                         {nodeData?.action_key}                                                     
                                                     </span>                                                 
                                                 </div>
@@ -672,7 +677,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                 <>
                                                     <div className="properties-drawer__divider" />
                                                     <div className="properties-drawer__section-title">Initial State Variables</div>
-                                                    <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 16, lineHeight: 1.5 }}>
+                                                    <Text type="secondary" style={{ fontSize: 'var(--text-sm)', display: 'block', marginBottom: 16, lineHeight: 1.5 }}>
                                                         State is used to store and pass data between all nodes in a workflow so 
                                                         they can share and update information.
                                                     </Text>
@@ -784,7 +789,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                             {isEnd ? (
                                                 <>
                                                     <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Failure Settings</div>
-                                                    <Text type="secondary" style={{ fontSize: 13, display: 'block', marginBottom: 16 }}>
+                                                    <Text type="secondary" style={{ fontSize: 'var(--text-sm)', display: 'block', marginBottom: 16 }}>
                                                         If the workflow fails before naturally reaching an exit, define the error response mapping.
                                                     </Text>
                                                     <div className="properties-drawer__flex-row">
@@ -812,6 +817,61 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                     </motion.div>
                                 )
                             }] : []),
+                            ...(executionStep && (executionStep.status === 'success' || executionStep.status === 'error') ? [{
+                                key: 'exec_logs',
+                                label: (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                        <span style={{ 
+                                            width: 8, height: 8, borderRadius: '50%', 
+                                            backgroundColor: executionStep.status === 'success' ? 'var(--color-success)' : 'var(--color-error)',
+                                            boxShadow: `0 0 4px ${executionStep.status === 'success' ? 'var(--color-success)' : 'var(--color-error)'}`
+                                        }} />
+                                        Execution
+                                    </div>
+                                ),
+                                children: (
+                                    <motion.div
+                                        variants={{
+                                            hidden: { opacity: 0, x: 16 },
+                                            visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }
+                                        }}
+                                        style={{ padding: '0 4px' }}
+                                    >
+                                        <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Step Inputs (Scope)</div>
+                                        <div style={{ 
+                                            backgroundColor: 'var(--color-nav-bg)', 
+                                            border: '1px solid var(--color-border)', 
+                                            borderRadius: 8, 
+                                            padding: 12, 
+                                            overflow: 'auto', 
+                                            maxHeight: 250, 
+                                            marginBottom: 20,
+                                            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
+                                        }}>
+                                            <pre style={{ margin: 0, fontFamily: 'monospace', fontSize: 'var(--text-sm)', color: 'var(--color-text-primary)' }}>
+                                                {JSON.stringify(executionStep.inputData, null, 2)}
+                                            </pre>
+                                        </div>
+
+                                        <div className="properties-drawer__section-title" style={{ color: executionStep.status === 'error' ? 'var(--color-error)' : undefined }}>
+                                            Step Output {executionStep.status === 'error' && '(Error)'}
+                                        </div>
+                                        <div style={{ 
+                                            backgroundColor: 'var(--color-nav-bg)', 
+                                            border: `1px solid ${executionStep.status === 'error' ? 'var(--color-error)' : 'var(--color-border)'}`, 
+                                            borderRadius: 8, 
+                                            padding: 12, 
+                                            overflow: 'auto', 
+                                            maxHeight: 400,
+                                            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
+                                        }}>
+                                            <pre style={{ margin: 0, fontFamily: 'monospace', fontSize: 'var(--text-sm)', color: executionStep.status === 'error' ? '#ff7875' : 'var(--color-text-primary)' }}>
+                                                {JSON.stringify(executionStep.data?.data, null, 2)}
+                                            </pre>
+                                        </div>
+                                    </motion.div>
+                                )
+                            }] : [])
                         ]}
                     />
                 </motion.div>

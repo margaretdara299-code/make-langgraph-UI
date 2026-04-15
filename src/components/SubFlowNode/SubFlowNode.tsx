@@ -20,7 +20,9 @@ export default function SubFlowNode({ id, data }: NodeProps<CanvasNode>) {
     };
 
     return (
-        <div className="modern-node-card" style={{ background: theme.bg, borderColor: theme.stroke }}>
+        <div
+      className={`modern-node-card ${nodeData.executionStatus ? `node-exec-${nodeData.executionStatus}` : ""}`}
+      style={{ background: theme.bg, borderColor: theme.stroke }}>
             <div className="modern-node-delete" onClick={handleDelete} title="Delete Node">×</div>
 
             <Handle type="target" position={Position.Top} className="modern-node-handle" />

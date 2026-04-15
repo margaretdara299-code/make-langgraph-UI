@@ -413,7 +413,7 @@ export default function CodeViewerModal({
             options={{
               readOnly: true,
               minimap: { enabled: false },
-              fontSize: 12,
+              fontSize: 'var(--text-sm)',
               fontFamily: "'Fira Code', 'Fira Mono', monospace",
               scrollBeyondLastLine: false,
               wordWrap: "on",
