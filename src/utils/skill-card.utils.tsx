@@ -14,12 +14,11 @@ import {
 } from '@ant-design/icons';
 import { CARD_ACTION_KEYS } from '@/constants';
 
-/** Build menu items based on skill status */
 export function getMenuItems(status: string, skillId: string, versionId?: string): MenuProps['items'] {
     const items: MenuProps['items'] = [
-        { 
-            key: CARD_ACTION_KEYS.BUILD_SKILL, 
-            icon: <PartitionOutlined />, 
+        {
+            key: CARD_ACTION_KEYS.BUILD_SKILL,
+            icon: <PartitionOutlined />,
             label: versionId ? (
                 <Link to={`/skills/${skillId}/versions/${versionId}/design`} style={{ color: 'inherit', textDecoration: 'none' }}>
                     Build Skill
@@ -28,15 +27,15 @@ export function getMenuItems(status: string, skillId: string, versionId?: string
             className: 'skill-card__menu-item-build',
             style: { color: 'var(--color-primary)', fontWeight: 600 }
         },
-        { 
-            key: CARD_ACTION_KEYS.EDIT_SETTINGS, 
-            icon: <SettingOutlined />, 
-            label: 'Edit' 
+        {
+            key: CARD_ACTION_KEYS.EDIT_SETTINGS,
+            icon: <SettingOutlined />,
+            label: 'Edit'
         },
-        { 
-            key: CARD_ACTION_KEYS.TEST, 
-            icon: <PlayCircleOutlined />, 
-            label: 'Test' 
+        {
+            key: CARD_ACTION_KEYS.TEST,
+            icon: <PlayCircleOutlined />,
+            label: 'Test'
         },
         { type: 'divider' },
     ];
