@@ -87,7 +87,7 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                     >
                         <Input placeholder="e.g., Verify Eligibility" />
                     </Form.Item>
-
+ 
                     <Form.Item
                         name="action_key"
                         label="Action Key"
@@ -100,7 +100,7 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                         <Input placeholder="e.g., verify_eligibility" />
                     </Form.Item>
                 </div>
-
+ 
                 <div className="create-action-overview__row">
                     <Form.Item name="category_id" label="Category" rules={[{ required: true, message: 'Category is required' }]} className="create-action-overview__flex-1">
                         <Select placeholder="Select a category" loading={isCategoriesLoading}>
@@ -111,7 +111,7 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                             ))}
                         </Select>
                     </Form.Item>
-
+ 
                     <Form.Item name="capability_id" label="Capability" rules={[{ required: true, message: 'Capability is required' }]} className="create-action-overview__flex-1">
                         <Select placeholder="Select a capability" loading={isCapabilitiesLoading}>
                             {capabilities.map(cap => (
@@ -122,7 +122,7 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                         </Select>
                     </Form.Item>
                 </div>
-
+ 
                 <Form.Item
                     name="description"
                     label="Description"
@@ -130,7 +130,7 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                     <TextArea
                         placeholder="Describe what this action does..."
                         rows={5}
-                        style={{ minHeight: '200px' }}
+                        style={{ minHeight: '150px' }}
                         maxLength={ACTION_DESCRIPTION_MAX_LENGTH}
                         showCount
                     />

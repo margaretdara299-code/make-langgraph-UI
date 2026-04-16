@@ -159,42 +159,15 @@ export default function ActionCatalogPage() {
                         items={[
                             { 
                                 key: 'all', 
-                                label: (
-                                    <Space size={8}>
-                                        <span>All</span>
-                                        <Badge 
-                                            count={statusCounts.all || 0} 
-                                            showZero 
-                                            style={{ backgroundColor: (filters.status || 'all') === 'all' ? 'var(--accent)' : '#f1f5f9', color: (filters.status || 'all') === 'all' ? '#fff' : '#64748b' }}
-                                        />
-                                    </Space>
-                                ) 
+                                label: 'All'
                             },
                             { 
                                 key: 'published', 
-                                label: (
-                                    <Space size={8}>
-                                        <span>Published</span>
-                                        <Badge 
-                                            count={statusCounts.published || 0} 
-                                            showZero 
-                                            style={{ backgroundColor: filters.status === 'published' ? 'var(--accent)' : '#f1f5f9', color: filters.status === 'published' ? '#fff' : '#64748b' }}
-                                        />
-                                    </Space>
-                                ) 
+                                label: 'Published'
                             },
                             { 
                                 key: 'draft', 
-                                label: (
-                                    <Space size={8}>
-                                        <span>Draft</span>
-                                        <Badge 
-                                            count={statusCounts.draft || 0} 
-                                            showZero 
-                                            style={{ backgroundColor: filters.status === 'draft' ? 'var(--accent)' : '#f1f5f9', color: filters.status === 'draft' ? '#fff' : '#64748b' }}
-                                        />
-                                    </Space>
-                                ) 
+                                label: 'Draft'
                             },
                         ]}
                     />

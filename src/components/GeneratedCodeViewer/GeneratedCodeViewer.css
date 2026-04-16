@@ -27,6 +27,9 @@
 
 .generated-code-viewer .ant-modal-close {
   color: #cccccc;
+  inset-inline-end: 16px !important;
+  inset-inline-start: auto !important;
+  top: 16px !important;
 }
 
 .generated-code-viewer .ant-modal-close:hover {

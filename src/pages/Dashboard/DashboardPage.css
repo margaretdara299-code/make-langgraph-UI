@@ -122,6 +122,10 @@
 }
 
 /* Skills Table */
+.dashboard-skills-table {
+  min-height: 400px;
+}
+
 .dashboard-skills-table .ant-table {
   background: transparent !important;
 }

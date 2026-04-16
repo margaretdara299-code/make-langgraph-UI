@@ -7,3 +7,9 @@
     overflow-y: auto;
     padding: 24px;
 }
+
+.create-connector-modal .ant-modal-close {
+    inset-inline-start: auto !important;
+    inset-inline-end: 16px !important;
+    top: 16px !important;
+}

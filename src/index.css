@@ -102,9 +102,9 @@
   --surface-2: #f3f4f6;
   --surface-3: #e5e7eb;
 
-  --shadow-subtle: 0 1px 3px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-card: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.03);
-  --shadow-float: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+  --shadow-float: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
   --motion-fast: 120ms;
   --motion-base: 220ms;
@@ -117,8 +117,10 @@
 
 [data-theme='dark'] {
   /* --- Core Palette (Dark - Azure/Vercel style) --- */
-  --bg-page: #020617;       /* Slate 950 - Absolute deep */
-  --bg-card: #0f172a;       /* Slate 900 - Dark surface */
+  --bg-page: #020617;
+  /* Slate 950 - Absolute deep */
+  --bg-card: #0f172a;
+  /* Slate 900 - Dark surface */
   --bg-sidebar: #020617;
   --bg-header: rgba(2, 6, 23, 0.8);
 
@@ -178,7 +180,9 @@
 }
 
 /* --- Base Styles --- */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -237,10 +241,121 @@ body {
 }
 
 /* --- Semantic Badge Classes (Legacy Support) --- */
-.badge-api { background: var(--color-node-connector-bg); color: var(--color-node-connector-text); }
-.badge-ai { background: var(--color-node-trigger-bg); color: var(--color-node-trigger-text); }
-.badge-rpa { background: #ffedd5; color: #c2410c; }
-.badge-human { background: #dcfce7; color: #15803d; }
-.badge-rules { background: #fef08a; color: #854d0e; }
-.badge-message { background: #ccfbf1; color: #0f766e; }
-.badge-default { background: var(--border-light); color: var(--text-muted); }
+.badge-api {
+  background: var(--color-node-connector-bg);
+  color: var(--color-node-connector-text);
+}
+
+.badge-ai {
+  background: var(--color-node-trigger-bg);
+  color: var(--color-node-trigger-text);
+}
+
+.badge-rpa {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.badge-human {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.badge-rules {
+  background: #fef08a;
+  color: #854d0e;
+}
+
+.badge-message {
+  background: #ccfbf1;
+  color: #0f766e;
+}
+
+.badge-default {
+  background: var(--border-light);
+  color: var(--text-muted);
+}
+
+/* --- Ant Design Modal Global Overrides --- */
+.ant-modal .ant-modal-close {
+  inset-inline-start: auto !important;
+  inset-inline-end: 16px !important;
+  top: 16px !important;
+}
+
+/* --- Ant Design Dropdown Global Overrides --- */
+.ant-dropdown .ant-dropdown-menu {
+  padding: 6px !important;
+  border-radius: 10px !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+.ant-dropdown .ant-dropdown-menu-item {
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+  margin-bottom: 2px !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+  color: #475569 !important;
+  transition: all 0.2s ease !important;
+}
+
+.ant-dropdown .ant-dropdown-menu-item:last-child {
+  margin-bottom: 0 !important;
+}
+
+.ant-dropdown .ant-dropdown-menu-item:hover {
+  background-color: #f8fafc !important;
+  color: var(--accent) !important;
+}
+
+.ant-dropdown .ant-dropdown-menu-item-danger {
+  color: #ef4444 !important;
+}
+
+.ant-dropdown .ant-dropdown-menu-item-danger:hover {
+  background-color: #fef2f2 !important;
+  color: #ef4444 !important;
+}
+
+/* --- Global Modal Input Height Styling --- */
+.ant-modal .ant-input,
+.ant-modal .ant-select-selector,
+.ant-modal .ant-picker,
+.ant-modal .ant-input-number,
+.ant-modal .ant-input-affix-wrapper {
+  height: 36px !important;
+  border-radius: 4px !important;
+  padding: 2px 5px !important;
+}
+
+/* Vertically center text in Selects and Affix wrappers */
+.ant-modal .ant-select-selection-item,
+.ant-modal .ant-select-selection-placeholder,
+.ant-modal .ant-select-selection-search-input {
+  line-height: normal !important;
+  height: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Ensure the search input within Select takes full height */
+.ant-modal .ant-select-selection-search {
+  display: flex !important;
+  align-items: center !important;
+  height: 24px !important;
+}
+
+/* Base Select Selector must center this 24px content */
+.ant-modal .ant-select-selector {
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 12px !important;
+}
+
+.ant-modal .ant-input-textarea-show-count > .ant-input {
+  height: auto !important;
+  /* Don't force 36px on textareas with showCount */
+  min-height: 36px !important;
+}

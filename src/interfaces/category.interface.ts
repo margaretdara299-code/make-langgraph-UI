@@ -2,6 +2,7 @@
  * Represents a Skill Category fetched from the backend.
  */
 export interface Category {
+    categoryId: number;
     category_id: number;
     name: string;
     description?: string;

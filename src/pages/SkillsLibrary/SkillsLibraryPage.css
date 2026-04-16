@@ -91,23 +91,6 @@
     margin-bottom: 6px;
 }
 
-.skills-library-search.ant-input-affix-wrapper {
-    width: 320px;
-    background: rgba(255, 255, 255, 0.6) !important;
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--border-medium) !important;
-    border-radius: 10px !important;
-    padding: 8px 12px !important;
-    box-shadow: var(--shadow-xs);
-    transition: all 0.3s ease !important;
-}
-
-.skills-library-search.ant-input-affix-wrapper-focused {
-    border-color: var(--accent) !important;
-    background: #ffffff !important;
-    box-shadow: 0 0 0 4px var(--accent-soft), var(--shadow-sm) !important;
-}
-
 .skills-library-body {
     flex: 1;
     min-height: 0;

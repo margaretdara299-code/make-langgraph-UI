@@ -58,46 +58,6 @@
     gap: var(--space-2);
 }
 
-.categories-search.ant-input-affix-wrapper {
-    width: 300px;
-    background: rgba(255, 255, 255, 0.6) !important;
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--border-medium) !important;
-    border-radius: 10px !important;
-    padding: 8px 12px !important;
-    box-shadow: var(--shadow-xs);
-    transition: all var(--motion-base) cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-.categories-search.ant-input-affix-wrapper:hover {
-    border-color: var(--accent) !important;
-    background: rgba(255, 255, 255, 0.8) !important;
-}
-
-.categories-search.ant-input-affix-wrapper-focused {
-    border-color: var(--accent) !important;
-    background: #ffffff !important;
-    box-shadow: 0 0 0 4px var(--accent-soft), var(--shadow-sm) !important;
-    transform: translateY(-1px);
-}
-
-.categories-search .ant-input-prefix {
-    margin-right: var(--space-1);
-    font-size: 14px;
-    transition: color var(--motion-fast) ease;
-}
-
-.categories-search.ant-input-affix-wrapper-focused .ant-input-prefix {
-    color: var(--accent) !important;
-}
-
-.categories-search input {
-    font-size: 14px !important;
-    font-weight: var(--weight-medium);
-    color: var(--text-main);
-    background: transparent !important;
-}
-
 .categories-body {
     flex: 1;
     min-height: 0;

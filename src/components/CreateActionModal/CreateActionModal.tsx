@@ -211,6 +211,67 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
 
 
 
+    const handleSaveAsDraft = async () => {
+        // Optionally validate forms before saving - we'll save partial drafts without validation
+        setIsSubmitting(true);
+        try {
+            const rawConfig = actionDraft.configurations_json || {};
+            const cleanedConfig: Record<string, any> = {};
+            if (rawConfig.url) cleanedConfig.url = rawConfig.url;
+            if (rawConfig.method) cleanedConfig.method = rawConfig.method;
+            if (rawConfig.output_key) cleanedConfig.output_key = rawConfig.output_key;
+            ['path_params', 'query_params', 'header_params', 'body_params'].forEach(paramType => {
+                if (Array.isArray(rawConfig[paramType])) {
+                    const filtered = rawConfig[paramType].filter((param: any) => param && (param.key || param.value));
+                    if (filtered.length > 0) {
+                        if (paramType === 'body_params') {
+                            const bodyObj: Record<string, any> = {};
+                            filtered.forEach((param: any) => {
+                                if (param.key) bodyObj[param.key] = param.value;
+                            });
+                            cleanedConfig.body_params = bodyObj;
+                        } else {
+                            cleanedConfig[paramType] = filtered;
+                        }
+                    }
+                }
+            });
+            if (rawConfig.fallback_message) {
+                cleanedConfig.fallback_message = rawConfig.fallback_message;
+            }
+            if (Array.isArray(rawConfig.input_keys)) {
+                const filtered = rawConfig.input_keys.filter((keyItem: any) => keyItem && keyItem.key);
+                if (filtered.length > 0) cleanedConfig.input_keys = filtered;
+            }
+            const cleanedDraft = { ...actionDraft, configurations_json: cleanedConfig, status: 'draft' as const };
+
+            let res;
+            if (actionToEdit) {
+                res = await updateActionDefinition(actionToEdit.id, cleanedDraft);
+                if (res.success) {
+                    message.success(res.message || 'Action draft updated!');
+                }
+            } else {
+                res = await createAction(cleanedDraft);
+                if (res.success) {
+                    message.success(res.message || 'Action saved as draft!');
+                }
+            }
+
+            if (res.success) {
+                await onCreated();
+                onClose();
+            } else {
+                message.error(res.error || 'Failed to save draft.');
+            }
+        } catch (error) {
+            console.error('Error saving draft:', error);
+            message.error('An unexpected error occurred.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     const steps = [
         {
             title: 'Overview',
@@ -232,81 +293,79 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
     const currentStepObj = steps[currentStep];
 
     return (
-        <>
-            <Modal
-                title={null}
-                open={isOpen}
-                onCancel={onClose}
-                width={1100}
-                footer={null}
-                destroyOnClose
-                className="create-action-modal"
-                centered
-                zIndex={1300}
-                bodyStyle={{ padding: 0 }}
-                styles={{ body: { padding: 0, height: 800, display: 'flex', flexDirection: 'row' } }}
-            >
-                {/* -- Left Side: Pure Vertical Navigator -- */}
-                <div className="create-action-modal__stepper-col">
-                    <div style={{ marginBottom: 32, paddingLeft: 4 }}>
-                         <span style={{ fontSize: '17px', fontWeight: 700, color: '#0F172A', display: 'block' }}>
-                            {actionToEdit ? 'Edit Action' : 'Create New Action'}
-                         </span>
-                    </div>
-                    <div className="create-action-modal__stepper">
-                        <Steps
-                            current={currentStep}
-                            items={steps.map(s => ({
-                                title: s.title,
-                                description: s.description
-                            }))}
-                            size="small"
-                            direction="vertical"
-                            onChange={handleStepChange}
-                            className="create-action-stepper"
-                        />
-                    </div>
+        <Modal
+            title={null}
+            open={isOpen}
+            onCancel={onClose}
+            width={1100}
+            footer={null}
+            destroyOnClose
+            className="create-action-modal"
+            centered
+            zIndex={1300}
+            bodyStyle={{ padding: 0 }}
+            styles={{ body: { padding: 0, height: 800, display: 'flex', flexDirection: 'row' } }}
+        >
+            {/* -- Left Side: Pure Vertical Navigator -- */}
+            <div className="create-action-modal__stepper-col">
+                <div style={{ marginBottom: 32, paddingLeft: 4 }}>
+                    <span style={{ fontSize: '17px', fontWeight: 700, color: '#0F172A', display: 'block' }}>
+                        {actionToEdit ? 'Edit Action' : 'Create New Action'}
+                    </span>
+                </div>
+                <div className="create-action-modal__stepper">
+                    <Steps
+                        current={currentStep}
+                        items={steps.map(s => ({
+                            title: s.title,
+                            description: s.description
+                        }))}
+                        size="small"
+                        direction="vertical"
+                        onChange={handleStepChange}
+                        className="create-action-stepper"
+                    />
+                </div>
+            </div>
+
+            {/* -- Right Side: Dedicated Form Panel -- */}
+            <div className="create-action-modal__form-col">
+                <div className="create-action-modal__header">
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#64748B', display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>
+                        Step {currentStep + 1} / {steps.length}
+                    </span>
+                    <Text strong style={{ fontSize: '26px', fontWeight: 700, display: 'block', marginBottom: 6, color: '#0F172A', letterSpacing: '-0.02em' }}>
+                        {currentStepObj.title}
+                    </Text>
+                    <Text style={{ fontSize: '14px', color: '#64748B', display: 'block', lineHeight: 1.5 }}>
+                        {currentStepObj.description}
+                    </Text>
                 </div>
 
-                {/* -- Right Side: Dedicated Form Panel -- */}
-                <div className="create-action-modal__form-col">
-                    <div className="create-action-modal__header">
-                        <span style={{ fontSize: '11px', fontWeight: 600, color: '#64748B', display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>
-                            Step {currentStep + 1} / {steps.length}
-                        </span>
-                        <Text strong style={{ fontSize: '22px', fontWeight: 700, display: 'block', marginBottom: 4, color: '#0F172A', letterSpacing: '-0.02em' }}>
-                            {currentStepObj.title}
-                        </Text>
-                        <Text style={{ fontSize: '12px', color: '#64748B', display: 'block', lineHeight: 1.5 }}>
-                            {currentStepObj.description}
-                        </Text>
-                    </div>
-
-                    <div className="create-action-modal__step-content">
-                        {steps[currentStep].content}
-                    </div>
-
-                    <div className="create-action-modal__footer">
-                        <div></div>
-                        <Space>
-                            <Button onClick={onClose}>Cancel</Button>
-                            <Button>Save as Draft</Button>
-                            {currentStep < steps.length - 1 && (
-                                <Button type="primary" onClick={handleNext}>
-                                    Continue
-                                </Button>
-                            )}
-                            {currentStep === steps.length - 1 && (
-                                <Button type="primary" onClick={handlePublish} loading={isSubmitting}>
-                                    {actionToEdit ? 'Publish Updates' : 'Publish Action'}
-                                </Button>
-                            )}
-                        </Space>
-                    </div>
+                <div className="create-action-modal__step-content">
+                    {steps[currentStep].content}
                 </div>
-            </Modal>
 
-            {/* ── Test API Popup — Moved outside the wizard root ── */}
+                <div className="create-action-modal__footer">
+                    <div></div>
+                    <Space>
+                        <Button onClick={onClose}>Cancel</Button>
+                        <Button onClick={handleSaveAsDraft} loading={isSubmitting}>Save as Draft</Button>
+                        {currentStep < steps.length - 1 && (
+                            <Button type="primary" onClick={handleNext}>
+                                Continue
+                            </Button>
+                        )}
+                        {currentStep === steps.length - 1 && (
+                            <Button type="primary" onClick={handlePublish} loading={isSubmitting}>
+                                {actionToEdit ? 'Publish Updates' : 'Publish Action'}
+                            </Button>
+                        )}
+                    </Space>
+                </div>
+            </div>
+
+            {/* ── Test API Popup ── */}
             <TestApiModal
                 isOpen={isTestPopupOpen}
                 onClose={() => setIsTestPopupOpen(false)}
@@ -314,6 +373,6 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
                 testResponse={testResponse}
                 testInputPayload={testInputPayload}
             />
-        </>
+        </Modal>
     );
 }

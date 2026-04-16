@@ -343,7 +343,7 @@ export default function CreateActionConfigStep({ draft, setDraft, form: external
                             <div className="request-bar">
                                 <Form.Item name="method" initialValue="POST" noStyle>
                                     <Select
-                                        size="middle"
+                                        size="large"
                                         variant="borderless"
                                         className="request-method-select"
                                         options={ACTION_HTTP_METHODS}
@@ -355,17 +355,23 @@ export default function CreateActionConfigStep({ draft, setDraft, form: external
                                     <Form.Item
                                         name="url"
                                         rules={[{ required: true, message: 'URL is required.' }]}
+                                        style={{ position: 'relative' }}
                                     >
-                                        <Input
-                                            placeholder="https://api.example.com/v1/:id"
-                                            variant="borderless"
-                                            className="request-url-input"
-                                        />
+                                        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                            <span style={{ color: '#ef4444', marginRight: '4px', fontSize: '14px', fontWeight: 'bold', display: watchedUrl ? 'none' : 'inline' }}>*</span>
+                                            <Input
+                                                size="large"
+                                                placeholder="https://api.example.com/v1/:id"
+                                                variant="borderless"
+                                                className="request-url-input"
+                                            />
+                                        </div>
                                     </Form.Item>
                                 </div>
 
                                 <Button
                                     type="primary"
+                                    size="large"
                                     onClick={onTestClick}
                                     loading={isTesting}
                                     icon={<SendOutlined />}
