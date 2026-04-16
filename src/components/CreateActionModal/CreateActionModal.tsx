@@ -299,11 +299,10 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
             onCancel={onClose}
             width={1100}
             footer={null}
-            destroyOnClose
+            destroyOnHidden
             className="create-action-modal"
             centered
             zIndex={1300}
-            bodyStyle={{ padding: 0 }}
             styles={{ body: { padding: 0, height: 800, display: 'flex', flexDirection: 'row' } }}
         >
             {/* -- Left Side: Pure Vertical Navigator -- */}
@@ -314,17 +313,69 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
                     </span>
                 </div>
                 <div className="create-action-modal__stepper">
-                    <Steps
-                        current={currentStep}
-                        items={steps.map(s => ({
-                            title: s.title,
-                            description: s.description
-                        }))}
-                        size="small"
-                        direction="vertical"
-                        onChange={handleStepChange}
-                        className="create-action-stepper"
-                    />
+                    <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+                        {steps.map((step, index) => {
+                            const isFinished = index < currentStep;
+                            const isActive = index === currentStep;
+                            const isLast = index === steps.length - 1;
+                            return (
+                                <div key={index} style={{ display: 'flex', gap: 16, cursor: 'pointer' }} onClick={() => handleStepChange(index)}>
+                                    {/* Icon + Line column */}
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
+                                        {/* Step icon */}
+                                        <div style={{
+                                            width: 32, height: 32, borderRadius: '50%',
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                            flexShrink: 0,
+                                            backgroundColor: isActive || isFinished ? 'var(--accent)' : 'transparent',
+                                            border: `1.5px solid ${isActive || isFinished ? 'var(--accent)' : '#e2e8f0'}`,
+                                            color: isActive || isFinished ? '#fff' : '#94a3b8',
+                                            fontSize: 13, fontWeight: 700,
+                                            transition: 'background-color 0.4s ease, border-color 0.4s ease, color 0.3s ease',
+                                            boxShadow: isActive ? '0 0 0 4px rgba(99,102,241,0.15)' : 'none',
+                                        }}>
+                                            <span style={{ transition: 'transform 0.3s ease', transform: isFinished ? 'scale(1.1)' : 'scale(1)' }}>
+                                                {isFinished ? '✓' : index + 1}
+                                            </span>
+                                        </div>
+                                        {/* Connector line */}
+                                        {!isLast && (
+                                            <div style={{
+                                                width: 2,
+                                                flex: 1,
+                                                minHeight: 40,
+                                                background: isFinished
+                                                    ? 'var(--accent)'
+                                                    : 'linear-gradient(to bottom, #e2e8f0, #e2e8f0)',
+                                                margin: '4px 0',
+                                                borderRadius: 2,
+                                                transition: 'background 0.5s ease',
+                                            }} />
+                                        )}
+                                    </div>
+                                    {/* Text content */}
+                                    <div style={{ paddingBottom: isLast ? 0 : 28, paddingTop: 4 }}>
+                                        <div style={{
+                                            fontSize: 14, fontWeight: 700,
+                                            color: isActive ? 'var(--accent)' : isFinished ? '#1E293B' : '#94a3b8',
+                                            lineHeight: '24px',
+                                            transition: 'color 0.3s ease',
+                                        }}>
+                                            {step.title}
+                                        </div>
+                                        <div style={{
+                                            fontSize: 12,
+                                            color: isActive ? '#334155' : isFinished ? '#64748b' : '#94a3b8',
+                                            lineHeight: 1.5,
+                                            transition: 'color 0.3s ease',
+                                        }}>
+                                            {step.description}
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
             </div>
 

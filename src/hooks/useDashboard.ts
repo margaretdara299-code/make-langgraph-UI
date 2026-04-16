@@ -37,11 +37,6 @@ export const useDashboard = (pageSize = 50) => {
 
     const filteredSkills = useMemo(() => {
         const filtered = filterActivitiesByQuery(recentSkills, searchQuery);
-        console.log('--- DASHBOARD DATA DEBUG ---');
-        console.log('Total Recent Skills:', recentSkills.length);
-        console.log('Recent Skills Data:', recentSkills);
-        console.log('Filtered Skills Data:', filtered);
-        console.log('----------------------------');
         return filtered;
     }, [recentSkills, searchQuery]);
 

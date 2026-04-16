@@ -58,9 +58,9 @@ export default function TestApiModal({
             width={720}
             zIndex={3000}
             centered
-            destroyOnClose
+            destroyOnHidden
             getContainer={() => document.body}
-            bodyStyle={{ padding: '0 24px 24px 24px' }}
+            styles={{ body: { padding: '0 24px 24px 24px' } }}
         >
             <div style={{ marginTop: 20 }}>
                 <Tabs

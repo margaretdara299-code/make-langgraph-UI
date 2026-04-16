@@ -29,8 +29,6 @@ export function useApiTest(actionDraft: Partial<ActionDefinition>, configForm?: 
             rawConfig = { ...rawConfig, ...formValues };
         }
             
-        console.log('[API Test] Current Draft:', currentDraft);
-        console.log('[API Test] Extracted Config:', rawConfig);
 
 
 
@@ -108,7 +106,6 @@ export function useApiTest(actionDraft: Partial<ActionDefinition>, configForm?: 
             if (jsonBody) reqConfig.data = jsonBody;
 
             // Log for debugging
-            console.log('[API Test] Final Request Config:', reqConfig);
             setTestInputPayload(reqConfig);
 
             const response = await axios.request(reqConfig);

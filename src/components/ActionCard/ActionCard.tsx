@@ -76,11 +76,13 @@ export default function ActionCard({ action, onAction }: ActionCardProps) {
       </div>
 
       <div className="ac-premium-body">
-        <div className="ac-name-row">
+        <div className="ac-identity-group">
           <Title level={5} className="ac-name" ellipsis>{action.name}</Title>
-          <Tooltip title={action.action_key}>
-            <code className="ac-key">{action.action_key}</code>
-          </Tooltip>
+          <div className="ac-key-row">
+            <code className="ac-key-minimal">
+              {action.action_key}
+            </code>
+          </div>
         </div>
         <Paragraph className="ac-desc" type="secondary" ellipsis={{ rows: 2 }}>
           {action.description || 'Explore and run this automated workflow action.'}

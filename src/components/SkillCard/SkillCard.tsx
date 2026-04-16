@@ -33,13 +33,9 @@ export default function SkillCard({ skill, onClick, onAction }: SkillCardProps) 
     };
 
     return (
-        <motion.div
+        <div
             className="skill-card-premium"
             onDoubleClick={onClick}
-            whileHover={{ y: -4, boxShadow: 'var(--shadow-md)', borderColor: 'var(--accent)' }}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
         >
             <div className="skill-card-header">
                 <Text strong className="skill-name">{skill.name}</Text>
@@ -114,6 +110,6 @@ export default function SkillCard({ skill, onClick, onAction }: SkillCardProps) 
                     </div>
                 </Tooltip>
             </div>
-        </motion.div>
+        </div>
     );
 }
