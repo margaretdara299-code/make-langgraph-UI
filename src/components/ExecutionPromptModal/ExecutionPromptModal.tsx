@@ -72,14 +72,14 @@ export default function ExecutionPromptModal({ isOpen, onClose, versionId, nodes
                 <Input.TextArea 
                     value={initialDataStr} 
                     onChange={(e) => setInitialDataStr(e.target.value)} 
-                    rows={12} 
+                     
                     style={{ 
                         fontFamily: 'monospace', 
                         marginBottom: '1.5rem', 
                         fontSize: 'var(--text-sm)', 
                         padding: '12px', 
-                        borderRadius: '8px' 
-                    }} 
+                        borderRadius: '8px',                        
+                    }}
                 />
                 <Button 
                     type="primary" 

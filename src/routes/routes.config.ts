@@ -13,6 +13,7 @@ export const ROUTES = {
     CATEGORIES: '/settings/categories',
     CAPABILITIES: '/settings/capabilities',
     CONNECTORS: '/connectors',
+    // VARIABLES: '/variables',
     TOOLS: '/tools',
     WORKFLOW: '/workflow',
 } as const;

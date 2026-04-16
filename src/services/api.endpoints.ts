@@ -19,6 +19,10 @@ export const API_ENDPOINTS = {
         BASE: `${API_V1_BASE}/capabilities`,
         BY_ID: (capabilityId: string) => `${API_V1_BASE}/capabilities/${capabilityId}`,
     },
+    VARIABLES: {
+        BASE: `${API_V1_BASE}/variables`,
+        BY_ID: (variableId: number) => `${API_V1_BASE}/variables/${variableId}`,
+    },
     SKILL_GRAPH: {
         GRAPH: (versionId: string) => `${API_V1_BASE}/skill-versions/${versionId}/graph`,
         VALIDATE: (versionId: string) => `${API_V1_BASE}/skill-versions/${versionId}/validate`,
