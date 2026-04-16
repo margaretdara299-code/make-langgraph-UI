@@ -72,13 +72,14 @@ export default function ExecutionPromptModal({ isOpen, onClose, versionId, nodes
                 <Input.TextArea 
                     value={initialDataStr} 
                     onChange={(e) => setInitialDataStr(e.target.value)} 
-                     
+                    autoSize={{ minRows: 10}}
                     style={{ 
                         fontFamily: 'monospace', 
                         marginBottom: '1.5rem', 
                         fontSize: 'var(--text-sm)', 
                         padding: '12px', 
-                        borderRadius: '8px',                        
+                        borderRadius: '8px',
+                        resize: 'vertical'
                     }}
                 />
                 <Button 
