@@ -129,8 +129,7 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                 >
                     <TextArea
                         placeholder="Describe what this action does..."
-                        rows={5}
-                        style={{ minHeight: '150px' }}
+                        rows={4}
                         maxLength={ACTION_DESCRIPTION_MAX_LENGTH}
                         showCount
                     />

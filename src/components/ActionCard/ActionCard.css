@@ -51,6 +51,7 @@
 }
 
 .ac-header-right {
+    font-size: 10px;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -93,30 +94,34 @@
     flex-direction: column;
 }
 
-.ac-name-row {
+.ac-identity-group {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 6px;
+    flex-direction: column;
+    margin-bottom: 8px;
 }
 
 .ac-name {
     margin: 0 !important;
-    font-size: 14px !important;
+    font-size: 15px !important;
     font-weight: 700 !important;
     letter-spacing: -0.01em;
     color: var(--text-main) !important;
 }
 
-.ac-key {
+.ac-key-row {
+    margin-top: -2px;
+}
+
+.ac-key-minimal {
     font-family: var(--font-mono);
-    font-size: 9px;
+    font-size: 11px;
     color: var(--accent);
-    background-color: var(--accent-soft);
-    padding: 1px 6px;
-    border-radius: 4px;
-    font-weight: 600;
-    text-transform: lowercase;
+    font-weight: 500;
+    opacity: 0.8;
+}
+
+.action-card-premium:hover .ac-key-minimal {
+    opacity: 1;
 }
 
 .ac-status-date {

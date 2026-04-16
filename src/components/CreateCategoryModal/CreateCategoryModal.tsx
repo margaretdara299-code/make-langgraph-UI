@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Modal, Form, Input, message, Typography, Space } from 'antd';
+import { Modal, Form, Input, message, Typography, Space, Button } from 'antd';
 import { createCategory, updateCategory } from '@/services/category.service';
 import type { CreateCategoryModalProps } from '@/interfaces';
 
@@ -73,35 +73,31 @@ export default function CreateCategoryModal({
 
     return (
         <Modal
-            title={
-                <Space direction="vertical" size={2} style={{ width: '100%', lineHeight: '1.2', paddingBottom: '12px' }}>
-                    <Text style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-main)', display: 'block', letterSpacing: '-0.02em' }}>
-                        {isEditMode ? "Edit Category" : "Create New Category"}
-                    </Text>
-                    <Text type="secondary" style={{ fontSize: '13px', fontWeight: 400, display: 'block' }}>
-                        {isEditMode ? "Modify category details and its organization" : "Define a new category to group related services"}
-                    </Text>
-                </Space>
-            }
             open={isOpen}
             onOk={handleSubmit}
             onCancel={handleCancel}
             okText={isEditMode ? "Save Changes" : "Create Category"}
             confirmLoading={isSubmitting}
-            width={480}
+            width={520}
             zIndex={1300}
             centered
             destroyOnClose
-            okButtonProps={{ 
-                style: { height: '40px', fontWeight: 600, padding: '0 24px', borderRadius: '8px' },
-                disabled: !nameValue || nameValue.trim().length < 3
-            }}
-            cancelButtonProps={{ 
-                style: { height: '40px', padding: '0 24px', borderRadius: '8px' }
-            }}
+            footer={null}
+            className="create-category-modal-v2"
         >
-            <div style={{ paddingTop: '12px' }}>
-                <Form form={form} layout="vertical" requiredMark="optional">
+            <div className="modal-header-neat">
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span className="modal-header-title">
+                        {isEditMode ? "Edit Category" : "Create New Category"}
+                    </span>
+                    <span className="modal-header-subtitle">
+                        {isEditMode ? "Modify category details and its organization" : "Define a new category to group related services"}
+                    </span>
+                </div>
+            </div>
+
+            <div>
+                <Form form={form} layout="vertical" requiredMark={false}>
                     <Form.Item
                         label="Category Name"
                         name="name"
@@ -110,19 +106,34 @@ export default function CreateCategoryModal({
                             { min: 3, message: 'Name must be at least 3 characters' }
                         ]}
                     >
-                        <Input size="large" placeholder="e.g. AI & NLP, Automation, Data Processing" style={{ borderRadius: '4px' }} />
+                        <Input placeholder="e.g. AI & NLP, Automation" />
                     </Form.Item>
                     <Form.Item label="Description" name="description">
                         <TextArea 
-                            size="large"
-                            placeholder="Optional description of this category" 
+                            placeholder="(optional)" 
                             rows={4} 
-                            style={{ borderRadius: '4px', minHeight: '100px' }}
                             showCount
                             maxLength={200}
                         />
                     </Form.Item>
                 </Form>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 32 }}>
+                <Space size={12}>
+                    <Button onClick={handleCancel} style={{ borderRadius: '4px', height: '36px', fontWeight: 600 }}>
+                        Cancel
+                    </Button>
+                    <Button 
+                        type="primary" 
+                        onClick={handleSubmit} 
+                        loading={isSubmitting}
+                        disabled={!nameValue || nameValue.trim().length < 3}
+                        style={{ borderRadius: '4px', height: '36px', fontWeight: 600, padding: '0 24px' }}
+                    >
+                        {isEditMode ? "Save Changes" : "Create Category"}
+                    </Button>
+                </Space>
             </div>
         </Modal>
     );

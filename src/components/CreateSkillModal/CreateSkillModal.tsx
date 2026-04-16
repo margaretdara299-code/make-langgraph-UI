@@ -1,49 +1,33 @@
 /**
- * CreateSkillModal — 2-step wizard for creating a new skill.
- * Step 1: Skill Details (via SkillDetailsForm)
- * Step 2: Creation Method (via CreationMethodCard)
- * Footer: via CreateSkillFooter
+ * CreateSkillModal — Simple modal for creating a new skill.
+ * Standardized to a single-step interaction for improved speed.
  */
 
 import { useState } from 'react';
-import { Modal, Steps, Form, message } from 'antd';
-import { CREATION_METHODS, WIZARD_STEPS } from '@/constants';
+import { Modal, Form, message, Button, Space } from 'antd';
 import { createSkill } from '@/services';
-import { SkillDetailsForm, CreationMethodCard, CreateSkillFooter } from '@/components';
+import { SkillDetailsForm } from '@/components';
 import type { CreateSkillModalProps, CreateSkillFormData } from '@/interfaces';
 import './CreateSkillModal.css';
 
 export default function CreateSkillModal({ isOpen, onClose, onCreated }: CreateSkillModalProps) {
-    const [currentStep, setCurrentStep] = useState(0);
-    const [selectedMethod, setSelectedMethod] = useState<string>('scratch');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [formData, setFormData] = useState<Partial<CreateSkillFormData>>({});
     const [form] = Form.useForm<CreateSkillFormData>();
 
     /** Reset state when modal closes */
     const handleClose = () => {
         form.resetFields();
-        setCurrentStep(0);
-        setSelectedMethod('scratch');
-        setFormData({});
+        setIsSubmitting(false);
         onClose();
-    };
-
-    /** Move to Step 2 after validating Step 1 */
-    const handleNext = async () => {
-        try {
-            await form.validateFields();
-            setFormData(form.getFieldsValue());
-            setCurrentStep(1);
-        } catch {
-            // form validation will show errors
-        }
     };
 
     /** Submit the skill creation */
     const handleCreate = async () => {
-        setIsSubmitting(true);
         try {
+            await form.validateFields();
+            setIsSubmitting(true);
+            const formData = form.getFieldsValue();
+
             const result = await createSkill({
                 name: formData.name || '',
                 skillKey: formData.skillKey || '',
@@ -56,6 +40,7 @@ export default function CreateSkillModal({ isOpen, onClose, onCreated }: CreateS
                 status: 'draft',
                 environment: 'dev',
             });
+
             if (result.success) {
                 message.success(result.message || 'Skill created successfully!');
                 handleClose();
@@ -63,8 +48,9 @@ export default function CreateSkillModal({ isOpen, onClose, onCreated }: CreateS
             } else {
                 message.error(result.error || 'Failed to create skill. Please try again.');
             }
-        } catch {
-            message.error('Failed to create skill. Please try again.');
+        } catch (error) {
+            // Validation errors are handled by AntD form
+            console.error('Validation or Creation error:', error);
         } finally {
             setIsSubmitting(false);
         }
@@ -74,42 +60,39 @@ export default function CreateSkillModal({ isOpen, onClose, onCreated }: CreateS
         <Modal
             open={isOpen}
             onCancel={handleClose}
-            title="Create New Skill"
-            width={640}
+            title={null}
+            width={520}
             zIndex={1300}
-            destroyOnHidden
-            footer={
-                <CreateSkillFooter
-                    currentStep={currentStep}
-                    isSubmitting={isSubmitting}
-                    onBack={() => setCurrentStep(0)}
-                    onNext={handleNext}
-                    onCreate={handleCreate}
-                />
-            }
+            destroyOnClose
+            centered
+            footer={null}
+            className="create-skill-modal-v2"
         >
-            <Steps
-                current={currentStep}
-                items={WIZARD_STEPS}
-                className="create-skill__steps"
-            />
-            <div className="create-skill__body">
-                {currentStep === 0 ? (
-                    <SkillDetailsForm form={form} />
-                ) : (
-                    <div className="create-skill__methods">
-                        {CREATION_METHODS.map((method) => (
-                            <CreationMethodCard
-                                key={method.key}
-                                methodKey={method.key}
-                                title={method.title}
-                                description={method.description}
-                                isSelected={selectedMethod === method.key}
-                                onClick={() => setSelectedMethod(method.key)}
-                            />
-                        ))}
-                    </div>
-                )}
+            <div className="modal-header-neat">
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span className="modal-header-title">Create New Skill</span>
+                    <span className="modal-header-subtitle">Give your skill a name and description to get started.</span>
+                </div>
+            </div>
+
+            <div className="create-skill__body" style={{  padding: '0 4px' }}>
+                <SkillDetailsForm form={form} />
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 24, padding: '0 4px' }}>
+                <Space size={12}>
+                    <Button onClick={handleClose} style={{ borderRadius: '4px', height: '36px', fontWeight: 600 }}>
+                        Cancel
+                    </Button>
+                    <Button 
+                        type="primary" 
+                        onClick={handleCreate} 
+                        loading={isSubmitting}
+                        style={{ borderRadius: '4px', height: '36px', fontWeight: 600, padding: '0 24px' }}
+                    >
+                        Create Skill
+                    </Button>
+                </Space>
             </div>
         </Modal>
     );
