@@ -3,10 +3,10 @@
  * Slides out to show the properties of the currently selected React Flow node.
  */
 
-import { Drawer, Input, Form, Typography, Select, Spin, theme, Button, Tabs, Collapse } from 'antd';
+import { Drawer, Input, Form, Typography, Select, Spin, theme, Button, Tabs, Collapse, AutoComplete } from 'antd';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReactFlow, useNodes, useEdges } from '@xyflow/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import IconRenderer from '@/components/IconRenderer/IconRenderer';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
@@ -43,6 +43,25 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     // Check if the current node has been executed in the active stepper session
     const { steps } = useExecution();
     const executionStep = selectedNodeId ? steps.find(s => s.node.id === selectedNodeId) : null;
+
+    const availableStateKeys = useMemo(() => {
+        const keys = new Set<string>();
+        nodes.forEach(n => {
+            const data = n.data as any;
+            if (n.type === 'start' && Array.isArray(data.initial_state)) {
+                data.initial_state.forEach((st: any) => { if (st?.key) keys.add(st.key); });
+            } else if (n.type === 'action') {
+                if (data.action_key) keys.add(data.action_key);
+                
+                // Gather existing mapped state keys so they auto-suggest cleanly
+                const mappings = data.configurations_json?.response_to_state_mapping;
+                if (Array.isArray(mappings)) {
+                    mappings.forEach((m: any) => { if (m?.state_key) keys.add(m.state_key); });
+                }
+            }
+        });
+        return Array.from(keys).map(k => ({ value: k }));
+    }, [nodes]);
 
     // Track state for the header to prevent it from resetting during the closing animation
     const [headerInfo, setHeaderInfo] = useState<{ title: string; icon: React.ReactNode }>({
@@ -537,7 +556,12 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                             style={{ margin: 0, flex: 1 }}
                                             rules={[{ required: true, message: 'State Key required' }]}
                                         >
-                                            <Input placeholder="State Key (e.g. customer_id)" style={{ fontFamily: 'monospace' }} />
+                                            <Select
+                                                showSearch
+                                                options={availableStateKeys}
+                                                placeholder="Select state variable"
+                                                optionFilterProp="value"
+                                            />
                                         </Form.Item>
                                         <Form.Item
                                             {...restField}
