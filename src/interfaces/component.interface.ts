@@ -6,6 +6,25 @@
 
 import type { ReactNode } from 'react';
 import type { DashboardCounts } from './engine.interface';
+import type { CanvasNodeData } from './canvas.interface';
+
+export interface ModernNodeProps {
+    id: string;
+    data: CanvasNodeData;
+    theme: {
+        bg: string;
+        stroke: string;
+        iconBg: string;
+        badgeBg?: string;
+    };
+    icon: ReactNode;
+    title?: string;
+    subtitle?: string;
+    badge?: string | ReactNode;
+    showTargetHandle?: boolean;
+    showSourceHandle?: boolean;
+    children?: ReactNode;
+}
 
 export interface StatusPillProps {
     status: 'draft' | 'published';

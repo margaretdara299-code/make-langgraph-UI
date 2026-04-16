@@ -20,6 +20,7 @@ export interface CanvasNodeData {
     configurations_json?: Record<string, any> | ActionConfigField[];
     color?: string;
     description?: string;
+    executionStatus?: 'idle' | 'running' | 'success' | 'error';
     // Index signature to satisfy React Flow's Record<string, unknown> constraint
     [key: string]: any;
 }

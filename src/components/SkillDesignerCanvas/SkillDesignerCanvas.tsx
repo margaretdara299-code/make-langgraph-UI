@@ -33,6 +33,7 @@ import {
     removeConnectionFromStorage,
     upsertViewportInStorage,
 } from '@/services/skillGraphStorage.service';
+import type { CanvasNode } from '@/interfaces';
 import { getNodeStrokeColor } from '@/utils';
 import './SkillDesignerCanvas.css';
 
@@ -147,7 +148,14 @@ export default function SkillDesignerCanvas() {
 
         return nodes.map(node => {
             const step = steps.find(s => s.node.id === node.id);
-            if (!step) return node;
+            
+            // If the node wasn't executed in this simulation, dim it
+            if (!step) {
+                return {
+                    ...node,
+                    style: { ...node.style, opacity: 0.25 }
+                } as CanvasNode;
+            }
 
             return {
                 ...node,
@@ -155,7 +163,7 @@ export default function SkillDesignerCanvas() {
                     ...node.data,
                     executionStatus: step.status // Used by Custom Nodes to glow or show badges
                 }
-            };
+            } as CanvasNode;
         });
     }, [nodes, steps, isExecuting, isSimulationDone]);
 
@@ -198,13 +206,13 @@ export default function SkillDesignerCanvas() {
                 return {
                     ...edge,
                     animated: false,
-                    style: { ...edge.style, stroke: 'var(--color-success)', strokeWidth: 3, opacity: 1, filter: 'drop-shadow(0 0 4px var(--color-success))' }
+                    style: { ...edge.style, stroke: 'var(--color-success)', strokeWidth: 3, opacity: 1 }
                 };
             } else if (status === 'error') {
                 return {
                     ...edge,
                     animated: false,
-                    style: { ...edge.style, stroke: 'var(--color-error)', strokeWidth: 3, opacity: 1, filter: 'drop-shadow(0 0 4px var(--color-error))' }
+                    style: { ...edge.style, stroke: 'var(--color-error)', strokeWidth: 3, opacity: 1 }
                 };
             }
 
@@ -279,7 +287,7 @@ export default function SkillDesignerCanvas() {
                         }
                     }}
                 >
-                    <Background color="#000000" variant={BackgroundVariant.Dots} gap={20} size={1} />
+                    <Background color="var(--text-muted)" variant={BackgroundVariant.Dots} gap={20} size={1.5} />
 
                     <Controls position="bottom-right" />
                     <MiniMap

@@ -12,26 +12,25 @@
 }
 
 .deletable-edge__label {
-    background-color: #222222;
-    border: 1px solid #ffffff;
+    background-color: var(--text-main);
+    border: 1px solid var(--text-inverse);
     border-radius: 6px;
     padding: 2px 8px;
-    font-size: 10px;
-    font-weight: 600;
-    color: #ffffff;
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    color: var(--text-inverse);
     pointer-events: all;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    box-shadow: var(--shadow-subtle);
     white-space: nowrap;
-    text-transform: uppercase;
     letter-spacing: 0.03em;
 }
 
 .deletable-edge__btn {
     width: 18px;
     height: 18px;
-    background: #f1f5f9;
-    color: #94a3b8;
-    border: 1px solid #e2e8f0;
+    background: var(--surface-1);
+    color: var(--text-muted);
+    border: 1px solid var(--border-medium);
     border-radius: 50%;
     cursor: pointer;
     display: flex;
@@ -55,9 +54,9 @@
 }
 
 .deletable-edge__btn:hover {
-    background: #fee2e2;
-    color: #ef4444;
-    border-color: #fecaca;
+    background: var(--color-error-bg);
+    color: var(--color-error);
+    border-color: var(--color-error-bg);
     transform: scale(1.1);
 }
 

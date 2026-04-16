@@ -12,3 +12,4 @@ export * from './canvas-nodes.constants';
 export * from './action.constants';
 export * from './connector.constants';
 export * from './auth.constants';
+export * from './file.constants';

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Space, Tooltip, message, Dropdown, Input, Divider, Spin } from 'antd';
+import { useState, useEffect } from 'react';
+import { message, Dropdown, Input, Divider, Spin } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  ChevronDown, Play, Save, Zap, Search, Code, Check
+  ChevronDown, Play, Save, Zap, Code, Check
 } from 'lucide-react';
 import { useReactFlow } from '@xyflow/react';
 
@@ -112,23 +113,23 @@ export default function SkillDesignerHeader() {
             <Dropdown
               menu={{ items: skillItems }}
               trigger={['click']}
-              placement="bottomLeft"
-              overlayClassName="builder-dropdown"
-              dropdownRender={(menu) => (
-                <div className="dropdown-content-wrapper">
+               placement="bottomLeft"
+               classNames={{ root: "builder-dropdown" }}
+               popupRender={(menu) => (
+                 <div className="dropdown-content-wrapper">
                   <div className="dropdown-search-wrapper">
                     <Input
                       placeholder="Search skills..."
-                      prefix={<Search size={12} className="search-icon" />}
+                      prefix={<SearchOutlined style={{ color: 'var(--text-muted)' }} />}
                       value={searchValue}
                       onChange={(e) => setSearchValue(e.target.value)}
-                      variant="borderless"
-                      className="compact-search"
+                      onClick={(e) => e.stopPropagation()}
+                      className="dropdown-search-input"
                     />
                   </div>
                   <Divider style={{ margin: '4px 0' }} />
                   <div className="dropdown-scroll-area">
-                    {React.cloneElement(menu as React.ReactElement)}
+                    {menu}
                   </div>
                 </div>
               )}
