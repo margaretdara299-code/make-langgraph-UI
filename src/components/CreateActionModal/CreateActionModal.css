@@ -21,13 +21,14 @@
     border: 0 !important;
     border-radius: 8px !important;
     box-shadow: none !important;
-    padding: 0 !important; /* Forces edge-to-edge child positioning */
+    padding: 0 !important;
+    /* Forces edge-to-edge child positioning */
 }
 
 .create-action-modal .ant-modal-header {
     margin-bottom: 0;
     padding: 24px 32px;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: none !important;
 }
 
 .create-action-modal .ant-modal-body {
@@ -41,7 +42,7 @@
     width: 280px;
     padding: 40px 32px;
     background-color: transparent;
-    border-right: 1px solid #E2E8F0;
+    border-right: 0.5px solid #706262;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -60,74 +61,99 @@
     width: 100%;
 }
 
-/* ── Custom Stepper Overrides ── */
-.create-action-stepper.ant-steps-vertical .ant-steps-item {
-    padding-bottom: 32px;
+/* ── Custom Stepper Styles (Neat & Modern) ── */
+.create-action-stepper {
+    margin-top: 16px;
 }
 
-.create-action-stepper.ant-steps-vertical .ant-steps-item-container {
-    cursor: pointer;
-}
-
-/* Icon / Circle Styling Override (just colors and alignment, no forced sizing) */
+/* Ensure Icons are Round and Correct Size */
 .create-action-stepper .ant-steps-item-icon {
-    margin-right: 12px !important;
-    margin-top: 2px !important;
+    width: 32px !important;
+    height: 32px !important;
+    line-height: 30px !important;
+    /* Center the number/icon */
+    margin-right: 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 50% !important;
+    /* Force round shape */
+    flex-shrink: 0 !important;
     background: transparent !important;
-    border-color: #E2E8F0 !important;
+    border: 1px solid #e2e8f0 !important;
 }
 
-.create-action-stepper .ant-steps-item-process .ant-steps-item-icon {
-    background: var(--accent) !important;
+/* Fix Distorted Rectangular Shape */
+.create-action-stepper .ant-steps-item-container {
+    display: flex !important;
+    align-items: flex-start !important;
+    padding-bottom: 24px !important;
+}
+
+/* Vertical Line (Tail) Styling - Force Visibility */
+.create-action-stepper .ant-steps-item-tail {
+    display: block !important;
+    inset-inline-start: 16px !important;
+    /* Center of 32px icon */
+    padding: 36px 0 4px !important;
+    /* Ensure it starts below icon */
+}
+
+.create-action-stepper .ant-steps-item-tail::after {
+    display: block !important;
+    background-color: #000 !important;
+    width: 2px !important;
+    height: 100% !important;
+    margin-inline-start: 16px !important;
+}
+
+/* Finished Step Colors */
+.create-action-stepper .ant-steps-item-finish .ant-steps-item-icon {
     border-color: var(--accent) !important;
-    position: relative;
+    color: var(--accent) !important;
+}
+
+.create-action-stepper .ant-steps-item-finish .ant-steps-item-tail::after {
+    background-color: var(--accent) !important;
+}
+
+/* Active/Process Step Colors */
+.create-action-stepper .ant-steps-item-process .ant-steps-item-icon {
+    background-color: var(--accent) !important;
+    border-color: var(--accent) !important;
 }
 
 .create-action-stepper .ant-steps-item-process .ant-steps-item-icon .ant-steps-icon {
-    display: none !important;
-    /* Hide the number */
+    color: #fff !important;
+    font-weight: 700;
 }
 
-.create-action-stepper .ant-steps-item-process .ant-steps-item-icon::after {
-    content: "";
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    background: #FFFFFF;
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-/* Text Styling */
 .create-action-stepper .ant-steps-item-content {
-    min-height: 48px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    margin-top: -6px !important;
-    font-size: 11px;
+    font-size: 12px !important;
 }
 
+/* Typography Refresh */
 .create-action-stepper .ant-steps-item-title {
-    font-size: 14px !important;
     font-weight: 700 !important;
-    color: #111827 !important;
-    line-height: 1.2 !important;
-    margin-bottom: 2px !important;
+    font-size: 15px !important;
+    color: #0f172a !important;
+    line-height: 32px !important;
+    /* Align with icon center */
 }
 
 .create-action-stepper .ant-steps-item-description {
     font-size: 12px !important;
-    color: #64748B !important;
+    color: #64748b !important;
     line-height: 1.5 !important;
-    max-width: 180px;
+    margin-top: -4px !important;
 }
 
-/* Hover effects */
+.create-action-stepper .ant-steps-item-process .ant-steps-item-title {
+    color: var(--accent) !important;
+}
+
 .create-action-stepper .ant-steps-item:hover {
-    opacity: 0.8;
+    opacity: 0.9;
 }
 
 /* -- Form Column (Right) -- */
@@ -188,7 +214,7 @@
     justify-content: space-between;
     align-items: center;
     padding-top: 24px;
-    border-top: 1px solid var(--color-border);
+    border-top: none !important;
 }
 
 .create-action-modal__footer .ant-btn-primary {
@@ -216,9 +242,16 @@
 .create-action-modal__preview-col {
     width: 440px;
     background-color: var(--color-sidebar-bg);
-    border-left: 1px solid var(--color-border);
+    border-left: 0.5px solid #706262;
     padding: 32px;
     overflow-y: auto;
+}
+
+/* ── Global Modal Close Override ── */
+.create-action-modal .ant-modal-close {
+    inset-inline-start: auto !important;
+    inset-inline-end: 20px !important;
+    top: 20px !important;
 }
 
 /* Monochrome Stepper Lines - Defaulted back to theme */

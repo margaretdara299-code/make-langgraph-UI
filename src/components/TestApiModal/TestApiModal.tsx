@@ -50,6 +50,7 @@ export default function TestApiModal({
 
     return (
         <Modal
+            className="test-api-modal"
             title={<span style={{ fontWeight: 700, fontSize: 'var(--text-base)', color: '#1e293b' }}>Response Details</span>}
             open={isOpen}
             onCancel={onClose}

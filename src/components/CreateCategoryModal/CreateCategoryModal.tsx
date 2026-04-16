@@ -88,7 +88,7 @@ export default function CreateCategoryModal({
             onCancel={handleCancel}
             okText={isEditMode ? "Save Changes" : "Create Category"}
             confirmLoading={isSubmitting}
-            width={620}
+            width={480}
             zIndex={1300}
             centered
             destroyOnClose
@@ -110,13 +110,14 @@ export default function CreateCategoryModal({
                             { min: 3, message: 'Name must be at least 3 characters' }
                         ]}
                     >
-                        <Input placeholder="e.g. AI & NLP, Automation, Data Processing" style={{ borderRadius: '8px', padding: '10px 14px' }} />
+                        <Input size="large" placeholder="e.g. AI & NLP, Automation, Data Processing" style={{ borderRadius: '4px' }} />
                     </Form.Item>
                     <Form.Item label="Description" name="description">
                         <TextArea 
+                            size="large"
                             placeholder="Optional description of this category" 
                             rows={4} 
-                            style={{ borderRadius: '8px', padding: '10px 14px' }}
+                            style={{ borderRadius: '4px', minHeight: '100px' }}
                             showCount
                             maxLength={200}
                         />

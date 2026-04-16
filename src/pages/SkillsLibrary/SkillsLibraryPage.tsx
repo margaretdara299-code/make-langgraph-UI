@@ -5,7 +5,7 @@ import { Input, Typography, Modal, message, Tabs, Badge, Space, Empty } from 'an
 import { PlusOutlined, ExclamationCircleOutlined, SearchOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useSkills, useCategories } from '@/hooks';
-import { SkillCard, CreateSkillModal, EditSkillModal } from '@/components';
+import { SkillCard, CreateSkillModal, EditSkillModal, SearchInput } from '@/components';
 import { PAGE_HEADER_CONTENT } from '@/constants/ui.constants';
 import SkillCardSkeleton from '@/components/Skeletons/SkillCardSkeleton';
 import { STATUS_FILTER_OPTIONS, CARD_ACTION_KEYS } from '@/constants';
@@ -146,33 +146,15 @@ export default function SkillsLibraryPage() {
                     className="skills-library-tabs"
                     items={STATUS_FILTER_OPTIONS.map((option) => ({
                         key: option.key,
-                        label: (
-                            <Space size={8}>
-                                <span>{option.label}</span>
-                                <Badge
-                                    count={statusCounts[option.key] ?? 0}
-                                    showZero
-                                    overflowCount={999}
-                                    style={{
-                                        backgroundColor: activeStatus === option.key ? 'var(--accent)' : '#f0f0f0',
-                                        color: activeStatus === option.key ? '#fff' : '#8c8c8c',
-                                        boxShadow: 'none',
-                                        fontSize: '10px'
-                                    }}
-                                />
-                            </Space>
-                        ),
+                        label: option.label,
                     }))}
                 />
 
                 <div className="skills-library-search-container">
-                    <Input
+                    <SearchInput
                         placeholder="Search skills..."
-                        prefix={<SearchOutlined style={{ color: 'var(--text-subtle)' }} />}
-                        className="skills-library-search"
-                        allowClear
                         value={searchValue}
-                        onChange={(e) => handleSearch(e.target.value)}
+                        onChange={handleSearch}
                     />
                 </div>
             </div>

@@ -36,8 +36,8 @@
 .request-bar {
     display: flex;
     align-items: stretch;
-    height: 32px !important;
-    min-height: 32px !important;
+    height: 40px !important;
+    min-height: 40px !important;
     border: 1px solid #cbd5e1 !important; /* Darkened for better visibility */
     border-radius: 8px;
     overflow: visible; /* Changed back to visible so error messages aren't clipped */
@@ -56,7 +56,7 @@
 }
 
 .request-url-slot .ant-form-item-explain-error {
-    display: none !important; /* Hiding the default error span as we use the absolutely positioned one below */
+    /* Removed display: none to show the error message when required */
 }
 
 
@@ -140,7 +140,7 @@
 }
 
 .request-url-input.ant-input {
-    height: 32px !important;
+    height: 40px !important;
     padding: 0 12px !important;
     border: 0 !important;
     border-radius: 0 !important;
@@ -179,7 +179,7 @@
 }
 
 .request-send-btn.ant-btn {
-    height: 30px !important; /* Inset by 1px from the 32px bar border */
+    height: 38px !important; /* Inset by 1px from the 40px bar border */
     margin: 1px !important; /* Centers it perfectly within the 1px bar border */
     border: 0 !important;
     border-radius: 0 7px 7px 0 !important; /* Slightly smaller radius for internal fit */

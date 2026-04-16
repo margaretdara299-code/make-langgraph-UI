@@ -27,8 +27,9 @@
 
 .code-viewer-modal .ant-modal-close {
   color: #cccccc;
-  top: 12px;
-  right: 12px;
+  top: 12px !important;
+  inset-inline-end: 12px !important;
+  inset-inline-start: auto !important;
 }
 
 .code-viewer-modal .ant-modal-close:hover {
