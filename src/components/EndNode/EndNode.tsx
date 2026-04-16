@@ -1,5 +1,4 @@
 import { Handle, Position, useReactFlow } from "@xyflow/react";
-import { useParams } from "react-router-dom";
 import type { NodeProps } from "@xyflow/react";
 import type { CanvasNode } from "@/interfaces";
 import { getNodeTheme } from "@/utils";
@@ -7,13 +6,13 @@ import "../ActionNode/ActionNode.css";
 
 export default function EndNode({ id, data }: NodeProps<CanvasNode>) {
   const nodeData = data;
-  const { setNodes } = useReactFlow();
+  const { deleteElements } = useReactFlow();
 
   const theme = getNodeTheme("end", "", nodeData.category);
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setNodes((nodes) => nodes.filter((node) => node.id !== id));
+    deleteElements({ nodes: [{ id }] });
   };
 
   return (

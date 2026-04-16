@@ -1,22 +1,18 @@
 import { Handle, Position, useReactFlow } from "@xyflow/react";
-import { useParams } from "react-router-dom";
 import type { NodeProps } from "@xyflow/react";
 import type { CanvasNode } from "@/interfaces";
-import { removeNodeFromStorage } from "@/services/skillGraphStorage.service";
 import { getNodeTheme } from "@/utils";
 import "../ActionNode/ActionNode.css";
 
 export default function StartNode({ id, data }: NodeProps<CanvasNode>) {
   const nodeData = data;
-  const { setNodes } = useReactFlow();
-  const { versionId } = useParams<{ versionId: string }>();
+  const { deleteElements } = useReactFlow();
 
   const theme = getNodeTheme("start");
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setNodes((nodes) => nodes.filter((node) => node.id !== id));
-    if (versionId) removeNodeFromStorage(versionId, id);
+    deleteElements({ nodes: [{ id }] });
   };
 
   return (

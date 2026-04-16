@@ -14,18 +14,15 @@
 
 import { useLayoutEffect } from 'react';
 import { Handle, Position, useReactFlow, useUpdateNodeInternals } from '@xyflow/react';
-import { useParams } from 'react-router-dom';
 import type { NodeProps } from '@xyflow/react';
 import type { CanvasNode } from '@/interfaces';
-import { removeNodeFromStorage } from '@/services/skillGraphStorage.service';
 import { getNodeTheme } from '@/utils';
 import '../ActionNode/ActionNode.css';
 import './DecisionNode.css';
 
 export default function DecisionNode({ id, data }: NodeProps<CanvasNode>) {
     const nodeData = data as any;
-    const { setNodes } = useReactFlow();
-    const { versionId } = useParams<{ versionId: string }>();
+    const { deleteElements } = useReactFlow();
     const updateNodeInternals = useUpdateNodeInternals();
 
     const theme = getNodeTheme('decision');
@@ -53,8 +50,7 @@ export default function DecisionNode({ id, data }: NodeProps<CanvasNode>) {
 
     const handleDelete = (e: React.MouseEvent) => {
         e.stopPropagation();
-        setNodes((nodes) => nodes.filter((n) => n.id !== id));
-        if (versionId) removeNodeFromStorage(versionId, id);
+        deleteElements({ nodes: [{ id }] });
     };
 
     // Total slots = one per rule + 1 default.
