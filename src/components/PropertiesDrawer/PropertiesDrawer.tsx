@@ -514,43 +514,78 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     };
 
     const renderStateManagement = () => (
-        <div className="properties-drawer__state-row">
-            {/* Input Keys */}
-            <div className="properties-drawer__state-col">
-                <Text strong>Input</Text>
-                <Form.List name="input_keys">
-                    {(fields, { add, remove }) => (
-                        <>
-                            {fields.length === 0 && (
-                                <Text type="secondary" className="properties-drawer__empty-hint">
-                                    No input keys.
-                                </Text>
-                            )}
-                            {fields.map(({ key, name, ...restField }) => (
-                                <div key={key} className="properties-drawer__kv-row">
-                                    <Form.Item {...restField} name={[name, 'key']} className="properties-drawer__kv-field">
-                                        <Input placeholder="e.g. claim_id" />
+        <div style={{ marginTop: 0 }}>
+            <Text type="secondary" style={{ fontSize: 'var(--text-sm)', display: 'block', marginBottom: 16, lineHeight: 1.5 }}>
+                Map values from the API response directly to global state variables. Use <strong>$</strong> to select the entire response payload, or use dot notation (e.g., <strong>data.id</strong>) to extract specific nested fields.
+            </Text>
+            <Form.List name="response_to_state_mapping">
+                {(fields, { add, remove }) => (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                        {fields.length === 0 && (
+                            <Text type="secondary" style={{ fontSize: 'var(--text-sm)' }}>
+                                No output mappings defined.
+                            </Text>
+                        )}
+                        {fields.map(({ key, name: fieldName, ...restField }) => (
+                            <div key={key} style={{ display: 'flex', gap: 8, alignItems: 'center', background: 'var(--color-bg-container)', padding: 12, border: '1px solid var(--color-border)', borderRadius: 8 }}>
+                                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                    
+                                    <div style={{ display: 'flex', gap: 8 }}>
+                                        <Form.Item
+                                            {...restField}
+                                            name={[fieldName, 'state_key']}
+                                            style={{ margin: 0, flex: 1 }}
+                                            rules={[{ required: true, message: 'State Key required' }]}
+                                        >
+                                            <Input placeholder="State Key (e.g. customer_id)" style={{ fontFamily: 'monospace' }} />
+                                        </Form.Item>
+                                        <Form.Item
+                                            {...restField}
+                                            name={[fieldName, 'datatype']}
+                                            style={{ margin: 0, width: 110 }}
+                                            initialValue="string"
+                                        >
+                                            <Select
+                                                options={[
+                                                    { label: "String", value: "string" },
+                                                    { label: "Integer", value: "integer" },
+                                                    { label: "Float", value: "float" },
+                                                    { label: "Boolean", value: "boolean" },
+                                                    { label: "Object", value: "object" },
+                                                    { label: "Array", value: "array" },
+                                                    { label: "Any", value: "any" }
+                                                ]}
+                                            />
+                                        </Form.Item>
+                                    </div>
+
+                                    <Form.Item
+                                        {...restField}
+                                        name={[fieldName, 'source_path']}
+                                        style={{ margin: 0 }}
+                                        rules={[{ required: true, message: 'Source Path required' }]}
+                                    >
+                                        <Input placeholder="Source Path (e.g. data.id or $)" />
                                     </Form.Item>
-                                    <DeleteOutlined className="properties-drawer__delete-icon" onClick={() => remove(name)} />
+                                    
                                 </div>
-                            ))}
-                            <Button type="dashed" onClick={() => add()} icon={<PlusOutlined />} block>
-                                Add Input Key
-                            </Button>
-                        </>
-                    )}
-                </Form.List>
-            </div>
-
-            <div className="properties-drawer__state-divider" />
-
-            {/* Output Key */}
-            <div className="properties-drawer__state-col">
-                <Text strong>Output</Text>
-                <Form.Item name="output_key">
-                    <Input placeholder="e.g. result_key" />
-                </Form.Item>
-            </div>
+                                <DeleteOutlined
+                                    style={{ color: '#ef4444', cursor: 'pointer', padding: 8 }}
+                                    onClick={() => remove(fieldName)}
+                                />
+                            </div>
+                        ))}
+                        <Button
+                            type="dashed"
+                            onClick={() => add({ state_key: '', source_path: '$', datatype: 'string' })}
+                            icon={<PlusOutlined />}
+                            block
+                        >
+                            Add Mapping Row
+                        </Button>
+                    </div>
+                )}
+            </Form.List>
         </div>
     );
 
@@ -683,39 +718,59 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                     </Text>
                                                     <Form.List name="initial_state">
                                                         {(fields, { add, remove }) => (
-                                                            <>
+                                                            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                                                                 {fields.map(({ key, name: fieldName, ...restField }) => (
-                                                                    <div key={key} className="properties-drawer__kv-row">
+                                                                    <div key={key} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
                                                                         <Form.Item
                                                                             {...restField}
                                                                             name={[fieldName, 'key']}
-                                                                            className="properties-drawer__kv-field"
+                                                                            style={{ margin: 0, flex: 2 }}
                                                                             rules={[{ required: true, message: 'Key required' }]}
                                                                         >
-                                                                            <Input placeholder="key" style={{ fontFamily: 'monospace' }} />
+                                                                            <Input placeholder="Variable Name" style={{ fontFamily: 'monospace' }} />
+                                                                        </Form.Item>
+                                                                        <Form.Item
+                                                                            {...restField}
+                                                                            name={[fieldName, 'type']}
+                                                                            style={{ margin: 0, flex: 1.5 }}
+                                                                            initialValue="string"
+                                                                        >
+                                                                            <Select
+                                                                                options={[
+                                                                                    { label: "String", value: "string" },
+                                                                                    { label: "Integer", value: "integer" },
+                                                                                    { label: "Float", value: "float" },
+                                                                                    { label: "Boolean", value: "boolean" },
+                                                                                    { label: "Object", value: "object" },
+                                                                                    { label: "Array", value: "array" },
+                                                                                    { label: "Date", value: "date" },
+                                                                                    { label: "DateTime", value: "datetime" },
+                                                                                    { label: "Any", value: "any" }
+                                                                                ]}
+                                                                            />
                                                                         </Form.Item>
                                                                         <Form.Item
                                                                             {...restField}
                                                                             name={[fieldName, 'value']}
-                                                                            className="properties-drawer__kv-field"
+                                                                            style={{ margin: 0, flex: 2 }}
                                                                         >
-                                                                            <Input placeholder="value" />
+                                                                            <Input placeholder="Default Value" />
                                                                         </Form.Item>
                                                                         <DeleteOutlined
-                                                                            className="properties-drawer__delete-icon"
+                                                                            style={{ color: '#ef4444', cursor: 'pointer', padding: 8, marginTop: 4 }}
                                                                             onClick={() => remove(fieldName)}
                                                                         />
                                                                     </div>
                                                                 ))}
                                                                 <Button
                                                                     type="dashed"
-                                                                    onClick={() => add({ key: '', value: '' })}
+                                                                    onClick={() => add({ key: '', type: 'str', value: '' })}
                                                                     icon={<PlusOutlined />}
                                                                     block
                                                                 >
                                                                     Add Variable
                                                                 </Button>
-                                                            </>
+                                                            </div>
                                                         )}
                                                     </Form.List>
                                                 </>
@@ -809,7 +864,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                     </Form.Item>
 
                                                     <div className="properties-drawer__divider" />
-                                                    <div className="properties-drawer__section-title">State Mapping</div>
+                                                    <div className="properties-drawer__section-title">Response to State Mapping</div>
                                                     {renderStateManagement()}
                                                 </>
                                             )}
