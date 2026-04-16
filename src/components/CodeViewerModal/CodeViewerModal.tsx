@@ -320,7 +320,7 @@ export default function CodeViewerModal({
       onCancel={onClose}
       width={isMobileView ? "95vw" : 1200}
       centered
-      destroyOnClose
+      destroyOnHidden
       className="code-viewer-modal"
       zIndex={2000}
       styles={{

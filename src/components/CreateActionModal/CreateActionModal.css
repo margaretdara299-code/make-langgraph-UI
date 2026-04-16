@@ -97,6 +97,7 @@
 }
 
 .create-action-stepper .ant-steps-item-tail::after {
+    content: '' !important;
     display: block !important;
     background-color: #E2E8F0 !important;
     width: 2px !important;

@@ -91,7 +91,7 @@ export default function CreateCapabilityModal({
             width={480}
             zIndex={1300}
             centered
-            destroyOnClose
+            destroyOnHidden
             okButtonProps={{ 
                 style: { height: '40px', fontWeight: 600, padding: '0 24px', borderRadius: '8px' },
                 disabled: !nameValue || nameValue.trim().length < 3

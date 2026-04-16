@@ -81,7 +81,7 @@ export default function CreateCategoryModal({
             width={520}
             zIndex={1300}
             centered
-            destroyOnClose
+            destroyOnHidden
             footer={null}
             className="create-category-modal-v2"
         >

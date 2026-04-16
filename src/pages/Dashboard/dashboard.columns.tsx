@@ -11,9 +11,6 @@ export const getDashboardColumns = (navigate: (path: string) => void): ColumnsTy
         key: 'name',
         width: 300,
         render: (_: any, record: Skill) => {
-            // Debugging log for each row
-            console.log('Rendering row for skill:', record.id, record);
-
             return (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                     <span style={{

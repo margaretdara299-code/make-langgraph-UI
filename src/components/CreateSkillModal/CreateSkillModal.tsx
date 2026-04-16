@@ -63,7 +63,7 @@ export default function CreateSkillModal({ isOpen, onClose, onCreated }: CreateS
             title={null}
             width={520}
             zIndex={1300}
-            destroyOnClose
+            destroyOnHidden
             centered
             footer={null}
             className="create-skill-modal-v2"
