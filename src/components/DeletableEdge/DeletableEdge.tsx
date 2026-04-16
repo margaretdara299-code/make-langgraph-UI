@@ -124,6 +124,7 @@ export default function DeletableEdge(props: EdgeProps) {
                         position: 'absolute',
                         transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`,
                         pointerEvents: 'all',
+                        opacity: style?.opacity,
                     }}
                     className="nodrag nopan"
                     // Keep the hover active if the pointer moves into the label area

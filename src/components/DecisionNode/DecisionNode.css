@@ -3,7 +3,7 @@
  */
 
 :root {
-    --color-node-decision: #f59e0b;
+    --color-node-decision: var(--color-warning);
 }
 
 /* ── Outer wrapper ── */
@@ -16,11 +16,11 @@
 
 /* ── Card ── */
 .decision-node__card {
-    background: var(--color-bg-white, #fff);
+    background: var(--bg-card, #fff);
     border: 1.5px solid var(--color-node-decision);
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
+    box-shadow: 0 2px 8px var(--color-warning-bg);
     transition: box-shadow 0.2s ease;
 }
 
@@ -34,8 +34,8 @@
     align-items: center;
     gap: 8px;
     padding: 8px 10px;
-    background: linear-gradient(90deg, rgba(245, 158, 11, 0.12), transparent);
-    border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+    background: linear-gradient(90deg, var(--color-warning-bg), transparent);
+    border-bottom: 1px solid var(--border-light);
 }
 
 /* Diamond Icon for Decision Node */
@@ -59,13 +59,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: var(--text-sm);
+}
+
+.decision-node__icon-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    opacity: 0.8;
 }
 
 .decision-node__title {
-    font-size: 12px;
+    font-size: var(--text-base);
     font-weight: 700;
-    color: #92400e;
+    color: var(--color-warning-text);
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -73,8 +80,8 @@
 }
 
 .decision-node__delete {
-    font-size: 12px;
-    color: #ff4d4f;
+    font-size: var(--text-xs);
+    color: var(--color-error);
     opacity: 0;
     cursor: pointer;
     transition: opacity 0.2s;
@@ -101,8 +108,8 @@
 .decision-node__empty {
     display: block;
     padding: 8px 12px;
-    font-size: 11px;
-    color: #aaa;
+    font-size: var(--text-xs);
+    color: var(--text-subtle);
     font-style: italic;
 }
 
@@ -136,23 +143,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(245, 158, 11, 0.15);
-    color: #92400e;
+    background: var(--color-warning-bg);
+    color: var(--color-warning-text);
     border-radius: 4px;
-    font-size: 10px;
+    font-size: var(--text-xs);
     font-weight: 700;
     flex-shrink: 0;
 }
 
 .decision-node__row-badge--default {
-    background: rgba(0, 0, 0, 0.06);
-    color: #888;
+    background: var(--border-light);
+    color: var(--text-subtle);
 }
 
 .decision-node__row-label {
-    font-size: 11px;
+    font-size: var(--text-xs);
     font-weight: 600;
-    color: #78350f;
+    color: var(--color-warning-text);
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -160,7 +167,7 @@
 }
 
 .decision-node__row-label--default {
-    color: #999;
+    color: var(--text-subtle);
     font-weight: 500;
 }
 
@@ -169,9 +176,9 @@
     width: 10px !important;
     height: 10px !important;
     border-radius: 2px !important;
-    background: #fff !important;
+    background: var(--bg-card) !important;
     border: 2px solid var(--color-node-decision) !important;
-    box-shadow: 0 0 4px rgba(245, 158, 11, 0.4) !important;
+    box-shadow: 0 0 4px var(--color-warning-bg) !important;
     transition: transform 0.15s, background 0.15s !important;
     transform: rotate(45deg) !important;
     flex-shrink: 0;
@@ -194,12 +201,12 @@
 }
 
 .decision-node__handle--default {
-    border-color: #aaa !important;
+    border-color: var(--text-subtle) !important;
     box-shadow: none !important;
 }
 
 .decision-node__handle--default:hover {
-    background: #aaa !important;
+    background: var(--text-subtle) !important;
 }
 
 /* ── Bottom source handles for DecisionNode ──
@@ -218,9 +225,9 @@
     width: 10px !important;
     height: 10px !important;
     border-radius: 2px !important;
-    background: #fff !important;
+    background: var(--bg-card) !important;
     border: 2px solid var(--color-node-decision) !important;
-    box-shadow: 0 0 4px rgba(245, 158, 11, 0.4) !important;
+    box-shadow: 0 0 4px var(--color-warning-bg) !important;
     opacity: 1 !important;           /* always visible — see note above */
     transition: background 0.15s !important;
     cursor: crosshair;
@@ -232,11 +239,11 @@
 
 /* Default handle — grey to signal "fallback path" */
 .decision-node__source-handle--default {
-    border-color: #aaa !important;
+    border-color: var(--text-subtle) !important;
     box-shadow: none !important;
 }
 
 .decision-node__source-handle--default:hover {
-    background: #aaa !important;
+    background: var(--text-subtle) !important;
 }
 

@@ -17,16 +17,13 @@
     height: 100%;
     position: relative;
     overflow: hidden;
-    background: #f9fafb;
+    background: var(--bg-page);
 }
-
-
 
 /* Hide React Flow attribution watermark */
 .react-flow__attribution {
     display: none !important;
 }
-
 
 /* React Flow overrides */
 .skill-designer__canvas .react-flow__pane {
@@ -34,10 +31,10 @@
 }
 
 .skill-designer__tabs-panel {
-    background: var(--color-bg-container);
-    border: 1px solid var(--color-border);
+    background: var(--bg-card);
+    border: 1px solid var(--border-medium);
     border-radius: 8px;
-    box-shadow: var(--shadow-sm-strong);
+    box-shadow: var(--shadow-card);
     padding: 0 16px;
     margin: 16px;
     pointer-events: all;
@@ -48,43 +45,38 @@
 }
 
 .skill-designer__canvas .react-flow__edge-path {
-    stroke: var(--color-primary);
+    stroke: var(--accent);
     stroke-width: 2;
 }
 
 .skill-designer__canvas .react-flow__controls {
-    box-shadow: var(--shadow-sm-strong);
+    box-shadow: var(--shadow-card);
     border-radius: 8px;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--border-medium);
 }
 
 .skill-designer__canvas .react-flow__minimap {
     border-radius: 8px;
-    border: 1px solid var(--color-border);
-    box-shadow: var(--shadow-sm-strong);
+    border: 1px solid var(--border-medium);
+    box-shadow: var(--shadow-card);
 }
 
 /* --- Node Execution Glow Effects --- */
 .node-exec-running {
-    outline: 2px solid var(--color-primary) !important;
-    box-shadow: 0 0 15px rgba(24, 144, 255, 0.6) !important;
+    box-shadow: 0 0 0 4px var(--color-info-bg), 0 0 20px var(--color-info) !important;
     animation: nodePulse 1.5s infinite;
 }
 
 .node-exec-success {
-    outline: 2px solid var(--color-success) !important;
-    box-shadow: 0 0 15px rgba(82, 196, 26, 0.6) !important;
-    border-color: var(--color-success) !important;
+    box-shadow: 0 0 0 4px var(--color-success-bg), 0 0 20px var(--color-success) !important;
 }
 
 .node-exec-error {
-    outline: 2px solid var(--color-error) !important;
-    box-shadow: 0 0 15px rgba(255, 77, 79, 0.6) !important;
-    border-color: var(--color-error) !important;
+    box-shadow: 0 0 0 4px var(--color-error-bg), 0 0 20px var(--color-error) !important;
 }
 
 @keyframes nodePulse {
-    0% { box-shadow: 0 0 8px rgba(24, 144, 255, 0.4); }
-    50% { box-shadow: 0 0 20px rgba(24, 144, 255, 0.8); }
-    100% { box-shadow: 0 0 8px rgba(24, 144, 255, 0.4); }
+    0% { box-shadow: 0 0 0 4px var(--color-info-bg), 0 0 8px var(--color-info); }
+    50% { box-shadow: 0 0 0 4px var(--color-info-bg), 0 0 25px var(--color-info); }
+    100% { box-shadow: 0 0 0 4px var(--color-info-bg), 0 0 8px var(--color-info); }
 }
