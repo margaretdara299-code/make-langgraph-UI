@@ -48,7 +48,7 @@ export default function Sidebar({
       </nav>
 
       <div className="sidebar-user-section">
-        <ThemeToggle collapsed={collapsed} />
+        {/* <ThemeToggle collapsed={collapsed} /> */}
         <div className="user-info-row" style={{ flexDirection: collapsed ? 'column' : 'row', gap: '12px' }}>
           {collapsed && (
             <button

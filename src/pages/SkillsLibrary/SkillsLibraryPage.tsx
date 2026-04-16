@@ -30,7 +30,6 @@ export default function SkillsLibraryPage() {
 
     const { skills, isLoading, statusCounts, setFilters, refetch } = useSkills();
     const { categories } = useCategories();
-    console.log("🚀 ~ SkillsLibraryPage ~ categories:", categories)
 
     /** Handle status filter click */
     const handleStatusFilter = (statusKey: string) => {
@@ -175,7 +174,6 @@ export default function SkillsLibraryPage() {
                     <div className="skills-library-grid">
                         {skills.map((skill) => {
                             const categoryName = categories.find((cat) => cat?.categoryId === skill.categoryId)?.name || 'General';
-                            console.log("🚀 ~ SkillsLibraryPage ~ categoryName:", categoryName)
                             return (
                                 <SkillCard
                                     key={skill.id}

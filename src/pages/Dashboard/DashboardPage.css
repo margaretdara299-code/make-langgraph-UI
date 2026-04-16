@@ -132,7 +132,7 @@
 
 .dashboard-skills-table .ant-table-thead > tr > th {
   background: var(--surface-1) !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
   color: var(--text-muted) !important;
   letter-spacing: 0.05em;

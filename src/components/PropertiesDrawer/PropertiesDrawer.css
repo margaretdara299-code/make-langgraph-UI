@@ -1,64 +1,64 @@
 /* Floating Properties Drawer */
 .properties-drawer-floating {
-  position: absolute;
-  right: 20px;
-  top: 72px;
-  bottom: 24px;
-  width: 450px; 
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0,0,0,0.02);
-  z-index: 1000;
-  overflow: hidden;
-  font-family: var(--font-sans);
+    position: absolute;
+    right: 20px;
+    top: 72px;
+    bottom: 24px;
+    width: 450px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+    z-index: 1000;
+    overflow: hidden;
+    font-family: var(--font-sans);
 }
 
 .properties-drawer__drawer-header {
-  padding: 16px 20px;
-  border-bottom: 1px solid #f1f5f9;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-  background: #ffffff;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    background: #ffffff;
 }
 
 .properties-drawer__header-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .properties-drawer__close-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #64748b;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  padding: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 0;
 }
 
 .properties-drawer__close-btn:hover {
-  background: #fee2e2;
-  color: #ef4444;
-  border-color: #fecaca;
-  transform: rotate(90deg) scale(1.05);
+    background: #fee2e2;
+    color: #ef4444;
+    border-color: #fecaca;
+    transform: rotate(90deg) scale(1.05);
 }
 
 .properties-drawer__drawer-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px;
-  background: #ffffff;
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background: #ffffff;
 }
 
 
@@ -216,9 +216,16 @@
     color: #cbd5e1;
     font-size: 14px;
     cursor: pointer;
-    padding: 6px;
+    width: 28px;
+    height: 28px;
     border-radius: 6px;
     transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transform: translateY(-1px);
+    margin-bottom: 14px;
 }
 
 .properties-drawer__delete-icon:hover {
@@ -298,7 +305,8 @@
 /* --- Decision Rules Card --- */
 .decision-props__rule-card {
     border-radius: var(--radius-sm) !important;
-    border: 1px solid #fed7aa !important; /* Subtle orange border */
+    border: 1px solid #fed7aa !important;
+    /* Subtle orange border */
     background: #fffcf9 !important;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
     margin-bottom: 16px !important;

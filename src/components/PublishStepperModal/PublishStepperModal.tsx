@@ -184,7 +184,7 @@ export default function PublishStepperModal({
             centered
             className="publish-stepper-modal"
             footer={null}
-            destroyOnClose
+            destroyOnHidden
             zIndex={2000}
             styles={{
                 mask: {

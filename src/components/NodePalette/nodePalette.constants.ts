@@ -6,7 +6,6 @@ import {
 export const ICON_MAP: Record<string, any> = {
   CreditCard, Webhook, Clock, Mail, MessageSquare, Table2, Bot, Globe, Zap, Terminal, Play,
   Map, Lightbulb, Activity, Database, Shield, Layout, Settings, Cpu,
-  'Zap': Zap,
   'Api': Terminal,
   'Ai': Bot,
   'Data': Database
