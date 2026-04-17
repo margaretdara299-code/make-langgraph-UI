@@ -13,6 +13,7 @@ import StartNodeItem from './StartNodeItem';
 import SubFlowNodeItem from './SubFlowNodeItem';
 import DecisionNodeItem from './DecisionNodeItem';
 import EndNodeItem from './EndNodeItem';
+import ErrorNodeItem from './ErrorNodeItem';
 import './NodePalette.css';
 
 // Custom renderer for Tree Items to maintain Drag & Drop
@@ -221,7 +222,8 @@ export default function NodePalette() {
                                         { title: <StartNodeItem />, key: 'common-start', isLeaf: true },
                                         { title: <SubFlowNodeItem />, key: 'common-sub-flow', isLeaf: true },
                                         { title: <DecisionNodeItem />, key: 'common-decision', isLeaf: true },
-                                        { title: <EndNodeItem />, key: 'common-end', isLeaf: true }
+                                        { title: <EndNodeItem />, key: 'common-end', isLeaf: true },
+                                        { title: <ErrorNodeItem />, key: 'common-error', isLeaf: true }
                                     ]
                                 },
                                 ...treeData

@@ -152,6 +152,18 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             return;
         }
 
+        // For error nodes
+        if (selectedNode.type === 'error') {
+            const stored = versionId ? loadGraphFromStorage(versionId) : null;
+            const err = (stored?.nodes?.[selectedNode.id]?.data || selectedNode.data) as any;
+            const cfg = err.configurations || {};
+            form.setFieldsValue({
+                label: err.label || 'Error Handler',
+                error_api_url: cfg.error_api_url || '',
+            });
+            return;
+        }
+
         // For decision nodes: read from localStorage first, fallback to node.data
         if (selectedNode.type === 'decision') {
             const stored = versionId ? loadGraphFromStorage(versionId) : null;
@@ -310,6 +322,18 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                         custom_message: newValues.custom_message,
                         fail_status_code: newValues.fail_status_code,
                         fail_message: newValues.fail_message,
+                    },
+                };
+            } else if (selectedNode.type === 'error') {
+                updatedNode = {
+                    ...currentNode,
+                    data: {
+                        ...currentNode.data,
+                        label: newValues.label || 'Error Handler',
+                        configurations: {
+                            error_api_url:    newValues.error_api_url || '',
+                            error_api_method: 'POST',
+                        },
                     },
                 };
             } else if (selectedNode.type === 'subflow') {
@@ -628,8 +652,9 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             const isDecision  = selectedNode.type === 'decision';
             const isEnd       = selectedNode.type === 'end';
             const isAction    = selectedNode.type === 'action';
+            const isError     = selectedNode.type === 'error';
 
-            const activeColor = isDecision ? '#f59e0b' : ((isStart || isEnd) ? '#10b981' : 'var(--accent)');
+            const activeColor = isDecision ? '#f59e0b' : isError ? '#EF4444' : ((isStart || isEnd) ? '#10b981' : 'var(--accent)');
 
             if (isLoadingAction) {
                 return (
@@ -678,6 +703,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                 <span className="properties-drawer__meta-value" style={{ fontWeight: 'bold', fontStyle: 'italic', fontSize: 'var(--text-sm)' }}>
                                                     {isStart     ? 'Workflow Entry'
                                                     : isEnd      ? 'Workflow Exit'
+                                                    : isError    ? 'Error Handler'
                                                     : isAction   ? 'Action'
                                                     : isDecision ? 'Router'
                                                     : isSubFlow  ? 'Group'
@@ -698,6 +724,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                     {isStart    ? 'START'
                                                     : isDecision ? 'DECISION'
                                                     : isEnd      ? 'END'
+                                                    : isError    ? 'ERR'
                                                     : isSubFlow  ? 'STRUCTURE'
                                                     : (nodeData?.capability || 'API').toUpperCase()}
                                                 </div>
@@ -841,6 +868,31 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                         }}
                                                     </Form.Item>
                                                 </>
+                                            ) : isError ? (
+                                                <>
+                                                    {/* ── Error API Configuration ── */}
+                                                    <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Error API</div>
+                                                    <Form.Item
+                                                        label="API Title"
+                                                        name="label"
+                                                    >
+                                                        <Input placeholder="Error Handler" />
+                                                    </Form.Item>
+
+                                                    <div className="properties-drawer__flex-row" style={{ alignItems: 'flex-end', gap: 8 }}>
+                                                        <Form.Item label="HTTP Method" style={{ width: 90, flexShrink: 0, marginBottom: 0 }}>
+                                                            <Input value="POST" disabled style={{ textAlign: 'center', fontWeight: 600, color: '#ef4444', background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 6 }} />
+                                                        </Form.Item>
+                                                        <Form.Item
+                                                            label="Error API URL"
+                                                            name="error_api_url"
+                                                            style={{ flex: 1, marginBottom: 0 }}
+                                                            rules={[{ type: 'url', message: 'Enter a valid URL' }]}
+                                                        >
+                                                            <Input placeholder="https://api.example.com/error-logs" />
+                                                        </Form.Item>
+                                                    </div>
+                                                </>
                                             ) : (
                                                 renderNodeConfig(nodeData as CanvasNodeData)
                                             )}
@@ -848,7 +900,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                     </motion.div>
                                 )
                             }] : []),
-                            ...((!isSubFlow && !isStart && !isDecision && !isConnector) ? [{
+                            ...((!isSubFlow && !isStart && !isDecision && !isConnector && !isError) ? [{
                                 key: '3',
                                 label: 'Settings',
                                 children: (

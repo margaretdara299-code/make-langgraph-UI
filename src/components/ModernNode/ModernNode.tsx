@@ -93,6 +93,7 @@ export default function ModernNode({
         <Handle
           type="source"
           position={Position.Bottom}
+          id="src"
           className="modern-node-handle"
         />
       )}

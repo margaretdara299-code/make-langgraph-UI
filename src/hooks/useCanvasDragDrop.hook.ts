@@ -146,6 +146,27 @@ export default function useCanvasDragDrop(
                 return;
             }
 
+            // ── Handle Error node drop ──
+            if (data.nodeType === 'error') {
+                const newNode: Node = {
+                    id: getNextNodeId(),
+                    type: 'error',
+                    position,
+                    data: {
+                        label: data.label || 'Error Handler',
+                        category: 'structure',
+                        icon: 'ShieldAlert',
+                        configurations: {
+                            error_api_url:    '',
+                            error_api_method: 'POST',
+                        },
+                    } as any,
+                };
+                setNodes((nds) => [...nds, newNode]);
+                if (versionId) upsertNodeInStorage(versionId, newNode.id, newNode);
+                return;
+            }
+
             // ── Handle Connector node drop ──
             if (data.nodeType === 'connector') {
                 const parentSubFlow = findSubFlowAtPosition(position.x, position.y);

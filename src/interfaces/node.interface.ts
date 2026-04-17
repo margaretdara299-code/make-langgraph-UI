@@ -3,7 +3,7 @@
  * Defines SkillNode, SkillRoute, and node type taxonomy.
  */
 
-export type NodeTypeCategory = 'trigger' | 'action' | 'connector' | 'end';
+export type NodeTypeCategory = 'trigger' | 'action' | 'connector' | 'end' | 'error';
 
 export type NodeType =
     | 'trigger.queue'
@@ -21,7 +21,8 @@ export type NodeType =
     | 'connector.payer_portal_rpa'
     | 'end.success'
     | 'end.error'
-    | 'end.escalated';
+    | 'end.escalated'
+    | 'error.handler';
 
 export interface SkillNode {
     id: string;

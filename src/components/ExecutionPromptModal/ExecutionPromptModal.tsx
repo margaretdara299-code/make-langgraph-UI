@@ -61,10 +61,10 @@ export default function ExecutionPromptModal({ isOpen, onClose, versionId, nodes
             open={isOpen}
             onCancel={onClose}
             footer={null}
+            zIndex={2000}
             width={600}
             centered
-            className="execution-prompt-modal"
-            zIndex={2000}
+            className="execution-prompt-modal"            
         >
             <div style={{ padding: '1rem 0' }}>
                 <Text type="secondary" style={{ display: 'block', marginBottom: '1rem' }}>

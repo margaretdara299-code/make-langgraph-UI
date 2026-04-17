@@ -174,3 +174,16 @@
 .modern-node-handle:hover {
   transform: scale(1.2);
 }
+
+/* Error-path source handle — red fill, slightly visible even without hover
+   so users understand the second handle is intentional */
+.action-node__error-handle {
+  background: #FEF2F2 !important;
+  border-color: #EF4444 !important;
+  opacity: 0.5 !important;
+}
+
+.modern-node-card:hover .action-node__error-handle {
+  opacity: 1 !important;
+  background: #EF4444 !important;
+}

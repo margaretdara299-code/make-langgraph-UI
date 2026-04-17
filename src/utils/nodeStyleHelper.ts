@@ -1,7 +1,7 @@
 export function getNodeTheme(type: string, capability?: string, category?: string) {
-    const isError = (category || '').toLowerCase().includes('error');
-    if (isError) {
-        return { bg: '#FFF5F5', stroke: '#FF4D4F', badgeBg: '#FF4D4F', iconBg: '#FFFFFF' };
+    // Explicit error node type — always red regardless of category
+    if (type === 'error') {
+        return { bg: '#FFF5F5', stroke: '#EF4444', badgeBg: '#EF4444', iconBg: '#FFFFFF' };
     }
 
     if (type === 'decision' || type === 'router') {
@@ -61,6 +61,10 @@ export function getNodeStrokeColor(node: NodeColorSource): string {
 
     if (nodeType === 'decision' || nodeType === 'router') {
         return getNodeTheme('decision', capability, category).stroke;
+    }
+
+    if (nodeType === 'error') {
+        return getNodeTheme('error').stroke;
     }
 
     return getNodeTheme(nodeType, capability, category).stroke;
