@@ -1,0 +1,479 @@
+/**
+ * ExecutionDebuggerModal — Three-pane execution visualization.
+ * Left: Mini React Flow canvas | Middle: Input data | Right: Output data
+ */
+
+.exec-debugger-modal-root {
+    --exec-modal-gutter-x: clamp(16px, 3vw, 32px);
+    --exec-modal-gutter-y: clamp(16px, 2vh, 24px);
+    --exec-modal-max-height: calc(100vh - (var(--exec-modal-gutter-y) * 2));
+    overflow: hidden;
+}
+
+.exec-debugger-modal-root .ant-modal-wrap,
+.exec-debugger-modal-wrapper {
+    overflow: hidden !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 16px;
+}
+
+.exec-debugger-modal-root .ant-modal {
+    max-width: none !important;
+    width: min(1480px, calc(100vw - (var(--exec-modal-gutter-x) * 2))) !important;
+    margin: 0 auto !important;
+    padding-bottom: 0 !important;
+    top: 0;
+    height: var(--exec-modal-max-height);
+    max-height: var(--exec-modal-max-height);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.exec-debugger-modal-root .ant-modal-content {
+    padding: 0 !important;
+    overflow: hidden;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-medium);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+}
+
+.exec-debugger-modal-container {
+    height: 100%;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.exec-debugger-modal-root .ant-modal-body,
+.exec-debugger-modal-ant-body {
+    padding: 0 !important;
+    height: 100%;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+@keyframes execFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.exec-debugger-modal {
+    width: 100%;
+    height: 100%;
+    background: var(--bg-card);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+    animation: execSlideUp 0.35s ease;
+}
+
+@keyframes execSlideUp {
+    from { opacity: 0; transform: translateY(30px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Header ── */
+.exec-debugger-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--border-medium);
+    background: var(--bg-header);
+    backdrop-filter: var(--glass-blur);
+    flex-shrink: 0;
+}
+
+.exec-debugger-header__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-weight: var(--weight-semibold);
+    font-size: var(--text-lg);
+    color: var(--text-main);
+}
+
+.exec-debugger-header__title-icon {
+    color: var(--accent);
+}
+
+.exec-debugger-header__status {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1-5);
+}
+
+.exec-debugger-header__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.02em;
+}
+
+.exec-debugger-header__badge--running {
+    background: var(--color-info-bg);
+    color: var(--color-info-text);
+    animation: badgePulse 1.5s infinite;
+}
+
+.exec-debugger-header__badge--done {
+    background: var(--color-success-bg);
+    color: var(--color-success-text);
+}
+
+.exec-debugger-header__badge--error {
+    background: var(--color-error-bg);
+    color: var(--color-error-text);
+}
+
+@keyframes badgePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.exec-debugger-header__close-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border-medium);
+    background: var(--bg-card);
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.2s ease;
+}
+
+.exec-debugger-header__close-btn:hover {
+    background: var(--color-error-bg);
+    color: var(--color-error);
+    border-color: var(--color-error);
+}
+
+/* ── Body — Three Pane Layout ── */
+.exec-debugger-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+}
+
+/* ── Left Pane — Mini Canvas ── */
+.exec-debugger-canvas {
+    border-right: 1px solid var(--border-medium);
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-page);
+}
+
+.exec-debugger-canvas .exec-debugger-node--dimmed {
+    opacity: 0.25;
+}
+
+.exec-debugger-canvas .react-flow__controls {
+    display: none;
+}
+
+.exec-debugger-canvas .react-flow__minimap {
+    display: none;
+}
+
+/* ── Middle + Right Panes ── */
+.exec-debugger-io {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+    flex: 1;
+    background: var(--bg-card);
+}
+
+.exec-debugger-io__headers {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-bottom: 1px solid var(--border-medium);
+}
+
+.exec-debugger-io__headers > :last-child {
+    border-left: 1px solid var(--border-medium);
+}
+
+.exec-debugger-io__scroll {
+    flex: 1;
+    height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: var(--space-1-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    min-height: 0;
+    overscroll-behavior: contain;
+    background:
+        linear-gradient(to right,
+            transparent 0,
+            transparent calc(50% - 0.5px),
+            var(--border-medium) calc(50% - 0.5px),
+            var(--border-medium) calc(50% + 0.5px),
+            transparent calc(50% + 0.5px)
+        );
+    background-clip: padding-box;
+}
+
+.exec-debugger-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-1);
+    align-items: stretch;
+}
+
+.exec-debugger-pane__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1-5) var(--space-2);
+    border-bottom: 1px solid var(--border-light);
+    background: var(--bg-card);
+    font-weight: var(--weight-semibold);
+    font-size: var(--text-sm);
+    color: var(--text-main);
+    flex-shrink: 0;
+}
+
+.exec-debugger-pane__header--io {
+    border-bottom: none;
+}
+
+.exec-debugger-pane__header-icon {
+    font-size: 16px;
+}
+
+.exec-debugger-pane__header-icon--input {
+    color: var(--color-info);
+}
+
+.exec-debugger-pane__header-icon--output {
+    color: var(--color-success);
+}
+
+/* ── Node Step Card ── */
+.exec-step-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    overflow: hidden;
+    animation: stepCardReveal 0.4s ease;
+    transition: border-color 0.2s ease;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+}
+
+@keyframes stepCardReveal {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.exec-step-card--active {
+    border-color: var(--color-info);
+    box-shadow: 0 0 0 2px var(--color-info-bg);
+}
+
+.exec-step-card--success {
+    border-color: var(--color-success);
+}
+
+.exec-step-card--error {
+    border-color: var(--color-error);
+}
+
+.exec-step-card--loading {
+    border-style: dashed;
+}
+
+.exec-step-card__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 8px 12px;
+    background: var(--surface-1);
+    border-bottom: 1px solid var(--border-light);
+    cursor: pointer;
+    user-select: none;
+}
+
+.exec-step-card__status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.exec-step-card__status-dot--running {
+    background: var(--color-info);
+    animation: dotPulse 1s infinite;
+}
+
+.exec-step-card__status-dot--success {
+    background: var(--color-success);
+}
+
+.exec-step-card__status-dot--error {
+    background: var(--color-error);
+}
+
+.exec-step-card__status-dot--idle {
+    background: var(--border-strong);
+}
+
+@keyframes dotPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.4); opacity: 0.6; }
+}
+
+.exec-step-card__node-name {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--text-main);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.exec-step-card__node-type {
+    font-size: var(--text-xs);
+    color: var(--text-subtle);
+    text-transform: capitalize;
+}
+
+.exec-step-card__body {
+    padding: 8px 12px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.exec-step-card__message {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 8px;
+}
+
+.exec-step-card__json {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--text-muted);
+    white-space: pre-wrap;
+    word-break: break-all;
+    background: var(--surface-0);
+    border-radius: 6px;
+    padding: 8px;
+    border: 1px solid var(--border-light);
+    margin: 0;
+}
+
+.exec-step-card__empty {
+    font-size: var(--text-xs);
+    color: var(--text-subtle);
+    font-style: italic;
+    padding: 4px 0;
+}
+
+.exec-step-card__skeleton .ant-skeleton {
+    width: 100%;
+}
+
+.exec-step-card__skeleton .ant-skeleton-title {
+    margin-top: 0;
+}
+
+.exec-step-card__skeleton .ant-skeleton-paragraph {
+    margin-bottom: 0;
+}
+
+/* ── Empty State ── */
+.exec-debugger-pane__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+    color: var(--text-subtle);
+    font-size: var(--text-sm);
+    gap: var(--space-1);
+    padding: var(--space-3);
+    text-align: center;
+}
+
+.exec-debugger-pane__empty-icon {
+    font-size: 32px;
+    opacity: 0.4;
+}
+
+/* Spinning loader */
+.spin-icon {
+    animation: spinIcon 1s linear infinite;
+}
+
+@keyframes spinIcon {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@media (max-width: 1180px) {
+    .exec-debugger-body {
+        grid-template-columns: 1fr;
+    }
+
+    .exec-debugger-canvas {
+        min-height: 280px;
+        border-right: none;
+        border-bottom: 1px solid var(--border-medium);
+    }
+}
+
+@media (max-width: 860px) {
+    .exec-debugger-modal-root .ant-modal {
+        width: calc(100vw - 24px) !important;
+    }
+
+    .exec-debugger-modal-root .ant-modal-content {
+        border-radius: 14px;
+    }
+
+    .exec-debugger-io__headers,
+    .exec-debugger-row {
+        grid-template-columns: 1fr;
+    }
+
+    .exec-debugger-io__headers > :last-child {
+        border-left: none;
+        border-top: 1px solid var(--border-medium);
+    }
+
+    .exec-debugger-io__scroll {
+        background: none;
+    }
+}

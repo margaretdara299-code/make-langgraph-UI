@@ -9,3 +9,4 @@ export * from './canvas.utils';
 export * from './color.utils';
 export * from './nodeStyleHelper';
 export * from './file.utils';
+export * from './execution-debugger.utils';

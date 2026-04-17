@@ -21,9 +21,21 @@ export interface DashboardCounts {
 
 export type NodeExecutionStatus = 'idle' | 'running' | 'success' | 'error';
 
+export interface NodeExecutionTrace {
+    nodeId: string;
+    label: string;
+    type: string;
+    status: Exclude<NodeExecutionStatus, 'idle' | 'running'>;
+    message: string;
+    input: any;
+    data: any;
+}
+
 export interface ExecutedNodeStep {
     node: import('@xyflow/react').Node;
     status: NodeExecutionStatus;
+    message?: string;
     data?: any;
     inputData?: any;
+    outputData?: any;
 }

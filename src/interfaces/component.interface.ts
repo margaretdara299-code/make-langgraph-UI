@@ -218,35 +218,6 @@ export interface DashboardMetricsCardProps {
     data: DashboardCounts['skills'] | DashboardCounts['actions'];
 }
 
-export interface ExecutionDebuggerModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    versionId: string;
-    nodes: import('@xyflow/react').Node[];
-    edges: import('@xyflow/react').Edge[];
-}
-
-export interface ExecutionInputsPaneProps {
-    activeOrCompletedSteps: import('./engine.interface').ExecutedNodeStep[];
-    inputContainerRef: React.RefObject<HTMLDivElement | null>;
-}
-
-export interface ExecutionStepperPaneProps {
-    steps: import('./engine.interface').ExecutedNodeStep[];
-    activeStepIndex: number;
-    setSelectedStepIndex: (index: number) => void;
-}
-
-export interface ExecutionOutputsLogsPaneProps {
-    completedStepsList: import('./engine.interface').ExecutedNodeStep[];
-    outputContainerRef: React.RefObject<HTMLDivElement | null>;
-    isSimulationDone: boolean;
-    isExecuting: boolean;
-    activeStepIndex: number;
-    steps: import('./engine.interface').ExecutedNodeStep[];
-    globalLogs: string[];
-}
-
 export interface GridColumns {
     xs?: number;
     sm?: number;
