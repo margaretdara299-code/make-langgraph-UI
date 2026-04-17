@@ -47,11 +47,14 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
                     icon: '🧩',
                 });
                 // Clear all form fields so no stale data remains
-                setTimeout(() => overviewForm.resetFields(), 0);
+                setTimeout(() => {
+                    overviewForm.resetFields();
+                    configForm.resetFields();
+                }, 0);
             }
             setCurrentStep(initialStep);
         }
-    }, [isOpen, actionToEdit, overviewForm, initialStep]);
+    }, [isOpen, actionToEdit, overviewForm, configForm, initialStep]);
 
 
 
@@ -155,22 +158,40 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
             if (rawConfig.url) cleanedConfig.url = rawConfig.url;
             if (rawConfig.method) cleanedConfig.method = rawConfig.method;
             if (rawConfig.output_key) cleanedConfig.output_key = rawConfig.output_key;
-            ['path_params', 'query_params', 'header_params', 'body_params'].forEach(paramType => {
-                if (Array.isArray(rawConfig[paramType])) {
-                    const filtered = rawConfig[paramType].filter((param: any) => param && (param.key || param.value));
-                    if (filtered.length > 0) {
-                        if (paramType === 'body_params') {
-                            const bodyObj: Record<string, any> = {};
-                            filtered.forEach((param: any) => {
-                                if (param.key) bodyObj[param.key] = param.value;
-                            });
-                            cleanedConfig.body_params = bodyObj;
-                        } else {
-                            cleanedConfig[paramType] = filtered;
-                        }
+            ['path_params', 'query_params', 'header_params'].forEach(paramType => {
+                const paramObj = rawConfig[paramType];
+                if (paramObj && typeof paramObj === 'object' && !Array.isArray(paramObj)) {
+                    if (Object.keys(paramObj).length > 0) {
+                        cleanedConfig[paramType] = paramObj;
                     }
+                } else if (Array.isArray(paramObj)) {
+                    // Fallback in case they were left as objects somehow
+                    const obj: any = {};
+                    paramObj.forEach(p => { if (p?.key) obj[p.key] = p.value; });
+                    if (Object.keys(obj).length > 0) cleanedConfig[paramType] = obj;
                 }
             });
+
+            // Special handling for body: raw string vs form-data list
+            const bodyType = rawConfig.body_params_type || 'form-data';
+            if (bodyType === 'raw' && rawConfig.body_params_raw) {
+                try {
+                    cleanedConfig.body_params = JSON.parse(rawConfig.body_params_raw);
+                } catch {
+                    cleanedConfig.body_params = rawConfig.body_params_raw; // keep as string if not parseable
+                }
+            } else if (bodyType === 'form-data') {
+                const bodyObj = rawConfig.body_params;
+                if (bodyObj && typeof bodyObj === 'object' && !Array.isArray(bodyObj)) {
+                    if (Object.keys(bodyObj).length > 0) {
+                        cleanedConfig.body_params = bodyObj;
+                    }
+                } else if (Array.isArray(bodyObj)) {
+                    const obj: any = {};
+                    bodyObj.forEach(p => { if (p?.key) obj[p.key] = p.value; });
+                    if (Object.keys(obj).length > 0) cleanedConfig.body_params = obj;
+                }
+            }
             if (rawConfig.fallback_message) {
                 cleanedConfig.fallback_message = rawConfig.fallback_message;
             }
@@ -220,22 +241,38 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
             if (rawConfig.url) cleanedConfig.url = rawConfig.url;
             if (rawConfig.method) cleanedConfig.method = rawConfig.method;
             if (rawConfig.output_key) cleanedConfig.output_key = rawConfig.output_key;
-            ['path_params', 'query_params', 'header_params', 'body_params'].forEach(paramType => {
-                if (Array.isArray(rawConfig[paramType])) {
-                    const filtered = rawConfig[paramType].filter((param: any) => param && (param.key || param.value));
-                    if (filtered.length > 0) {
-                        if (paramType === 'body_params') {
-                            const bodyObj: Record<string, any> = {};
-                            filtered.forEach((param: any) => {
-                                if (param.key) bodyObj[param.key] = param.value;
-                            });
-                            cleanedConfig.body_params = bodyObj;
-                        } else {
-                            cleanedConfig[paramType] = filtered;
-                        }
+            ['path_params', 'query_params', 'header_params'].forEach(paramType => {
+                const paramObj = rawConfig[paramType];
+                if (paramObj && typeof paramObj === 'object' && !Array.isArray(paramObj)) {
+                    if (Object.keys(paramObj).length > 0) {
+                        cleanedConfig[paramType] = paramObj;
                     }
+                } else if (Array.isArray(paramObj)) {
+                    const obj: any = {};
+                    paramObj.forEach(p => { if (p?.key) obj[p.key] = p.value; });
+                    if (Object.keys(obj).length > 0) cleanedConfig[paramType] = obj;
                 }
             });
+
+            const bodyType = rawConfig.body_params_type || 'form-data';
+            if (bodyType === 'raw' && rawConfig.body_params_raw) {
+                try {
+                    cleanedConfig.body_params = JSON.parse(rawConfig.body_params_raw);
+                } catch {
+                    cleanedConfig.body_params = rawConfig.body_params_raw;
+                }
+            } else if (bodyType === 'form-data') {
+                const bodyObj = rawConfig.body_params;
+                if (bodyObj && typeof bodyObj === 'object' && !Array.isArray(bodyObj)) {
+                    if (Object.keys(bodyObj).length > 0) {
+                        cleanedConfig.body_params = bodyObj;
+                    }
+                } else if (Array.isArray(bodyObj)) {
+                    const obj: any = {};
+                    bodyObj.forEach(p => { if (p?.key) obj[p.key] = p.value; });
+                    if (Object.keys(obj).length > 0) cleanedConfig.body_params = obj;
+                }
+            }
             if (rawConfig.fallback_message) {
                 cleanedConfig.fallback_message = rawConfig.fallback_message;
             }

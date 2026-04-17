@@ -4,6 +4,7 @@
  */
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useDebounce } from '@/hooks';
 import { Button, Typography, message, Modal, Empty, Input, Spin } from 'antd';
 import { PlusOutlined, SearchOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { fetchCategories, deleteCategory } from '@/services/category.service';
@@ -23,6 +24,7 @@ const { CATEGORIES: CATEGORIES_UI } = PAGE_HEADER_CONTENT;
 export default function CategoriesPage() {
     const [categories, setCategories] = useState<Category[]>([]);
     const [searchValue, setSearchValue] = useState('');
+    const debouncedSearch = useDebounce(searchValue, 300);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [categoryToEdit, setCategoryToEdit] = useState<Category | null>(null);
@@ -44,14 +46,14 @@ export default function CategoriesPage() {
     }, [loadCategories]);
 
     const filteredCategories = useMemo(() => {
-        const query = searchValue.trim().toLowerCase();
+        const query = debouncedSearch.trim().toLowerCase();
         if (!query) return categories;
         
         return categories.filter(cat => 
             cat.name.toLowerCase().includes(query) || 
             (cat.description ?? '').toLowerCase().includes(query)
         );
-    }, [categories, searchValue]);
+    }, [categories, debouncedSearch]);
 
     const handleCardAction = (actionKey: string, categoryId: number) => {
         const category = categories.find(

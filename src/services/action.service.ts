@@ -328,7 +328,7 @@ export async function updateActionDefinition(
              sanitized.configurations_json = sanitized.configurationsJson || {};
         }
 
-        const result = await apiClient.put<ActionDefinition>(API_ENDPOINTS.ACTIONS.UPDATE(actionDefinitionId), sanitized);
+        const result = await apiClient.patch<ActionDefinition>(API_ENDPOINTS.ACTIONS.UPDATE(actionDefinitionId), sanitized);
         return { success: true, data: result.data, message: result.message };
     } catch (error) {
         return { success: false, error: error instanceof Error ? error.message : 'Failed to update action definition' };
