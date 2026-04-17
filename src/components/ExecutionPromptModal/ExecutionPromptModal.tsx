@@ -61,6 +61,7 @@ export default function ExecutionPromptModal({ isOpen, onClose, versionId, nodes
             open={isOpen}
             onCancel={onClose}
             footer={null}
+            zIndex={2000}
             width={600}
             centered
             className="execution-prompt-modal"

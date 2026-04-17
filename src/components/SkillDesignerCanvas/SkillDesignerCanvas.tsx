@@ -101,23 +101,32 @@ export default function SkillDesignerCanvas() {
             // Edges that come from a named rule handle originate from a DecisionNode.
             // Must explicitly exclude "default" — Boolean("default") === true would
             // incorrectly tag the fallback path as a branch edge (amber vs grey).
-            const fromDecision = Boolean(params.sourceHandle) && params.sourceHandle !== 'default';
+            const fromDecision = Boolean(params.sourceHandle) && params.sourceHandle !== 'default' && params.sourceHandle !== 'src' && params.sourceHandle !== 'error';
+
+            // Edges from the action node's `error` handle route to the Error Node.
+            const isErrorPath = params.sourceHandle === 'error';
 
             setEdges((eds) => addEdge({
                 ...params,
                 id: edgeId,
                 type: 'smoothstep',
-                animated: false,
-                data: { fromDecision },
-                // Decision edges: amber + no generic arrow (DeletableEdge draws the diamond)
-                // Regular edges: grey arrow
+                animated: isErrorPath,
+                data: { fromDecision, isErrorPath },
                 markerEnd: fromDecision
                     ? undefined
-                    : { type: MarkerType.ArrowClosed, color: edgeColor },
-                style: {
-                    stroke: edgeColor,
-                    strokeWidth: fromDecision ? 2 : 1.5,
-                },
+                    : isErrorPath
+                        ? { type: MarkerType.ArrowClosed, color: '#EF4444' }
+                        : { type: MarkerType.ArrowClosed, color: edgeColor },
+                style: isErrorPath
+                    ? {
+                        stroke: '#EF4444',
+                        strokeWidth: 2,
+                        strokeDasharray: '6 3',
+                    }
+                    : {
+                        stroke: edgeColor,
+                        strokeWidth: fromDecision ? 2 : 1.5,
+                    },
             }, eds));
 
             if (versionId) {

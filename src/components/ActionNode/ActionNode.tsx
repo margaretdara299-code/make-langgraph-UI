@@ -89,10 +89,20 @@ export default function ActionNode({ id, data }: NodeProps<CanvasNode>) {
         </div>
       </div>
 
+      {/* Happy-path source handle (bottom-center) */}
       <Handle
         type="source"
         position={Position.Bottom}
+        id="src"
         className="modern-node-handle"
+      />
+
+      {/* Error-path source handle (right side) — routes to Error Node on action failure */}
+      <Handle
+        type="source"
+        position={Position.Right}
+        id="error"
+        className="modern-node-handle action-node__error-handle"
       />
     </div>
   );

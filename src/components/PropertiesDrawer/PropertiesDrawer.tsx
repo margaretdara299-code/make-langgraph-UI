@@ -152,6 +152,25 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             return;
         }
 
+        // For error nodes
+        if (selectedNode.type === 'error') {
+            const stored = versionId ? loadGraphFromStorage(versionId) : null;
+            const err = (stored?.nodes?.[selectedNode.id]?.data || selectedNode.data) as any;
+            const cfg = err.configurations || {};
+            form.setFieldsValue({
+                label: err.label || 'Error Handler',
+                enable_logging: cfg.enable_logging ?? true,
+                error_api_enabled: cfg.error_api_enabled ?? false,
+                error_api_url: cfg.error_api_url || '',
+                error_api_method: cfg.error_api_method || 'POST',
+                save_to_db: cfg.save_to_db ?? false,
+                send_notification: cfg.send_notification ?? false,
+                notification_channel: cfg.notification_channel || 'none',
+                notification_target: cfg.notification_target || '',
+            });
+            return;
+        }
+
         // For decision nodes: read from localStorage first, fallback to node.data
         if (selectedNode.type === 'decision') {
             const stored = versionId ? loadGraphFromStorage(versionId) : null;
@@ -310,6 +329,24 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                         custom_message: newValues.custom_message,
                         fail_status_code: newValues.fail_status_code,
                         fail_message: newValues.fail_message,
+                    },
+                };
+            } else if (selectedNode.type === 'error') {
+                updatedNode = {
+                    ...currentNode,
+                    data: {
+                        ...currentNode.data,
+                        label: newValues.label || 'Error Handler',
+                        configurations: {
+                            enable_logging: newValues.enable_logging ?? true,
+                            error_api_enabled: newValues.error_api_enabled ?? false,
+                            error_api_url: newValues.error_api_url || '',
+                            error_api_method: newValues.error_api_method || 'POST',
+                            save_to_db: newValues.save_to_db ?? false,
+                            send_notification: newValues.send_notification ?? false,
+                            notification_channel: newValues.notification_channel || 'none',
+                            notification_target: newValues.notification_target || '',
+                        },
                     },
                 };
             } else if (selectedNode.type === 'subflow') {
@@ -628,8 +665,9 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             const isDecision  = selectedNode.type === 'decision';
             const isEnd       = selectedNode.type === 'end';
             const isAction    = selectedNode.type === 'action';
+            const isError     = selectedNode.type === 'error';
 
-            const activeColor = isDecision ? '#f59e0b' : ((isStart || isEnd) ? '#10b981' : 'var(--accent)');
+            const activeColor = isDecision ? '#f59e0b' : isError ? '#EF4444' : ((isStart || isEnd) ? '#10b981' : 'var(--accent)');
 
             if (isLoadingAction) {
                 return (
@@ -678,6 +716,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                 <span className="properties-drawer__meta-value" style={{ fontWeight: 'bold', fontStyle: 'italic', fontSize: 'var(--text-sm)' }}>
                                                     {isStart     ? 'Workflow Entry'
                                                     : isEnd      ? 'Workflow Exit'
+                                                    : isError    ? 'Error Handler'
                                                     : isAction   ? 'Action'
                                                     : isDecision ? 'Router'
                                                     : isSubFlow  ? 'Group'
@@ -698,6 +737,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                     {isStart    ? 'START'
                                                     : isDecision ? 'DECISION'
                                                     : isEnd      ? 'END'
+                                                    : isError    ? 'ERR'
                                                     : isSubFlow  ? 'STRUCTURE'
                                                     : (nodeData?.capability || 'API').toUpperCase()}
                                                 </div>
@@ -839,6 +879,79 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                                 </Form.Item>
                                                             ) : null;
                                                         }}
+                                                    </Form.Item>
+                                                </>
+                                            ) : isError ? (
+                                                <>
+                                                    {/* ── Error Handler Configuration ── */}
+                                                    <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Logging</div>
+                                                    <Form.Item name="enable_logging" valuePropName="checked" label="Enable Logging">
+                                                        <Select options={[
+                                                            { label: 'Enabled (recommended)', value: true },
+                                                            { label: 'Disabled', value: false },
+                                                        ]} />
+                                                    </Form.Item>
+
+                                                    <div className="properties-drawer__divider" />
+                                                    <div className="properties-drawer__section-title">Error API</div>
+                                                    <Form.Item name="error_api_enabled" label="Call Error API">
+                                                        <Select options={[
+                                                            { label: 'No', value: false },
+                                                            { label: 'Yes', value: true },
+                                                        ]} />
+                                                    </Form.Item>
+                                                    <Form.Item noStyle shouldUpdate={(prev, cur) => prev.error_api_enabled !== cur.error_api_enabled}>
+                                                        {({ getFieldValue }) => getFieldValue('error_api_enabled') ? (
+                                                            <>
+                                                                <div className="properties-drawer__flex-row">
+                                                                    <Form.Item label="HTTP Method" name="error_api_method" style={{ minWidth: 120 }}>
+                                                                        <Select options={[
+                                                                            { label: 'POST', value: 'POST' },
+                                                                            { label: 'PUT', value: 'PUT' },
+                                                                            { label: 'GET', value: 'GET' },
+                                                                        ]} />
+                                                                    </Form.Item>
+                                                                    <Form.Item label="Error API URL" name="error_api_url" className="properties-drawer__flex-item">
+                                                                        <Input placeholder="https://api.example.com/errors" />
+                                                                    </Form.Item>
+                                                                </div>
+                                                            </>
+                                                        ) : null}
+                                                    </Form.Item>
+
+                                                    <div className="properties-drawer__divider" />
+                                                    <div className="properties-drawer__section-title">Persistence</div>
+                                                    <Form.Item name="save_to_db" label="Save Error to Database">
+                                                        <Select options={[
+                                                            { label: 'No', value: false },
+                                                            { label: 'Yes', value: true },
+                                                        ]} />
+                                                    </Form.Item>
+
+                                                    <div className="properties-drawer__divider" />
+                                                    <div className="properties-drawer__section-title">Notifications</div>
+                                                    <Form.Item name="send_notification" label="Send Notification">
+                                                        <Select options={[
+                                                            { label: 'No', value: false },
+                                                            { label: 'Yes', value: true },
+                                                        ]} />
+                                                    </Form.Item>
+                                                    <Form.Item noStyle shouldUpdate={(prev, cur) => prev.send_notification !== cur.send_notification}>
+                                                        {({ getFieldValue }) => getFieldValue('send_notification') ? (
+                                                            <>
+                                                                <Form.Item name="notification_channel" label="Channel">
+                                                                    <Select options={[
+                                                                        { label: 'Email', value: 'email' },
+                                                                        { label: 'Slack', value: 'slack' },
+                                                                        { label: 'Webhook', value: 'webhook' },
+                                                                        { label: 'None', value: 'none' },
+                                                                    ]} />
+                                                                </Form.Item>
+                                                                <Form.Item name="notification_target" label="Target (email / webhook URL / channel)">
+                                                                    <Input placeholder="e.g. #alerts or errors@company.com" />
+                                                                </Form.Item>
+                                                            </>
+                                                        ) : null}
                                                     </Form.Item>
                                                 </>
                                             ) : (
