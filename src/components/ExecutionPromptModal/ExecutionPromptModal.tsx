@@ -9,12 +9,13 @@ const { Title, Text } = Typography;
 interface ExecutionPromptModalProps {
     isOpen: boolean;
     onClose: () => void;
+    onExecutionStarted: () => void;
     versionId: string;
     nodes: Node[];
     edges: Edge[];
 }
 
-export default function ExecutionPromptModal({ isOpen, onClose, versionId, nodes, edges }: ExecutionPromptModalProps) {
+export default function ExecutionPromptModal({ isOpen, onClose, onExecutionStarted, versionId, nodes, edges }: ExecutionPromptModalProps) {
     const { runExecution } = useExecution();
 
     // Derive initial JSON from the Start node's initial_state variables
@@ -46,9 +47,10 @@ export default function ExecutionPromptModal({ isOpen, onClose, versionId, nodes
             return;
         }
 
-        // Let the provider handle execution
+        // Start execution, then signal parent to open debugger modal
         runExecution(versionId, nodes, edges, parsed);
-        onClose(); // Close the modal to reveal the animated canvas
+        onClose();
+        onExecutionStarted();
     };
 
     return (
@@ -64,7 +66,7 @@ export default function ExecutionPromptModal({ isOpen, onClose, versionId, nodes
             zIndex={2000}
             width={600}
             centered
-            className="execution-prompt-modal"            
+            className="execution-prompt-modal"
         >
             <div style={{ padding: '1rem 0' }}>
                 <Text type="secondary" style={{ display: 'block', marginBottom: '1rem' }}>

@@ -18,6 +18,7 @@ import type { Skill } from '@/interfaces';
 import CodeViewerModal from '@/components/CodeViewerModal/CodeViewerModal';
 import PublishStepperModal from '@/components/PublishStepperModal/PublishStepperModal';
 import ExecutionPromptModal from '@/components/ExecutionPromptModal/ExecutionPromptModal';
+import ExecutionDebuggerModal from '@/components/ExecutionDebuggerModal/ExecutionDebuggerModal';
 
 import './SkillDesignerHeader.css';
 
@@ -38,6 +39,7 @@ export default function SkillDesignerHeader() {
   const [isGeneratingCode, setIsGeneratingCode] = useState(false);
   const [isPublishOpen, setIsPublishOpen] = useState(false);
   const [isDebuggerOpen, setIsDebuggerOpen] = useState(false);
+  const [isExecutionDebuggerOpen, setIsExecutionDebuggerOpen] = useState(false);
 
   useEffect(() => {
     if (!skillId) return;
@@ -224,13 +226,22 @@ export default function SkillDesignerHeader() {
         }}
       />
       {versionId && (
-        <ExecutionPromptModal
-          isOpen={isDebuggerOpen}
-          onClose={() => setIsDebuggerOpen(false)}
-          versionId={versionId}
-          nodes={getNodes()}
-          edges={getEdges()}
-        />
+        <>
+          <ExecutionPromptModal
+            isOpen={isDebuggerOpen}
+            onClose={() => setIsDebuggerOpen(false)}
+            onExecutionStarted={() => setIsExecutionDebuggerOpen(true)}
+            versionId={versionId}
+            nodes={getNodes()}
+            edges={getEdges()}
+          />
+          <ExecutionDebuggerModal
+            isOpen={isExecutionDebuggerOpen}
+            onClose={() => setIsExecutionDebuggerOpen(false)}
+            nodes={getNodes()}
+            edges={getEdges()}
+          />
+        </>
       )}
     </header>
   );
