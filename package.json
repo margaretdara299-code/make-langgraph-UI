@@ -11,7 +11,8 @@
     "build:staging": "tsc -b && vite build --mode staging",
     "build:production": "tsc -b && vite build --mode production",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:prod": "vite build --mode production"
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
