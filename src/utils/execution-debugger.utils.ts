@@ -106,7 +106,7 @@ export function buildExecutionDebuggerNodes(
             ...node,
             data: {
                 ...(node.data ?? {}),
-                executionStatus: latestStep.status,
+                executionStatus: node.type === 'error' ? 'error' : latestStep.status,
             },
         } as CanvasNode;
     });
@@ -122,14 +122,22 @@ export function buildExecutionDebuggerEdges(
 
     const revealedSteps = getActiveExecutionSteps(steps);
 
+    if (revealedSteps.length === 0) {
+        return edges;
+    }
+
     return edges.map((edge) => {
         let isPathActive = false;
         let status: NodeExecutionStatus = 'idle';
+        let isErrorPath = Boolean((edge.data as { isErrorPath?: boolean } | undefined)?.isErrorPath);
 
         for (let index = 0; index < revealedSteps.length - 1; index += 1) {
             if (revealedSteps[index].node.id === edge.source && revealedSteps[index + 1].node.id === edge.target) {
                 isPathActive = true;
-                status = revealedSteps[index + 1].status;
+                status = revealedSteps[index + 1].node.type === 'error'
+                    ? 'error'
+                    : revealedSteps[index + 1].status;
+                isErrorPath = isErrorPath || revealedSteps[index + 1].node.type === 'error';
                 break;
             }
         }
@@ -140,8 +148,8 @@ export function buildExecutionDebuggerEdges(
                 animated: false,
                 style: {
                     ...edge.style,
-                    stroke: 'var(--color-border)',
-                    opacity: 0.3,
+                    opacity: 0.25,
+                    filter: 'none',
                 },
             };
         }
@@ -181,6 +189,7 @@ export function buildExecutionDebuggerEdges(
                     ...edge.style,
                     stroke: 'var(--color-error)',
                     strokeWidth: 3,
+                    strokeDasharray: isErrorPath ? '6 3' : edge.style?.strokeDasharray,
                     opacity: 1,
                 },
             };

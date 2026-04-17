@@ -9,6 +9,61 @@ import { engineService } from '@/services';
 import { message } from 'antd';
 import type { ExecutedNodeStep, NodeExecutionTrace } from '@/interfaces';
 
+type TracedExecutionNode = { node: Node; trace?: NodeExecutionTrace };
+
+function ensureErrorHandlerStep(
+    sequence: TracedExecutionNode[],
+    nodes: Node[],
+    edges: Edge[],
+    nodeResponsesData: Record<string, any>
+) {
+    if (sequence.some((item) => item.node.type === 'error')) {
+        return sequence;
+    }
+
+    const failedIndex = sequence.findIndex((item) => {
+        if (item.trace?.status === 'error') return true;
+        return nodeResponsesData?.[item.node.id]?.status === 'error';
+    });
+
+    if (failedIndex === -1) {
+        return sequence;
+    }
+
+    const failedNode = sequence[failedIndex].node;
+    const errorEdge = edges.find((edge) =>
+        edge.source === failedNode.id &&
+        nodes.some((node) => node.id === edge.target && node.type === 'error')
+    );
+
+    if (!errorEdge) {
+        return sequence;
+    }
+
+    const errorNode = nodes.find((node) => node.id === errorEdge.target && node.type === 'error');
+    if (!errorNode) {
+        return sequence;
+    }
+
+    const errorResponse = nodeResponsesData?.[errorNode.id];
+    const failedResponse = nodeResponsesData?.[failedNode.id];
+    const syntheticTrace: NodeExecutionTrace = {
+        nodeId: errorNode.id,
+        label: String(errorNode.data?.label || errorNode.id),
+        type: String(errorNode.type || 'error'),
+        status: 'error',
+        message: errorResponse?.message || failedResponse?.message || 'Error handler triggered',
+        input: errorResponse?.input,
+        data: errorResponse?.data ?? errorResponse ?? failedResponse?.data ?? failedResponse,
+    };
+
+    return [
+        ...sequence.slice(0, failedIndex + 1),
+        { node: errorNode, trace: syntheticTrace },
+        ...sequence.slice(failedIndex + 1),
+    ];
+}
+
 export function useExecutionStepper() {
     const [isExecuting, setIsExecuting] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
@@ -41,6 +96,7 @@ export function useExecutionStepper() {
         setSteps([]);
         setActiveStepIndex(-1);
         shouldStop.current = false;
+        let encounteredFailure = false;
 
         try {
             // 1. Call the backend
@@ -155,6 +211,8 @@ export function useExecutionStepper() {
                 }));
             }
 
+            tracedSequence = ensureErrorHandlerStep(tracedSequence, nodes, edges, nodeResponsesData);
+
             // Initialize all steps as idle
             setSteps(tracedSequence.map(({ node }) => ({
                 node,
@@ -204,15 +262,14 @@ export function useExecutionStepper() {
                     return step;
                 }));
 
-                if (!isSuccess) {
+                if (!isSuccess && !encounteredFailure) {
+                    encounteredFailure = true;
                     message.error(`Execution failed at: ${currentNode.data?.label || 'Node'}`);
-                    shouldStop.current = true;
-                    break;
                 }
             }
 
             // Execution Loop Finished
-            if (!shouldStop.current) {
+            if (!shouldStop.current && !encounteredFailure) {
                 message.success('Workflow finished executing!');
             }
             setIsSimulationDone(true);
