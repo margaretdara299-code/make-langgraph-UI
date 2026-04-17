@@ -16,8 +16,8 @@ export default function CategoryCard({ category, onAction }: CategoryCardProps) 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
-        <div 
-            className="category-card-premium" 
+        <div
+            className="category-card-premium"
             onDoubleClick={() => onAction?.('edit', (category as any).categoryId ?? category.category_id)}
         >
             <div className="cc-premium-header">
@@ -56,7 +56,7 @@ export default function CategoryCard({ category, onAction }: CategoryCardProps) 
                     type="secondary"
                     ellipsis={{ rows: 3, tooltip: true }}
                 >
-                    {category.description || 'Explore services and actions in this category.'}
+                    {category.description || ''}
                 </Paragraph>
             </div>
         </div>

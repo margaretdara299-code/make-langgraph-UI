@@ -101,13 +101,13 @@ export default function CreateCapabilityModal({
             }}
         >
             <div style={{ paddingTop: '12px' }}>
-                <Form form={form} layout="vertical" requiredMark="optional">
+                <Form form={form} layout="vertical" requiredMark>
                     <Form.Item
                         label="Capability Name"
                         name="name"
                         rules={[
-                            { required: true, message: 'Please enter a capability name' },
-                            { min: 3, message: 'Name must be at least 3 characters' }
+                            { required: true, whitespace: true, message: 'Capability name is required' },
+                            { min: 3, message: 'Name must be at least 3 characters long' }
                         ]}
                     >
                         <Input size="large" placeholder="e.g. RPA, API Integration, AI Triage" style={{ borderRadius: '4px' }} />

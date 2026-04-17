@@ -351,21 +351,19 @@ export default function CreateActionConfigStep({ draft, setDraft, form: external
                                     />
                                 </Form.Item>
 
-                                <div className="request-url-slot">
+                                <div className="request-url-slot" style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                    <span style={{ color: '#ef4444', marginRight: '4px', fontSize: '14px', fontWeight: 'bold', display: watchedUrl ? 'none' : 'inline' }}>*</span>
                                     <Form.Item
                                         name="url"
                                         rules={[{ required: true, message: 'URL is required.' }]}
-                                        style={{ position: 'relative' }}
+                                        style={{ position: 'relative', width: '100%', marginBottom: 0 }}
                                     >
-                                        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                                            <span style={{ color: '#ef4444', marginRight: '4px', fontSize: '14px', fontWeight: 'bold', display: watchedUrl ? 'none' : 'inline' }}>*</span>
-                                            <Input
-                                                size="large"
-                                                placeholder="https://api.example.com/v1/:id"
-                                                variant="borderless"
-                                                className="request-url-input"
-                                            />
-                                        </div>
+                                        <Input
+                                            size="large"
+                                            placeholder="https://api.example.com/v1/:id"
+                                            variant="borderless"
+                                            className="request-url-input"
+                                        />
                                     </Form.Item>
                                 </div>
 

@@ -21,35 +21,52 @@ export default function CreateActionReviewStep({ draft }: CreateActionStepProps)
             icon: draft.icon,
         };
 
-        const config = { ...(draft.configurations_json || {}) };
+        const rawConfig = draft.configurations_json || {};
+        const cleanedConfig: Record<string, any> = {};
 
-        // Clean up parameters (mimicking backend preparation)
-        ['query_params', 'header_params', 'body_params', 'path_params'].forEach(key => {
-            if (config[key]) {
-                const filtered = Object.fromEntries(
-                    Object.entries(config[key]).filter(([k, v]) =>
-                        k.trim() !== '' && v !== undefined && v !== null && String(v).trim() !== ''
-                    )
-                );
+        if (rawConfig.url) cleanedConfig.url = rawConfig.url;
+        if (rawConfig.method) cleanedConfig.method = rawConfig.method;
+        if (rawConfig.output_key) cleanedConfig.output_key = rawConfig.output_key;
 
-                if (Object.keys(filtered).length > 0) {
-                    config[key] = filtered;
-                } else {
-                    delete config[key];
-                }
+        ['path_params', 'query_params', 'header_params'].forEach(paramType => {
+            const paramObj = rawConfig[paramType];
+            if (paramObj && typeof paramObj === 'object' && !Array.isArray(paramObj)) {
+                if (Object.keys(paramObj).length > 0) cleanedConfig[paramType] = paramObj;
+            } else if (Array.isArray(paramObj)) {
+                const obj: any = {};
+                paramObj.forEach(p => { if (p?.key) obj[p.key] = p.value; });
+                if (Object.keys(obj).length > 0) cleanedConfig[paramType] = obj;
             }
         });
 
-        if (Array.isArray(config.input_keys)) {
-            const filtered = config.input_keys.filter((item: any) => item?.key && item.key.trim() !== '');
-            if (filtered.length > 0) {
-                config.input_keys = filtered;
-            } else {
-                delete config.input_keys;
+        const bodyType = rawConfig.body_params_type || 'form-data';
+        if (bodyType === 'raw' && rawConfig.body_params_raw) {
+            try {
+                cleanedConfig.body_params = JSON.parse(rawConfig.body_params_raw);
+            } catch {
+                cleanedConfig.body_params = rawConfig.body_params_raw;
+            }
+        } else if (bodyType === 'form-data') {
+            const bodyObj = rawConfig.body_params;
+            if (bodyObj && typeof bodyObj === 'object' && !Array.isArray(bodyObj)) {
+                if (Object.keys(bodyObj).length > 0) cleanedConfig.body_params = bodyObj;
+            } else if (Array.isArray(bodyObj)) {
+                const obj: any = {};
+                bodyObj.forEach(p => { if (p?.key) obj[p.key] = p.value; });
+                if (Object.keys(obj).length > 0) cleanedConfig.body_params = obj;
             }
         }
 
-        payload.configurations_json = config;
+        if (rawConfig.fallback_message) {
+            cleanedConfig.fallback_message = rawConfig.fallback_message;
+        }
+
+        if (Array.isArray(rawConfig.input_keys)) {
+            const filtered = rawConfig.input_keys.filter((item: any) => item?.key && item.key.trim() !== '');
+            if (filtered.length > 0) cleanedConfig.input_keys = filtered;
+        }
+
+        payload.configurations_json = cleanedConfig;
 
         // Strip undefined/null top-level fields
         return Object.fromEntries(

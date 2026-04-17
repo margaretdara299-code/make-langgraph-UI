@@ -16,8 +16,8 @@ export default function CapabilityCard({ capability, onAction }: CapabilityCardP
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
-        <div 
-            className="capability-card-premium" 
+        <div
+            className="capability-card-premium"
             onDoubleClick={() => onAction?.('edit', (capability as any).capabilityId ?? capability.capability_id)}
         >
             <div className="cc-premium-header">
@@ -56,7 +56,7 @@ export default function CapabilityCard({ capability, onAction }: CapabilityCardP
                     type="secondary"
                     ellipsis={{ rows: 3, tooltip: true }}
                 >
-                    {capability.description || 'Define high-level system behaviors and interfaces.'}
+                    {capability.description || ''}
                 </Paragraph>
             </div>
         </div>
