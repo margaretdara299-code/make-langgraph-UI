@@ -60,7 +60,7 @@ export function useSkillGraph() {
                     const edgeId = conn.id || key;
                     const sourceNode = reactFlowNodes.find((node) => node.id === conn.source);
                     const edgeColor = getNodeStrokeColor(sourceNode);
-                    
+
                     // We must map sourceHandle/targetHandle into our storage payload
                     // so the next Save doesn't erase them (posting null to backend).
                     connectionsMap[edgeId] = {
@@ -70,7 +70,7 @@ export function useSkillGraph() {
                         sourceHandle: conn.sourceHandle,
                         targetHandle: conn.targetHandle,
                     };
-                    
+
                     // A decision-branch edge originates from a named rule handle.
                     // Must explicitly exclude "default" — Boolean("default") === true,
                     // which would incorrectly style the fallback path as a branch edge.
@@ -85,18 +85,21 @@ export function useSkillGraph() {
                         type: 'smoothstep', // Ensure loaded edges use smoothstep (runs through DeletableEdge)
                         animated: false,
                         data: { fromDecision },
-                        markerEnd: fromDecision 
-                            ? undefined 
+                        markerEnd: fromDecision
+                            ? undefined
                             : { type: MarkerType.ArrowClosed, color: edgeColor },
-                        style: { 
+                        style: {
                             stroke: edgeColor,
-                            strokeWidth: fromDecision ? 2 : 1.5 
+                            strokeWidth: fromDecision ? 2 : 1.5
                         },
                     };
                 });
 
-                // For a brand-new graph, bootstrap only a Start node.
-                if (reactFlowNodes.length === 0) {
+                // Ensure at least one Start and one End node exist on load
+                const hasStart = reactFlowNodes.some((node: Node) => node.type === 'start');
+                const hasEnd = reactFlowNodes.some((node: Node) => node.type === 'end');
+
+                if (!hasStart) {
                     const startNodeId = 'start-node-auto';
                     const startNode: Node = {
                         id: startNodeId,
@@ -110,6 +113,27 @@ export function useSkillGraph() {
                     };
                     reactFlowNodes.push(startNode);
                     nodesMap[startNodeId] = startNode;
+                }
+
+                if (!hasEnd) {
+                    const endNodeId = 'end-node-auto';
+                    // We attempt to place it further down so it doesn't overlap immediately
+                    const maxY = reactFlowNodes.length > 0
+                        ? Math.max(...reactFlowNodes.map((node: Node) => node.position.y)) + 200
+                        : 600;
+
+                    const endNode: Node = {
+                        id: endNodeId,
+                        type: 'end',
+                        position: { x: 240, y: maxY },
+                        data: {
+                            label: 'End',
+                            category: 'termination',
+                            icon: 'flag',
+                        } as any,
+                    };
+                    reactFlowNodes.push(endNode);
+                    nodesMap[endNodeId] = endNode;
                 }
 
                 // Seed localStorage (replaces any stale data)
