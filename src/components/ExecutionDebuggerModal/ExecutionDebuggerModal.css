@@ -3,22 +3,63 @@
  * Left: Mini React Flow canvas | Middle: Input data | Right: Output data
  */
 
-.exec-debugger-modal-shell .ant-modal {
-    max-width: none !important;
+.exec-debugger-modal-root {
+    --exec-modal-gutter-x: clamp(16px, 3vw, 32px);
+    --exec-modal-gutter-y: clamp(16px, 2vh, 24px);
+    --exec-modal-max-height: calc(100vh - (var(--exec-modal-gutter-y) * 2));
+    overflow: hidden;
 }
 
-.exec-debugger-modal-shell .ant-modal-content {
+.exec-debugger-modal-root .ant-modal-wrap,
+.exec-debugger-modal-wrapper {
+    overflow: hidden !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 16px;
+}
+
+.exec-debugger-modal-root .ant-modal {
+    max-width: none !important;
+    width: min(1480px, calc(100vw - (var(--exec-modal-gutter-x) * 2))) !important;
+    margin: 0 auto !important;
+    padding-bottom: 0 !important;
+    top: 0;
+    height: var(--exec-modal-max-height);
+    max-height: var(--exec-modal-max-height);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.exec-debugger-modal-root .ant-modal-content {
     padding: 0 !important;
     overflow: hidden;
+    height: 100%;
+    max-height: 100%;
     border-radius: 16px;
     background: var(--bg-card);
     border: 1px solid var(--border-medium);
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
 }
 
-.exec-debugger-modal-shell .ant-modal-body {
+.exec-debugger-modal-container {
+    height: 100%;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.exec-debugger-modal-root .ant-modal-body,
+.exec-debugger-modal-ant-body {
     padding: 0 !important;
-    height: min(92vh, calc(100vh - 32px));
+    height: 100%;
+    flex: 1;
+    min-height: 0;
     overflow: hidden;
 }
 
@@ -34,6 +75,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    min-height: 0;
     animation: execSlideUp 0.35s ease;
 }
 
@@ -129,7 +171,7 @@
 /* ── Body — Three Pane Layout ── */
 .exec-debugger-body {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     flex: 1;
     overflow: hidden;
     min-height: 0;
@@ -143,6 +185,10 @@
     background: var(--bg-page);
 }
 
+.exec-debugger-canvas .exec-debugger-node--dimmed {
+    opacity: 0.25;
+}
+
 .exec-debugger-canvas .react-flow__controls {
     display: none;
 }
@@ -152,15 +198,52 @@
 }
 
 /* ── Middle + Right Panes ── */
-.exec-debugger-pane {
+.exec-debugger-io {
     display: flex;
     flex-direction: column;
     overflow: hidden;
     min-height: 0;
+    flex: 1;
+    background: var(--bg-card);
 }
 
-.exec-debugger-pane + .exec-debugger-pane {
+.exec-debugger-io__headers {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-bottom: 1px solid var(--border-medium);
+}
+
+.exec-debugger-io__headers > :last-child {
     border-left: 1px solid var(--border-medium);
+}
+
+.exec-debugger-io__scroll {
+    flex: 1;
+    height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: var(--space-1-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    min-height: 0;
+    overscroll-behavior: contain;
+    background:
+        linear-gradient(to right,
+            transparent 0,
+            transparent calc(50% - 0.5px),
+            var(--border-medium) calc(50% - 0.5px),
+            var(--border-medium) calc(50% + 0.5px),
+            transparent calc(50% + 0.5px)
+        );
+    background-clip: padding-box;
+}
+
+.exec-debugger-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-1);
+    align-items: stretch;
 }
 
 .exec-debugger-pane__header {
@@ -176,6 +259,10 @@
     flex-shrink: 0;
 }
 
+.exec-debugger-pane__header--io {
+    border-bottom: none;
+}
+
 .exec-debugger-pane__header-icon {
     font-size: 16px;
 }
@@ -188,15 +275,6 @@
     color: var(--color-success);
 }
 
-.exec-debugger-pane__scroll {
-    flex: 1;
-    overflow-y: auto;
-    padding: var(--space-1-5);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-}
-
 /* ── Node Step Card ── */
 .exec-step-card {
     background: var(--bg-card);
@@ -205,6 +283,10 @@
     overflow: hidden;
     animation: stepCardReveal 0.4s ease;
     transition: border-color 0.2s ease;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    height: auto;
 }
 
 @keyframes stepCardReveal {
@@ -223,6 +305,10 @@
 
 .exec-step-card--error {
     border-color: var(--color-error);
+}
+
+.exec-step-card--loading {
+    border-style: dashed;
 }
 
 .exec-step-card__header {
@@ -283,8 +369,8 @@
 
 .exec-step-card__body {
     padding: 8px 12px;
-    max-height: 200px;
-    overflow-y: auto;
+    flex: 1;
+    overflow: hidden;
 }
 
 .exec-step-card__message {
@@ -315,13 +401,25 @@
     padding: 4px 0;
 }
 
+.exec-step-card__skeleton .ant-skeleton {
+    width: 100%;
+}
+
+.exec-step-card__skeleton .ant-skeleton-title {
+    margin-top: 0;
+}
+
+.exec-step-card__skeleton .ant-skeleton-paragraph {
+    margin-bottom: 0;
+}
+
 /* ── Empty State ── */
 .exec-debugger-pane__empty {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    min-height: 220px;
     color: var(--text-subtle);
     font-size: var(--text-sm);
     gap: var(--space-1);
@@ -342,4 +440,40 @@
 @keyframes spinIcon {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
+}
+
+@media (max-width: 1180px) {
+    .exec-debugger-body {
+        grid-template-columns: 1fr;
+    }
+
+    .exec-debugger-canvas {
+        min-height: 280px;
+        border-right: none;
+        border-bottom: 1px solid var(--border-medium);
+    }
+}
+
+@media (max-width: 860px) {
+    .exec-debugger-modal-root .ant-modal {
+        width: calc(100vw - 24px) !important;
+    }
+
+    .exec-debugger-modal-root .ant-modal-content {
+        border-radius: 14px;
+    }
+
+    .exec-debugger-io__headers,
+    .exec-debugger-row {
+        grid-template-columns: 1fr;
+    }
+
+    .exec-debugger-io__headers > :last-child {
+        border-left: none;
+        border-top: 1px solid var(--border-medium);
+    }
+
+    .exec-debugger-io__scroll {
+        background: none;
+    }
 }

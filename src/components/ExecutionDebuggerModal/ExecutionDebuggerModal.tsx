@@ -6,40 +6,45 @@
  */
 
 import { useMemo, useRef, useEffect } from 'react';
-import { Modal } from 'antd';
+import { Modal, Skeleton } from 'antd';
 import {
     ReactFlow,
     Background,
     BackgroundVariant,
     ReactFlowProvider,
-    type Node,
-    type Edge,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { Zap, LogIn, LogOut, X, Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { NODE_TYPES, EDGE_TYPES } from '@/constants';
 import { useExecution } from '@/contexts';
-import type { CanvasNode } from '@/interfaces';
+import type {
+    DebuggerCanvasInnerProps,
+    ExecutionDebuggerBadgeIconMap,
+    ExecutionDebuggerModalProps,
+    ExecutionDebuggerStepCardProps,
+    ExecutionDebuggerStepCardSkeletonProps,
+} from '@/interfaces';
+import {
+    buildExecutionDebuggerEdges,
+    buildExecutionDebuggerNodes,
+    EXECUTION_DEBUGGER_PLACEHOLDER_ROWS,
+    getActiveExecutionSteps,
+    getExecutionStatusBadge,
+    getExecutionStepNodeLabel,
+    getExecutionStepNodeType,
+    getExecutionStepPayload,
+    getStepCardStatusClass,
+    hasRenderablePayload,
+} from '@/utils';
 
 import './ExecutionDebuggerModal.css';
 
-interface ExecutionDebuggerModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    nodes: Node[];
-    edges: Edge[];
-}
-
 /** Renders a single step card with node name, status dot, and JSON body */
-function StepCard({ step, type }: { step: any; type: 'input' | 'output' }) {
-    const nodeLabel = String(step.node?.data?.label || step.node?.type || 'Node');
-    const nodeType = String(step.node?.type || '');
-    const payload = type === 'input' ? step.inputData : step.outputData ?? step.data?.data ?? step.data;
-
-    const statusClass =
-        step.status === 'running' ? 'active' :
-        step.status === 'success' ? 'success' :
-        step.status === 'error' ? 'error' : '';
+function StepCard({ step, type, isLoading = false }: ExecutionDebuggerStepCardProps) {
+    const nodeLabel = getExecutionStepNodeLabel(step);
+    const nodeType = getExecutionStepNodeType(step);
+    const payload = getExecutionStepPayload(step, type);
+    const statusClass = getStepCardStatusClass(step.status);
 
     return (
         <div className={`exec-step-card ${statusClass ? `exec-step-card--${statusClass}` : ''}`}>
@@ -52,15 +57,23 @@ function StepCard({ step, type }: { step: any; type: 'input' | 'output' }) {
                 {step.message && (
                     <div className="exec-step-card__message">{step.message}</div>
                 )}
-                {payload && typeof payload === 'object' && Object.keys(payload).length > 0 ? (
+                {isLoading ? (
+                    <div className="exec-step-card__skeleton">
+                        <Skeleton
+                            active
+                            title={{ width: '42%' }}
+                            paragraph={{ rows: 4, width: ['100%', '96%', '92%', '84%'] }}
+                        />
+                    </div>
+                ) : hasRenderablePayload(payload) && typeof payload === 'object' ? (
                     <pre className="exec-step-card__json">
                         {JSON.stringify(payload, null, 2)}
                     </pre>
-                ) : payload && typeof payload === 'string' ? (
+                ) : hasRenderablePayload(payload) && typeof payload === 'string' ? (
                     <pre className="exec-step-card__json">{payload}</pre>
                 ) : (
                     <span className="exec-step-card__empty">
-                        {step.status === 'running' ? 'Awaiting response...' : 'No data available'}
+                        {type === 'output' && step.status === 'running' ? 'Output will appear when this node completes...' : 'No data available'}
                     </span>
                 )}
             </div>
@@ -68,86 +81,42 @@ function StepCard({ step, type }: { step: any; type: 'input' | 'output' }) {
     );
 }
 
+function StepCardSkeleton({ type }: ExecutionDebuggerStepCardSkeletonProps) {
+    return (
+        <div className="exec-step-card exec-step-card--loading">
+            <div className="exec-step-card__header">
+                <span className="exec-step-card__status-dot exec-step-card__status-dot--idle" />
+                <span className="exec-step-card__node-name">Loading {type}...</span>
+                <span className="exec-step-card__node-type">{type}</span>
+            </div>
+            <div className="exec-step-card__body">
+                <div className="exec-step-card__skeleton">
+                    <Skeleton
+                        active
+                        title={{ width: type === 'input' ? '46%' : '52%' }}
+                        paragraph={{ rows: 5, width: ['100%', '96%', '92%', '88%', '82%'] }}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+}
+
 /** The inner component that uses React Flow hooks (must be inside ReactFlowProvider) */
-function DebuggerCanvasInner({ nodes, edges }: { nodes: Node[]; edges: Edge[] }) {
+function DebuggerCanvasInner({ nodes, edges }: DebuggerCanvasInnerProps) {
     const { steps, isExecuting, isSimulationDone } = useExecution();
     const nodeTypes = useMemo(() => NODE_TYPES, []);
     const edgeTypes = useMemo(() => EDGE_TYPES, []);
 
-    // Transform nodes with execution status — same logic as SkillDesignerCanvas
-    const displayNodes = useMemo(() => {
-        if (!isExecuting && !isSimulationDone) return nodes;
+    const displayNodes = useMemo(
+        () => buildExecutionDebuggerNodes(nodes, steps, isExecuting, isSimulationDone),
+        [nodes, steps, isExecuting, isSimulationDone]
+    );
 
-        return nodes.map(node => {
-            const matchingSteps = steps.filter((step) => step.node.id === node.id && step.status !== 'idle');
-            const step = matchingSteps[matchingSteps.length - 1];
-
-            if (!step) {
-                return {
-                    ...node,
-                    style: { ...node.style, opacity: 0.25 }
-                } as CanvasNode;
-            }
-
-            return {
-                ...node,
-                data: {
-                    ...node.data,
-                    executionStatus: step.status
-                }
-            } as CanvasNode;
-        });
-    }, [nodes, steps, isExecuting, isSimulationDone]);
-
-    // Transform edges with execution status — same logic as SkillDesignerCanvas
-    const displayEdges = useMemo(() => {
-        if (!isExecuting && !isSimulationDone) return edges;
-
-        const revealedSteps = steps.filter((step) => step.status !== 'idle');
-
-        return edges.map(edge => {
-            let isPathActive = false;
-            let status = 'idle';
-
-            for (let i = 0; i < revealedSteps.length - 1; i++) {
-                if (revealedSteps[i].node.id === edge.source && revealedSteps[i + 1].node.id === edge.target) {
-                    isPathActive = true;
-                    status = revealedSteps[i + 1].status;
-                    break;
-                }
-            }
-
-            if (!isPathActive) {
-                return {
-                    ...edge,
-                    animated: false,
-                    style: { ...edge.style, stroke: 'var(--color-border)', opacity: 0.3 }
-                };
-            }
-
-            if (status === 'running') {
-                return {
-                    ...edge,
-                    animated: true,
-                    style: { ...edge.style, stroke: 'var(--color-primary)', strokeWidth: 3, opacity: 1, filter: 'drop-shadow(0 0 4px var(--color-primary))' }
-                };
-            } else if (status === 'success') {
-                return {
-                    ...edge,
-                    animated: false,
-                    style: { ...edge.style, stroke: 'var(--color-success)', strokeWidth: 3, opacity: 1 }
-                };
-            } else if (status === 'error') {
-                return {
-                    ...edge,
-                    animated: false,
-                    style: { ...edge.style, stroke: 'var(--color-error)', strokeWidth: 3, opacity: 1 }
-                };
-            }
-
-            return edge;
-        });
-    }, [edges, steps, isExecuting, isSimulationDone]);
+    const displayEdges = useMemo(
+        () => buildExecutionDebuggerEdges(edges, steps, isExecuting, isSimulationDone),
+        [edges, steps, isExecuting, isSimulationDone]
+    );
 
     return (
         <ReactFlow
@@ -170,20 +139,13 @@ function DebuggerCanvasInner({ nodes, edges }: { nodes: Node[]; edges: Edge[] })
 }
 
 export default function ExecutionDebuggerModal({ isOpen, onClose, nodes, edges }: ExecutionDebuggerModalProps) {
-    const { steps, isExecuting, isSimulationDone, resetStepper } = useExecution();
-    const inputScrollRef = useRef<HTMLDivElement>(null);
-    const outputScrollRef = useRef<HTMLDivElement>(null);
+    const { steps, isExecuting, isFetching, isSimulationDone, resetStepper } = useExecution();
+    const timelineScrollRef = useRef<HTMLDivElement>(null);
 
-    // Auto-scroll panes as new cards appear
+    // Auto-scroll timeline as new cards appear
     useEffect(() => {
-        if (inputScrollRef.current) {
-            inputScrollRef.current.scrollTop = inputScrollRef.current.scrollHeight;
-        }
-    }, [steps]);
-
-    useEffect(() => {
-        if (outputScrollRef.current) {
-            outputScrollRef.current.scrollTop = outputScrollRef.current.scrollHeight;
+        if (timelineScrollRef.current) {
+            timelineScrollRef.current.scrollTop = timelineScrollRef.current.scrollHeight;
         }
     }, [steps]);
 
@@ -192,30 +154,18 @@ export default function ExecutionDebuggerModal({ isOpen, onClose, nodes, edges }
         onClose();
     };
 
-    // Steps that have started (running, success, error) — for input pane
-    const activeSteps = useMemo(() =>
-        steps.filter(s => s.status !== 'idle'),
-    [steps]);
+    const activeSteps = useMemo(() => getActiveExecutionSteps(steps), [steps]);
 
-    // Steps that have completed — for output pane
-    const completedSteps = useMemo(() =>
-        steps.filter(s => s.status === 'success' || s.status === 'error'),
-    [steps]);
+    const badgeIcons = useMemo<ExecutionDebuggerBadgeIconMap>(() => ({
+        loading: <Loader2 size={12} className="spin-icon" />,
+        success: <CheckCircle2 size={12} />,
+        error: <XCircle size={12} />,
+    }), []);
 
-    // Header badge
-    const statusBadge = useMemo(() => {
-        if (isExecuting) {
-            return { label: 'Executing...', className: 'exec-debugger-header__badge--running', icon: <Loader2 size={12} className="spin-icon" /> };
-        }
-        const hasError = steps.some(s => s.status === 'error');
-        if (isSimulationDone && hasError) {
-            return { label: 'Failed', className: 'exec-debugger-header__badge--error', icon: <XCircle size={12} /> };
-        }
-        if (isSimulationDone) {
-            return { label: 'Completed', className: 'exec-debugger-header__badge--done', icon: <CheckCircle2 size={12} /> };
-        }
-        return { label: 'Initializing...', className: 'exec-debugger-header__badge--running', icon: <Loader2 size={12} className="spin-icon" /> };
-    }, [isExecuting, isSimulationDone, steps]);
+    const statusBadge = useMemo(
+        () => getExecutionStatusBadge(isExecuting, isSimulationDone, steps),
+        [isExecuting, isSimulationDone, steps]
+    );
 
     if (!isOpen) return null;
 
@@ -225,11 +175,13 @@ export default function ExecutionDebuggerModal({ isOpen, onClose, nodes, edges }
             onCancel={handleClose}
             footer={null}
             closable={false}
-            centered
             destroyOnHidden
-            width="calc(100vw - 32px)"
-            className="exec-debugger-modal-shell"
-            style={{ top: 16, maxWidth: 'none', paddingBottom: 0 }}
+            rootClassName="exec-debugger-modal-root"
+            classNames={{
+                wrapper: 'exec-debugger-modal-wrapper',
+                container: 'exec-debugger-modal-container',
+                body: 'exec-debugger-modal-ant-body',
+            }}
         >
             <div className="exec-debugger-modal">
                 {/* ── Header ── */}
@@ -240,7 +192,7 @@ export default function ExecutionDebuggerModal({ isOpen, onClose, nodes, edges }
                     </div>
                     <div className="exec-debugger-header__status">
                         <span className={`exec-debugger-header__badge ${statusBadge.className}`}>
-                            {statusBadge.icon}
+                            {badgeIcons[statusBadge.icon]}
                             {statusBadge.label}
                         </span>
                         <button className="exec-debugger-header__close-btn" onClick={handleClose} title="Close">
@@ -258,41 +210,45 @@ export default function ExecutionDebuggerModal({ isOpen, onClose, nodes, edges }
                         </ReactFlowProvider>
                     </div>
 
-                    {/* Middle: Input Data */}
-                    <div className="exec-debugger-pane">
-                        <div className="exec-debugger-pane__header">
-                            <LogIn size={16} className="exec-debugger-pane__header-icon exec-debugger-pane__header-icon--input" />
-                            Input
+                    {/* Middle + Right: Aligned Input / Output Timeline */}
+                    <div className="exec-debugger-io">
+                        <div className="exec-debugger-io__headers">
+                            <div className="exec-debugger-pane__header exec-debugger-pane__header--io">
+                                <LogIn size={16} className="exec-debugger-pane__header-icon exec-debugger-pane__header-icon--input" />
+                                Input
+                            </div>
+                            <div className="exec-debugger-pane__header exec-debugger-pane__header--io">
+                                <LogOut size={16} className="exec-debugger-pane__header-icon exec-debugger-pane__header-icon--output" />
+                                Output
+                            </div>
                         </div>
-                        <div className="exec-debugger-pane__scroll" ref={inputScrollRef}>
-                            {activeSteps.length > 0 ? (
+                        <div className="exec-debugger-io__scroll" ref={timelineScrollRef}>
+                            {isFetching && activeSteps.length === 0 ? (
+                                EXECUTION_DEBUGGER_PLACEHOLDER_ROWS.map((idx) => (
+                                    <div className="exec-debugger-row" key={`loading-${idx}`}>
+                                        <StepCardSkeleton type="input" />
+                                        <StepCardSkeleton type="output" />
+                                    </div>
+                                ))
+                            ) : activeSteps.length > 0 ? (
                                 activeSteps.map((step, idx) => (
-                                    <StepCard key={`input-${step.node.id}-${idx}`} step={step} type="input" />
+                                    <div className="exec-debugger-row" key={`row-${step.node.id}-${idx}`}>
+                                        <StepCard
+                                            step={step}
+                                            type="input"
+                                            isLoading={step.status === 'running' && !hasRenderablePayload(step.inputData)}
+                                        />
+                                        <StepCard
+                                            step={step}
+                                            type="output"
+                                            isLoading={step.status === 'running'}
+                                        />
+                                    </div>
                                 ))
                             ) : (
                                 <div className="exec-debugger-pane__empty">
                                     <LogIn size={32} className="exec-debugger-pane__empty-icon" />
                                     Waiting for execution to begin...
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Right: Output Data */}
-                    <div className="exec-debugger-pane">
-                        <div className="exec-debugger-pane__header">
-                            <LogOut size={16} className="exec-debugger-pane__header-icon exec-debugger-pane__header-icon--output" />
-                            Output
-                        </div>
-                        <div className="exec-debugger-pane__scroll" ref={outputScrollRef}>
-                            {completedSteps.length > 0 ? (
-                                completedSteps.map((step, idx) => (
-                                    <StepCard key={`output-${step.node.id}-${idx}`} step={step} type="output" />
-                                ))
-                            ) : (
-                                <div className="exec-debugger-pane__empty">
-                                    <LogOut size={32} className="exec-debugger-pane__empty-icon" />
-                                    Output will appear as nodes complete...
                                 </div>
                             )}
                         </div>
