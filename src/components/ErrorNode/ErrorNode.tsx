@@ -19,7 +19,7 @@ import type { NodeProps } from '@xyflow/react';
 import type { CanvasNode } from '@/interfaces';
 import { removeNodeFromStorage } from '@/services/skillGraphStorage.service';
 import { getNodeTheme } from '@/utils';
-import '../ActionNode/ActionNode.css';
+import '../ModernNode/ModernNode.css';
 import './ErrorNode.css';
 
 export default function ErrorNode({ id, data }: NodeProps<CanvasNode>) {
