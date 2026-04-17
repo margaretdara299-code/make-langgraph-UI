@@ -111,17 +111,17 @@ export default function SkillDesignerCanvas() {
                 ...params,
                 id: edgeId,
                 type: 'smoothstep',
-                animated: isErrorPath,
+                animated: false,
                 data: { fromDecision, isErrorPath },
                 markerEnd: fromDecision
                     ? undefined
                     : isErrorPath
-                        ? { type: MarkerType.ArrowClosed, color: '#EF4444' }
+                        ? { type: MarkerType.ArrowClosed, color: 'var(--color-error)' }
                         : { type: MarkerType.ArrowClosed, color: edgeColor },
                 style: isErrorPath
                     ? {
-                        stroke: '#EF4444',
-                        strokeWidth: 2,
+                        stroke: 'var(--color-error)',
+                        strokeWidth: 1.5,
                         strokeDasharray: '6 3',
                     }
                     : {
@@ -157,7 +157,7 @@ export default function SkillDesignerCanvas() {
 
         return nodes.map(node => {
             const step = steps.find(s => s.node.id === node.id);
-            
+
             // If the node wasn't executed in this simulation, dim it
             if (!step) {
                 return {
@@ -185,13 +185,13 @@ export default function SkillDesignerCanvas() {
 
             for (let i = 0; i < steps.length - 1; i++) {
                 // If this edge connects an executed sequence step to the exact next executed sequence step
-                if (steps[i].node.id === edge.source && steps[i+1].node.id === edge.target) {
+                if (steps[i].node.id === edge.source && steps[i + 1].node.id === edge.target) {
                     // Additionally, if the edge is a rule branch (Decision node), we check if the path used the exact handle
                     // The backend `useExecutionStepper` doesn't explicitly return the handle used. 
                     // However, we know step[i+1] is the target. If an edge connects them, it's the executed path.
                     // This creates a perfect visual chain for the paths actually taken.
                     isPathActive = true;
-                    status = steps[i+1].status;
+                    status = steps[i + 1].status;
                     break;
                 }
             }

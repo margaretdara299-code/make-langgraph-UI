@@ -18,10 +18,23 @@ export default function DecisionNode({ id, data }: NodeProps<CanvasNode>) {
      * the number of rule handles changes.
      */
     useLayoutEffect(() => {
-        const timeout = setTimeout(() => {
+        // Recalculate more than once so handle bounds stay correct inside
+        // animated containers like the Execution Debugger modal.
+        const frameId = window.requestAnimationFrame(() => {
+            updateNodeInternals(id);
+        });
+        const timeout = window.setTimeout(() => {
             updateNodeInternals(id);
         }, 50);
-        return () => clearTimeout(timeout);
+        const delayedTimeout = window.setTimeout(() => {
+            updateNodeInternals(id);
+        }, 400);
+
+        return () => {
+            window.cancelAnimationFrame(frameId);
+            window.clearTimeout(timeout);
+            window.clearTimeout(delayedTimeout);
+        };
     }, [rules.length, id, updateNodeInternals]);
 
     // Total slots = one per rule + 1 default.

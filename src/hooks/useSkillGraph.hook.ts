@@ -59,6 +59,7 @@ export function useSkillGraph() {
                 const reactFlowEdges: Edge[] = Object.entries(connectionsObj).map(([key, conn]: [string, any]) => {
                     const edgeId = conn.id || key;
                     const sourceNode = reactFlowNodes.find((node) => node.id === conn.source);
+                    const targetNode = reactFlowNodes.find((node) => node.id === conn.target);
                     const edgeColor = getNodeStrokeColor(sourceNode);
 
                     // We must map sourceHandle/targetHandle into our storage payload
@@ -74,7 +75,10 @@ export function useSkillGraph() {
                     // A decision-branch edge originates from a named rule handle.
                     // Must explicitly exclude "default" — Boolean("default") === true,
                     // which would incorrectly style the fallback path as a branch edge.
-                    const fromDecision = Boolean(conn.sourceHandle) && conn.sourceHandle !== 'default';
+                    const fromDecision = Boolean(conn.sourceHandle)
+                        && conn.sourceHandle !== 'default'
+                        && conn.sourceHandle !== 'error';
+                    const isErrorPath = conn.sourceHandle === 'error' || targetNode?.type === 'error';
 
                     return {
                         id: edgeId,
@@ -84,13 +88,16 @@ export function useSkillGraph() {
                         targetHandle: conn.targetHandle,
                         type: 'smoothstep', // Ensure loaded edges use smoothstep (runs through DeletableEdge)
                         animated: false,
-                        data: { fromDecision },
+                        data: { fromDecision, isErrorPath },
                         markerEnd: fromDecision
                             ? undefined
-                            : { type: MarkerType.ArrowClosed, color: edgeColor },
+                            : isErrorPath
+                                ? { type: MarkerType.ArrowClosed, color: 'var(--color-error)' }
+                                : { type: MarkerType.ArrowClosed, color: edgeColor },
                         style: {
-                            stroke: edgeColor,
-                            strokeWidth: fromDecision ? 2 : 1.5
+                            stroke: isErrorPath ? 'var(--color-error)' : edgeColor,
+                            strokeWidth: fromDecision ? 2 : 1.5,
+                            ...(isErrorPath ? { strokeDasharray: '6 3' } : {}),
                         },
                     };
                 });

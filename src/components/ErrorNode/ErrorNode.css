@@ -22,6 +22,10 @@
     animation: none;
 }
 
+.error-node-card.node-exec-error {
+    box-shadow: 0 0 0 4px var(--color-error-bg), 0 0 20px var(--color-error) !important;
+}
+
 /* Target handle — inverted red dot so it reads clearly */
 .error-node-handle {
     width: 10px;
