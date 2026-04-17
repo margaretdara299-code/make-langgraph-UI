@@ -1,3 +1,4 @@
+import { Handle, Position } from '@xyflow/react';
 import { Settings2 } from 'lucide-react';
 import IconRenderer from "@/components/IconRenderer/IconRenderer";
 import type { NodeProps } from "@xyflow/react";
@@ -5,6 +6,7 @@ import type { CanvasNode } from "@/interfaces";
 import { CAPABILITY_LABELS } from "@/constants";
 import { getNodeTheme } from "@/utils";
 import ModernNode from "../ModernNode/ModernNode";
+import "../ModernNode/ModernNode.css";
 
 export default function ActionNode({ id, data }: NodeProps<CanvasNode>) {
   const nodeData = data;
@@ -32,6 +34,14 @@ export default function ActionNode({ id, data }: NodeProps<CanvasNode>) {
           fallback={<Settings2 size={13} />}
         />
       }
-    />
+    >
+      {/* Error-path source handle (right side) — routes to Error Node on action failure */}
+      <Handle
+        type="source"
+        position={Position.Right}
+        id="error"
+        className="modern-node-handle action-node__error-handle"
+      />
+    </ModernNode>
   );
 }
