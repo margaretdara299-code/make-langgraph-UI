@@ -156,28 +156,9 @@ export default function useCanvasDragDrop(
                         label: data.label || 'Error Handler',
                         category: 'structure',
                         icon: 'ShieldAlert',
-                        // Error payload shape — populated at runtime by the backend
-                        error_payload: {
-                            failed_node_id: '',
-                            failed_node_name: '',
-                            error_message: '',
-                            error_type: '',
-                            stack_trace: '',
-                            request_payload: null,
-                            response_payload: null,
-                            workflow_state: null,
-                            timestamp: '',
-                        },
-                        // User-configurable error handling options
                         configurations: {
-                            enable_logging: true,
-                            error_api_enabled: false,
-                            error_api_url: '',
+                            error_api_url:    '',
                             error_api_method: 'POST',
-                            save_to_db: false,
-                            send_notification: false,
-                            notification_channel: 'none',
-                            notification_target: '',
                         },
                     } as any,
                 };
