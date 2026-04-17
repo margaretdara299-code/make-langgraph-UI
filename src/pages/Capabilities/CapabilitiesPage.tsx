@@ -4,6 +4,7 @@
  */
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useDebounce } from '@/hooks';
 import { Button, Typography, message, Modal, Empty } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { fetchCapabilities, deleteCapability } from '@/services';
@@ -24,6 +25,7 @@ const { CAPABILITIES } = PAGE_HEADER_CONTENT;
 export default function CapabilitiesPage() {
     const [capabilities, setCapabilities] = useState<Capability[]>([]);
     const [searchValue, setSearchValue] = useState('');
+    const debouncedSearch = useDebounce(searchValue, 300);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [capabilityToEdit, setCapabilityToEdit] = useState<Capability | null>(null);
@@ -46,14 +48,14 @@ export default function CapabilitiesPage() {
 
     /** Filter logic */
     const filteredCapabilities = useMemo(() => {
-        const query = searchValue.trim().toLowerCase();
+        const query = debouncedSearch.trim().toLowerCase();
         if (!query) return capabilities;
         
         return capabilities.filter(cap => 
             cap.name.toLowerCase().includes(query) || 
             (cap.description ?? '').toLowerCase().includes(query)
         );
-    }, [capabilities, searchValue]);
+    }, [capabilities, debouncedSearch]);
 
     /** Standard handler for card actions */
     const handleAction = async (actionKey: string, capabilityId: number, capability: Capability) => {
@@ -145,7 +147,7 @@ export default function CapabilitiesPage() {
                 isEditMode={!!capabilityToEdit}
                 capabilityToEdit={capabilityToEdit}
                 onClose={() => setIsModalOpen(false)}
-                onSuccess={() => { 
+                onCreated={() => { 
                     setIsModalOpen(false); 
                     loadCapabilities(); 
                 }}

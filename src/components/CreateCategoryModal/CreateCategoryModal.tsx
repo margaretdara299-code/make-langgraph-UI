@@ -97,20 +97,20 @@ export default function CreateCategoryModal({
             </div>
 
             <div>
-                <Form form={form} layout="vertical" requiredMark={false}>
+                <Form form={form} layout="vertical" requiredMark>
                     <Form.Item
                         label="Category Name"
                         name="name"
                         rules={[
-                            { required: true, message: 'Please enter a category name' },
-                            { min: 3, message: 'Name must be at least 3 characters' }
+                            { required: true, whitespace: true, message: 'Category name is required' },
+                            { min: 3, message: 'Name must be at least 3 characters long' }
                         ]}
                     >
                         <Input placeholder="e.g. AI & NLP, Automation" />
                     </Form.Item>
                     <Form.Item label="Description" name="description">
                         <TextArea 
-                            placeholder="(optional)" 
+                            placeholder="What is this category for?" 
                             rows={4} 
                             showCount
                             maxLength={200}

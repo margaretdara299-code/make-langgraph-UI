@@ -45,7 +45,7 @@ export default function ExecutionPromptModal({ isOpen, onClose, versionId, nodes
             message.error("Invalid JSON input");
             return;
         }
-        
+
         // Let the provider handle execution
         runExecution(versionId, nodes, edges, parsed);
         onClose(); // Close the modal to reveal the animated canvas
@@ -64,27 +64,28 @@ export default function ExecutionPromptModal({ isOpen, onClose, versionId, nodes
             width={600}
             centered
             className="execution-prompt-modal"
+            zIndex={2000}
         >
             <div style={{ padding: '1rem 0' }}>
                 <Text type="secondary" style={{ display: 'block', marginBottom: '1rem' }}>
                     Pass initial contextual data into the workflow run. This simulates an external event (like a webhook or API call) providing state to the Workflow Entry node.
                 </Text>
-                <Input.TextArea 
-                    value={initialDataStr} 
-                    onChange={(e) => setInitialDataStr(e.target.value)} 
-                     
-                    style={{ 
-                        fontFamily: 'monospace', 
-                        marginBottom: '1.5rem', 
-                        fontSize: 'var(--text-sm)', 
-                        padding: '12px', 
-                        borderRadius: '8px',                        
+                <Input.TextArea
+                    value={initialDataStr}
+                    onChange={(e) => setInitialDataStr(e.target.value)}
+
+                    style={{
+                        fontFamily: 'monospace',
+                        marginBottom: '1.5rem',
+                        fontSize: 'var(--text-sm)',
+                        padding: '12px',
+                        borderRadius: '8px',
                     }}
                 />
-                <Button 
-                    type="primary" 
-                    size="large" 
-                    onClick={handleStart} 
+                <Button
+                    type="primary"
+                    size="large"
+                    onClick={handleStart}
                     icon={<PlayCircleOutlined />}
                     style={{ width: '100%' }}
                 >
