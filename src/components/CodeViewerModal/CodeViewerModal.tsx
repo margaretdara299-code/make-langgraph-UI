@@ -1,28 +1,27 @@
 /**
- * CodeViewerModal - Displays generated code in a VS Code-style interface.
- * Supports both single file and multiple files with file tree navigation.
+ * CodeViewerModal — VS Code-style read-only code viewer.
+ *
+ * Orchestrates all state and composes sub-components:
+ *   FileSidebar → EditorTabs + ViewerToolbar → EditorPane / SplitEditorLayout
+ *
+ * Props are fully backward-compatible with the original interface.
+ * No footer, no title bar — all chrome lives inside the modal body.
  */
 
-import { useCallback, useEffect, useMemo, useState, type Key } from "react";
-import { Modal, Button, Input, Tree, Typography, message } from "antd";
-import {
-  CopyOutlined,
-  DownloadOutlined,
-} from "@ant-design/icons";
-import Editor from "@monaco-editor/react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Modal } from "antd";
 import type { CodeViewerModalProps } from "@/interfaces";
-import {
-  createZipBlob,
-  downloadBlob,
-  getFileExtension,
-  getLanguageFromFileName,
-  getMimeTypeFromFileName,
-  getFilePresentation
-} from "@/utils/file.utils";
+
+import FileSidebar from "./FileSidebar";
+import EditorTabs from "./EditorTabs";
+import EditorPane from "./EditorPane";
+import SplitEditorLayout from "./SplitEditorLayout";
+import ViewerToolbar from "./ViewerToolbar";
+
 import "./CodeViewerModal.css";
 
-const { Text } = Typography;
-
+/** Maximum number of open tabs before oldest is evicted */
+const MAX_OPEN_TABS = 10;
 
 export default function CodeViewerModal({
   isOpen,
@@ -30,233 +29,246 @@ export default function CodeViewerModal({
   onClose,
   fileName = "workflow.py",
 }: CodeViewerModalProps) {
-  const [downloadName, setDownloadName] = useState(fileName);
-  const [selectedFile, setSelectedFile] = useState("");
-  const [isMobileView, setIsMobileView] = useState(false);
-
-  useEffect(() => {
-    const checkScreenSize = () => {
-      setIsMobileView(window.innerWidth < 768);
-    };
-
-    checkScreenSize();
-    window.addEventListener("resize", checkScreenSize);
-    return () => window.removeEventListener("resize", checkScreenSize);
-  }, []);
-
-  const files = useMemo(() => {
-    if (typeof code === "string") {
-      return { [fileName]: code };
-    }
-    return code || {};
+  // ─── Derived file map ───────────────────────────────────────────────────
+  const files = useMemo<Record<string, string>>(() => {
+    if (typeof code === "string") return { [fileName]: code };
+    return code ?? {};
   }, [code, fileName]);
 
   const fileNames = useMemo(() => Object.keys(files), [files]);
   const hasMultipleFiles = fileNames.length > 1;
 
-  const activeFileName = useMemo(() => {
-    if (selectedFile && files[selectedFile]) return selectedFile;
-    return fileNames[0] || "";
-  }, [files, fileNames, selectedFile]);
+  // ─── Core state ─────────────────────────────────────────────────────────
+  const [activeFile, setActiveFile] = useState<string>("");
+  const [splitFile, setSplitFile] = useState<string | null>(null);
+  const [openTabs, setOpenTabs] = useState<string[]>([]);
+  const [isSplitView, setIsSplitView] = useState(false);
+  const [theme, setTheme] = useState<"vs-dark" | "light">("vs-dark");
+  const [isMobileView, setIsMobileView] = useState(false);
 
-  const currentFileContent = activeFileName ? files[activeFileName] : "";
-
+  // ─── Responsive check ───────────────────────────────────────────────────
   useEffect(() => {
-    if (!isOpen) return;
+    const checkSize = () => setIsMobileView(window.innerWidth < 768);
+    checkSize();
+    window.addEventListener("resize", checkSize);
+    return () => window.removeEventListener("resize", checkSize);
+  }, []);
 
-    if (fileNames.length === 0) {
-      setSelectedFile("");
-      return;
-    }
-
-    if (!selectedFile || !files[selectedFile]) {
-      setSelectedFile(fileNames[0]);
-    }
-  }, [fileNames, files, isOpen, selectedFile]);
-
+  // ─── Initialize / reset when modal opens ────────────────────────────────
   useEffect(() => {
-    if (!isOpen || hasMultipleFiles) return;
-    setDownloadName(activeFileName || fileName);
-  }, [activeFileName, fileName, hasMultipleFiles, isOpen]);
+    if (!isOpen || fileNames.length === 0) return;
 
-  const handleDownload = useCallback(() => {
-    if (!activeFileName) return;
+    const firstFile = fileNames[0];
 
-    const defaultExtension = getFileExtension(activeFileName);
-    const finalFileName =
-      downloadName && getFileExtension(downloadName)
-        ? downloadName
-        : `${downloadName || activeFileName}${defaultExtension}`;
-
-    const blob = new Blob([currentFileContent], {
-      type: getMimeTypeFromFileName(activeFileName),
+    setActiveFile((prev) =>
+      prev && files[prev] ? prev : firstFile
+    );
+    setOpenTabs((prev) => {
+      const valid = prev.filter((t) => files[t]);
+      return valid.length > 0 ? valid : [firstFile];
     });
+    setSplitFile(null);
+    setIsSplitView(false);
+  }, [isOpen, fileNames, files]);
 
-    downloadBlob(blob, finalFileName);
-    message.success(`Downloaded ${finalFileName}`);
-  }, [activeFileName, currentFileContent, downloadName]);
+  // ─── Derived values ─────────────────────────────────────────────────────
+  const activeContent = activeFile ? (files[activeFile] ?? "") : "";
+  const resolvedSplitFile = isSplitView ? (splitFile ?? fileNames[1] ?? fileNames[0] ?? "") : "";
 
-  const handleDownloadAll = useCallback(() => {
-    if (fileNames.length === 0) return;
+  // ─── Tab helpers ────────────────────────────────────────────────────────
+  /**
+   * Open a file in the left/main pane.
+   * Adds to openTabs if not already present (evicts oldest if MAX exceeded).
+   */
+  const openFile = useCallback(
+    (name: string) => {
+      if (!files[name]) return;
+      setActiveFile(name);
+      setOpenTabs((prev) => {
+        if (prev.includes(name)) return prev;
+        const next = [...prev, name];
+        return next.length > MAX_OPEN_TABS ? next.slice(1) : next;
+      });
+    },
+    [files]
+  );
 
-    if (!hasMultipleFiles) {
-      handleDownload();
-      return;
-    }
+  /**
+   * Open a file in the right split pane.
+   * Automatically enables split view.
+   */
+  const openSplitFile = useCallback(
+    (name: string) => {
+      if (!files[name]) return;
+      setSplitFile(name);
+      setIsSplitView(true);
+    },
+    [files]
+  );
 
-    const zipBlob = createZipBlob(files);
-    downloadBlob(zipBlob, "generated-code.zip");
-    message.success(`Downloaded generated-code.zip (${fileNames.length} files)`);
-  }, [fileNames.length, files, hasMultipleFiles, handleDownload]);
+  /**
+   * Close a tab. Falls back to the previous or first available tab.
+   */
+  const closeTab = useCallback(
+    (name: string) => {
+      setOpenTabs((prev) => {
+        const next = prev.filter((t) => t !== name);
+        if (name === activeFile && next.length > 0) {
+          const closedIndex = prev.indexOf(name);
+          const fallback =
+            next[Math.min(closedIndex, next.length - 1)];
+          setActiveFile(fallback);
+        }
+        return next;
+      });
+    },
+    [activeFile]
+  );
 
-  const handleCopy = useCallback(async () => {
-    if (!currentFileContent) return;
-
-    try {
-      await navigator.clipboard.writeText(currentFileContent);
-      message.success("Code copied to clipboard");
-    } catch {
-      message.error("Failed to copy code");
-    }
-  }, [currentFileContent]);
-
-  const treeData = useMemo(() => {
-    return fileNames.map((name) => {
-      const presentation = getFilePresentation(name);
-      const isActive = activeFileName === name;
-
-      return {
-        title: (
-          <span className={`code-viewer-modal__tree-title ${isActive ? "is-active" : ""}`}>
-            <span className={`code-viewer-modal__tree-file-icon ${presentation.colorClass}`}>
-              {presentation.icon}
-            </span>
-            <span className="code-viewer-modal__tree-file-name">{name}</span>
-          </span>
-        ),
-        key: name,
-        isLeaf: true,
-      };
+  /**
+   * Toggle split view on/off.
+   * On disable, clear split state.
+   */
+  const handleSplitToggle = useCallback(() => {
+    setIsSplitView((prev) => {
+      if (prev) {
+        setSplitFile(null);
+      } else {
+        // Default right pane to second file or first file if only one
+        setSplitFile(fileNames[1] ?? fileNames[0] ?? "");
+      }
+      return !prev;
     });
-  }, [activeFileName, fileNames]);
+  }, [fileNames]);
 
-  const handleFileSelect = (selectedKeys: Key[]) => {
-    const nextFile = selectedKeys[0];
-    if (typeof nextFile === "string") {
-      setSelectedFile(nextFile);
-    }
-  };
+  /**
+   * Flip between vs-dark and light theme.
+   */
+  const handleThemeToggle = useCallback(() => {
+    setTheme((prev) => (prev === "vs-dark" ? "light" : "vs-dark"));
+  }, []);
 
-  const activePresentation = getFilePresentation(activeFileName);
+  // ─── Modal close ────────────────────────────────────────────────────────
+  const handleClose = useCallback(() => {
+    setIsSplitView(false);
+    setSplitFile(null);
+    onClose();
+  }, [onClose]);
 
+  // ─── Theme class ────────────────────────────────────────────────────────
+  const themeClass = theme === "vs-dark" ? "cv-modal--dark" : "cv-modal--light";
+  const titleText = hasMultipleFiles
+    ? `${fileNames.length} files`
+    : (activeFile || fileName);
+
+  // ─── Render ─────────────────────────────────────────────────────────────
   return (
     <Modal
-      title={`Generated Code${hasMultipleFiles ? ` (${fileNames.length} files)` : ""}`}
       open={isOpen}
-      onCancel={onClose}
-      width={isMobileView ? "95vw" : 1200}
+      onCancel={handleClose}
+      width={isMobileView ? "97vw" : 1200}
       centered
       destroyOnHidden
-      className="code-viewer-modal"
+      className={`cv-modal ${themeClass}`}
       zIndex={2000}
+      footer={null}
+      title={null}
       styles={{
         mask: {
-          backdropFilter: "blur(8px)",
-          background: "rgba(0, 0, 0, 0.45)",
+          backdropFilter: "blur(6px)",
+          background: "rgba(0, 0, 0, 0.5)",
         },
         body: { padding: 0 },
       }}
-      footer={
-        <div className="code-viewer-modal__footer">
-          <div className="code-viewer-modal__footer-actions">
-            {!hasMultipleFiles && (
-              <Input
-                value={downloadName}
-                onChange={(e) => setDownloadName(e.target.value)}
-                className="code-viewer-modal__download-input"
-                placeholder={activeFileName || "workflow.py"}
-              />
-            )}
-            <Button icon={<CopyOutlined />} onClick={handleCopy} disabled={!currentFileContent}>
-              Copy
-            </Button>
-            <Button
-              type="primary"
-              icon={<DownloadOutlined />}
-              onClick={hasMultipleFiles ? handleDownloadAll : handleDownload}
-              disabled={fileNames.length === 0}
-            >
-              {hasMultipleFiles ? "Download ZIP" : "Download"}
-            </Button>
-          </div>
-        </div>
-      }
     >
-      <div
-        className={[
-          "code-viewer-modal__content",
-          isMobileView ? "mobile-view" : "",
-          !hasMultipleFiles ? "code-viewer-modal__content--single" : "",
-        ].join(" ")}
-      >
-        {hasMultipleFiles && !isMobileView && (
-          <div className="code-viewer-modal__file-explorer">
-            <div className="code-viewer-modal__file-explorer-header">
-              <Text strong>Files</Text>
-            </div>
-            <Tree
-              blockNode
-              showIcon={false}
-              treeData={treeData}
-              selectedKeys={activeFileName ? [activeFileName] : []}
-              onSelect={handleFileSelect}
-              className="code-viewer-modal__file-tree"
+      <div className="cv-modal__root">
+
+        {/* ── Minimal title bar ───────────────────────────────────────── */}
+        <div className="cv-modal__titlebar" aria-label="Code viewer">
+          <span className="cv-modal__titlebar-text">
+            {titleText}
+          </span>
+        </div>
+
+        {/* ── Main body ───────────────────────────────────────────────── */}
+        <div className={`cv-modal__body${isMobileView ? " cv-modal__body--mobile" : ""}`}>
+
+          {/* Left sidebar — hidden on mobile */}
+          {hasMultipleFiles && !isMobileView && (
+            <FileSidebar
+              files={files}
+              activeFile={activeFile}
+              splitFile={splitFile}
+              isSplitView={isSplitView}
+              onFileClick={openFile}
+              onFileSplitClick={openSplitFile}
             />
-          </div>
-        )}
+          )}
 
-        {hasMultipleFiles && isMobileView && (
-          <div className="code-viewer-modal__mobile-file-selector">
-            <Text strong className="code-viewer-modal__mobile-file-label">
-              Select File
-            </Text>
-            <select
-              value={activeFileName}
-              onChange={(e) => setSelectedFile(e.target.value)}
-              className="code-viewer-modal__mobile-select"
-            >
-              {fileNames.map((name) => (
-                <option key={name} value={name}>
-                  {name}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
+          {/* Editor area */}
+          <div className="cv-modal__editor-area">
 
-        <div className="code-viewer-modal__editor-wrapper">
-          <div className="code-viewer-modal__editor-header">
-            <span className={`code-viewer-modal__tree-file-icon ${activePresentation.colorClass}`}>
-              {activePresentation.icon}
-            </span>
-            <Text code>{activeFileName || "No file"}</Text>
+            {/* Mobile file picker */}
+            {hasMultipleFiles && isMobileView && (
+              <div className="cv-modal__mobile-select-wrap">
+                <select
+                  className="cv-modal__mobile-select"
+                  value={activeFile}
+                  onChange={(e) => openFile(e.target.value)}
+                  aria-label="Select file"
+                >
+                  {fileNames.map((name) => (
+                    <option key={name} value={name}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* Tab bar + toolbar row */}
+            <div className="cv-modal__tab-row">
+              <EditorTabs
+                openTabs={openTabs}
+                activeFile={activeFile}
+                splitFile={splitFile}
+                isSplitView={isSplitView && !isMobileView}
+                onTabClick={openFile}
+                onTabClose={closeTab}
+                onSplitTabClick={openSplitFile}
+                onSplitClose={() => { setIsSplitView(false); setSplitFile(null); }}
+                files={files}
+              />
+              <ViewerToolbar
+                theme={theme}
+                isSplitView={isSplitView}
+                hasMultipleFiles={hasMultipleFiles}
+                activeFile={activeFile}
+                activeContent={activeContent}
+                files={files}
+                onThemeToggle={handleThemeToggle}
+                onSplitToggle={handleSplitToggle}
+              />
+            </div>
+
+            {/* Editor body — single or split */}
+            <div className="cv-modal__editor-body">
+              {isSplitView && !isMobileView && resolvedSplitFile ? (
+                <SplitEditorLayout
+                  leftFile={activeFile}
+                  rightFile={resolvedSplitFile}
+                  files={files}
+                  theme={theme}
+                />
+              ) : (
+                <EditorPane
+                  fileName={activeFile || fileName}
+                  content={activeContent}
+                  theme={theme}
+                />
+              )}
+            </div>
           </div>
-          <Editor
-            height={isMobileView ? "400px" : "500px"}
-            language={getLanguageFromFileName(activeFileName)}
-            value={currentFileContent}
-            theme="vs-dark"
-            options={{
-              readOnly: true,
-              minimap: { enabled: false },
-              fontSize: 'var(--text-sm)',
-              fontFamily: "'Fira Code', 'Fira Mono', monospace",
-              scrollBeyondLastLine: false,
-              wordWrap: "on",
-              padding: { top: 12 },
-              automaticLayout: true,
-            }}
-          />
         </div>
       </div>
     </Modal>
