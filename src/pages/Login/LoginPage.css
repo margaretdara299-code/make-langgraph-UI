@@ -141,6 +141,28 @@
   font-size: var(--text-sm);
   transition: all var(--motion-base) var(--ease-out);
   background: var(--bg-page);
+  color: var(--text-main) !important;
+  height: auto !important;
+  min-height: 48px !important;
+}
+
+.login-form .ant-input-lg,
+.login-form .ant-input-affix-wrapper-lg > input.ant-input {
+  color: var(--text-main) !important;
+  background: transparent;
+}
+
+.login-form .ant-input-affix-wrapper-lg > input.ant-input {
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  line-height: inherit !important;
+}
+
+.login-form .ant-input-lg::placeholder,
+.login-form .ant-input-password-large input::placeholder,
+.login-form .ant-input-affix-wrapper-lg input::placeholder {
+  color: var(--text-subtle) !important;
 }
 
 .login-form .ant-input-lg:focus,
@@ -148,6 +170,22 @@
   border-color: var(--accent) !important;
   box-shadow: 0 0 0 2px var(--accent-soft) !important;
   background: var(--bg-card);
+}
+
+/* Fix for Chrome's "ice blue" autofill background and placeholder-like text */
+.login-form input:-webkit-autofill,
+.login-form input:-webkit-autofill:hover, 
+.login-form input:-webkit-autofill:focus, 
+.login-form input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-page) inset !important;
+  -webkit-text-fill-color: var(--text-main) !important;
+  transition: background-color 5000s ease-in-out 0s;
+  background-clip: content-box !important;
+}
+
+.login-form .ant-input-affix-wrapper-focused input:-webkit-autofill,
+.login-form .ant-input-lg:focus:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-card) inset !important;
 }
 
 .login-forgot-wrap {

@@ -54,26 +54,26 @@ const TreeTitle: React.FC<{ node: any; isLeaf?: boolean }> = ({ node, isLeaf }) 
 
   return (
     <div className="node-library-item-wrapper" draggable onDragStart={onDragStart}>
-        <div className="node-library-item">
-            <div className="nli-icon" style={{ background: colors.bg }}>
-            {Icon ? (
-                <Icon size={12} color={colors.color} strokeWidth={2.4} />
-            ) : (
-                <span style={{ fontSize: '12px' }}>{node.icon && node.icon.length <= 2 ? node.icon : '🧩'}</span>
-            )}
-            </div>
-            <div className="nli-content">
-                <span className="nli-label">{node.label}</span>
-            </div>            
+      <div className="node-library-item">
+        <div className="nli-icon" style={{ background: colors.bg }}>
+          {Icon ? (
+            <Icon size={12} color={colors.color} strokeWidth={2.4} />
+          ) : (
+            <span style={{ fontSize: '12px' }}>{node.icon && node.icon.length <= 2 ? node.icon : '🧩'}</span>
+          )}
         </div>
+        <div className="nli-content">
+          <span className="nli-label">{node.label}</span>
+        </div>
+      </div>
     </div>
   );
 };
 
 export default function NodePalette() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [search, setSearch] = useState('');
-  
+
   const { actionsByCategory, isLoading: actionsLoading } = useDesignerActions();
   const { connectorGroups, isLoading: connectorsLoading } = useDesignerConnectors() as any;
 
@@ -91,9 +91,9 @@ export default function NodePalette() {
       ),
       key: `actions-${subCat}`,
       children: items.map((action: any) => ({
-        title: <TreeTitle node={{ 
-            id: action.id, type: 'action', label: action.name, 
-            icon: action.icon || 'Zap', category: 'Actions', subCategory: subCat 
+        title: <TreeTitle node={{
+          id: action.id, type: 'action', label: action.name,
+          icon: action.icon || 'Zap', category: 'Actions', subCategory: subCat
         }} isLeaf />,
         key: action.id,
         isLeaf: true
@@ -123,9 +123,9 @@ export default function NodePalette() {
       ),
       key: `connectors-${subCat}`,
       children: items.map((conn: any) => ({
-        title: <TreeTitle node={{ 
-            id: conn.id, type: 'data', label: conn.name, 
-            icon: conn.icon || 'Database', category: 'Connectors', subCategory: subCat 
+        title: <TreeTitle node={{
+          id: conn.id, type: 'data', label: conn.name,
+          icon: conn.icon || 'Database', category: 'Connectors', subCategory: subCat
         }} isLeaf />,
         key: conn.id,
         isLeaf: true
@@ -153,7 +153,7 @@ export default function NodePalette() {
   const onExpand = (keys: React.Key[], info: { node: any; expanded: boolean }) => {
     if (info.expanded) {
       const currentKey = info.node.key as string;
-      
+
       // 1. Handle Top-level categories (Actions, Connectors, Common)
       const topLevelKeys = ['cat-common', 'cat-actions', 'cat-connectors'];
       if (topLevelKeys.includes(currentKey)) {
@@ -164,7 +164,7 @@ export default function NodePalette() {
 
       // 2. Handle Sub-categories within Actions
       if (currentKey.startsWith('actions-')) {
-        const otherActionSubs = keys.filter(k => 
+        const otherActionSubs = keys.filter(k =>
           typeof k === 'string' && k.startsWith('actions-') && k !== currentKey
         );
         setExpandedKeys(keys.filter(k => !otherActionSubs.includes(k)));
@@ -173,7 +173,7 @@ export default function NodePalette() {
 
       // 3. Handle Sub-categories within Connectors
       if (currentKey.startsWith('connectors-')) {
-        const otherConnSubs = keys.filter(k => 
+        const otherConnSubs = keys.filter(k =>
           typeof k === 'string' && k.startsWith('connectors-') && k !== currentKey
         );
         setExpandedKeys(keys.filter(k => !otherConnSubs.includes(k)));
@@ -228,33 +228,33 @@ export default function NodePalette() {
                   <div className="node-group" style={{ marginBottom: 0 }}>
                     <div className="antd-tree-wrapper">
                       {/* <pre>{JSON.stringify(treeData, null, 2)}</pre> */}
-                        <Tree
-                            showLine={{ showLeafIcon: false }}
-                            switcherIcon={<ChevronDown size={14} />}
-                            expandedKeys={expandedKeys}
-                            onExpand={onExpand}
-                            expandAction="click"
-                            selectable={false}
-                            treeData={[
-                                {
-                                    title: (
-                                        <div className="gh-left">
-                                          <div className="cat-icon-wrapper"><Layout size={16} /></div>
-                                          <span className="group-label">Common</span>
-                                        </div>
-                                      ),
-                                    key: 'cat-common',
-                                    children: [
-                                        { title: <StartNodeItem />, key: 'common-start', isLeaf: true },
-                                        { title: <SubFlowNodeItem />, key: 'common-sub-flow', isLeaf: true },
-                                        { title: <DecisionNodeItem />, key: 'common-decision', isLeaf: true },
-                                        { title: <EndNodeItem />, key: 'common-end', isLeaf: true },
-                                        { title: <ErrorNodeItem />, key: 'common-error', isLeaf: true }
-                                    ]
-                                },
-                                ...treeData
-                            ]}
-                        />
+                      <Tree
+                        showLine={{ showLeafIcon: false }}
+                        switcherIcon={<ChevronDown size={14} />}
+                        expandedKeys={expandedKeys}
+                        onExpand={onExpand}
+                        expandAction="click"
+                        selectable={false}
+                        treeData={[
+                          {
+                            title: (
+                              <div className="gh-left">
+                                <div className="cat-icon-wrapper"><Layout size={16} /></div>
+                                <span className="group-label">Common</span>
+                              </div>
+                            ),
+                            key: 'cat-common',
+                            children: [
+                              { title: <StartNodeItem />, key: 'common-start', isLeaf: true },
+                              { title: <SubFlowNodeItem />, key: 'common-sub-flow', isLeaf: true },
+                              { title: <DecisionNodeItem />, key: 'common-decision', isLeaf: true },
+                              { title: <EndNodeItem />, key: 'common-end', isLeaf: true },
+                              { title: <ErrorNodeItem />, key: 'common-error', isLeaf: true }
+                            ]
+                          },
+                          ...treeData
+                        ]}
+                      />
                     </div>
                   </div>
                 </>
