@@ -2,7 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronDown, ChevronRight, Loader2, Plus, Minus,
-  Zap, Database, Layout
+  Zap, Database, Layout, Folder, BrainCircuit, FileText, Ban, Activity, Settings,
+  Hospital, Receipt, FileBarChart, RotateCcw
 } from 'lucide-react';
 import { Tree } from 'antd';
 import type { TreeDataNode } from 'antd';
@@ -15,6 +16,20 @@ import DecisionNodeItem from './DecisionNodeItem';
 import EndNodeItem from './EndNodeItem';
 import ErrorNodeItem from './ErrorNodeItem';
 import './NodePalette.css';
+
+const getSubCatIcon = (name: string) => {
+  const n = name.toLowerCase();
+  if (n.includes('hospital')) return <Hospital size={14} className="sub-cat-icon" />;
+  if (n.includes('bill')) return <Receipt size={14} className="sub-cat-icon" />;
+  if (n.includes('ai') || n.includes('llm')) return <BrainCircuit size={14} className="sub-cat-icon" />;
+  if (n.includes('report')) return <FileBarChart size={14} className="sub-cat-icon" />;
+  if (n.includes('recover')) return <RotateCcw size={14} className="sub-cat-icon" />;
+  if (n.includes('claim') || n.includes('cliam')) return <FileText size={14} className="sub-cat-icon" />;
+  if (n.includes('denial')) return <Ban size={14} className="sub-cat-icon" />;
+  if (n.includes('triage')) return <Activity size={14} className="sub-cat-icon" />;
+  if (n.includes('process') || n.includes('procees')) return <Settings size={14} className="sub-cat-icon" />;
+  return <Folder size={14} className="sub-cat-icon" />;
+};
 
 // Custom renderer for Tree Items to maintain Drag & Drop
 const TreeTitle: React.FC<{ node: any; isLeaf?: boolean }> = ({ node, isLeaf }) => {
@@ -68,7 +83,12 @@ export default function NodePalette() {
 
     // 1. Actions
     const actionChildren: TreeDataNode[] = Object.entries(actionsByCategory).map(([subCat, items]: [string, any]) => ({
-      title: <span className="sub-group-label">{subCat}</span>,
+      title: (
+        <div className="gh-left sub-gh-left">
+          {getSubCatIcon(subCat)}
+          <span className="sub-group-label">{subCat}</span>
+        </div>
+      ),
       key: `actions-${subCat}`,
       children: items.map((action: any) => ({
         title: <TreeTitle node={{ 
@@ -95,7 +115,12 @@ export default function NodePalette() {
 
     // 2. Connectors
     const connectorChildren: TreeDataNode[] = Object.entries(connectorGroups || {}).map(([subCat, items]: [string, any]) => ({
-      title: <span className="sub-group-label">{subCat}</span>,
+      title: (
+        <div className="gh-left sub-gh-left">
+          {getSubCatIcon(subCat)}
+          <span className="sub-group-label">{subCat}</span>
+        </div>
+      ),
       key: `connectors-${subCat}`,
       children: items.map((conn: any) => ({
         title: <TreeTitle node={{ 
@@ -202,6 +227,7 @@ export default function NodePalette() {
                   {/* Common Section (Fixed structure) */}
                   <div className="node-group" style={{ marginBottom: 0 }}>
                     <div className="antd-tree-wrapper">
+                      {/* <pre>{JSON.stringify(treeData, null, 2)}</pre> */}
                         <Tree
                             showLine={{ showLeafIcon: false }}
                             switcherIcon={<ChevronDown size={14} />}

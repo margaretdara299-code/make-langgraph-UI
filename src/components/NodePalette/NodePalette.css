@@ -30,7 +30,7 @@
   left: 20px;
   top: 72px;
   bottom: 24px;
-  width: 320px;
+  width: auto;
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 20px;
@@ -43,7 +43,7 @@
 }
 
 .sidebar-top {
-  padding: 24px 24px 16px;
+  padding: 20px 20px 0px;
   flex-shrink: 0;
 }
 
@@ -93,18 +93,29 @@
 .gh-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  padding: 0;
+}
+
+.sub-gh-left {
+  gap: 8px;
+}
+
+.sub-cat-icon {
+  color: #64748b;
+  display: flex;
+  align-items: center;
 }
 
 .cat-icon-wrapper {
-  width: 34px;
-  height: 34px;
+  width: 27px;
+  height: 27px;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f8fafc;
-  border: 1px solid #f1f5f9;
+  background: #f7f7f7;
+  border: 1px solid #e5e8ec;
   color: #334155;
 }
 
@@ -123,10 +134,14 @@
   font-family: inherit;
 }
 
+.antd-tree-container .ant-tree .ant-tree-treenode {
+  /* margin-bottom: 8px; Added spacing between nodes */
+}
+
 .antd-tree-container .ant-tree-node-content-wrapper {
   background: transparent !important;
   cursor: pointer !important;
-  padding: 0 !important;
+  padding-left: 0px !important;
   display: flex !important;
   align-items: center;
 }
@@ -140,7 +155,7 @@
   display: flex !important;
   align-items: center;
   justify-content: center;
-  width: 24px !important;
+  width: 25px !important;
   color: #838f9c !important;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
@@ -169,9 +184,10 @@
 
 .sub-group-label {
   font-size: 13px;
-  font-weight: 600;
-  color: #64748b;
-  margin-left: 4px;
+  font-weight: 500;
+  color: #334155;
+  margin-left: 0;
+  padding: 4px 0;
   font-family: var(--font-sans);
   display: inline-block;
   white-space: nowrap;
@@ -183,12 +199,13 @@
 
 .node-library-item-wrapper {
   width: 100%;
-  margin-left: -5px; /* Offset antd default child padding */
+  /* margin-left: -5px; Offset antd default child padding */
 }
 
 /* Ensure common section looks consistent */
 .antd-tree-wrapper {
-  margin-top: -10px;
+  margin-top: 4px;
+  padding: 0 8px 16px 8px;
 }
 
 /* Sub-groups */
@@ -230,15 +247,16 @@
 /* Node Items (Leafs) */
 .node-library-item-wrapper {
   position: relative;
-  padding-left: 4px; /* Reduced to let AntD handle the indent */
+  /* padding-left: 4px; Reduced to let AntD handle the indent */
   width: 100%;
 }
 
 .node-library-item {
   display: flex;
   align-items: center;
-  gap: 12px; /* Adjusted gap for a cleaner look */
-  padding: 6px 12px; /* Sleeker vertical padding */
+  gap: 8px; /* Adjusted gap for a cleaner look */
+  /* padding: 8px 12px; Better vertical padding for evenness */
+  padding: 5px 2px;
   border-radius: 8px; /* Slightly tighter radius for rows */
   cursor: grab;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
