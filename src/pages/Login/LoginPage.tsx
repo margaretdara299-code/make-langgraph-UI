@@ -30,7 +30,7 @@ export default function LoginPage() {
             <div className="login-left">
                 <div className="login-nav">
                     <div className="login-brand">
-                        <img src="/tensawLogo.jpg" alt="Tensaw Logo" className="brand-logo" />
+                        <img src={`${import.meta.env.VITE_IMAGE_BASE_URL || ''}/tensawLogo.jpg`} alt="Tensaw Logo" className="brand-logo" />
                         <span>Tensaw Skill Studio</span>
                     </div>
                     <a href="https://www.tensaw.com" target="_blank" rel="noopener noreferrer" className="login-nav-link">About Us →</a>

@@ -25,7 +25,7 @@ export default function Sidebar({
       <div className="brand-section">
         <div className="brand-logo-container">
           <img
-            src="/tensawLogo.jpg"
+            src={`${import.meta.env.VITE_IMAGE_BASE_URL || ''}/tensawLogo.jpg`}
             alt="Tensaw Logo"
             className="brand-logo-img"
           />
