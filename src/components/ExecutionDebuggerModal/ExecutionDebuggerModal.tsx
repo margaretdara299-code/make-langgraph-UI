@@ -5,16 +5,17 @@
  * Right:  Output data per node (progressive reveal)
  */
 
-import { useMemo, useRef, useEffect } from 'react';
+import { useMemo, useRef, useEffect, useState } from 'react';
 import { Modal, Skeleton } from 'antd';
 import {
     ReactFlow,
     Background,
     BackgroundVariant,
     ReactFlowProvider,
+    useReactFlow,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { Zap, LogIn, LogOut, X, Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import { Zap, LogIn, LogOut, X, Loader2, CheckCircle2, XCircle, Maximize2, Minimize2 } from 'lucide-react';
 import { NODE_TYPES, EDGE_TYPES } from '@/constants';
 import { useExecution } from '@/contexts';
 import type {
@@ -103,8 +104,9 @@ function StepCardSkeleton({ type }: ExecutionDebuggerStepCardSkeletonProps) {
 }
 
 /** The inner component that uses React Flow hooks (must be inside ReactFlowProvider) */
-function DebuggerCanvasInner({ nodes, edges }: DebuggerCanvasInnerProps) {
-    const { steps, isExecuting, isSimulationDone } = useExecution();
+function DebuggerCanvasInner({ nodes, edges, panelWidthToggle }: DebuggerCanvasInnerProps & { panelWidthToggle?: number }) {
+    const { steps, isExecuting, isSimulationDone, activeStepIndex } = useExecution();
+    const { fitView, setCenter, getZoom } = useReactFlow();
     const nodeTypes = useMemo(() => NODE_TYPES, []);
     const edgeTypes = useMemo(() => EDGE_TYPES, []);
 
@@ -117,6 +119,33 @@ function DebuggerCanvasInner({ nodes, edges }: DebuggerCanvasInnerProps) {
         () => buildExecutionDebuggerEdges(edges, steps, isExecuting, isSimulationDone),
         [edges, steps, isExecuting, isSimulationDone]
     );
+
+    // Smart Viewport Sync: Refit smoothly when panels are fully resized or initialized.
+    useEffect(() => {
+        // slight delay to let DOM settle after resize
+        const timeout = setTimeout(() => {
+            fitView({ duration: 600, padding: 0.3, maxZoom: 0.85 });
+        }, 50);
+        return () => clearTimeout(timeout);
+    }, [panelWidthToggle, fitView]);
+
+    // Smart Viewport Sync: Follow the active node
+    useEffect(() => {
+        if (activeStepIndex >= 0 && activeStepIndex < steps.length) {
+            const activeNodeId = steps[activeStepIndex].node.id;
+            const activeNode = displayNodes.find(n => n.id === activeNodeId);
+            
+            if (activeNode && activeNode.position) {
+                // Determine node center (approximate width 250px, height 80px based on standard nodes)
+                const nodeX = activeNode.position.x + 125; 
+                const nodeY = activeNode.position.y + 40;
+                
+                // Pan smoothly to center the node, keeping current zoom or zooming in slightly
+                const currentZoom = getZoom();
+                setCenter(nodeX, nodeY, { zoom: Math.max(currentZoom, 0.7), duration: 800 });
+            }
+        }
+    }, [activeStepIndex, displayNodes, setCenter, getZoom, steps]);
 
     return (
         <ReactFlow
@@ -139,8 +168,16 @@ function DebuggerCanvasInner({ nodes, edges }: DebuggerCanvasInnerProps) {
 }
 
 export default function ExecutionDebuggerModal({ isOpen, onClose, nodes, edges }: ExecutionDebuggerModalProps) {
-    const { steps, isExecuting, isFetching, isSimulationDone, resetStepper } = useExecution();
+    const { steps, isExecuting, isFetching, isSimulationDone, globalLogs, resetStepper } = useExecution();
     const timelineScrollRef = useRef<HTMLDivElement>(null);
+    
+    // Resizer State
+    const [ioWidth, setIoWidth] = useState(550); // Default 550px for the IO pane
+    const [isDragging, setIsDragging] = useState(false);
+
+    // Tab State
+    const [activeIoTab, setActiveIoTab] = useState<'node' | 'log'>('node');
+    const [isFullScreen, setIsFullScreen] = useState(false);
 
     // Auto-scroll timeline as new cards appear
     useEffect(() => {
@@ -148,6 +185,32 @@ export default function ExecutionDebuggerModal({ isOpen, onClose, nodes, edges }
             timelineScrollRef.current.scrollTop = timelineScrollRef.current.scrollHeight;
         }
     }, [steps]);
+
+    // Cleanup drag listeners
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            if (!isDragging) return;
+            // Calculate new width: distance from right edge
+            const newWidth = window.innerWidth - e.clientX;
+            // Enforce min/max constraints (min 300px, max 60% of viewport)
+            const clampedWidth = Math.max(300, Math.min(newWidth, window.innerWidth * 0.6));
+            setIoWidth(clampedWidth);
+        };
+
+        const handleMouseUp = () => {
+            if (isDragging) setIsDragging(false);
+        };
+
+        if (isDragging) {
+            window.addEventListener('mousemove', handleMouseMove);
+            window.addEventListener('mouseup', handleMouseUp);
+        }
+
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [isDragging]);
 
     const handleClose = () => {
         resetStepper();
@@ -176,14 +239,14 @@ export default function ExecutionDebuggerModal({ isOpen, onClose, nodes, edges }
             footer={null}
             closable={false}
             destroyOnHidden
-            rootClassName="exec-debugger-modal-root"
+            rootClassName={`exec-debugger-modal-root ${isFullScreen ? 'exec-debugger-modal-root--fullscreen' : ''}`}
             classNames={{
                 wrapper: 'exec-debugger-modal-wrapper',
                 container: 'exec-debugger-modal-container',
                 body: 'exec-debugger-modal-ant-body',
             }}
         >
-            <div className="exec-debugger-modal">
+            <div className={`exec-debugger-modal ${isDragging ? 'is-dragging' : ''}`}>
                 {/* ── Header ── */}
                 <div className="exec-debugger-header">
                     <div className="exec-debugger-header__title">
@@ -195,63 +258,112 @@ export default function ExecutionDebuggerModal({ isOpen, onClose, nodes, edges }
                             {badgeIcons[statusBadge.icon]}
                             {statusBadge.label}
                         </span>
-                        <button className="exec-debugger-header__close-btn" onClick={handleClose} title="Close">
-                            <X size={16} />
-                        </button>
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            <button className="exec-debugger-header__close-btn" onClick={() => setIsFullScreen(!isFullScreen)} title={isFullScreen ? "Exit Full Screen" : "Full Screen"}>
+                                {isFullScreen ? <Minimize2 size={15} /> : <Maximize2 size={15} />}
+                            </button>
+                            <button className="exec-debugger-header__close-btn" onClick={handleClose} title="Close">
+                                <X size={16} />
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 {/* ── Body — Three Panes ── */}
                 <div className="exec-debugger-body">
-                    {/* Left: Mini Canvas */}
-                    <div className="exec-debugger-canvas">
+                    {/* Left: Mini Canvas (flex-grow fills the rest) */}
+                    <div className="exec-debugger-canvas" style={{ flex: 1 }}>
                         <ReactFlowProvider>
-                            <DebuggerCanvasInner nodes={nodes} edges={edges} />
+                            <DebuggerCanvasInner nodes={nodes} edges={edges} panelWidthToggle={isDragging ? 0 : ioWidth} />
                         </ReactFlowProvider>
                     </div>
 
+                    {/* Resizer Handle */}
+                    <div 
+                        className="exec-debugger-resizer" 
+                        onMouseDown={() => setIsDragging(true)}
+                        title="Drag to resize"
+                        aria-hidden="true"
+                    >
+                        <div className="exec-debugger-resizer-line" />
+                    </div>
+
                     {/* Middle + Right: Aligned Input / Output Timeline */}
-                    <div className="exec-debugger-io">
-                        <div className="exec-debugger-io__headers">
-                            <div className="exec-debugger-pane__header exec-debugger-pane__header--io">
-                                <LogIn size={16} className="exec-debugger-pane__header-icon exec-debugger-pane__header-icon--input" />
-                                Input
-                            </div>
-                            <div className="exec-debugger-pane__header exec-debugger-pane__header--io">
-                                <LogOut size={16} className="exec-debugger-pane__header-icon exec-debugger-pane__header-icon--output" />
-                                Output
-                            </div>
+                    <div className="exec-debugger-io" style={{ width: `${ioWidth}px`, flex: `0 0 ${ioWidth}px` }}>
+                        
+                        {/* ── IO Tabs ── */}
+                        <div className="exec-debugger-io__tabs">
+                            <button 
+                                className={`exec-debugger-io-tab ${activeIoTab === 'node' ? 'exec-debugger-io-tab--active' : ''}`}
+                                onClick={() => setActiveIoTab('node')}
+                            >
+                                Action Monitor
+                            </button>
+                            <button 
+                                className={`exec-debugger-io-tab ${activeIoTab === 'log' ? 'exec-debugger-io-tab--active' : ''}`}
+                                onClick={() => setActiveIoTab('log')}
+                            >
+                                Monitor Log
+                            </button>
                         </div>
-                        <div className="exec-debugger-io__scroll" ref={timelineScrollRef}>
-                            {isFetching && activeSteps.length === 0 ? (
-                                EXECUTION_DEBUGGER_PLACEHOLDER_ROWS.map((idx) => (
-                                    <div className="exec-debugger-row" key={`loading-${idx}`}>
-                                        <StepCardSkeleton type="input" />
-                                        <StepCardSkeleton type="output" />
+
+                        {/* ── Content Area ── */}
+                        {activeIoTab === 'node' ? (
+                            <>
+                                <div className="exec-debugger-io__headers">
+                                    <div className="exec-debugger-pane__header exec-debugger-pane__header--io">
+                                        <LogIn size={16} className="exec-debugger-pane__header-icon exec-debugger-pane__header-icon--input" />
+                                        Input
                                     </div>
-                                ))
-                            ) : activeSteps.length > 0 ? (
-                                activeSteps.map((step, idx) => (
-                                    <div className="exec-debugger-row" key={`row-${step.node.id}-${idx}`}>
-                                        <StepCard
-                                            step={step}
-                                            type="input"
-                                            isLoading={step.status === 'running' && !hasRenderablePayload(step.inputData)}
-                                        />
-                                        <StepCard
-                                            step={step}
-                                            type="output"
-                                            isLoading={step.status === 'running'}
-                                        />
+                                    <div className="exec-debugger-pane__header exec-debugger-pane__header--io">
+                                        <LogOut size={16} className="exec-debugger-pane__header-icon exec-debugger-pane__header-icon--output" />
+                                        Output
                                     </div>
-                                ))
-                            ) : (
-                                <div className="exec-debugger-pane__empty">
-                                    <LogIn size={32} className="exec-debugger-pane__empty-icon" />
-                                    Waiting for execution to begin...
                                 </div>
-                            )}
-                        </div>
+                                <div className="exec-debugger-io__scroll" ref={timelineScrollRef}>
+                                    {isFetching && activeSteps.length === 0 ? (
+                                        EXECUTION_DEBUGGER_PLACEHOLDER_ROWS.map((idx) => (
+                                            <div className="exec-debugger-row" key={`loading-${idx}`}>
+                                                <StepCardSkeleton type="input" />
+                                                <StepCardSkeleton type="output" />
+                                            </div>
+                                        ))
+                                    ) : activeSteps.length > 0 ? (
+                                        activeSteps.map((step, idx) => (
+                                            <div className="exec-debugger-row" key={`row-${step.node.id}-${idx}`}>
+                                                <StepCard
+                                                    step={step}
+                                                    type="input"
+                                                    isLoading={step.status === 'running' && !hasRenderablePayload(step.inputData)}
+                                                />
+                                                <StepCard
+                                                    step={step}
+                                                    type="output"
+                                                    isLoading={step.status === 'running'}
+                                                />
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="exec-debugger-pane__empty">
+                                            <LogIn size={32} className="exec-debugger-pane__empty-icon" />
+                                            Waiting for execution to begin...
+                                        </div>
+                                    )}
+                                </div>
+                            </>
+                        ) : (
+                            <div className="exec-debugger-log-container">
+                                {globalLogs && globalLogs.length > 0 ? (
+                                    globalLogs.map((log, i) => (
+                                        <div key={i} className="exec-debugger-log-line">{log}</div>
+                                    ))
+                                ) : (
+                                    <div className="exec-debugger-pane__empty">
+                                        No logs captured for this execution.
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
