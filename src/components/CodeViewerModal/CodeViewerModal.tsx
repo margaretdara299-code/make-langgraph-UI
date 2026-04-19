@@ -4,8 +4,8 @@
  * Orchestrates all state and composes sub-components:
  *   FileSidebar → EditorTabs + ViewerToolbar → EditorPane / SplitEditorLayout
  *
- * Props are fully backward-compatible with the original interface.
- * No footer, no title bar — all chrome lives inside the modal body.
+ * Supports independent left and right editor groups (tabs and active file),
+ * just like real VS Code.
  */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -20,7 +20,7 @@ import ViewerToolbar from "./ViewerToolbar";
 
 import "./CodeViewerModal.css";
 
-/** Maximum number of open tabs before oldest is evicted */
+/** Maximum number of open tabs per group before oldest is evicted */
 const MAX_OPEN_TABS = 10;
 
 export default function CodeViewerModal({
@@ -39,10 +39,15 @@ export default function CodeViewerModal({
   const hasMultipleFiles = fileNames.length > 1;
 
   // ─── Core state ─────────────────────────────────────────────────────────
-  const [activeFile, setActiveFile] = useState<string>("");
-  const [splitFile, setSplitFile] = useState<string | null>(null);
-  const [openTabs, setOpenTabs] = useState<string[]>([]);
+  const [leftActiveFile, setLeftActiveFile] = useState<string>("");
+  const [rightActiveFile, setRightActiveFile] = useState<string>("");
+  
+  const [leftTabs, setLeftTabs] = useState<string[]>([]);
+  const [rightTabs, setRightTabs] = useState<string[]>([]);
+
   const [isSplitView, setIsSplitView] = useState(false);
+  const [focusedPane, setFocusedPane] = useState<"left" | "right">("left");
+
   const [theme, setTheme] = useState<"vs-dark" | "light">("vs-dark");
   const [isMobileView, setIsMobileView] = useState(false);
 
@@ -60,86 +65,157 @@ export default function CodeViewerModal({
 
     const firstFile = fileNames[0];
 
-    setActiveFile((prev) =>
-      prev && files[prev] ? prev : firstFile
-    );
-    setOpenTabs((prev) => {
+    setLeftActiveFile((prev) => (prev && files[prev] ? prev : firstFile));
+    setLeftTabs((prev) => {
       const valid = prev.filter((t) => files[t]);
       return valid.length > 0 ? valid : [firstFile];
     });
-    setSplitFile(null);
+
+    setRightActiveFile("");
+    setRightTabs([]);
     setIsSplitView(false);
+    setFocusedPane("left");
   }, [isOpen, fileNames, files]);
 
   // ─── Derived values ─────────────────────────────────────────────────────
-  const activeContent = activeFile ? (files[activeFile] ?? "") : "";
-  const resolvedSplitFile = isSplitView ? (splitFile ?? fileNames[1] ?? fileNames[0] ?? "") : "";
+  // Ensure the active file actually gets content. Fallback to empty if missing.
+  const activeLeftContent = leftActiveFile && files[leftActiveFile] ? files[leftActiveFile] : "";
+  const activeRightContent = rightActiveFile && files[rightActiveFile] ? files[rightActiveFile] : "";
+
+  // The active file conceptually used by download/copy toolbar (based on focused pane)
+  const currentFocusedFile = focusedPane === "right" && isSplitView ? rightActiveFile : leftActiveFile;
+  const currentFocusedContent = focusedPane === "right" && isSplitView ? activeRightContent : activeLeftContent;
 
   // ─── Tab helpers ────────────────────────────────────────────────────────
+
   /**
-   * Open a file in the left/main pane.
-   * Adds to openTabs if not already present (evicts oldest if MAX exceeded).
+   * Helper to add a tab to a list with max limit check.
    */
-  const openFile = useCallback(
+  const addTab = (prev: string[], name: string) => {
+    if (prev.includes(name)) return prev;
+    const next = [...prev, name];
+    return next.length > MAX_OPEN_TABS ? next.slice(1) : next;
+  };
+
+  /**
+   * Helper to remove a tab and fallback to another if active.
+   */
+  const removeTab = (
+    prevTabs: string[],
+    nameToRemove: string,
+    activeName: string,
+    setActiveFn: (name: string) => void
+  ) => {
+    const next = prevTabs.filter((t) => t !== nameToRemove);
+    if (nameToRemove === activeName) {
+      if (next.length > 0) {
+        const closedIndex = prevTabs.indexOf(nameToRemove);
+        const fallback = next[Math.min(closedIndex, next.length - 1)];
+        setActiveFn(fallback);
+      } else {
+        setActiveFn(""); // No tabs left
+      }
+    }
+    return next;
+  };
+
+  /**
+   * Open a file from the sidebar into the currently focused pane.
+   */
+  const openFileFromSidebar = useCallback(
     (name: string) => {
       if (!files[name]) return;
-      setActiveFile(name);
-      setOpenTabs((prev) => {
-        if (prev.includes(name)) return prev;
-        const next = [...prev, name];
-        return next.length > MAX_OPEN_TABS ? next.slice(1) : next;
-      });
+
+      if (focusedPane === "right" && isSplitView) {
+        setRightActiveFile(name);
+        setRightTabs((prev) => addTab(prev, name));
+      } else {
+        setLeftActiveFile(name);
+        setLeftTabs((prev) => addTab(prev, name));
+        // If split view but left was clicked, ensure focus returns to left
+        setFocusedPane("left");
+      }
+    },
+    [files, focusedPane, isSplitView]
+  );
+
+  /**
+   * Open a file in the left pane (e.g. from left tab strip).
+   */
+  const openLeftTab = useCallback(
+    (name: string) => {
+      if (!files[name]) return;
+      setLeftActiveFile(name);
+      setLeftTabs((prev) => addTab(prev, name));
+      setFocusedPane("left");
     },
     [files]
   );
 
   /**
-   * Open a file in the right split pane.
-   * Automatically enables split view.
+   * Open a file in the right pane (e.g. from right tab strip or 'open in split').
    */
-  const openSplitFile = useCallback(
+  const openRightTab = useCallback(
     (name: string) => {
       if (!files[name]) return;
-      setSplitFile(name);
+      setRightActiveFile(name);
+      setRightTabs((prev) => addTab(prev, name));
       setIsSplitView(true);
+      setFocusedPane("right");
     },
     [files]
   );
 
   /**
-   * Close a tab. Falls back to the previous or first available tab.
+   * Close a tab in the left pane.
    */
-  const closeTab = useCallback(
+  const closeLeftTab = useCallback(
     (name: string) => {
-      setOpenTabs((prev) => {
-        const next = prev.filter((t) => t !== name);
-        if (name === activeFile && next.length > 0) {
-          const closedIndex = prev.indexOf(name);
-          const fallback =
-            next[Math.min(closedIndex, next.length - 1)];
-          setActiveFile(fallback);
+      setLeftTabs((prev) => removeTab(prev, name, leftActiveFile, setLeftActiveFile));
+    },
+    [leftActiveFile]
+  );
+
+  /**
+   * Close a tab in the right pane.
+   * If it's the last right tab, collapse the split view automatically.
+   */
+  const closeRightTab = useCallback(
+    (name: string) => {
+      setRightTabs((prev) => {
+        const next = removeTab(prev, name, rightActiveFile, setRightActiveFile);
+        if (next.length === 0) {
+          setIsSplitView(false);
+          setFocusedPane("left");
         }
         return next;
       });
     },
-    [activeFile]
+    [rightActiveFile]
   );
 
   /**
-   * Toggle split view on/off.
-   * On disable, clear split state.
+   * Toggle split view on/off via toolbar.
    */
   const handleSplitToggle = useCallback(() => {
     setIsSplitView((prev) => {
       if (prev) {
-        setSplitFile(null);
+        // Turning off
+        setFocusedPane("left");
+        return false;
       } else {
-        // Default right pane to second file or first file if only one
-        setSplitFile(fileNames[1] ?? fileNames[0] ?? "");
+        // Turning on
+        // Real VS Code populates the new split with a copy of the currently active file
+        const fileToSplit = leftActiveFile || fileNames[0] || "";
+        if (fileToSplit) {
+          setRightActiveFile(fileToSplit);
+          setRightTabs((tabs) => addTab(tabs, fileToSplit));
+        }
+        setFocusedPane("right");
+        return true;
       }
-      return !prev;
     });
-  }, [fileNames]);
+  }, [leftActiveFile, fileNames]);
 
   /**
    * Flip between vs-dark and light theme.
@@ -151,7 +227,6 @@ export default function CodeViewerModal({
   // ─── Modal close ────────────────────────────────────────────────────────
   const handleClose = useCallback(() => {
     setIsSplitView(false);
-    setSplitFile(null);
     onClose();
   }, [onClose]);
 
@@ -159,7 +234,14 @@ export default function CodeViewerModal({
   const themeClass = theme === "vs-dark" ? "cv-modal--dark" : "cv-modal--light";
   const titleText = hasMultipleFiles
     ? `${fileNames.length} files`
-    : (activeFile || fileName);
+    : (leftActiveFile || fileName);
+
+  // ─── Sidebar selection mapping ──────────────────────────────────────────
+  // The sidebar should highlight the file active in the focused pane.
+  // We can treat leftActiveFile as the "active" and rightActiveFile as "splitActive"
+  // just so it shows both in the sidebar (VS Code highlights the focused one, but showing both is nice).
+  const sidebarSelectedFile = focusedPane === "right" && isSplitView ? rightActiveFile : leftActiveFile;
+  const sidebarSplitSelectedFile = focusedPane === "left" && isSplitView ? rightActiveFile : null;
 
   // ─── Render ─────────────────────────────────────────────────────────────
   return (
@@ -197,11 +279,11 @@ export default function CodeViewerModal({
           {hasMultipleFiles && !isMobileView && (
             <FileSidebar
               files={files}
-              activeFile={activeFile}
-              splitFile={splitFile}
+              activeFile={sidebarSelectedFile}
+              splitFile={sidebarSplitSelectedFile}
               isSplitView={isSplitView}
-              onFileClick={openFile}
-              onFileSplitClick={openSplitFile}
+              onFileClick={openFileFromSidebar}
+              onFileSplitClick={openRightTab}
             />
           )}
 
@@ -213,8 +295,8 @@ export default function CodeViewerModal({
               <div className="cv-modal__mobile-select-wrap">
                 <select
                   className="cv-modal__mobile-select"
-                  value={activeFile}
-                  onChange={(e) => openFile(e.target.value)}
+                  value={leftActiveFile}
+                  onChange={(e) => openLeftTab(e.target.value)}
                   aria-label="Select file"
                 >
                   {fileNames.map((name) => (
@@ -229,22 +311,23 @@ export default function CodeViewerModal({
             {/* Tab bar + toolbar row */}
             <div className="cv-modal__tab-row">
               <EditorTabs
-                openTabs={openTabs}
-                activeFile={activeFile}
-                splitFile={splitFile}
+                leftTabs={leftTabs}
+                leftActiveFile={leftActiveFile}
+                rightTabs={rightTabs}
+                rightActiveFile={rightActiveFile}
                 isSplitView={isSplitView && !isMobileView}
-                onTabClick={openFile}
-                onTabClose={closeTab}
-                onSplitTabClick={openSplitFile}
-                onSplitClose={() => { setIsSplitView(false); setSplitFile(null); }}
-                files={files}
+                focusedPane={focusedPane}
+                onLeftTabClick={openLeftTab}
+                onLeftTabClose={closeLeftTab}
+                onRightTabClick={openRightTab}
+                onRightTabClose={closeRightTab}
               />
               <ViewerToolbar
                 theme={theme}
                 isSplitView={isSplitView}
                 hasMultipleFiles={hasMultipleFiles}
-                activeFile={activeFile}
-                activeContent={activeContent}
+                activeFile={currentFocusedFile}
+                activeContent={currentFocusedContent}
                 files={files}
                 onThemeToggle={handleThemeToggle}
                 onSplitToggle={handleSplitToggle}
@@ -253,18 +336,22 @@ export default function CodeViewerModal({
 
             {/* Editor body — single or split */}
             <div className="cv-modal__editor-body">
-              {isSplitView && !isMobileView && resolvedSplitFile ? (
+              {isSplitView && !isMobileView && rightActiveFile ? (
                 <SplitEditorLayout
-                  leftFile={activeFile}
-                  rightFile={resolvedSplitFile}
+                  leftFile={leftActiveFile}
+                  rightFile={rightActiveFile}
                   files={files}
                   theme={theme}
+                  focusedPane={focusedPane}
+                  onLeftPaneFocus={() => setFocusedPane("left")}
+                  onRightPaneFocus={() => setFocusedPane("right")}
                 />
               ) : (
                 <EditorPane
-                  fileName={activeFile || fileName}
-                  content={activeContent}
+                  fileName={leftActiveFile || fileName}
+                  content={activeLeftContent}
                   theme={theme}
+                  isFocused={true}
                 />
               )}
             </div>

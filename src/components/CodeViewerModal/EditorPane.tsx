@@ -4,6 +4,7 @@
  * Enforces strict read-only via both `readOnly` and `domReadOnly`.
  * Uses Monaco URI models so file switching is instant (no remount/flicker).
  * Language is auto-detected from the file name.
+ * Supports focus tracking via `isFocused` + `onPaneFocus`.
  */
 
 import { useRef, useEffect } from "react";
@@ -20,6 +21,10 @@ interface EditorPaneProps {
   theme: "vs-dark" | "light";
   /** Optional pill label shown in corner (for split view) */
   label?: "LEFT" | "RIGHT";
+  /** Whether this pane is the currently focused editor group */
+  isFocused?: boolean;
+  /** Called when user clicks inside this pane — sets it as the focused group */
+  onPaneFocus?: () => void;
 }
 
 /** Monaco editor options — strictly read-only, no contextmenu edits */
@@ -58,6 +63,8 @@ export default function EditorPane({
   content,
   theme,
   label,
+  isFocused,
+  onPaneFocus,
 }: EditorPaneProps) {
   const editorRef = useRef<MonacoType.editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<typeof MonacoType | null>(null);
@@ -78,7 +85,6 @@ export default function EditorPane({
         uri
       );
     } else {
-      // Content may have changed; update the model value
       if (model.getValue() !== content) {
         model.setValue(content);
       }
@@ -110,9 +116,21 @@ export default function EditorPane({
   const language = getLanguageFromFileName(fileName);
 
   return (
-    <div className="cv-editor-pane">
+    <div
+      className={[
+        "cv-editor-pane",
+        isFocused ? "cv-editor-pane--focused" : "",
+      ].join(" ").trim()}
+      onClick={onPaneFocus}
+    >
       {label && (
-        <span className={`cv-editor-pane__label cv-editor-pane__label--${label.toLowerCase()}`}>
+        <span
+          className={[
+            "cv-editor-pane__label",
+            `cv-editor-pane__label--${label.toLowerCase()}`,
+            isFocused ? "cv-editor-pane__label--active" : "",
+          ].join(" ").trim()}
+        >
           {label}
         </span>
       )}

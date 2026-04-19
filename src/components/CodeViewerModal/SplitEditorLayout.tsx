@@ -1,22 +1,28 @@
 /**
  * SplitEditorLayout — Side-by-side dual read-only editor panes.
  *
- * Used when split view is enabled. Each pane receives its own EditorPane
- * instance with a LEFT / RIGHT label pill so the user knows which pane is which.
- * No drag-to-resize — keeps the implementation clean and dependency-free.
+ * Each pane is an independent editor group (VS Code model).
+ * Clicking inside a pane fires onLeftPaneFocus / onRightPaneFocus
+ * to move keyboard/sidebar focus to that group.
  */
 
 import EditorPane from "./EditorPane";
 
 interface SplitEditorLayoutProps {
-  /** File name to render in the left pane */
+  /** File name in the left editor group */
   leftFile: string;
-  /** File name to render in the right pane */
+  /** File name in the right editor group */
   rightFile: string;
   /** All files map */
   files: Record<string, string>;
   /** Monaco theme */
   theme: "vs-dark" | "light";
+  /** Which pane is currently the focused editor group */
+  focusedPane: "left" | "right";
+  /** Called when user clicks inside the left pane */
+  onLeftPaneFocus: () => void;
+  /** Called when user clicks inside the right pane */
+  onRightPaneFocus: () => void;
 }
 
 export default function SplitEditorLayout({
@@ -24,6 +30,9 @@ export default function SplitEditorLayout({
   rightFile,
   files,
   theme,
+  focusedPane,
+  onLeftPaneFocus,
+  onRightPaneFocus,
 }: SplitEditorLayoutProps) {
   const leftContent = files[leftFile] ?? "";
   const rightContent = files[rightFile] ?? "";
@@ -37,6 +46,8 @@ export default function SplitEditorLayout({
           content={leftContent}
           theme={theme}
           label="LEFT"
+          isFocused={focusedPane === "left"}
+          onPaneFocus={onLeftPaneFocus}
         />
       </div>
 
@@ -50,6 +61,8 @@ export default function SplitEditorLayout({
           content={rightContent}
           theme={theme}
           label="RIGHT"
+          isFocused={focusedPane === "right"}
+          onPaneFocus={onRightPaneFocus}
         />
       </div>
     </div>
