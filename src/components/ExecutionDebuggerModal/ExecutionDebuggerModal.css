@@ -46,6 +46,38 @@
     flex-direction: column;
 }
 
+/* ── Fullscreen Override ── */
+.exec-debugger-modal-root--fullscreen {
+    z-index: 9999 !important;
+}
+
+.exec-debugger-modal-root--fullscreen .ant-modal-mask {
+    z-index: 9999 !important;
+}
+
+.exec-debugger-modal-root--fullscreen .ant-modal-wrap,
+.exec-debugger-modal-root--fullscreen .exec-debugger-modal-wrapper {
+    padding: 0 !important;
+    z-index: 9999 !important;
+}
+
+.exec-debugger-modal-root--fullscreen .ant-modal {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    margin: 0 !important;
+    top: 0 !important;
+    padding: 0 !important;
+}
+
+.exec-debugger-modal-root--fullscreen .ant-modal-content {
+    border-radius: 0 !important;
+    border: none !important;
+    width: 100vw !important;
+    height: 100vh !important;
+}
+
 .exec-debugger-modal-container {
     height: 100%;
     max-height: 100%;
@@ -170,8 +202,8 @@
 
 /* ── Body — Three Pane Layout ── */
 .exec-debugger-body {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    display: flex;
+    flex-direction: row;
     flex: 1;
     overflow: hidden;
     min-height: 0;
@@ -197,14 +229,82 @@
     display: none;
 }
 
+/* ── Middle Resizer Handle ── */
+.exec-debugger-resizer {
+    width: 12px;
+    margin-left: -6px;
+    margin-right: -6px;
+    z-index: 10;
+    cursor: col-resize;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.exec-debugger-resizer-line {
+    width: 2px;
+    height: 100%;
+    background: var(--border-medium);
+    transition: background 0.2s ease, width 0.2s ease;
+}
+
+.exec-debugger-resizer:hover .exec-debugger-resizer-line,
+.exec-debugger-modal.is-dragging .exec-debugger-resizer-line {
+    background: var(--accent);
+    width: 4px;
+    border-radius: 2px;
+}
+
 /* ── Middle + Right Panes ── */
 .exec-debugger-io {
     display: flex;
     flex-direction: column;
     overflow: hidden;
     min-height: 0;
-    flex: 1;
     background: var(--bg-card);
+}
+
+/* ── IO Tabs ── */
+.exec-debugger-io__tabs {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border-medium);
+    background: var(--bg-header);
+    flex-shrink: 0;
+}
+
+.exec-debugger-io-tab {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.exec-debugger-io-tab:hover {
+    color: var(--text-main);
+    background: var(--surface-1);
+}
+
+.exec-debugger-io-tab--active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+}
+
+/* While dragging, disable pointer events on IO and Canvas to ensure window mousemove fires cleanly */
+.exec-debugger-modal.is-dragging {
+    user-select: none;
+}
+
+.exec-debugger-modal.is-dragging .exec-debugger-canvas,
+.exec-debugger-modal.is-dragging .exec-debugger-io {
+    pointer-events: none;
 }
 
 .exec-debugger-io__headers {
@@ -215,6 +315,29 @@
 
 .exec-debugger-io__headers > :last-child {
     border-left: 1px solid var(--border-medium);
+}
+
+/* ── Log Container ── */
+.exec-debugger-log-container {
+    flex: 1;
+    overflow-y: auto;
+    background: var(--surface-0);
+    padding: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-main);
+}
+
+.exec-debugger-log-line {
+    white-space: pre-wrap;
+    word-break: break-all;
+    padding: 2px 0;
+    margin-bottom: 4px;
+    border-bottom: 1px dashed var(--border-light);
+}
+
+.exec-debugger-log-line:last-child {
+    border-bottom: none;
 }
 
 .exec-debugger-io__scroll {

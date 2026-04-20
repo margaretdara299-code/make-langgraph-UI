@@ -12,24 +12,26 @@ import { CloseOutlined } from "@ant-design/icons";
 import { getFilePresentation } from "@/utils/file.utils";
 
 interface EditorTabsProps {
-  /** Ordered list of open tabs */
-  openTabs: string[];
+  /** Ordered list of open tabs for the left/main pane */
+  leftTabs: string[];
   /** Currently active file in the main/left pane */
-  activeFile: string;
+  leftActiveFile: string;
+  /** Ordered list of open tabs for the right/split pane */
+  rightTabs: string[];
   /** Currently active file in the right split pane */
-  splitFile: string | null;
+  rightActiveFile: string | null;
   /** Whether split view is active */
   isSplitView: boolean;
-  /** Click a tab to make it active */
-  onTabClick: (name: string) => void;
-  /** Close (×) a tab — removes it from left pane's open tab list */
-  onTabClose: (name: string) => void;
-  /** Click a tab in the right split strip to change the split file */
-  onSplitTabClick: (name: string) => void;
-  /** Close the entire right split pane (called when any right-tab × is clicked) */
-  onSplitClose: () => void;
-  /** All files map (for split tab strip population) */
-  files: Record<string, string>;
+  /** Currently focused pane */
+  focusedPane: "left" | "right";
+  /** Click a tab in the left pane to make it active */
+  onLeftTabClick: (name: string) => void;
+  /** Close (×) a tab in the left pane */
+  onLeftTabClose: (name: string) => void;
+  /** Click a tab in the right pane to make it active */
+  onRightTabClick: (name: string) => void;
+  /** Close (×) a tab in the right pane */
+  onRightTabClose: (name: string) => void;
 }
 
 /** Renders a single horizontal tab strip */
@@ -39,15 +41,17 @@ function TabStrip({
   onTabClick,
   onTabClose,
   stripId,
+  isFocused,
 }: {
   tabs: string[];
   activeTab: string;
   onTabClick: (name: string) => void;
   onTabClose?: (name: string) => void;
   stripId: string;
+  isFocused: boolean;
 }) {
   return (
-    <div className="cv-tabs__strip" role="tablist" id={stripId}>
+    <div className={`cv-tabs__strip${isFocused ? " cv-tabs__strip--focused" : ""}`} role="tablist" id={stripId}>
       {tabs.map((name) => {
         const { icon, colorClass } = getFilePresentation(name);
         const isActive = activeTab === name;
@@ -94,28 +98,29 @@ function TabStrip({
 }
 
 export default function EditorTabs({
-  openTabs,
-  activeFile,
-  splitFile,
+  leftTabs,
+  leftActiveFile,
+  rightTabs,
+  rightActiveFile,
   isSplitView,
-  onTabClick,
-  onTabClose,
-  onSplitTabClick,
-  onSplitClose,
-  files,
+  focusedPane,
+  onLeftTabClick,
+  onLeftTabClose,
+  onRightTabClick,
+  onRightTabClose,
 }: EditorTabsProps) {
-  const splitTabs = Object.keys(files);
 
   return (
     <div className={`cv-tabs${isSplitView ? " cv-tabs--split" : ""}`}>
       {/* Primary (left / single) tab strip */}
       <div className="cv-tabs__pane">
         <TabStrip
-          tabs={openTabs}
-          activeTab={activeFile}
-          onTabClick={onTabClick}
-          onTabClose={onTabClose}
+          tabs={leftTabs}
+          activeTab={leftActiveFile}
+          onTabClick={onLeftTabClick}
+          onTabClose={onLeftTabClose}
           stripId="cv-tabs-primary"
+          isFocused={focusedPane === "left" || !isSplitView}
         />
       </div>
 
@@ -124,16 +129,13 @@ export default function EditorTabs({
         <>
           <div className="cv-tabs__split-divider" aria-hidden="true" />
           <div className="cv-tabs__pane">
-            {/*
-              Right-side tabs get the same × button as left tabs.
-              Clicking × on any right tab collapses the split pane entirely.
-            */}
             <TabStrip
-              tabs={splitTabs}
-              activeTab={splitFile ?? ""}
-              onTabClick={onSplitTabClick}
-              onTabClose={() => onSplitClose()}
+              tabs={rightTabs}
+              activeTab={rightActiveFile ?? ""}
+              onTabClick={onRightTabClick}
+              onTabClose={onRightTabClose}
               stripId="cv-tabs-split"
+              isFocused={focusedPane === "right"}
             />
           </div>
         </>
