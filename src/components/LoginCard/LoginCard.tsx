@@ -22,7 +22,7 @@ export default function LoginCard({
             {/* Branding */}
             <div className="login-card__brand">
                 <img
-                    src={`${import.meta.env.VITE_IMAGE_BASE_URL || ''}/tensawLogo.jpg`}
+                    src={`${import.meta.env.VITE_BASE_URL || '/'}tensawLogo.jpg`}
                     alt="Tensaw Logo"
                     className="login-card__logo"
                 />

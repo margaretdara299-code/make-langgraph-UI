@@ -34,3 +34,9 @@ export const SUB_CAT_COLORS: Record<string, { bg: string; color: string }> = {
   'CONTENT MANAGEMENT': { bg: '#fffdf2', color: '#a16207' },
   'Common': { bg: '#f1f5f9', color: '#000000' },
 };
+
+/** AntD Tree indent unit width in px — used to align tree depth CSS classes */
+export const NP_INDENT   = 24;
+/** AntD switcher column width in px — used to offset content after the chevron */
+export const NP_SWITCHER = 25;
+
