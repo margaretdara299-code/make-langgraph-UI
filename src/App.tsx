@@ -16,7 +16,6 @@ import ActionCatalogPage from '@/pages/ActionCatalog/ActionCatalogPage';
 import ConnectorsPage from '@/pages/Connectors/ConnectorsPage';
 import CategoriesPage from '@/pages/Categories/CategoriesPage';
 import CapabilitiesPage from '@/pages/Capabilities/CapabilitiesPage';
-import VariablesPage from '@/pages/Variables/VariablesPage';
 import LoginPage from '@/pages/Login/LoginPage';
 import PrivateRoute from '@/components/PrivateRoute/PrivateRoute';
 import PublicRoute from '@/components/PublicRoute/PublicRoute';
@@ -26,10 +25,12 @@ import AppInitializer from '@/components/AppInitializer/AppInitializer';
 function AppContent() {
   const { isDark } = useTheme();
 
+  const basename = import.meta.env.VITE_BASE_URL || '/';
+
   return (
     <ConfigProvider theme={isDark ? darkTheme : antdTheme}>
       <AppInitializer>
-        <BrowserRouter>
+        <BrowserRouter basename={basename}>
           <Routes>
             {/* Public route — login (redirects to dashboard if already authenticated) */}
             <Route
