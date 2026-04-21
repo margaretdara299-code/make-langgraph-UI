@@ -1,37 +1,21 @@
-/**
- * DecisionPropertiesPanel — Properties panel for Decision nodes.
- *
- * Lets user configure:
- *   - rules: an array of routing rules
- *     - rule name (generates a handle)
- *     - match type (AND / OR)
- *     - conditions (field, operator, value)
- *
- * NO API call — this node only evaluates conditions and routes flow.
- */
-
-import { Form, Input, Select, Button, Typography, Tag, Divider, Space, Card } from 'antd';
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Split } from 'lucide-react';
+import { Form, Input, Select, Button, Typography, Tag, Divider, Tooltip } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { Split, GripVertical, Trash2, Plus, Info, Search } from 'lucide-react';
+import { Reorder, LayoutGroup, useDragControls } from 'framer-motion';
 
 const { Text, Title } = Typography;
 
-const MATCH_TYPES = [
-    { value: 'AND', label: 'AND (All conditions must pass)' },
-    { value: 'OR',  label: 'OR (Any condition can pass)' },
-];
-
 const OPERATORS = [
-    { value: '==',       label: '== equals' },
-    { value: '!=',       label: '!= not equals' },
-    { value: '>',        label: '>  greater than' },
-    { value: '<',        label: '<  less than' },
-    { value: '>=',       label: '>= greater or equal' },
-    { value: '<=',       label: '<= less or equal' },
-    { value: 'contains', label: 'contains' },
-    { value: 'exists',   label: 'exists (not null)' },
-    { value: 'is_true',  label: 'is true' },
-    { value: 'is_false', label: 'is false' },
+    { value: '==',       label: 'Equals (==)' },
+    { value: '!=',       label: 'Not Equals (!=)' },
+    { value: '>',        label: 'Greater Than (>)' },
+    { value: '<',        label: 'Less Than (<)' },
+    { value: '>=',       label: 'Greater or Equal (>=)' },
+    { value: '<=',       label: 'Less or Equal (<=)' },
+    { value: 'contains', label: 'Contains' },
+    { value: 'exists',   label: 'Exists (not null)' },
+    { value: 'is_true',  label: 'Is True' },
+    { value: 'is_false', label: 'Is False' },
 ];
 
 interface DecisionPropertiesPanelProps {
@@ -39,206 +23,262 @@ interface DecisionPropertiesPanelProps {
     nodes?: any[];
 }
 
-export default function DecisionPropertiesPanel({ form, nodes = [] }: DecisionPropertiesPanelProps) {
-    // Extract unique output keys from all provided nodes
+// --- Sub-components to handle useDragControls correctly ---
+
+const ConditionRow = ({ cField, cIndex, field, removeCond, moveCond, availableOutputKeys }: any) => {
+    const controls = useDragControls();
+    return (
+        <Reorder.Item 
+            key={cField.key} 
+            value={cField} 
+            layout
+            dragListener={false}
+            dragControls={controls}
+            className="senior-condition-row-container"
+            transition={{ type: "spring", stiffness: 600, damping: 45 }}
+        >
+            {cIndex > 0 && (
+                <div className="senior-operator-pill-wrap">
+                    <Form.Item {...field} name={[field.name, 'match_type']} noStyle initialValue="OR">
+                        <Select size="small" className="senior-operator-toggle-select" popupMatchSelectWidth={false} options={[{ label: 'AND', value: 'AND' }, { label: 'OR', value: 'OR' }]} />
+                    </Form.Item>
+                </div>
+            )}
+
+            <div className="senior-condition-row">
+                <div 
+                    className="senior-drag-handle"
+                    onPointerDown={(e) => controls.start(e)}
+                    style={{ cursor: 'grab' }}
+                >
+                    <GripVertical size={14} />
+                </div>
+                <div className="senior-expression-group">
+                    <div className="senior-match-condition-group">
+                        <div className="senior-sub-block source-col">
+                            <Form.Item {...cField} name={[cField.name, 'source_type']} noStyle initialValue="custom">
+                                <Select placeholder="Source" size="small" variant="borderless" className="senior-inner-select" options={[{ label: 'Step Output', value: 'output_key' }, { label: 'Custom Value', value: 'custom' }]} />
+                            </Form.Item>
+                        </div>
+                        <div className="senior-sub-block path-wrap">
+                            <Form.Item noStyle shouldUpdate={(prev, cur) => prev.rules?.[field.name]?.conditions?.[cField.name]?.source_type !== cur.rules?.[field.name]?.conditions?.[cField.name]?.source_type}>
+                                {({ getFieldValue }) => {
+                                    const sType = getFieldValue(['rules', field.name, 'conditions', cField.name, 'source_type']) || 'custom';
+                                    return sType === 'output_key' ? (
+                                        <Form.Item {...cField} name={[cField.name, 'root_key']} noStyle rules={[{ required: true }]}><Select placeholder="Variable Path" size="small" variant="borderless" options={availableOutputKeys} showSearch /></Form.Item>
+                                    ) : (
+                                        <Form.Item {...cField} name={[cField.name, 'field']} noStyle rules={[{ required: true }]}><Input placeholder="Field" size="small" variant="borderless" className="senior-inner-input" /></Form.Item>
+                                    );
+                                }}
+                            </Form.Item>
+                        </div>
+                        <div className="senior-sub-block subpath-wrap">
+                            <Form.Item {...cField} name={[cField.name, 'path_suffix']} noStyle><Input placeholder="Path" size="small" variant="borderless" className="senior-inner-input suffix-input" /></Form.Item>
+                        </div>
+                    </div>
+                    
+                    <div className="senior-operator-value-row">
+                        <div className="senior-operator-block">
+                            <Form.Item {...cField} name={[cField.name, 'operator']} noStyle initialValue="=="><Select options={OPERATORS} size="small" variant="borderless" className="senior-inner-select op-select" placeholder="Operator" popupMatchSelectWidth={190} /></Form.Item>
+                        </div>
+                        <div className="senior-value-block">
+                            <Form.Item noStyle shouldUpdate={(prev, cur) => prev.rules?.[field.name]?.conditions?.[cField.name]?.operator !== cur.rules?.[field.name]?.conditions?.[cField.name]?.operator}>
+                                {({ getFieldValue }) => {
+                                    const op = getFieldValue(['rules', field.name, 'conditions', cField.name, 'operator']);
+                                    const noVal = op === 'exists' || op === 'is_true' || op === 'is_false';
+                                    return !noVal ? (
+                                        <Form.Item {...cField} name={[cField.name, 'value']} noStyle><Input placeholder="Value" size="small" variant="borderless" className="senior-inner-input value-input" /></Form.Item>
+                                    ) : <div className="senior-empty-value">No value needed</div>;
+                                }}
+                            </Form.Item>
+                        </div>
+                    </div>
+                </div>
+                <Tooltip title="Delete Condition"><Button type="text" size="small" icon={<Trash2 size={14} />} onClick={() => removeCond(cField.name)} className="senior-cond-delete" /></Tooltip>
+            </div>
+        </Reorder.Item>
+    );
+};
+
+const BranchItem = ({ field, index, remove, availableOutputKeys }: any) => {
+    const controls = useDragControls();
+    return (
+        <Reorder.Item 
+            key={field.key} 
+            value={field} 
+            layout
+            dragListener={false}
+            dragControls={controls}
+            initial={{ opacity: 1 }}
+            className="senior-rule-group-container"
+            transition={{ type: "spring", stiffness: 500, damping: 40 }}
+            style={{ display: 'flex', flexDirection: 'column' }}
+        >
+            {index > 0 && (
+                <div style={{ display: 'flex', alignItems: 'center', margin: '4px 0 12px 0', width: '100%' }}>
+                    <div style={{ flex: 1, height: '1px', background: 'var(--border-medium)' }}></div>
+                    <div style={{ padding: '0 12px' }}>
+                        <Form.Item {...field} name={[field.name, 'branch_match_type']} noStyle initialValue="OR">
+                            <Select size="small" className="senior-operator-toggle-select" style={{ right: 'auto', top: 'auto', bottom: 'auto' }} popupMatchSelectWidth={false} options={[{ label: 'AND', value: 'AND' }, { label: 'OR', value: 'OR' }]} />
+                        </Form.Item>
+                    </div>
+                    <div style={{ flex: 1, height: '1px', background: 'var(--border-medium)' }}></div>
+                </div>
+            )}
+            <div className="senior-rule-group shadow-sm">
+                <div className="senior-rule-header">
+                <div 
+                    className="senior-drag-handle branch-drag"
+                    onPointerDown={(e) => controls.start(e)}
+                    style={{ cursor: 'grab' }}
+                >
+                    <GripVertical size={14} />
+                </div>
+                <div className="branch-label">BRANCH {index + 1}</div>
+                <div className="branch-name-input-wrap">
+                    <Form.Item {...field} name={[field.name, 'label']} noStyle rules={[{ required: true }]}>
+                        <Input className="senior-branch-name-header-input" variant="borderless" placeholder="Enter branch name..." />
+                    </Form.Item>
+                </div>
+                <div className="header-right">
+                    <Tooltip title="Delete Branch">
+                        <Button 
+                            type="text" 
+                            size="small" 
+                            icon={<Trash2 size={15} />} 
+                            onClick={() => remove(field.name)} 
+                            className="branch-delete-action" 
+                        />
+                    </Tooltip>
+                </div>
+            </div>
+
+            <div className="senior-rule-content">
+                <Form.List name={[field.name, 'conditions']}>
+                    {(condFields, { add: addCond, remove: removeCond, move: moveCond }) => (
+                        <div className="senior-conditions-wrapper">
+                            <div className="senior-conditions-header">
+                                <div className="col-label source-col">CONDITION SOURCE</div>
+                                <div className="col-label path-col">VARIABLE PATH</div>
+                                <div className="col-label subpath-col">SUB PATH</div>
+                                <div className="col-label op-col">OPERATOR</div>
+                                <div className="col-label val-col">VALUE</div>
+                            </div>
+
+                            <div className="senior-conditions-pipe" />
+
+                            <LayoutGroup id={`branch-${field.key}-conds`}>
+                                <Reorder.Group 
+                                    axis="y" 
+                                    values={condFields} 
+                                    onReorder={(newConds) => {
+                                        const fromIndex = condFields.findIndex(f => f.key !== newConds[condFields.indexOf(f)].key);
+                                        if (fromIndex !== -1) {
+                                            const toIndex = newConds.findIndex(f => f.key === condFields[fromIndex].key);
+                                            moveCond(fromIndex, toIndex);
+                                        }
+                                    }}
+                                >
+                                    {condFields.map((cField, cIndex) => (
+                                        <ConditionRow 
+                                            key={cField.key} 
+                                            cField={cField} 
+                                            cIndex={cIndex} 
+                                            field={field} 
+                                            removeCond={removeCond} 
+                                            moveCond={moveCond} 
+                                            availableOutputKeys={availableOutputKeys} 
+                                        />
+                                    ))}
+                                </Reorder.Group>
+                            </LayoutGroup>
+
+                            <div className="senior-add-cond-wrap">
+                                <Button type="text" size="small" onClick={() => addCond({ source_type: 'custom', operator: '==' })} icon={<Plus size={14} />} className="senior-add-cond-btn">Add condition</Button>
+                            </div>
+                        </div>
+                    )}
+                </Form.List>
+            </div>
+            </div>
+        </Reorder.Item>
+    );
+};
+
+export default function DecisionPropertiesPanel({ nodes = [] }: DecisionPropertiesPanelProps) {
     const availableOutputKeys = Array.from(new Set(
         nodes
             .map(n => n.data?.configurations_json?.output_key)
             .filter(key => typeof key === 'string' && key.trim() !== '')
     )).map(key => ({ label: key, value: key }));
+
     return (
         <div className="decision-props">
-
-            {/* ── Info Banner ── */}
-            <div className="decision-props__banner" style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '12px', background: 'var(--color-warning-bg)', border: '1px solid var(--color-warning)', borderRadius: 'var(--radius-sm)', marginBottom: '8px' }}>
-                <Tag color="gold" icon={<Split size={12} />} style={{ marginBottom: 0, width: 'fit-content', display: 'flex', alignItems: 'center', gap: '4px' }}>ROUTER</Tag>
-                <Text type="secondary" style={{ fontSize: 'var(--text-sm)' }}>
-                    Create multiple routing rules. Each rule generates a distinct output port on the canvas that you can connect to any target node.
-                </Text>
+            <div className="decision-props__banner">
+                <div className="decision-props__banner-content">
+                    <div className="decision-props__banner-left">
+                        <div className="decision-props__banner-title">
+                            <div className="decision-props__icon-wrap">
+                                <Split size={14} color="#6366f1" />
+                            </div>
+                            <Title level={5} className="decision-props__title">Routing Rules</Title>
+                        </div>
+                    </div>
+                    <div className="decision-props__banner-right">
+                        {/* Search removed as requested */}
+                    </div>
+                </div>
             </div>
 
-            <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Routing Rules</div>
-            
-            <Text type="secondary" style={{ fontSize: 'var(--text-sm)', display: 'block', marginBottom: 12, lineHeight: '1.5', padding: '0 4px' }}>
-                Evaluated top-to-bottom. Rules generate distinct output ports on the canvas. The first rule to match will be executed.
-            </Text>
-
             <Form.List name="rules">
-                {(fields, { add, remove }) => (
-                    <>
-                        {fields.map(({ key, name: fieldName, ...restField }, index) => (
-                            <Card 
-                                key={key} 
-                                size="small" 
-                                className="decision-props__rule-card"
-                                title={
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                                        <div className="properties-drawer__meta-value" style={{ background: '#fff7ed', color: '#c2410c', borderColor: '#ffedd5', fontSize: 'var(--text-xs)' }}>
-                                            BRANCH {index + 1}
-                                        </div>
-                                        <Form.Item {...restField} name={[fieldName, 'id']} hidden><Input /></Form.Item>
-                                        <Form.Item 
-                                            {...restField} 
-                                            name={[fieldName, 'label']}
-                                            style={{ margin: 0, flex: 1 }}
-                                            rules={[{ required: true, message: 'Missing branch name' }]}
-                                        >
-                                            <Input placeholder="Branch Name" variant="borderless" style={{ fontWeight: 700, padding: 0, fontSize: 'var(--text-sm)' }} />
-                                        </Form.Item>
-                                    </div>
-                                }
-                                extra={<DeleteOutlined className="properties-drawer__delete-icon" onClick={() => remove(fieldName)} />}
+                {(fields, { add, remove, move }) => (
+                    <div className="senior-rules-container">
+                        <LayoutGroup>
+                            <Reorder.Group 
+                                axis="y" 
+                                values={fields} 
+                                onReorder={(newFields) => {
+                                    const fromIndex = fields.findIndex(f => f.key !== newFields[fields.indexOf(f)].key);
+                                    if (fromIndex !== -1) {
+                                        const toIndex = newFields.findIndex(f => f.key === fields[fromIndex].key);
+                                        move(fromIndex, toIndex);
+                                    }
+                                }}
                             >
-                                <Form.Item
-                                    {...restField}
-                                    name={[fieldName, 'match_type']}
-                                    label={<span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-subtle)' }}>Match Condition</span>}
-                                    initialValue="AND"
-                                    style={{ marginBottom: 12 }}
-                                >
-                                    <Select options={MATCH_TYPES} size="small" style={{ fontSize: 'var(--text-sm)' }} />
-                                </Form.Item>
-
-                                <Form.List name={[fieldName, 'conditions']}>
-                                    {(condFields, { add: addCond, remove: removeCond }) => (
-                                        <div style={{ paddingLeft: 8, borderLeft: '2px solid rgba(245,158,11,0.2)' }}>
-                                            {condFields.map(({ key, name: cName, ...restCField }) => (
-                                                <div key={key} style={{ display: 'flex', flexDirection: 'column', gap: 0, marginBottom: 12, paddingBottom: 12, borderBottom: '1px dashed var(--border-color)' }}>
-                                                    <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
-                                                        <Form.Item 
-                                                            {...restCField} 
-                                                            name={[cName, 'source_type']} 
-                                                            label={<span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-subtle)' }}>Condition Source</span>}
-                                                            style={{ marginBottom: 8, flex: 1 }}
-                                                            initialValue="custom"
-                                                        >
-                                                            <Select size="small" style={{ fontSize: 'var(--text-sm)' }} options={[
-                                                                { label: 'State Output (Node Key)', value: 'output_key' },
-                                                                { label: 'Custom Parameter', value: 'custom' },
-                                                            ]} />
-                                                        </Form.Item>
-                                                        <Button type="text" size="small" danger icon={<DeleteOutlined />} onClick={() => removeCond(cName)} style={{ marginTop: 22, padding: '0 4px' }} />
-                                                    </div>
-
-                                                    <Form.Item
-                                                        noStyle
-                                                        shouldUpdate={(prev, cur) =>
-                                                            prev.rules?.[fieldName]?.conditions?.[cName]?.source_type !== cur.rules?.[fieldName]?.conditions?.[cName]?.source_type
-                                                        }
-                                                    >
-                                                        {({ getFieldValue }) => {
-                                                            const sType = getFieldValue(['rules', fieldName, 'conditions', cName, 'source_type']) || 'custom';
-                                                            
-                                                            return sType === 'output_key' ? (
-                                                                <div style={{ display: 'flex', gap: 6 }}>
-                                                                    <Form.Item 
-                                                                        {...restCField} 
-                                                                        name={[cName, 'root_key']} 
-                                                                        label={<span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-subtle)' }}>Variable Output</span>}
-                                                                        style={{ marginBottom: 8, flex: 1 }}
-                                                                        rules={[{ required: true, message: 'Req' }]}
-                                                                    >
-                                                                        <Select 
-                                                                            placeholder="Output Key" 
-                                                                            size="small" 
-                                                                            style={{ fontSize: 'var(--text-sm)' }}
-                                                                            options={availableOutputKeys}
-                                                                            showSearch
-                                                                        />
-                                                                    </Form.Item>
-                                                                </div>
-                                                            ) : (
-                                                                <div style={{ display: 'flex', gap: 6 }}>
-                                                                    <Form.Item 
-                                                                        {...restCField} 
-                                                                        name={[cName, 'field']} 
-                                                                        label={<span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-subtle)' }}>Variable Path</span>}
-                                                                        style={{ marginBottom: 8, flex: 1 }}
-                                                                        rules={[{ required: true, message: 'Req' }]}
-                                                                    >
-                                                                        <Input placeholder="e.g. data.age" size="small" style={{ fontSize: 'var(--text-sm)' }} />
-                                                                    </Form.Item>
-                                                                </div>
-                                                            );
-                                                        }}
-                                                    </Form.Item>
-
-                                                    <Form.Item 
-                                                        {...restCField} 
-                                                        name={[cName, 'path_suffix']} 
-                                                        label={<span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-subtle)' }}>Sub Path</span>}
-                                                        style={{ marginBottom: 8, flex: 1 }}
-                                                    >
-                                                        <Input placeholder="e.g. data.value" size="small" style={{ fontSize: 'var(--text-sm)' }} />
-                                                    </Form.Item>
-
-                                                    <div style={{ display: 'flex', gap: 6 }}>
-                                                        <Form.Item 
-                                                            {...restCField} 
-                                                            name={[cName, 'operator']} 
-                                                            label={<span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-subtle)' }}>Operator</span>}
-                                                            style={{ margin: 0, flex: 1 }}
-                                                            initialValue="=="
-                                                        >
-                                                            <Select options={OPERATORS} size="small" style={{ fontSize: 'var(--text-sm)' }} />
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            noStyle
-                                                            shouldUpdate={(prev, cur) =>
-                                                                prev.rules?.[fieldName]?.conditions?.[cName]?.operator !== cur.rules?.[fieldName]?.conditions?.[cName]?.operator
-                                                            }
-                                                        >
-                                                            {({ getFieldValue }) => {
-                                                                const op = getFieldValue(['rules', fieldName, 'conditions', cName, 'operator']);
-                                                                const noVal = op === 'exists' || op === 'is_true' || op === 'is_false';
-                                                                return !noVal ? (
-                                                                    <Form.Item 
-                                                                        {...restCField} 
-                                                                        name={[cName, 'value']} 
-                                                                        label={<span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-subtle)' }}>Value</span>}
-                                                                        style={{ margin: 0, flex: 1 }}
-                                                                    >
-                                                                        <Input placeholder="Val" size="small" style={{ fontSize: 'var(--text-sm)' }} />
-                                                                    </Form.Item>
-                                                                ) : <div style={{ flex: 1 }}></div>;
-                                                            }}
-                                                        </Form.Item>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                            <Button type="dashed" size="small" onClick={() => addCond({ source_type: 'custom', field: '', root_key: '', path_suffix: '', operator: '==', value: '' })} icon={<PlusOutlined />} block>
-                                                Add Condition
-                                            </Button>
-                                        </div>
-                                    )}
-                                </Form.List>
-                            </Card>
-                        ))}
-
+                                {fields.map((field, index) => (
+                                    <BranchItem 
+                                        key={field.key} 
+                                        field={field} 
+                                        index={index} 
+                                        remove={remove} 
+                                        availableOutputKeys={availableOutputKeys} 
+                                    />
+                                ))}
+                            </Reorder.Group>
+                        </LayoutGroup>
                         <Button
-                            type="dashed"
-                            onClick={() => add({ id: 'branch_' + Date.now(), label: `Condition ${fields.length + 1}`, match_type: 'AND', conditions: [] })}
+                            type="primary"
+                            className="senior-add-branch-btn"
+                            onClick={() => add({ id: 'branch_' + Date.now(), label: `Branch ${fields.length + 1}`, match_type: 'OR', conditions: [{ source_type: 'custom', operator: '==' }] })}
                             icon={<PlusOutlined />}
                             block
                         >
-                            Add Routing Branch
+                            Add Branch
                         </Button>
-                    </>
+                    </div>
                 )}
             </Form.List>
 
-            <div className="properties-drawer__section-title">Default Output</div>
-            <Text type="secondary" style={{ fontSize: 'var(--text-sm)', display: 'block', marginBottom: 12, lineHeight: '1.5', padding: '0 4px' }}>
-                Triggers when <strong>none</strong> of the rules above match.
-            </Text>
-            <div className="properties-drawer__meta" style={{ margin: 0, background: 'var(--bg-card)' }}>
-                <div className="properties-drawer__meta-item">
-                    <span className="properties-drawer__meta-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--text-subtle)' }} />
-                        Default Path
-                    </span>
-                    <span className="properties-drawer__meta-value">FALLBACK</span>
+            <Divider className="decision-props__divider" />
+
+            <div className="decision-props__fallback-section">
+                <div className="fallback-header">
+                    <span className="fallback-label">Fallback Path</span>
+                    <Tag className="fallback-tag">DEFAULT</Tag>
                 </div>
+                <Text type="secondary" className="fallback-description">
+                    This branch is taken if no other rules match above.
+                </Text>
             </div>
         </div>
     );
