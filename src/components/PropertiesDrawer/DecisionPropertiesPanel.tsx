@@ -39,7 +39,7 @@ const ConditionRow = ({ cField, cIndex, field, removeCond, moveCond, availableOu
         >
             {cIndex > 0 && (
                 <div className="senior-operator-pill-wrap">
-                    <Form.Item {...field} name={[field.name, 'match_type']} noStyle>
+                    <Form.Item {...field} name={[field.name, 'match_type']} noStyle initialValue="OR">
                         <Select size="small" className="senior-operator-toggle-select" popupMatchSelectWidth={false} options={[{ label: 'AND', value: 'AND' }, { label: 'OR', value: 'OR' }]} />
                     </Form.Item>
                 </div>
@@ -110,10 +110,23 @@ const BranchItem = ({ field, index, remove, availableOutputKeys }: any) => {
             dragListener={false}
             dragControls={controls}
             initial={{ opacity: 1 }}
-            className="senior-rule-group shadow-sm"
+            className="senior-rule-group-container"
             transition={{ type: "spring", stiffness: 500, damping: 40 }}
+            style={{ display: 'flex', flexDirection: 'column' }}
         >
-            <div className="senior-rule-header">
+            {index > 0 && (
+                <div style={{ display: 'flex', alignItems: 'center', margin: '4px 0 12px 0', width: '100%' }}>
+                    <div style={{ flex: 1, height: '1px', background: 'var(--border-medium)' }}></div>
+                    <div style={{ padding: '0 12px' }}>
+                        <Form.Item {...field} name={[field.name, 'branch_match_type']} noStyle initialValue="OR">
+                            <Select size="small" className="senior-operator-toggle-select" style={{ right: 'auto', top: 'auto', bottom: 'auto' }} popupMatchSelectWidth={false} options={[{ label: 'AND', value: 'AND' }, { label: 'OR', value: 'OR' }]} />
+                        </Form.Item>
+                    </div>
+                    <div style={{ flex: 1, height: '1px', background: 'var(--border-medium)' }}></div>
+                </div>
+            )}
+            <div className="senior-rule-group shadow-sm">
+                <div className="senior-rule-header">
                 <div 
                     className="senior-drag-handle branch-drag"
                     onPointerDown={(e) => controls.start(e)}
@@ -187,6 +200,7 @@ const BranchItem = ({ field, index, remove, availableOutputKeys }: any) => {
                     )}
                 </Form.List>
             </div>
+            </div>
         </Reorder.Item>
     );
 };
@@ -245,7 +259,7 @@ export default function DecisionPropertiesPanel({ nodes = [] }: DecisionProperti
                         <Button
                             type="primary"
                             className="senior-add-branch-btn"
-                            onClick={() => add({ id: 'branch_' + Date.now(), label: `Branch ${fields.length + 1}`, match_type: 'AND', conditions: [{ source_type: 'custom', operator: '==' }] })}
+                            onClick={() => add({ id: 'branch_' + Date.now(), label: `Branch ${fields.length + 1}`, match_type: 'OR', conditions: [{ source_type: 'custom', operator: '==' }] })}
                             icon={<PlusOutlined />}
                             block
                         >

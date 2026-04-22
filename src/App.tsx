@@ -26,10 +26,12 @@ import AppInitializer from '@/components/AppInitializer/AppInitializer';
 function AppContent() {
   const { isDark } = useTheme();
 
+  const basename = import.meta.env.VITE_BASE_URL || '/';
+
   return (
     <ConfigProvider theme={isDark ? darkTheme : antdTheme}>
       <AppInitializer>
-        <BrowserRouter>
+        <BrowserRouter basename={basename}>
           <Routes>
             {/* Public route — login (redirects to dashboard if already authenticated) */}
             <Route
@@ -52,7 +54,7 @@ function AppContent() {
                       <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
                       <Route path={ROUTES.SKILLS_LIBRARY} element={<SkillsLibraryPage />} />
                       <Route path={ROUTES.SKILL_DESIGNER} element={<SkillDesignerPage />} />
-                       <Route path={ROUTES.ACTION_CATALOG} element={<ActionCatalogPage />} />
+                      <Route path={ROUTES.ACTION_CATALOG} element={<ActionCatalogPage />} />
                       <Route path={ROUTES.CATEGORIES} element={<CategoriesPage />} />
                       <Route path={ROUTES.CONNECTORS} element={<ConnectorsPage />} />
                       <Route path={ROUTES.CAPABILITIES} element={<CapabilitiesPage />} />

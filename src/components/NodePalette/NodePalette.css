@@ -315,3 +315,101 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/* ── Category header (top-level + sub-level) ─────────────── */
+.cat-section-header {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 4px 0;
+  user-select: none;
+}
+
+.cat-section-header:hover .group-label,
+.cat-section-header:hover .sub-group-label {
+  color: var(--accent, #6366f1);
+}
+
+.cat-section-switcher {
+  width: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #838f9c;
+  flex-shrink: 0;
+}
+
+/* ── CSS Grid accordion — smooth slide at any depth, zero JS ── */
+.acc-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940);
+}
+
+.acc-panel.open {
+  grid-template-rows: 1fr;
+}
+
+.acc-panel > * {
+  overflow: hidden;
+  min-height: 0; /* required for Firefox */
+}/* ── NodePalette design tokens ─────────────────────────────── */
+.antd-tree-container {
+  --np-indent:   12px;           /* half of switcher width → aligns line with arrow center */
+  --np-switcher: 25px;           /* AntD switcher column width                              */
+  --np-line-d1:  1.2px solid #94a3b8;  /* depth-1 line (sub-categories) */
+  --np-line-d2:  1px   solid #dde3eb;  /* depth-2 line (leaf items)     */
+}
+
+/* ── Tree depth indentation classes ────────────────────────── */
+
+/* depth-1: sub-category group container (has line, no leaf padding) */
+.np-depth1-group {
+  margin-left: var(--np-indent);
+  border-left:  var(--np-line-d1);
+}
+
+/* depth-1: leaf container (Common items) */
+.np-depth1 {
+  margin-left:  var(--np-indent);
+  border-left:  var(--np-line-d1);
+  padding-left: var(--np-switcher);
+}
+
+/* depth-2: leaf container (Action / Connector items inside a sub-category) */
+.np-depth2 {
+  margin-left:  var(--np-indent);
+  border-left:  var(--np-line-d2);
+  padding-left: var(--np-switcher);
+}
+
+/* ── Leaf items: slide in from right when accordion opens ──────────────
+   Selector uses:
+     > .np-leaf  — direct-child combinator so the animation fires only when
+                   the IMMEDIATE parent .acc-panel gains .open, not any ancestor.
+   This is depth-agnostic: add np-leaf to any container at any nesting level
+   and the animation will work automatically.
+─────────────────────────────────────────────────────────────────────── */
+@keyframes slide-in-right {
+  from { transform: translateX(14px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+.acc-panel.open > .np-leaf .node-library-item-wrapper {
+  animation: slide-in-right 0.28s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+  animation-delay: 0.22s; /* default — overridden per-child below */
+}
+
+/* Stagger: each card enters 40 ms after the previous one.
+   Base 0.20 s lets the CSS Grid expansion lead. */
+.acc-panel.open > .np-leaf .node-library-item-wrapper:nth-child(1)  { animation-delay: 0.20s; }
+.acc-panel.open > .np-leaf .node-library-item-wrapper:nth-child(2)  { animation-delay: 0.24s; }
+.acc-panel.open > .np-leaf .node-library-item-wrapper:nth-child(3)  { animation-delay: 0.28s; }
+.acc-panel.open > .np-leaf .node-library-item-wrapper:nth-child(4)  { animation-delay: 0.32s; }
+.acc-panel.open > .np-leaf .node-library-item-wrapper:nth-child(5)  { animation-delay: 0.36s; }
+.acc-panel.open > .np-leaf .node-library-item-wrapper:nth-child(6)  { animation-delay: 0.40s; }
+.acc-panel.open > .np-leaf .node-library-item-wrapper:nth-child(7)  { animation-delay: 0.44s; }
+.acc-panel.open > .np-leaf .node-library-item-wrapper:nth-child(8)  { animation-delay: 0.48s; }
+.acc-panel.open > .np-leaf .node-library-item-wrapper:nth-child(n+9){ animation-delay: 0.50s; }
+
+
