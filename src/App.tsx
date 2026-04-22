@@ -14,9 +14,9 @@ import DashboardPage from '@/pages/Dashboard/DashboardPage';
 import SkillDesignerPage from '@/pages/SkillDesigner/SkillDesignerPage';
 import ActionCatalogPage from '@/pages/ActionCatalog/ActionCatalogPage';
 import ConnectorsPage from '@/pages/Connectors/ConnectorsPage';
-import CategoriesPage from '@/pages/Categories/CategoriesPage';
 import CapabilitiesPage from '@/pages/Capabilities/CapabilitiesPage';
-import VariablesPage from '@/pages/Variables/VariablesPage';
+import CategoriesPage from '@/pages/Categories/CategoriesPage';
+import GroupsPage from '@/pages/Groups/GroupsPage';
 import LoginPage from '@/pages/Login/LoginPage';
 import PrivateRoute from '@/components/PrivateRoute/PrivateRoute';
 import PublicRoute from '@/components/PublicRoute/PublicRoute';
@@ -52,11 +52,11 @@ function AppContent() {
                       <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
                       <Route path={ROUTES.SKILLS_LIBRARY} element={<SkillsLibraryPage />} />
                       <Route path={ROUTES.SKILL_DESIGNER} element={<SkillDesignerPage />} />
-                      <Route path={ROUTES.ACTION_CATALOG} element={<ActionCatalogPage />} />
-                      <Route path={ROUTES.CONNECTORS} element={<ConnectorsPage />} />
+                       <Route path={ROUTES.ACTION_CATALOG} element={<ActionCatalogPage />} />
                       <Route path={ROUTES.CATEGORIES} element={<CategoriesPage />} />
+                      <Route path={ROUTES.CONNECTORS} element={<ConnectorsPage />} />
                       <Route path={ROUTES.CAPABILITIES} element={<CapabilitiesPage />} />
-                      {/* <Route path={ROUTES.VARIABLES} element={<VariablesPage />} /> */}
+                      <Route path={ROUTES.GROUPS} element={<GroupsPage />} />
                       <Route path={ROUTES.TOOLS} element={<div>Tools Placeholder</div>} />
                       <Route path={ROUTES.WORKFLOW} element={<div>Workflow Placeholder</div>} />
                       {/* Catch-all: redirect unknown routes to dashboard */}

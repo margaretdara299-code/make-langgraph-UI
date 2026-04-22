@@ -13,7 +13,8 @@ export const ROUTES = {
     CATEGORIES: '/settings/categories',
     CAPABILITIES: '/settings/capabilities',
     CONNECTORS: '/connectors',
-    // VARIABLES: '/variables',
+    VARIABLES: '/variables',
+    GROUPS: '/groups',
     TOOLS: '/tools',
     WORKFLOW: '/workflow',
 } as const;

@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { Typography, message, Modal, Empty, Tabs, Space, Badge, Select, Button } from 'antd';
+import { Typography, message, Modal, Empty, Tabs, Space, Badge, Select, Button, Pagination } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useActions, useCategories, useCapabilities } from '@/hooks';
 import { 
@@ -29,7 +29,8 @@ export default function ActionCatalogPage() {
         isLoading, 
         filters, 
         setFilters,
-        refetch
+        refetch,
+        totalActions
     } = useActions();
     
     const { categories } = useCategories();
@@ -112,7 +113,7 @@ export default function ActionCatalogPage() {
                                     setInitialStep(0);
                                     setModalOpen(true);
                                 }}
-                                className="create-btn-mini"
+                                className="global-header-add-btn"
                             />
                         </div>
                         <Text type="secondary" style={{ fontSize: '13px', fontWeight: 400, color: 'var(--text-subtle)', display: 'block', marginTop: '4px' }}>
@@ -185,19 +186,35 @@ export default function ActionCatalogPage() {
                         </Empty>
                     </div>
                 ) : (
-                    <Grid 
-                        isLoading={isLoading}
-                        SkeletonComponent={ActionCardSkeleton}
-                        data={actions}
-                        gutter={[20, 20]}
-                        autoFitMinWidth={280}
-                        renderItem={(action) => (
-                            <ActionCard 
-                                action={action} 
-                                onAction={handleAction} 
+                    <>
+                        <Grid 
+                            isLoading={isLoading}
+                            SkeletonComponent={ActionCardSkeleton}
+                            data={actions}
+                            gutter={[20, 20]}
+                            autoFitMinWidth={280}
+                            renderItem={(action) => (
+                                <ActionCard 
+                                    action={action} 
+                                    onAction={handleAction} 
+                                />
+                            )}
+                        />
+                        <div className="catalog-pagination-wrap">
+                            <Pagination 
+                                current={filters.page}
+                                pageSize={filters.pageSize}
+                                total={totalActions}
+                                onChange={(page, pageSize) => {
+                                    setFilters(prev => ({ ...prev, page, pageSize }));
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                showSizeChanger
+                                pageSizeOptions={['20', '30', '40', '50', '60', '70', '80', '90', '100']}
+                                className="premium-pagination"
                             />
-                        )}
-                    />
+                        </div>
+                    </>
                 )}
             </div>
 

@@ -44,8 +44,15 @@ const UrlUtils = {
     },
 
     extractPathRows: (url: string, existingPathParams: Record<string, string> = {}) => {
-        const pathParams = Array.from(url.matchAll(/:([a-zA-Z0-9_]+)/g)).map((match: any) => match[1]);
-        const rows = pathParams.map((param) => ({
+        // Support both :param and {param} styles
+        const regex = /:([a-zA-Z0-9_]+)|\{([a-zA-Z0-9_]+)\}/g;
+        const matches = Array.from(url.matchAll(regex));
+        const pathParams = matches.map(match => match[1] || match[2]);
+        
+        // Filter unique params to avoid duplicates in the UI
+        const uniqueParams = Array.from(new Set(pathParams));
+        
+        const rows = uniqueParams.map((param) => ({
             key: param,
             value: existingPathParams[param] || ''
         }));
@@ -202,29 +209,25 @@ export default function CreateActionConfigStep({ draft, setDraft, form: external
 
     // Initial Hydration
     useEffect(() => {
-        const currentConfig = draft.configurations_json;
-        if (currentConfig && !isInitialized.current) {
-            const formValues: any = { ...currentConfig };
-            const paramTypes = ['query_params', 'header_params', 'body_params', 'path_params'];
+        const currentConfig = draft.configurations_json || {};
+        const formValues: any = { ...currentConfig };
+        const paramTypes = ['query_params', 'header_params', 'body_params', 'path_params'];
 
-            paramTypes.forEach((key) => {
-                const listName = `${key}_list`;
-                const obj = (currentConfig as any)[key] || {};
-                formValues[listName] = Object.entries(obj).map(([k, v]) => ({ key: k, value: v }));
-                if (formValues[listName].length === 0) formValues[listName] = [{ key: '', value: '' }];
-            });
+        paramTypes.forEach((key) => {
+            const listName = `${key}_list`;
+            const obj = (currentConfig as any)[key] || {};
+            formValues[listName] = Object.entries(obj).map(([k, v]) => ({ key: k, value: v }));
+            if (formValues[listName].length === 0) formValues[listName] = [{ key: '', value: '' }];
+        });
 
-            if (currentConfig.input_keys && Array.isArray(currentConfig.input_keys)) {
-                // Ensure array shape is { key: string } objects
-                formValues.input_keys = currentConfig.input_keys.map((k: any) => typeof k === 'string' ? { key: k } : k);
-            } else if (currentConfig.input_keys && typeof currentConfig.input_keys === 'string') {
-                formValues.input_keys = currentConfig.input_keys.split(',').filter((k: string) => k.trim()).map((k: string) => ({ key: k.trim() }));
-            }
-
-            form.setFieldsValue(formValues);
-            isInitialized.current = true;
+        if (currentConfig.input_keys && Array.isArray(currentConfig.input_keys)) {
+            formValues.input_keys = currentConfig.input_keys.map((k: any) => typeof k === 'string' ? { key: k } : k);
+        } else if (currentConfig.input_keys && typeof currentConfig.input_keys === 'string') {
+            formValues.input_keys = currentConfig.input_keys.split(',').filter((k: string) => k.trim()).map((k: string) => ({ key: k.trim() }));
         }
-    }, [draft.configurations_json, form]);
+
+        form.setFieldsValue(formValues);
+    }, [draft.id, form]); // Hydrate when the identity of the action changes
 
     const handleValuesChange = (changed: any, allValues: any) => {
         const updatedConfig = { ...config, ...allValues };

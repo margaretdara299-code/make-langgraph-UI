@@ -56,45 +56,67 @@ export function useApiTest(actionDraft: Partial<ActionDefinition>, configForm?: 
         try {
             // ── Path Param Resolution ──
             let resolvedUrl = String(rawConfig.url);
-            let pathParams = rawConfig.path_params || [];
-            if (!Array.isArray(pathParams) && typeof pathParams === 'object') {
-                pathParams = Object.entries(pathParams).map(([key, value]) => ({ key, value }));
-            }
+            let pathParams = rawConfig.path_params || {};
             
-            pathParams.forEach((param: any) => {
+            // Normalize pathParams to entries
+            const pathEntries = Array.isArray(pathParams) 
+                ? pathParams 
+                : Object.entries(pathParams).map(([key, value]) => ({ key, value: String(value) }));
+            
+            pathEntries.forEach((param: any) => {
                 if (param?.key && param?.value) {
                     const escapedKey = param.key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                    const regex = new RegExp(`:${escapedKey}(?=/|\\?|$)`, 'g');
+                    // Support both :key and {key}
+                    const regex = new RegExp(`(:${escapedKey}|\\{${escapedKey}\\})(?=/|\\?|$)`, 'g');
                     resolvedUrl = resolvedUrl.replace(regex, param.value);
                 }
             });
 
             // ── Header Assembly ──
-            let headerParams = rawConfig.header_params || [];
-            if (!Array.isArray(headerParams) && typeof headerParams === 'object') {
-                headerParams = Object.entries(headerParams).map(([key, value]) => ({ key, value }));
-            }
-            const headers: Record<string, string> = {};
-            headerParams.forEach((param: any) => {
+            let headerParams = rawConfig.header_params || {};
+            const headerEntries = Array.isArray(headerParams)
+                ? headerParams
+                : Object.entries(headerParams).map(([key, value]) => ({ key, value: String(value) }));
+                
+            const headers: Record<string, string> = {
+                'Accept': 'application/json'
+            };
+            
+            headerEntries.forEach((param: any) => {
                 if (param?.key && param?.value) headers[param.key] = param.value;
             });
 
             // ── Body Serialization ──
-            let bodyParams = rawConfig.body_params || [];
-            if (!Array.isArray(bodyParams) && typeof bodyParams === 'object') {
-                bodyParams = Object.entries(bodyParams).map(([key, value]) => ({ key, value }));
-            }
             let jsonBody = undefined;
-            if (['POST', 'PUT', 'PATCH'].includes(String(rawConfig.method).toUpperCase())) {
-                const bodyObj: Record<string, any> = {};
-                bodyParams.forEach((param: any) => {
-                    if (param?.key) bodyObj[param.key] = param.value;
-                });
-                if (Object.keys(bodyObj).length > 0) {
-                    jsonBody = bodyObj;
-                    if (!headers['Content-Type'] && !headers['content-type']) {
-                        headers['Content-Type'] = 'application/json';
+            const method = String(rawConfig.method).toUpperCase();
+            const bodyType = rawConfig.body_params_type || 'form-data';
+
+            if (['POST', 'PUT', 'PATCH'].includes(method)) {
+                if (bodyType === 'raw' && rawConfig.body_params_raw) {
+                    try {
+                        jsonBody = JSON.parse(rawConfig.body_params_raw);
+                    } catch (e) {
+                        // If it's not valid JSON, send as raw string
+                        jsonBody = rawConfig.body_params_raw;
                     }
+                } else if (bodyType === 'form-data') {
+                    let bodyParams = rawConfig.body_params || {};
+                    const bodyEntries = Array.isArray(bodyParams)
+                        ? bodyParams
+                        : Object.entries(bodyParams).map(([key, value]) => ({ key, value }));
+                        
+                    const bodyObj: Record<string, any> = {};
+                    bodyEntries.forEach((param: any) => {
+                        if (param?.key) bodyObj[param.key] = param.value;
+                    });
+                    
+                    if (Object.keys(bodyObj).length > 0) {
+                        jsonBody = bodyObj;
+                    }
+                }
+
+                if (jsonBody !== undefined && !headers['Content-Type'] && !headers['content-type']) {
+                    headers['Content-Type'] = 'application/json';
                 }
             }
             

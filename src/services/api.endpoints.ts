@@ -20,8 +20,8 @@ export const API_ENDPOINTS = {
         BY_ID: (capabilityId: string) => `${API_V1_BASE}/capabilities/${capabilityId}`,
     },
     VARIABLES: {
-        BASE: `${API_V1_BASE}/variables`,
-        BY_ID: (variableId: number) => `${API_V1_BASE}/variables/${variableId}`,
+        BASE: `${API_V1_BASE}/workflow-variables`,
+        BY_ID: (variableId: number) => `${API_V1_BASE}/workflow-variables/${variableId}`,
     },
     SKILL_GRAPH: {
         GRAPH: (versionId: string) => `${API_V1_BASE}/skill-versions/${versionId}/graph`,
@@ -47,5 +47,9 @@ export const API_ENDPOINTS = {
         COUNTS: `${API_V1_BASE}/engine/counts`,
         GENERATE_CODE: (versionId: string) => `${API_V1_BASE}/engine/generate-code/${versionId}`,
         RUN: (versionId: string) => `${API_V1_BASE}/engine/run/${versionId}`,
+    },
+    GROUPS: {
+        BASE: `${API_V1_BASE}/groups`,
+        BY_ID: (groupId: number) => `${API_V1_BASE}/groups/${groupId}`,
     },
 } as const;

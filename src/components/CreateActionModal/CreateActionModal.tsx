@@ -38,19 +38,18 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
             if (actionToEdit) {
                 // Pre-fill existing action for editing
                 setActionDraft(actionToEdit);
-                setTimeout(() => overviewForm.setFieldsValue(actionToEdit), 0);
+                overviewForm.setFieldsValue(actionToEdit);
             } else {
                 // Reset for creating a new action
                 setActionDraft({
                     category: 'Uncategorized',
                     scope: 'global' as const,
                     icon: '🧩',
+                    configurations_json: {}
                 });
                 // Clear all form fields so no stale data remains
-                setTimeout(() => {
-                    overviewForm.resetFields();
-                    configForm.resetFields();
-                }, 0);
+                overviewForm.resetFields();
+                configForm.resetFields();
             }
             setCurrentStep(initialStep);
         }
@@ -313,17 +312,17 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
         {
             title: 'Overview',
             description: 'Provide basic details and categorization for the action.',
-            content: <CreateActionOverview draft={actionDraft} setDraft={setActionDraft} form={overviewForm} />
+            content: <CreateActionOverview key={actionToEdit?.id || 'new-action'} draft={actionDraft} setDraft={setActionDraft} form={overviewForm} />
         },
         {
             title: 'Configuration',
             description: 'Configure API endpoints, methods, and parameters.',
-            content: <CreateActionConfigStep draft={actionDraft} setDraft={setActionDraft} form={configForm} onTestClick={handleTestApi} isTesting={testState === 'loading'} />
+            content: <CreateActionConfigStep key={actionToEdit?.id || 'new-action'} draft={actionDraft} setDraft={setActionDraft} form={configForm} onTestClick={handleTestApi} isTesting={testState === 'loading'} />
         },
         {
             title: 'Review & Publish',
             description: 'Double check all settings before taking the action live.',
-            content: <CreateActionReviewStep draft={actionDraft} setDraft={setActionDraft} />
+            content: <CreateActionReviewStep key={actionToEdit?.id || 'new-action'} draft={actionDraft} setDraft={setActionDraft} />
         },
     ];
 
@@ -336,7 +335,7 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
             onCancel={onClose}
             width={1100}
             footer={null}
-            destroyOnHidden
+            destroyOnClose
             className="create-action-modal"
             centered
             zIndex={1300}

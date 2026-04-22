@@ -1,135 +1,150 @@
-import { useEffect, useState } from 'react';
-import { Typography, Button, Table, Space, Popconfirm, message, Collapse } from 'antd';
-import { PlusOutlined, DeleteOutlined, EditOutlined, DatabaseOutlined } from '@ant-design/icons';
+import { useEffect, useState, useMemo, useCallback } from 'react';
+import { 
+    Typography, 
+    Button, 
+    Table, 
+    Space, 
+    message, 
+    Empty, 
+    Spin, 
+    Collapse
+} from 'antd';
+import { 
+    PlusOutlined, 
+    Key 
+} from '@ant-design/icons';
 import { fetchVariables, deleteVariable } from '@/services/variables.service';
 import type { Variable } from '@/services/variables.service';
-import CreateVariableDrawer from './CreateVariableDrawer';
+import VariableModal from './VariableModal';
+import { getVariableColumns, mapVariablesToGroups } from '../Groups/GroupsPage.helpers';
+import { PAGE_HEADER_CONTENT } from '@/constants/ui.constants';
+import { SearchInput } from '@/components';
+import { Layers } from 'lucide-react';
 import './VariablesPage.css';
 
 const { Title, Text } = Typography;
+const { Panel } = Collapse;
+const { VARIABLES } = PAGE_HEADER_CONTENT;
 
 export default function VariablesPage() {
     const [variables, setVariables] = useState<Variable[]>([]);
     const [loading, setLoading] = useState(true);
-    const [drawerVisible, setDrawerVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
     const [editingVariable, setEditingVariable] = useState<Variable | null>(null);
+    const [search, setSearch] = useState('');
 
-    const loadData = async () => {
+    const loadData = useCallback(async () => {
         setLoading(true);
-        const data = await fetchVariables();
-        setVariables(data);
-        setLoading(false);
-    };
-
-    useEffect(() => {
-        loadData();
+        try {
+            const data = await fetchVariables();
+            setVariables(data);
+        } catch (err) {
+            message.error('Failed to load variables');
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
-    const handleDelete = async (id: number) => {
-        const res = await deleteVariable(id);
-        if (res.success) {
-            message.success('Variable deleted');
-            loadData();
-        } else {
-            message.error(res.error || 'Failed to delete variable');
-        }
-    };
+    useEffect(() => { loadData(); }, [loadData]);
 
-    const handleEdit = (variable: Variable) => {
-        setEditingVariable(variable);
-        setDrawerVisible(true);
-    };
+    const filteredVariables = useMemo(() => {
+        const query = search.toLowerCase().trim();
+        if (!query) return variables;
+        return variables.filter(v => 
+            v.variableName.toLowerCase().includes(query) || 
+            v.variableKey.toLowerCase().includes(query) ||
+            v.groupName?.toLowerCase().includes(query)
+        );
+    }, [variables, search]);
+
+    const groupedData = useMemo(() => {
+        // We reuse the grouping logic here for a clean UI
+        const uniqueGroups = Array.from(new Set(filteredVariables.map(v => v.groupName || 'General'))).map(name => ({
+            groupName: name,
+            groupKey: (filteredVariables.find(v => v.groupName === name)?.groupKey || name).toUpperCase()
+        }));
+        return mapVariablesToGroups(uniqueGroups as any, filteredVariables);
+    }, [filteredVariables]);
 
     const handleCreate = () => {
         setEditingVariable(null);
-        setDrawerVisible(true);
+        setModalVisible(true);
     };
 
-    // Grouping
-    const groupedVariables = variables.reduce((acc, variable) => {
-        const group = variable.group_name || 'General';
-        if (!acc[group]) acc[group] = [];
-        acc[group].push(variable);
-        return acc;
-    }, {} as Record<string, Variable[]>);
+    const handleEdit = (v: Variable) => {
+        setEditingVariable(v);
+        setModalVisible(true);
+    };
 
-    const columns = [
-        {
-            title: 'Key Name',
-            dataIndex: 'key_name',
-            key: 'key_name',
-            render: (text: string) => <Text style={{ fontFamily: 'monospace', fontWeight: 600 }}>{text}</Text>,
-        },
-        {
-            title: 'Value',
-            dataIndex: 'value',
-            key: 'value',
-            render: (text: string) => <Text type="secondary" ellipsis style={{ maxWidth: 300 }}>{text}</Text>,
-        },
-        {
-            title: 'Actions',
-            key: 'actions',
-            width: 120,
-            render: (_: any, record: Variable) => (
-                <Space size="middle">
-                    <Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
-                    <Popconfirm
-                        title="Delete variable?"
-                        description="This might break workflows that depend on it."
-                        onConfirm={() => handleDelete(record.id)}
-                    >
-                        <Button type="text" danger icon={<DeleteOutlined />} />
-                    </Popconfirm>
-                </Space>
-            ),
-        },
-    ];
+    const handleDelete = async (v: Variable) => {
+        const res = await deleteVariable(v.variableId);
+        if (res.success) {
+            message.success('Variable deleted');
+            loadData();
+        }
+    };
 
-    const collapseItems = Object.entries(groupedVariables).map(([groupName, groupVars]) => ({
-        key: groupName,
-        label: <Text strong>{groupName} <span style={{ color: 'var(--text-muted)', fontWeight: 'normal', marginLeft: 8 }}>({groupVars.length})</span></Text>,
-        children: <Table dataSource={groupVars} columns={columns} rowKey="id" pagination={false} size="small" />
-    }));
+    const columns = useMemo(() => getVariableColumns(handleEdit, handleDelete), [loadData]);
 
     return (
-        <div className="variables-page">
-            <div className="variables-header">
-                <div>
-                    <Title level={3} style={{ margin: 0 }}>
-                        <DatabaseOutlined style={{ marginRight: 12, color: 'var(--accent)' }} />
-                        Global Variables
-                    </Title>
-                    <Text type="secondary">Define constants securely passed to your LangGraph executions.</Text>
+        <div className="variables-page reveal-up">
+            <header className="variables-header">
+                <div className="title-section">
+                    <div className="title-row">
+                        <Title level={2} style={{ margin: 0, fontSize: '18px', fontWeight: 700, letterSpacing: '-0.015em' }}>{VARIABLES.title}</Title>
+                    </div>
+                    <Text type="secondary" style={{ fontSize: '12px', color: 'var(--text-subtle)' }}>{VARIABLES.description}</Text>
                 </div>
-                <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-                    Create Variable
-                </Button>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                    <SearchInput placeholder="Search variables..." value={search} onChange={setSearch} />
+                    <Button type="primary" shape="circle" icon={<PlusOutlined />} onClick={handleCreate} className="global-header-add-btn" />
+                </div>
+            </header>
+
+            <div className="variables-body">
+                {loading ? <div style={{ display: 'flex', justifyContent: 'center', padding: '100px' }}><Spin size="large" /></div> :
+                    variables.length === 0 ? <Empty description="No variables found" style={{ marginTop: '100px' }} /> : (
+                        <div className="variables-accordion-container">
+                            <Collapse accordion ghost expandIconPosition="end" defaultActiveKey={Object.keys(groupedData)} className="variables-main-accordion">
+                                {Object.entries(groupedData).map(([groupName, items]) => (
+                                    <Panel 
+                                        header={
+                                            <div className="accordion-group-header">
+                                                <div className="accordion-group-left">
+                                                    <div className="accordion-group-icon"><Layers size={16} /></div>
+                                                    <span className="accordion-group-title">{groupName}</span>
+                                                </div>
+                                                <div className="accordion-group-right">
+                                                    <div className="neat-count-badge">
+                                                        {items.length}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        } 
+                                        key={groupName}
+                                    >
+                                        <div className="accordion-table-wrapper">
+                                            <Table
+                                                dataSource={items}
+                                                columns={columns}
+                                                pagination={false}
+                                                rowKey="variableId"
+                                                size="middle"
+                                                className="minimal-nested-table"
+                                            />
+                                        </div>
+                                    </Panel>
+                                ))}
+                            </Collapse>
+                        </div>
+                    )}
             </div>
 
-            {loading ? (
-                <Table loading={true} dataSource={[]} columns={columns} />
-            ) : Object.keys(groupedVariables).length === 0 ? (
-                <div className="empty-state">
-                    <DatabaseOutlined style={{ fontSize: 48, color: '#d9d9d9', marginBottom: 16 }} />
-                    <Text type="secondary">No variables defined yet.</Text>
-                </div>
-            ) : (
-                <Collapse 
-                    items={collapseItems} 
-                    defaultActiveKey={Object.keys(groupedVariables)} 
-                    ghost 
-                    className="variables-collapse" 
-                />
-            )}
-
-            <CreateVariableDrawer
-                visible={drawerVisible}
+            <VariableModal
+                visible={modalVisible}
                 variable={editingVariable}
-                onClose={() => setDrawerVisible(false)}
-                onSuccess={() => {
-                    setDrawerVisible(false);
-                    loadData();
-                }}
+                onClose={() => setModalVisible(false)}
+                onSuccess={() => { setModalVisible(false); loadData(); }}
             />
         </div>
     );
