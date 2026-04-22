@@ -5,9 +5,7 @@ import type { Group } from '@/services/groups.service';
 import { deleteGroup } from '@/services/groups.service';
 import { deleteVariable } from '@/services/variables.service';
 
-/**
- * Maps Variables to their respective Groups based on the groupName field.
- */
+
 export const mapVariablesToGroups = (groups: Group[], variables: Variable[]) => {
     const mapping: Record<string, Variable[]> = {};
     groups.forEach(g => mapping[g.groupName] = []);
