@@ -72,7 +72,7 @@ const CategoryHeader: React.FC<CatHeaderProps> = ({ catKey, icon, label, openCat
 
 /* ── Main component ───────────────────────────────────────── */
 export default function NodePalette() {
-  const [isOpen,  setIsOpen]  = useState(false);
+  const [isOpen,  setIsOpen]  = useState(true);
   const [search,  setSearch]  = useState('');
   const [openCat, setOpenCat] = useState<string | null>('cat-common');
 
