@@ -3,7 +3,7 @@
  *
  * Design contract:
  *  - Target handle only (top-center). It receives error edges from Action nodes.
- *  - No source handle — this is a terminal node; execution ends here.
+ *  - Source handle (bottom-center) allows connecting to an End Node.
  *  - Red theme (#EF4444) with a subtle pulsing glow defined in ErrorNode.css.
  *  - Distinct from Decision node's else/default path, which is for business logic.
  *
@@ -84,10 +84,12 @@ export default function ErrorNode({ id, data }: NodeProps<CanvasNode>) {
                 </div>
             </div>
 
-            {/*
-             * No source handle — ErrorNode is terminal.
-             * All error paths fan-in here; nothing routes onward.
-             */}
+            {/* Source handle — allows routing error flow to an End Node */}
+            <Handle
+                type="source"
+                position={Position.Bottom}
+                className="modern-node-handle error-node-handle"
+            />
         </div>
     );
 }
