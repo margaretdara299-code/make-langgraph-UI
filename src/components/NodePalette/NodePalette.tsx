@@ -7,25 +7,25 @@ import { SearchInput } from '@/components';
 import { ICON_MAP, SUB_CAT_COLORS } from './nodePalette.constants';
 import type { CatHeaderProps, DragNodePayload, PaletteLeafNode } from '@/interfaces/node-palette.interface';
 
-import StartNodeItem    from './StartNodeItem';
-import SubFlowNodeItem  from './SubFlowNodeItem';
+import StartNodeItem from './StartNodeItem';
+import SubFlowNodeItem from './SubFlowNodeItem';
 import DecisionNodeItem from './DecisionNodeItem';
-import EndNodeItem      from './EndNodeItem';
-import ErrorNodeItem    from './ErrorNodeItem';
+import EndNodeItem from './EndNodeItem';
+import ErrorNodeItem from './ErrorNodeItem';
 import './NodePalette.css';
 
 /* ── Draggable leaf item ──────────────────────────────────────
    Builds the drag payload and renders the icon + label card.
 ─────────────────────────────────────────────────────────────── */
 const TreeTitle: React.FC<{ node: PaletteLeafNode & { type: string; category: string; subCategory: string } }> = ({ node }) => {
-  const Icon   = ICON_MAP[node.icon ?? ''] ?? null;
+  const Icon = ICON_MAP[node.icon ?? ''] ?? null;
   const colors = SUB_CAT_COLORS[node.subCategory] ?? SUB_CAT_COLORS['Common'];
 
   const onDragStart = (e: React.DragEvent) => {
     const payload: DragNodePayload = {
-      type:     node.type,
-      label:    node.name,
-      icon:     node.icon ?? '🧩',
+      type: node.type,
+      label: node.name,
+      icon: node.icon ?? '🧩',
       actionId: node.id,
       category: node.category,
     };
@@ -72,8 +72,8 @@ const CategoryHeader: React.FC<CatHeaderProps> = ({ catKey, icon, label, openCat
 
 /* ── Main component ───────────────────────────────────────── */
 export default function NodePalette() {
-  const [isOpen,  setIsOpen]  = useState(true);
-  const [search,  setSearch]  = useState('');
+  const [isOpen, setIsOpen] = useState(true);
+  const [search, setSearch] = useState('');
   const [openCat, setOpenCat] = useState<string | null>('cat-common');
 
   /**
@@ -83,10 +83,10 @@ export default function NodePalette() {
    */
   const [openSubs, setOpenSubs] = useState<Record<string, string | null>>({});
 
-  const { actionsByCategory, isLoading: actionsLoading }   = useDesignerActions();
-  const { connectorGroups,  isLoading: connectorsLoading } = useDesignerConnectors() as any;
+  const { actionsByCategory, isLoading: actionsLoading } = useDesignerActions();
+  const { connectorGroups, isLoading: connectorsLoading } = useDesignerConnectors() as any;
 
-  const actionEntries    = useMemo(() => Object.entries(actionsByCategory),     [actionsByCategory]);
+  const actionEntries = useMemo(() => Object.entries(actionsByCategory), [actionsByCategory]);
   const connectorEntries = useMemo(() => Object.entries(connectorGroups ?? {}), [connectorGroups]);
 
   /* Toggle top-level category — collapse all sub-categories on change */
@@ -101,9 +101,9 @@ export default function NodePalette() {
 
   /* Render a sub-level accordion (Actions or Connectors) generically */
   const renderSubAccordion = (
-    catKey:  string,
+    catKey: string,
     entries: [string, any][],
-    type:    'action' | 'data',
+    type: 'action' | 'data',
     defaultIcon: string,
   ) => (
     <div className={`acc-panel ${openCat === catKey ? 'open' : ''}`}>
@@ -156,10 +156,10 @@ export default function NodePalette() {
         {isOpen && (
           <motion.aside
             className="node-library-floating"
-            initial={{ x: -20, opacity: 0, scale: 0.98 }}
-            animate={{ x: 0,   opacity: 1, scale: 1    }}
-            exit={{ x: -20,    opacity: 0, scale: 0.98 }}
-            transition={{ type: 'spring', bounce: 0.15, duration: 0.4 }}
+            initial={{ x: -350, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -350, opacity: 0 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 150 }}
           >
             {/* Header */}
             <div className="sidebar-top">
@@ -184,7 +184,7 @@ export default function NodePalette() {
 
                     {/* ════ COMMON ════ */}
                     <CategoryHeader catKey="cat-common" icon={<Layout size={16} />} label="Common"
-                                    openCat={openCat} onToggle={toggleCat} />
+                      openCat={openCat} onToggle={toggleCat} />
                     <div className={`acc-panel ${openCat === 'cat-common' ? 'open' : ''}`}>
                       <div className="np-depth1 np-leaf">
                         <StartNodeItem /><SubFlowNodeItem /><DecisionNodeItem />
@@ -196,7 +196,7 @@ export default function NodePalette() {
                     {actionEntries.length > 0 && (
                       <>
                         <CategoryHeader catKey="cat-actions" icon={<Zap size={16} />} label="Actions"
-                                        openCat={openCat} onToggle={toggleCat} />
+                          openCat={openCat} onToggle={toggleCat} />
                         {renderSubAccordion('cat-actions', actionEntries, 'action', 'Zap')}
                       </>
                     )}
@@ -205,7 +205,7 @@ export default function NodePalette() {
                     {connectorEntries.length > 0 && (
                       <>
                         <CategoryHeader catKey="cat-connectors" icon={<Database size={16} />} label="Connectors"
-                                        openCat={openCat} onToggle={toggleCat} />
+                          openCat={openCat} onToggle={toggleCat} />
                         {renderSubAccordion('cat-connectors', connectorEntries, 'data', 'Database')}
                       </>
                     )}

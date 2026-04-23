@@ -1102,10 +1102,10 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             {isOpen && (
                 <motion.aside
                     className="properties-drawer-floating"
-                    initial={{ x: 30, opacity: 0, scale: 0.98 }}
-                    animate={{ x: 0, opacity: 1, scale: 1 }}
-                    exit={{ x: 30, opacity: 0, scale: 0.98 }}
-                    transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
+                    initial={{ x: 350, y: 350, opacity: 0 }}
+                    animate={{ x: 0, y: 0, opacity: 1 }}
+                    exit={{ x: 350, y: 350, opacity: 0 }}
+                    transition={{ type: "spring", damping: 25, stiffness: 150 }}
                 >
                     <div className="properties-drawer__drawer-header">
                         <div className="properties-drawer__header-left">
