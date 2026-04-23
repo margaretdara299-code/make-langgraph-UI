@@ -26,31 +26,7 @@
     margin: 0 !important;
 }
 
-.create-category-btn-mini {
-    width: 24px !important;
-    height: 24px !important;
-    min-width: 24px !important;
-    padding: 0 !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--accent) !important;
-    border: none !important;
-    color: white !important;
-    box-shadow: 0 4px 10px var(--accent-soft);
-    transition: all 0.2s ease;
-    border-radius: 50% !important;
-    cursor: pointer;
-}
 
-.create-category-btn-mini .anticon {
-    font-size: 12px;
-}
-
-.create-category-btn-mini:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 12px var(--accent-soft);
-}
 
 .categories-toolbar {
     display: flex;

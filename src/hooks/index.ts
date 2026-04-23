@@ -13,4 +13,5 @@ export { default as useDesignerConnectors } from './useDesignerConnectors.hook';
 export { default as useLogin } from './useLogin.hook';
 export * from './useExecutionStepper.hook';
 export { useDebounce } from './useDebounce.hook';
+export { useThreeScene } from './useThreeScene';
 

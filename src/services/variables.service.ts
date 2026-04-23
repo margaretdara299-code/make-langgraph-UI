@@ -2,38 +2,46 @@ import { apiClient } from './http.service';
 import { API_ENDPOINTS } from './api.endpoints';
 import type { ApiResponse } from '@/interfaces';
 
+/**
+ * Variable interface matching the backend schema 
+ * but transformed to camelCase by http.service.
+ */
 export interface Variable {
-    id: number;
-    key_name: string;
-    group_name: string;
-    value: string;
+    variableId: number;
+    variableKey: string;
+    variableName: string;
+    groupKey: string;
+    groupName: string;
+    variableValue: string;
+    dataType: string;
+    description: string | null;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export async function fetchVariables(): Promise<Variable[]> {
     try {
-        const result = await apiClient.get<Variable[] | { items: Variable[] }>(API_ENDPOINTS.VARIABLES.BASE);
-        const data = result.data;
-        if (Array.isArray(data)) return data;
-        if (data && Array.isArray((data as any).items)) return (data as any).items;
-        return [];
+        const result = await apiClient.get<Variable[]>(API_ENDPOINTS.VARIABLES.BASE);
+        console.log("🚀 ~ fetchVariables ~ result:", result)
+        return result.data || [];
     } catch (error) {
         console.error('fetchVariables error:', error);
         return [];
     }
 }
 
-export async function createVariable(payload: { key_name: string; group_name?: string; value: string }): Promise<ApiResponse<Variable>> {
+export async function createVariable(payload: Partial<Variable>): Promise<ApiResponse<Variable>> {
     try {
-        const result = await apiClient.post(API_ENDPOINTS.VARIABLES.BASE, payload);
+        const result = await apiClient.post<Variable>(API_ENDPOINTS.VARIABLES.BASE, payload);
         return { success: true, data: result.data, message: result.message };
     } catch (error) {
         return { success: false, error: error instanceof Error ? error.message : 'Failed to create variable' };
     }
 }
 
-export async function updateVariable(variableId: number, payload: { key_name?: string; group_name?: string; value?: string }): Promise<ApiResponse<Variable>> {
+export async function updateVariable(variableId: number, payload: Partial<Variable>): Promise<ApiResponse<Variable>> {
     try {
-        const result = await apiClient.patch(API_ENDPOINTS.VARIABLES.BY_ID(variableId), payload);
+        const result = await apiClient.patch<Variable>(API_ENDPOINTS.VARIABLES.BY_ID(variableId), payload);
         return { success: true, data: result.data, message: result.message };
     } catch (error) {
         return { success: false, error: error instanceof Error ? error.message : 'Failed to update variable' };

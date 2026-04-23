@@ -3,6 +3,7 @@ import { Form, Input, Button, Divider } from 'antd';
 import { GithubOutlined, GoogleOutlined, WindowsOutlined } from '@ant-design/icons';
 import useLogin from '@/hooks/useLogin.hook';
 import { CANVAS_EDGES, PACKETS, CANVAS_NODES, CANVAS_STATS } from './LoginPage.data';
+import ThreeBackground from './ThreeBackground';
 import './LoginPage.css';
 
 export default function LoginPage() {
@@ -10,14 +11,11 @@ export default function LoginPage() {
 
     return (
         <div className="login-container">
-            {/* Decoupled Background Layer for exactly matched curves and fluid blobs */}
-            <div className="login-bg-layer">
-                <div className="login-bg-dark" />
-                <div className="lr-grid" />
-                <div className="lr-blob lr-blob--a" />
-                <div className="lr-blob lr-blob--b" />
-                <div className="lr-blob lr-blob--c" />
-                
+            {/* Three.js interactive particle background */}
+            <ThreeBackground />
+
+            {/* Static left-panel curve overlay (unchanged) */}
+            <div className="login-bg-layer" style={{ pointerEvents: 'none' }}>
                 <svg className="login-curve-overlay" viewBox="0 0 1000 1000" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M 0 0 L 520 0 C 520 150, 440 300, 440 500 C 440 700, 480 850, 480 1000 L 0 1000 Z"
@@ -163,7 +161,7 @@ export default function LoginPage() {
 
                     {/* Render Workflow Nodes */}
                     {CANVAS_NODES.map((node, i) => (
-                        <div key={node.id} className="lr-node" style={{ ...node.style, animationDelay: `${i * 0.6}s` }}>
+                        <div key={node.id} className="lr-node" data-accent={node.iconStyle} style={{ ...node.style, '--node-delay': `${i * 0.15}s` } as React.CSSProperties}>
                             <div className="lr-node-hd">
                                 <span className={`lr-icon lr-icon--${node.iconStyle}`}>{node.icon}</span>
                                 <div className="lr-node-meta">

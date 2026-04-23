@@ -102,13 +102,14 @@ export default function CategoriesPage() {
                 <div className="title-section">
                     <div className="title-row">
                         <Title level={2} style={{ margin: 0, fontSize: '28px', fontWeight: 700, letterSpacing: '-0.022em' }}>{CATEGORIES_UI.title}</Title>
-                        <button 
-                            className="create-category-btn-mini" 
+                        <Button 
+                            type="primary"
+                            shape="circle"
+                            className="global-header-add-btn" 
                             onClick={handleOpenCreate}
                             title="Create New Category"
-                        >
-                            <PlusOutlined />
-                        </button>
+                            icon={<PlusOutlined />}
+                        />
                     </div>
                     <Text type="secondary" style={{ fontSize: '13px', fontWeight: 400, color: 'var(--text-subtle)', display: 'block', marginTop: '4px' }}>
                         {CATEGORIES_UI.description}

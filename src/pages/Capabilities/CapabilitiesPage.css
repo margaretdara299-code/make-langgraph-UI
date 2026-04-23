@@ -9,10 +9,9 @@
 .capabilities-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
+    align-items: flex-start;
+    /* margin-bottom: 24px; */
     padding-bottom: 20px;
-
 }
 
 .title-section {
@@ -26,26 +25,7 @@
     gap: 12px;
 }
 
-.create-capability-btn-mini {
-    width: 28px !important;
-    height: 28px !important;
-    min-width: 28px !important;
-    background-color: var(--accent) !important;
-    border: none !important;
-    color: white !important;
-    box-shadow: 0 4px 10px var(--accent-soft);
-    transition: all 0.2s ease;
-    border-radius: 50% !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
 
-.create-capability-btn-mini:hover {
-    transform: scale(1.1);
-    filter: brightness(1.1);
-}
 
 .capabilities-toolbar {
     display: flex;

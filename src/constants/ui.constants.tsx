@@ -36,5 +36,13 @@ export const PAGE_HEADER_CONTENT = {
     CAPABILITIES: {
         title: 'Capabilities',
         description: 'Manage your platform capabilities and core service connectors.'
+    },
+    VARIABLES: {
+        title: 'Global Variables',
+        description: 'Define constants securely passed to your LangGraph executions.'
+    },
+    GROUPS: {
+        title: 'Variable Groups',
+        description: 'Manage and organize logical groupings for global configuration constants.'
     }
 };

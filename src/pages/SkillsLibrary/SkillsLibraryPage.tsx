@@ -1,7 +1,7 @@
 
 
 import { useState } from 'react';
-import { Input, Typography, Modal, message, Tabs, Badge, Space, Empty } from 'antd';
+import { Input, Typography, Modal, message, Tabs, Badge, Space, Empty, Button } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined, SearchOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useSkills, useCategories } from '@/hooks';
@@ -124,13 +124,14 @@ export default function SkillsLibraryPage() {
                 <div className="title-section">
                     <div className="title-row">
                         <Title level={2}>{SKILLS_LIBRARY.title}</Title>
-                        <button
-                            className="create-skill-btn-mini"
+                        <Button
+                            type="primary"
+                            shape="circle"
+                            icon={<PlusOutlined />}
+                            className="global-header-add-btn"
                             onClick={() => setIsCreateModalOpen(true)}
                             title="Create New Skill"
-                        >
-                            <PlusOutlined />
-                        </button>
+                        />
                     </div>
                     <Text type="secondary" style={{ fontSize: '12px', fontWeight: 500, color: '#64748b', display: 'block', marginTop: '4px' }}>
                         {SKILLS_LIBRARY.description}

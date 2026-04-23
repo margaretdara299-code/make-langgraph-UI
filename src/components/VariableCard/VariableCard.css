@@ -1,0 +1,46 @@
+/* VariableCard Enhanced Layout — Side-by-Side Mini Pattern */
+
+.variable-card-enhanced {
+    min-height: 140px; /* Condensed height */
+}
+
+.variable-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.variable-group-name {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: var(--text-main) !important;
+    line-height: 1 !important;
+    font-family: var(--font-sans);
+}
+
+.variable-key-mini {
+    font-size: 9px !important; /* "RIGHT SMALL" spec */
+    font-weight: 700 !important;
+    color: var(--accent) !important;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    max-width: 50%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.variable-card-enhanced:hover .variable-key-mini {
+    color: var(--accent) !important;
+    opacity: 1;
+}
+
+.capability-desc {
+    margin: 0 !important;
+    font-size: 12.5px !important;
+    line-height: 1.5 !important;
+    color: var(--text-muted) !important;
+    opacity: 0.8;
+}

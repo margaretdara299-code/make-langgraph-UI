@@ -95,7 +95,7 @@ export default function CapabilitiesPage() {
                             shape="circle"
                             icon={<PlusOutlined />} 
                             onClick={() => { setCapabilityToEdit(null); setIsModalOpen(true); }}
-                            className="create-capability-btn-mini"
+                            className="global-header-add-btn"
                         />
                     </div>
                     <Text type="secondary" style={{ fontSize: '13px', fontWeight: 400, color: 'var(--text-subtle)', display: 'block', marginTop: '4px' }}>

@@ -8,7 +8,7 @@ import type { ActionDefinition, ActionFilters } from '@/interfaces';
 import { fetchActions, fetchActionStatusCounts, fetchActionCategoryCounts, fetchActionCapabilityCounts } from '@/services';
 
 export default function useActions(initialFilters?: ActionFilters) {
-    const defaultFilters: ActionFilters = initialFilters || { page: 1, pageSize: 12 };
+    const defaultFilters: ActionFilters = initialFilters || { page: 1, pageSize: 20 };
     const [filters, setFilters] = useState<ActionFilters>(defaultFilters);
 
     const { data, isLoading, refetch } = useQuery({

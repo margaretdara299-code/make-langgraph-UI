@@ -19,7 +19,7 @@
   --app-grid-gap-x: 16px;
   --app-grid-gap-y: 16px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--app-grid-min-width)), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--app-grid-min-width)), 1fr));
   column-gap: var(--app-grid-gap-x);
   row-gap: var(--app-grid-gap-y);
 }
@@ -31,6 +31,7 @@
 
 .app-grid__auto-item > div {
   flex: 1;
+  margin-top: 18px; /* Added spacing from header */
   height: 100%;
 }
 
