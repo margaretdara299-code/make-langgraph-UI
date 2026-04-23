@@ -49,3 +49,7 @@ Thumbs.db
 *.mov
 *.wmv
 
+# AI Assistant files
+* .agent/
+* CLAUDE.md
+
