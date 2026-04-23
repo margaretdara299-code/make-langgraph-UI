@@ -172,34 +172,33 @@
     justify-content: space-between;
 }
 
-.var-metadata-row {
+.var-metadata-row-table {
     display: flex;
-    align-items: center;
-    gap: 24px;
-    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 32px;
+    margin-top: 4px;
+    padding-top: 8px;
+    border-top: 1px solid #f8fafc;
 }
 
-
-.var-meta-item {
+.var-meta-column {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    flex-direction: column;
+    gap: 4px;
     min-width: 0;
 }
 
-.var-meta-value {
+.var-meta-value-col {
     flex: 1;
 }
 
-.var-label {
-    font-size: 8px;
-    font-weight: 700;
+.var-column-header {
+    font-size: 9px;
+    font-weight: 800;
     color: var(--text-muted);
-    letter-spacing: 0.04em;
-    opacity: 0.6;
-    background: #f1f5f9;
-    padding: 1px 4px;
-    border-radius: 3px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0.5;
 }
 
 .var-name {

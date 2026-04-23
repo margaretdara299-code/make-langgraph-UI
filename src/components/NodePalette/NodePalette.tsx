@@ -147,7 +147,7 @@ export default function NodePalette() {
       {/* ── Toggle button ── */}
       <div className="library-control-fixed">
         <button className={`library-toggle-btn ${isOpen ? 'active' : ''}`} onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <Minus size={14} /> : <Plus size={14} />}
+          <Plus size={14} className="toggle-icon" />
         </button>
       </div>
 

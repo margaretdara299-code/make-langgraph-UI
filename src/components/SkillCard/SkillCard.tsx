@@ -3,13 +3,9 @@
  * Uses div-based layout and framer-motion for industry-level feel.
  */
 
-import { Tag, Typography, Space, Tooltip, Dropdown } from 'antd';
+import { Typography, Tooltip, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
-import { motion } from 'framer-motion';
 import {
-    ClockCircleOutlined,
-    BranchesOutlined,
-    TagOutlined,
     MoreOutlined,
 } from '@ant-design/icons';
 import { Tag as LucideTag, Layers } from 'lucide-react';
@@ -21,12 +17,6 @@ import './SkillCard.css';
 const { Text, Paragraph } = Typography;
 
 export default function SkillCard({ skill, onClick, onAction }: SkillCardProps) {
-    const updatedDate = new Date(skill.updatedAt).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-    });
-
     const handleMenuClick: MenuProps['onClick'] = (e) => {
         e.domEvent.stopPropagation();
         onAction?.(e.key, skill.id);
@@ -35,80 +25,77 @@ export default function SkillCard({ skill, onClick, onAction }: SkillCardProps) 
     return (
         <div
             className="skill-card-premium"
-            onDoubleClick={onClick}
+            onClick={onClick}
         >
-            <div className="skill-card-header">
-                <Text strong className="skill-name">{skill.name}</Text>
-                <div className="header-right">
-                    <StatusPill status={skill.status} />
-                    <Dropdown
-                        menu={{ items: getMenuItems(skill.status, skill.id, skill.latestVersionId), onClick: handleMenuClick }}
-                        trigger={['click']}
-                        placement="bottomRight"
-                    >
-                        <div
-                            className="card-actions-trigger"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <MoreOutlined />
-                        </div>
-                    </Dropdown>
-                </div>
-            </div>
-
-            <div className="skill-card-body">
-                <div className="skill-key-badge">{skill.skillKey}</div>
-
-                <Paragraph
-                    className="skill-description"
-                    ellipsis={{ rows: 2 }}
+            {/* Row 1: Name + Actions */}
+            <div className="sc-header">
+                <Tooltip title={skill.name} mouseEnterDelay={0.2}>
+                    <Text strong className="sc-name">{skill.name}</Text>
+                </Tooltip>
+                <Dropdown
+                    menu={{ items: getMenuItems(skill.status, skill.id, skill.latestVersionId), onClick: handleMenuClick }}
+                    trigger={['click']}
+                    placement="bottomRight"
                 >
-                    {skill.description}
-                </Paragraph>
+                    <div
+                        className="sc-more-btn"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <MoreOutlined />
+                    </div>
+                </Dropdown>
             </div>
 
-            <div className="skill-card-meta">
-                <div className="meta-item">
-                    <Layers size={13} strokeWidth={2.5} color="#94A3B8" />
-                    <span>{skill.category}</span>
-                </div>
+            {/* Row 2: Key + Status */}
+            <div className="sc-key-row">
+                <span className="sc-key-value">{skill.skillKey}</span>
+                <StatusPill status={skill.status} />
             </div>
 
-            <div className="skill-card-footer">
-                <div className="footer-tags">
-                    {skill.tags.slice(0, 2).map((tag) => {
+            {/* Row 4: Description */}
+            <div className="sc-body">
+                <Tooltip title={skill.description || 'No description available'} mouseEnterDelay={0.2} placement="top">
+                    <Paragraph
+                        className="sc-description"
+                        ellipsis={{ rows: 2 }}
+                    >
+                        {skill.description || <span className="sc-empty-desc">No description provided</span>}
+                    </Paragraph>
+                </Tooltip>
+            </div>
+
+            {/* Footer: Capabilities (Category) + Tags */}
+            <div className="sc-footer">
+                <Tooltip title={`Category: ${skill.category || 'General'}`} mouseEnterDelay={0.2}>
+                    <div className="sc-cap-section">
+                        <Layers size={12} strokeWidth={2.5} color="var(--accent)" />
+                        <span className="sc-cap-label">{skill.category || 'General'}</span>
+                    </div>
+                </Tooltip>
+
+                <div className="sc-tags-section">
+                    {skill.tags.slice(0, 1).map((tag) => {
                         const style = getTagStyle(tag);
                         return (
                             <div
                                 key={tag}
-                                className="mini-tag"
+                                className="sc-mini-tag"
                                 style={{
                                     backgroundColor: style.bg,
                                     color: style.color,
-                                    borderColor: 'transparent',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '4px'
                                 }}
                             >
-                                <LucideTag size={10} strokeWidth={2.5} />
+                                <LucideTag size={9} strokeWidth={2.5} />
                                 {tag}
                             </div>
                         );
                     })}
-                    {skill.tags.length > 2 && (
-                        <Tooltip title={skill.tags.slice(2).join(', ')}>
-                            <div className="mini-tag count" style={{ backgroundColor: '#F1F5F9', color: '#64748B' }}>+{skill.tags.length - 2}</div>
+                    {skill.tags.length > 1 && (
+                        <Tooltip title={skill.tags.slice(1).join(', ')}>
+                            <div className="sc-mini-tag sc-tag-count">+{skill.tags.length - 1}</div>
                         </Tooltip>
                     )}
                 </div>
-
-                <Tooltip title={`Last updated: ${updatedDate}`}>
-                    <div className="updated-date">
-                        <ClockCircleOutlined className="meta-icon" />
-                        <span>{updatedDate}</span>
-                    </div>
-                </Tooltip>
             </div>
         </div>
     );

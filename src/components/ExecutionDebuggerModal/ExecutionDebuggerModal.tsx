@@ -239,6 +239,7 @@ export default function ExecutionDebuggerModal({ isOpen, onClose, nodes, edges }
             footer={null}
             closable={false}
             destroyOnHidden
+            zIndex={2000}
             rootClassName={`exec-debugger-modal-root ${isFullScreen ? 'exec-debugger-modal-root--fullscreen' : ''}`}
             classNames={{
                 wrapper: 'exec-debugger-modal-wrapper',

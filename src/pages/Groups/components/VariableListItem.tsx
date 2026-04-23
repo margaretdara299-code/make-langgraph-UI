@@ -35,17 +35,18 @@ export const VariableListItem = ({ variable, onEdit, onDelete }: VariableListIte
                         />
                     </div>
                 </div>
-                <div className="var-metadata-row">
-                    <div className="var-meta-item">
-                        <span className="var-label">KEY</span>
+                
+                <div className="var-metadata-row-table">
+                    <div className="var-meta-column">
+                        <span className="var-column-header">KEY</span>
                         <span className="var-key-code">{variable.variableKey}</span>
                     </div>
-                    <div className="var-meta-item">
-                        <span className="var-label">TYPE</span>
+                    <div className="var-meta-column">
+                        <span className="var-column-header">TYPE</span>
                         <Tag className="variable-type-tag-neat">{variable.dataType}</Tag>
                     </div>
-                    <div className="var-meta-item var-meta-value">
-                        <span className="var-label">VALUE</span>
+                    <div className="var-meta-column var-meta-value-col">
+                        <span className="var-column-header">VALUE</span>
                         <Tooltip title={variable.variableValue}>
                             <span className="var-value-text">{variable.variableValue}</span>
                         </Tooltip>
