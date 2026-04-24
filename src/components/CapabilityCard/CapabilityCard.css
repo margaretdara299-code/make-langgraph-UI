@@ -26,25 +26,27 @@
 }
 
 .cc-premium-icon-box {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    background-color: var(--accent-soft);
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background-color: var(--bg-page);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 18px;
     color: var(--accent);
     border: 1px solid var(--border-light);
-    transition: all var(--motion-base) ease;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: var(--shadow-sm);
 }
 
 .capability-card-premium:hover .cc-premium-icon-box {
+    transform: scale(1.1) rotate(5deg);
     background-color: var(--accent);
-    color: var(--accent-contrast);
+    color: #ffffff;
     border-color: var(--accent);
-    transform: scale(1.05);
 }
+
 
 .cc-menu-btn {
     background: transparent;

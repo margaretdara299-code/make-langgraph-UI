@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Space, Button, Empty } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { Folder } from 'lucide-react';
+import { DynamicLucideIcon } from '@/components/LucideIconPicker/LucideIconPicker';
 import type { Group } from '@/services/groups.service';
 import type { Variable } from '@/services/variables.service';
 import { VariableListItem } from './VariableListItem';
@@ -35,8 +35,9 @@ export const GroupCard = ({
         <div className="group-card" key={group.groupName}>
             <div className="group-card-header">
                 <div className="group-card-icon">
-                    <Folder size={18} />
+                    <DynamicLucideIcon name={group.icon || 'Folder'} size={18} />
                 </div>
+
                 <div className="group-card-header-main" style={{ flex: 1 }}>
                     <div className="group-card-name-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>

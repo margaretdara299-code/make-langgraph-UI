@@ -5,6 +5,18 @@
     margin-top: 14px !important;
 }
 
+.create-action-overview__header-row {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.icon-field {
+    width: 80px;
+    flex-shrink: 0;
+}
+
 .create-action-overview__row {
     display: flex;
     gap: 24px;

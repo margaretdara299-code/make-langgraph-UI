@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Modal, Form, Input, Button, message, Typography } from 'antd';
 import { createGroup, updateGroup } from '@/services/groups.service';
+import { LucideIconPicker } from '@/components/LucideIconPicker/LucideIconPicker';
 import type { Group } from '@/services/groups.service';
 
 const { Text } = Typography;
@@ -23,7 +24,9 @@ export default function GroupModal({ visible, group, onClose, onSuccess }: Props
                     group_key: group.groupKey,
                     groupName: group.groupName,
                     description: group.description,
+                    icon: group.icon || 'Folder',
                 });
+
             } else {
                 form.resetFields();
             }
@@ -44,7 +47,9 @@ export default function GroupModal({ visible, group, onClose, onSuccess }: Props
                 groupKey: values.group_key,
                 groupName: values.groupName,
                 description: values.description,
+                icon: values.icon,
             };
+
 
             const res = await (group ? updateGroup(group.groupId, payload) : createGroup(payload));
 
@@ -112,6 +117,20 @@ export default function GroupModal({ visible, group, onClose, onSuccess }: Props
                 </Form.Item>
 
                 <Form.Item
+                    name="icon"
+                    label={<Text strong>Group Icon</Text>}
+                    initialValue=""
+                    rules={[{ required: true, message: 'Please select an icon' }]}
+                >
+
+                    <LucideIconPicker 
+                        value={form.getFieldValue('icon')} 
+                        onChange={(val) => form.setFieldsValue({ icon: val })} 
+                    />
+                </Form.Item>
+
+
+                <Form.Item
                     name="description"
                     label={<Text strong>Description</Text>}
                 >
@@ -121,6 +140,7 @@ export default function GroupModal({ visible, group, onClose, onSuccess }: Props
                         style={{ borderRadius: '6px', padding: '12px' }}
                     />
                 </Form.Item>
+
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '32px' }}>
                     <Button onClick={handleClose} style={{ height: '38px', borderRadius: '6px', padding: '0 20px' }}>

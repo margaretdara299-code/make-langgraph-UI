@@ -99,7 +99,7 @@ export default function useCanvasDragDrop(
                     data: {
                         label: data.label || 'Start',
                         category: data.category || 'structure',
-                        icon: data.icon || '▶️',
+                        icon: data.icon || 'Play',
                     } as any,
                 };
                 setNodes((nds) => [...nds, newNode]);
@@ -137,7 +137,7 @@ export default function useCanvasDragDrop(
                     data: {
                         label:          data.label || 'Decision',
                         category:       'structure',
-                        icon:           '⚡',
+                        icon:           'Zap',
                         rules:          []
                     } as any,
                 };
@@ -272,7 +272,7 @@ export default function useCanvasDragDrop(
                                 label: nodeData.label || rawAction.name,
                                 category: nodeData.category || rawAction.category || 'Uncategorized',
                                 capability: mappedCapability,
-                                icon: nodeData.icon || rawAction.icon || '🧩',
+                                icon: nodeData.icon || rawAction.icon || 'Package',
                                 configurations_json: rawAction.configurations_json || {},
                                 category_id: rawAction.category_id,
                             };

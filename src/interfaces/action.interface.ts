@@ -14,14 +14,17 @@ export interface ActionDefinition {
     description: string;
     category: string;
     category_id?: number;
+    category_icon?: string;
     capability: ActionCapability;
     capability_id?: number;
+    capability_icon?: string;
     scope: ActionScope;
     icon?: string;
     default_node_title: string;
     status: ActionVersionStatus;
     created_at: string;
     updated_at: string;
+
 
     // ── Version-level Configuration Blob ──
     configurations_json?: Record<string, any>;

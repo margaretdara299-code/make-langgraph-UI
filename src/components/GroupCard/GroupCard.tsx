@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Dropdown, Typography } from 'antd';
-import { MoreOutlined, EditOutlined, DeleteOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import { MoreOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
+import { DynamicLucideIcon } from '../LucideIconPicker/LucideIconPicker';
 import type { Group } from '@/services/groups.service';
 import './GroupCard.css';
 
@@ -22,8 +23,9 @@ export default function GroupCard({ group, onAction }: GroupCardProps) {
         >
             <div className="cc-premium-header">
                 <div className="cc-premium-icon-box">
-                    <UsergroupAddOutlined className="capability-icon" />
+                    <DynamicLucideIcon name={group.icon || 'Folder'} size={20} />
                 </div>
+
                 <Dropdown
                     menu={{
                         items: [

@@ -10,6 +10,7 @@ export interface Variable {
     groupId?: number;
     groupKey: string;
     groupName?: string;
+    icon?: string | null;
     variableKey: string;
     variableName: string;
     variableValue: string;
@@ -18,6 +19,7 @@ export interface Variable {
     createdAt?: string;
     updatedAt?: string;
 }
+
 
 export async function fetchVariables(): Promise<Variable[]> {
     try {

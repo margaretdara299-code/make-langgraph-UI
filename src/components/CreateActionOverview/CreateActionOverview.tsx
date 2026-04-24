@@ -3,10 +3,11 @@ import { Form, Input, Select, Space, Typography, Tooltip } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { useCategories, useCapabilities } from '@/hooks';
 import { ACTION_KEY_PATTERN, ACTION_DESCRIPTION_MAX_LENGTH } from '@/constants';
+import { LucideIconPicker } from '../LucideIconPicker/LucideIconPicker';
 import type { CreateActionOverviewProps } from '@/interfaces';
 import './CreateActionOverview.css';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 export default function CreateActionOverview({ draft, setDraft, form: externalForm }: CreateActionOverviewProps) {
@@ -43,7 +44,7 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
     const handleValuesChange = (changedValues: any) => {
         let updates = { ...changedValues };
 
-        // If name changed, also update default_node_title
+        // If name changed, also update default_node_title internally for the designer
         if (changedValues.name) {
             updates.default_node_title = changedValues.name;
         }
@@ -70,24 +71,39 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
 
     return (
         <div className="create-action-overview">
-
             <Form
                 form={form}
                 layout="vertical"
                 initialValues={draft}
                 onValuesChange={handleValuesChange}
-                requiredMark
+                requiredMark={true}
             >
-                <div className="create-action-overview__row">
+                <div className="create-action-overview__header-row">
                     <Form.Item
-                        name="name"
-                        label="Action Name"
-                        rules={[{ required: true, message: 'Name is required' }]}
-                        className="create-action-overview__flex-1"
+                        name="icon"
+                        label="Icon"
+                        rules={[{ required: true, message: 'Icon is required' }]}
+                        className="icon-field"
                     >
-                        <Input placeholder="e.g., Verify Eligibility" />
+                        <LucideIconPicker 
+                            value={draft.icon} 
+                            onChange={(icon) => {
+                                form.setFieldsValue({ icon });
+                                handleValuesChange({ icon });
+                            }} 
+                        />
                     </Form.Item>
- 
+
+                    <div style={{ flex: 1 }}>
+                        <Form.Item
+                            name="name"
+                            label="Action Name"
+                            rules={[{ required: true, message: 'Name is required' }]}
+                        >
+                            <Input placeholder="e.g., Verify Eligibility" />
+                        </Form.Item>
+                    </div>
+
                     <Form.Item
                         name="action_key"
                         label="Action Key"
@@ -100,7 +116,7 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                         <Input placeholder="e.g., verify_eligibility" />
                     </Form.Item>
                 </div>
- 
+
                 <div className="create-action-overview__row">
                     <Form.Item name="category_id" label="Category" rules={[{ required: true, message: 'Category is required' }]} className="create-action-overview__flex-1">
                         <Select placeholder="Select a category" loading={isCategoriesLoading}>
@@ -111,7 +127,7 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                             ))}
                         </Select>
                     </Form.Item>
- 
+
                     <Form.Item name="capability_id" label="Capability" rules={[{ required: true, message: 'Capability is required' }]} className="create-action-overview__flex-1">
                         <Select placeholder="Select a capability" loading={isCapabilitiesLoading}>
                             {capabilities.map(cap => (
@@ -122,10 +138,11 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                         </Select>
                     </Form.Item>
                 </div>
- 
+
                 <Form.Item
                     name="description"
                     label="Description"
+                    rules={[{ required: true, message: 'Description is required' }]}
                 >
                     <TextArea
                         placeholder="Describe what this action does..."
@@ -134,7 +151,6 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                         showCount
                     />
                 </Form.Item>
-
             </Form>
         </div>
     );

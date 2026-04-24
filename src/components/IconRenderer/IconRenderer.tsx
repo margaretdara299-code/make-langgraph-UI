@@ -1,4 +1,4 @@
-import { icons } from 'lucide-react';
+import * as icons from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
 
 /**
@@ -22,13 +22,13 @@ export interface IconRendererProps extends Omit<LucideProps, 'ref'> {
 /**
  * Dynamically renders a Lucide React icon based on a string name.
  */
-export default function IconRenderer({ iconName, fallback = '🧩', ...props }: IconRendererProps) {
+export default function IconRenderer({ iconName, fallback = <icons.HelpCircle size={18} />, ...props }: IconRendererProps) {
     if (!iconName) {
         return <>{fallback}</>;
     }
 
     const pascalName = kebabToPascal(iconName);
-    const IconComponent = (icons as any)[pascalName];
+    const IconComponent = (icons as any)[iconName] || (icons as any)[pascalName];
 
     if (!IconComponent) {
         // Fallback if the icon name doesn't exist in the lucide-react library

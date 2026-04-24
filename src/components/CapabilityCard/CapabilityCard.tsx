@@ -8,6 +8,7 @@ import { Dropdown, Typography } from 'antd';
 import { MoreOutlined, EditOutlined, DeleteOutlined, RocketOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import type { CapabilityCardProps } from '@/interfaces';
+import { DynamicLucideIcon } from '../LucideIconPicker/LucideIconPicker';
 import './CapabilityCard.css';
 
 const { Paragraph, Title } = Typography;
@@ -22,8 +23,9 @@ export default function CapabilityCard({ capability, onAction }: CapabilityCardP
         >
             <div className="cc-premium-header">
                 <div className="cc-premium-icon-box">
-                    <RocketOutlined className="capability-icon" />
+                    <DynamicLucideIcon name={capability.icon || 'Rocket'} size={22} />
                 </div>
+
                 <Dropdown
                     menu={{
                         items: [

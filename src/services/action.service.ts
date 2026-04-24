@@ -25,7 +25,7 @@ export async function createAction(
             category_id: anyInput.category_id || input.category_id || 1,
             capability: (input.capability || 'api').toUpperCase(),
             capability_id: anyInput.capability_id || input.capability_id || 1,
-            icon: input.icon || '🧩',
+            icon: input.icon || 'Package',
             default_node_title: anyInput.default_node_title || input.default_node_title || input.name || 'Untitled',
             scope: input.scope || 'global',
 
@@ -43,7 +43,7 @@ export async function createAction(
             category: input.category || 'Uncategorized',
             capability: input.capability || 'api',
             scope: input.scope || 'global',
-            icon: input.icon || '🧩',
+            icon: input.icon || 'Package',
             default_node_title: input.default_node_title || input.name || 'Untitled',
             status: 'draft' as const,
             created_at: new Date().toISOString(),
@@ -62,38 +62,51 @@ export async function createAction(
  */
 export async function fetchGroupedActions(): Promise<Record<string, ActionDefinition[]>> {
     try {
-        // Fetch capabilities map in parallel so we can resolve capability_id → name
-        const [result, capList] = await Promise.all([
+        // Fetch capabilities and categories map in parallel so we can resolve IDs → names/icons
+        const [result, capList, catList] = await Promise.all([
             apiClient.get<any>(API_ENDPOINTS.ACTIONS.GROUPED),
             fetchCapabilities().catch(() => []),
+            fetchCategories().catch(() => []),
         ]);
 
-        const capMap: Record<number, string> = Object.fromEntries(
-            capList.map((c: any) => [c.capabilityId ?? c.capability_id, (c.name || '').toLowerCase()])
+        const capMap: Record<number, { name: string; icon: string }> = Object.fromEntries(
+            capList.map((c: any) => [c.capabilityId ?? c.capability_id, { name: c.name || '', icon: c.icon || '' }])
+        );
+
+        const catMap: Record<number, { name: string; icon: string }> = Object.fromEntries(
+            catList.map((c: any) => [c.id || c.categoryId || c.category_id, { name: c.name || '', icon: c.icon || '' }])
         );
 
         // The backend wraps the response in { data: { "CategoryName": [...], ... } }
         const grouped: Record<string, any[]> = result.data || {};
         const mapped: Record<string, ActionDefinition[]> = {};
 
-        for (const [category, actions] of Object.entries(grouped)) {
-            mapped[category] = (actions as any[]).map((a: any) => ({
-                id: a.actionDefinitionId || a.id,
-                action_key: a.actionKey || a.action_key || '',
-                name: a.name || '',
-                description: a.description || '',
-                category: category,
-                capability: (capMap[a.capabilityId || a.capability_id] || a.capability || 'api').toLowerCase(),
-                capability_id: a.capabilityId || a.capability_id,
-                scope: a.scope || 'global',
-                icon: a.icon || '🧩',
-                default_node_title: a.defaultNodeTitle || a.default_node_title || a.name || '',
-                status: a.status || 'published',
-                created_at: a.createdAt || a.created_at || '',
-                updated_at: a.updatedAt || a.updated_at || '',
-                configurations_json: a.configurationsJson || a.configurations_json || {},
-                actionVersionId: a.actionVersionId || a.action_version_id || '',
-            } as ActionDefinition));
+        for (const [categoryName, actions] of Object.entries(grouped)) {
+            mapped[categoryName] = (actions as any[]).map((a: any) => {
+                const capId = a.capabilityId || a.capability_id;
+                const catId = a.categoryId || a.category_id;
+                
+                return {
+                    id: a.actionDefinitionId || a.action_definition_id || a.id,
+                    action_key: a.actionKey || a.action_key || '',
+                    name: a.name || '',
+                    description: a.description || '',
+                    category: categoryName,
+                    category_id: catId,
+                    category_icon: a.categoryIcon || a.category_icon || catMap[catId]?.icon || '',
+                    capability: (capMap[capId]?.name || a.capability || 'api').toLowerCase(),
+                    capability_id: capId,
+                    capability_icon: a.capabilityIcon || a.capability_icon || capMap[capId]?.icon || '',
+                    scope: a.scope || 'global',
+                    icon: a.icon || a.icon_name || 'Package',
+                    default_node_title: a.defaultNodeTitle || a.default_node_title || a.name || '',
+                    status: a.status || 'published',
+                    created_at: a.createdAt || a.created_at || '',
+                    updated_at: a.updatedAt || a.updated_at || '',
+                    configurations_json: a.configurationsJson || a.configurations_json || {},
+                    actionVersionId: a.actionVersionId || a.action_version_id || '',
+                } as ActionDefinition;
+            });
         }
 
         return mapped;
@@ -102,6 +115,7 @@ export async function fetchGroupedActions(): Promise<Record<string, ActionDefini
         return {};
     }
 }
+
 
 /**
  * Fetches a paginated list of catalog Actions from the backend.
@@ -129,12 +143,12 @@ export async function fetchActions(
             fetchCategories().catch(() => []),
         ]);
 
-        const capMap: Record<number, string> = Object.fromEntries(
-            capList.map((c: any) => [c.capabilityId ?? c.capability_id, (c.name || '').toLowerCase()])
+        const capMap: Record<number, { name: string; icon: string }> = Object.fromEntries(
+            capList.map((c: any) => [c.capabilityId ?? c.capability_id, { name: c.name || '', icon: c.icon || '' }])
         );
 
-        const catMap: Record<number, string> = Object.fromEntries(
-            catList.map((c: any) => [c.id || c.categoryId || c.category_id, c.name || ''])
+        const catMap: Record<number, { name: string; icon: string }> = Object.fromEntries(
+            catList.map((c: any) => [c.id || c.categoryId || c.category_id, { name: c.name || '', icon: c.icon || '' }])
         );
 
         const items: ActionDefinition[] = (result.data.items || []).map((a: any) => {
@@ -146,9 +160,12 @@ export async function fetchActions(
                 id: a.actionDefinitionId || a.action_definition_id || a.id,
                 action_key: a.actionKey || a.action_key || '',
                 category_id: catId,
-                category: a.category || catMap[catId] || 'Uncategorized',
+                category: a.category || catMap[catId]?.name || 'Uncategorized',
+                category_icon: a.categoryIcon || a.category_icon || catMap[catId]?.icon || '',
                 capability_id: capId,
-                capability: (capMap[capId] || a.capability || 'api').toLowerCase() as ActionDefinition['capability'],
+                capability: (capMap[capId]?.name || a.capability || 'api').toLowerCase() as ActionDefinition['capability'],
+                capability_icon: a.capabilityIcon || a.capability_icon || capMap[capId]?.icon || '',
+                icon: a.icon || a.icon_name || 'Package',
                 updated_at: a.updatedAt || a.updated_at || '',
                 created_at: a.createdAt || a.created_at || '',
             };
@@ -277,7 +294,7 @@ export async function fetchActionById(id: string): Promise<ApiResponse<ActionDef
             capability: data.capability || 'api',
             capability_id: data.capabilityId || data.capability_id,
             scope: data.scope || 'global',
-            icon: data.icon || '🧩',
+            icon: data.icon || 'Package',
             default_node_title: data.defaultNodeTitle || data.default_node_title || data.name || '',
             status: data.status || 'draft',
             created_at: data.createdAt || data.created_at || '',
