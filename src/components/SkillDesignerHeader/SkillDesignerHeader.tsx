@@ -1,149 +1,248 @@
-/**
- * SkillDesignerHeader — The sub-header for the visual canvas.
- * Contains skill context (name, status) and primary actions (Save, View Code, Publish).
- */
-
 import { useState, useEffect } from 'react';
-import { Button, Typography, Space, Tooltip, message, Skeleton } from 'antd';
-import { ArrowLeftOutlined, CodeOutlined, SaveOutlined, SendOutlined } from '@ant-design/icons';
+import { message, Dropdown, Input, Divider, Spin } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
-import StatusPill from '@/components/StatusPill/StatusPill';
+import { motion } from 'framer-motion';
+import {
+  ChevronDown, Play, Save, Zap, Code, Check
+} from 'lucide-react';
+import { useReactFlow } from '@xyflow/react';
+
+import { useSkillGraph } from '@/hooks';
+import { fetchSkillById, fetchSkills } from '@/services/skill.service';
+import { generateCode } from '@/services/graph.service';
+import { getStatusConfig } from '@/utils/status.util';
+import { ROUTES } from '@/routes';
+import type { Skill } from '@/interfaces';
+
 import CodeViewerModal from '@/components/CodeViewerModal/CodeViewerModal';
 import PublishStepperModal from '@/components/PublishStepperModal/PublishStepperModal';
-import { ROUTES } from '@/routes';
-import { useSkillGraph } from '@/hooks';
-import { fetchSkillById } from '@/services';
-import { generateCode } from '@/services/graph.service';
-import type { Skill } from '@/interfaces';
+import ExecutionPromptModal from '@/components/ExecutionPromptModal/ExecutionPromptModal';
+import ExecutionDebuggerModal from '@/components/ExecutionDebuggerModal/ExecutionDebuggerModal';
+
 import './SkillDesignerHeader.css';
 
-const { Text, Title } = Typography;
-
 export default function SkillDesignerHeader() {
-    const navigate = useNavigate();
-    const { skillId } = useParams<{ skillId: string }>();
-    const { saveGraph, versionId } = useSkillGraph();
-    const [skill, setSkill] = useState<Skill | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+  const { getNodes, getEdges } = useReactFlow();
+  const { skillId } = useParams<{ skillId: string }>();
+  const { saveGraph, versionId } = useSkillGraph();
 
-    // View Code state
-    const [isCodeViewerOpen, setIsCodeViewerOpen] = useState(false);
-    const [generatedCode, setGeneratedCode] = useState('');
-    const [isGeneratingCode, setIsGeneratingCode] = useState(false);
+  const [skill, setSkill] = useState<Skill | null>(null);
+  const [allSkills, setAllSkills] = useState<Skill[]>([]);
+  const [searchValue, setSearchValue] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
-    // Publish stepper state
-    const [isPublishOpen, setIsPublishOpen] = useState(false);
+  // Modal states
+  const [isCodeViewerOpen, setIsCodeViewerOpen] = useState(false);
+  const [generatedCode, setGeneratedCode] = useState('');
+  const [isGeneratingCode, setIsGeneratingCode] = useState(false);
+  const [isPublishOpen, setIsPublishOpen] = useState(false);
+  const [isDebuggerOpen, setIsDebuggerOpen] = useState(false);
+  const [isExecutionDebuggerOpen, setIsExecutionDebuggerOpen] = useState(false);
 
-    useEffect(() => {
-        if (!skillId) return;
-        setIsLoading(true);
-        fetchSkillById(skillId).then((res) => {
-            if (res.success && res.data) {
-                setSkill(res.data);
-            } else if (!res.success) {
-                message.error(res.error || 'Failed to load skill details');
-            }
-            setIsLoading(false);
-        });
-    }, [skillId]);
+  useEffect(() => {
+    if (!skillId) return;
+    setIsLoading(true);
+    Promise.all([
+      fetchSkillById(skillId),
+      fetchSkills({ pageSize: 100 })
+    ]).then(([res, listRes]) => {
+      if (res.success && res.data) setSkill(res.data);
+      if (listRes.data) setAllSkills(listRes.data);
+      setIsLoading(false);
+    });
+  }, [skillId]);
 
-    const handleSave = async () => {
-        try {
-            const res: any = await saveGraph();
-            message.success(res.message || 'Draft saved successfully');
-        } catch (error: any) {
-            message.error(error?.message || 'Failed to save draft');
-        }
-    };
+  const handleSave = async () => {
+    try {
+      const res: any = await saveGraph();
+      message.success(res.message || 'Draft saved successfully');
+    } catch (error: any) {
+      message.error(error?.message || 'Failed to save draft');
+    }
+  };
 
-    const handleViewCode = async () => {
-        if (!versionId) return;
-        setIsGeneratingCode(true);
-        try {
-            const result: any = await generateCode(versionId);
-            const code = result?.code || result?.data?.code || '';
-            if (!code) throw new Error('No code available');
-            setGeneratedCode(code);
-            setIsCodeViewerOpen(true);
-        } catch (err: any) {
-            message.error(err?.message || 'Failed to generate code');
-        } finally {
-            setIsGeneratingCode(false);
-        }
-    };
+  const handleViewCode = async () => {
+    if (!versionId) return;
+    setIsGeneratingCode(true);
+    try {
+      const result: any = await generateCode(versionId);
+      setGeneratedCode(result || {});
+      setIsCodeViewerOpen(true);
+    } catch (err: any) {
+      message.error(err?.message || 'Failed to generate code');
+    } finally {
+      setIsGeneratingCode(false);
+    }
+  };
 
-    return (
-        <div className="skill-designer-header">
-            {/* Left Side: Context & Navigation */}
-            <Space size="large" className="skill-designer-header__context">
-                <Button
-                    type="text"
-                    icon={<ArrowLeftOutlined />}
-                    onClick={() => navigate(ROUTES.SKILLS_LIBRARY)}
-                    className="skill-designer-header__back-btn"
-                />
+  const statusConfig = getStatusConfig(skill?.status || 'draft');
+  const StatusIcon = statusConfig.icon;
 
-                <div className="skill-designer-header__titles">
-                    {isLoading ? (
-                        <Skeleton.Input active size="small" style={{ width: 200 }} />
-                    ) : (
-                        <>
-                            <Title level={4} style={{ margin: 0 }}>{skill?.name || 'Unknown Skill'}</Title>
-                            <Space size="small" className="skill-designer-header__meta">
-                                <Text type="secondary" code>{skill?.skillKey || 'unknown'}</Text>
-                                {skill && <StatusPill status={skill.status} />}
-                            </Space>
-                        </>
-                    )}
-                </div>
-            </Space>
+  const filteredSkills = allSkills.filter(s =>
+    s.name.toLowerCase().includes(searchValue.toLowerCase())
+  );
 
-            {/* Right Side: Primary Actions */}
-            <Space size="middle" className="skill-designer-header__actions">
-                <Tooltip title="Save Draft">
-                    <Button icon={<SaveOutlined />} onClick={handleSave}>Save</Button>
-                </Tooltip>
-                <Tooltip title="View Generated Code">
-                    <Button
-                        icon={<CodeOutlined />}
-                        onClick={handleViewCode}
-                        loading={isGeneratingCode}
-                        disabled={!versionId}
-                    >
-                        View Code
-                    </Button>
-                </Tooltip>
-                <Tooltip title="Publish Workflow">
-                    <Button
-                        type="primary"
-                        icon={<SendOutlined />}
-                        onClick={() => setIsPublishOpen(true)}
-                        disabled={!versionId}
-                    >
-                        Publish
-                    </Button>
-                </Tooltip>
-            </Space>
-
-            {/* Code Viewer Modal */}
-            <CodeViewerModal
-                isOpen={isCodeViewerOpen}
-                code={generatedCode}
-                onClose={() => setIsCodeViewerOpen(false)}
-            />
-
-            {/* Publish Stepper Modal */}
-            <PublishStepperModal
-                isOpen={isPublishOpen}
-                versionId={versionId}
-                onClose={() => setIsPublishOpen(false)}
-                onViewCode={(code) => {
-                    setIsPublishOpen(false);
-                    setGeneratedCode(code);
-                    setIsCodeViewerOpen(true);
-                }}
-            />
+  const skillItems = filteredSkills.map((s) => ({
+    key: s.id,
+    label: (
+      <div className="skill-dropdown-item" onClick={() => navigate(`/skills/${s.id}/versions/${s.latestVersionId || ''}/design`)}>
+        <div className="skill-info">
+          <span className="skill-dropdown-name">{s.name}</span>
         </div>
-    );
-}
+        {s.id === skillId && <Check size={14} className="active-check-icon" />}
+      </div>
+    ),
+  }));
 
+  return (
+    <header className="builder-header">
+      {/* Left: Section for spacing if needed */}
+      <div className="builder-header-left">
+      </div>
+
+      {/* Center: Breadcrumb */}
+      <div className="builder-header-center">
+        <nav className="breadcrumb">
+          <button className="breadcrumb-item link" onClick={() => navigate(ROUTES.SKILLS_LIBRARY)}>
+            Skills
+          </button>
+
+          <span className="breadcrumb-separator">/</span>
+
+          <div className="breadcrumb-container">
+            <Dropdown
+              menu={{ items: skillItems }}
+              trigger={['click']}
+               placement="bottomLeft"
+               classNames={{ root: "builder-dropdown" }}
+               popupRender={(menu) => (
+                 <div className="dropdown-content-wrapper">
+                  <div className="dropdown-search-wrapper">
+                    <Input
+                      placeholder="Search skills..."
+                      prefix={<SearchOutlined style={{ color: 'var(--text-muted)' }} />}
+                      value={searchValue}
+                      onChange={(e) => setSearchValue(e.target.value)}
+                      onClick={(e) => e.stopPropagation()}
+                      className="dropdown-search-input"
+                    />
+                  </div>
+                  <Divider style={{ margin: '4px 0' }} />
+                  <div className="dropdown-scroll-area">
+                    {menu}
+                  </div>
+                </div>
+              )}
+            >
+              <span className="breadcrumb-item skill-name clickable">
+                {isLoading ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ opacity: 0.5 }}>Syncing...</span>
+                    <Spin size="small" />
+                  </div>
+                ) : (
+                  <>
+                    {skill?.name}
+                    <ChevronDown size={14} className="dropdown-arrow ml-1" />
+                  </>
+                )}
+              </span>
+            </Dropdown>
+
+            <span className="breadcrumb-separator" style={{ margin: '0 8px' }}>/</span>
+
+            <div className={`status-indicator ${statusConfig.className}`}>
+              <StatusIcon size={11} strokeWidth={2.5} className="status-icon" />
+              <span className="status-badge">{statusConfig.label}</span>
+            </div>
+          </div>
+        </nav>
+      </div>
+
+      {/* Right Side: Actions */}
+      <div className="builder-header-right">
+        <motion.button
+          className="hdr-btn hdr-btn-outline"
+          whileTap={{ scale: 0.96 }}
+          onClick={handleViewCode}
+          disabled={isGeneratingCode || !versionId}
+        >
+          {isGeneratingCode ? <Spin size="small" /> : <Code size={14} />}
+          View Code
+        </motion.button>
+
+        <motion.button
+          className="hdr-btn hdr-btn-outline"
+          whileTap={{ scale: 0.96 }}
+          onClick={() => {
+            if (!versionId) return;
+            const currentNodes = getNodes();
+            const hasStart = currentNodes.some((node: any) => node.type === 'start');
+            const hasEnd = currentNodes.some((node: any) => node.type === 'end');
+            if (!hasStart || !hasEnd) {
+              message.error('Validation Error: The workflow must have at least one Start node and one End node before running.');
+              return;
+            }
+            setIsDebuggerOpen(true);
+          }}
+          disabled={!versionId}
+        >
+          <Play size={14} />
+          Run
+        </motion.button>
+
+        <motion.button
+          className="hdr-btn hdr-btn-outline"
+          whileTap={{ scale: 0.96 }}
+          onClick={handleSave}
+        >
+          <Save size={14} />
+          Save
+        </motion.button>
+
+        <motion.button
+          className="hdr-btn hdr-btn-primary"
+          whileTap={{ scale: 0.96 }}
+          onClick={() => setIsPublishOpen(true)}
+          disabled={!versionId}
+        >
+          <Zap size={14} />
+          Publish
+        </motion.button>
+      </div>
+
+      {/* Modals */}
+      <CodeViewerModal isOpen={isCodeViewerOpen} code={generatedCode} onClose={() => setIsCodeViewerOpen(false)} />
+      <PublishStepperModal
+        isOpen={isPublishOpen}
+        versionId={versionId}
+        onClose={() => setIsPublishOpen(false)}
+        onViewCode={(code) => {
+          setIsPublishOpen(false);
+          setGeneratedCode(code);
+          setIsCodeViewerOpen(true);
+        }}
+      />
+      {versionId && (
+        <>
+          <ExecutionPromptModal
+            isOpen={isDebuggerOpen}
+            onClose={() => setIsDebuggerOpen(false)}
+            onExecutionStarted={() => setIsExecutionDebuggerOpen(true)}
+            versionId={versionId}
+            nodes={getNodes()}
+            edges={getEdges()}
+          />
+          <ExecutionDebuggerModal
+            isOpen={isExecutionDebuggerOpen}
+            onClose={() => setIsExecutionDebuggerOpen(false)}
+            nodes={getNodes()}
+            edges={getEdges()}
+          />
+        </>
+      )}
+    </header>
+  );
+}

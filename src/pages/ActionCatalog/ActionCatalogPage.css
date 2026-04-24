@@ -1,127 +1,177 @@
-/**
- * Action Catalog page styles.
- * Inherits much of the layout structure from skills-library.
- */
-
-.action-catalog {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    height: calc(100vh - 112px);
-    /* Matches skill library layout height */
+.action-catalog-page {
+    min-height: calc(100vh - 80px);
 }
 
-/* ── Page Header ── */
-
-.action-catalog__header {
+.catalog-header {
+    margin-bottom: 32px;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.catalog-header-top {
+    display: flex;
     justify-content: space-between;
+    align-items: flex-end;
+    gap: 40px;
 }
 
-.action-catalog__title {
+.title-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+.catalog-filters-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.catalog-search-wrap {
+    width: 320px;
+}
+
+.catalog-options-row {
+    display: flex;
+    gap: 8px;
+}
+
+.catalog-options-row .ant-select {
+    min-width: 160px;
+    min-height: 36px;
+}
+
+.catalog-options-row .ant-select-selector {
+    border-radius: 4px !important;
+    border-color: var(--border-light) !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    height: 36px !important;
+    padding: 0 8px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.catalog-options-row .ant-select-selection-item,
+.catalog-options-row .ant-select-selection-placeholder {
+    display: flex !important;
+    align-items: center !important;
+    line-height: normal !important;
+    height: 34px !important;
+}
+
+.catalog-options-row .ant-select-focused .ant-select-selector {
+    border-color: var(--accent) !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 0 0 4px var(--accent-light) !important;
+}
+
+.status-tabs .ant-tabs-nav {
+    margin-bottom: 0 !important;
+}
+
+.status-tabs .ant-tabs-nav::before {
+    border-bottom: 1px solid var(--border-light) !important;
+}
+
+.status-tabs.ant-tabs {
+    margin-bottom: -1px;
+}
+
+.status-tabs .ant-tabs-tab {
+    padding: 12px 27px !important;
     margin: 0 !important;
+    font-size: 14px;
+    color: var(--text-subtle) !important;
+    transition: all 0.3s ease !important;
 }
 
-/* ── Search & Filters ── */
-
-.action-catalog__toolbar {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 8px;
+.status-tabs .ant-tabs-ink-bar {
+    height: 3px !important;
+    background: var(--accent) !important;
+    border-radius: 3px 3px 0 0;
 }
 
-.action-catalog__search-row {
+.status-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: var(--accent) !important;
+}
+
+.catalog-body {
+    position: relative;
+
+}
+
+.catalog-empty {
     display: flex;
-    gap: 16px;
+    justify-content: center;
     align-items: center;
+    min-height: 300px;
+    background: var(--bg-card);
+    border: 1px dashed var(--border-medium);
+    border-radius: 16px;
 }
 
-.action-catalog__search-input {
-    flex: 1;
-    min-width: 250px;
-    max-width: 480px;
+@media (max-width: 1024px) {
+    .catalog-header-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 24px;
+    }
+
+    .catalog-filters-row {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .catalog-search-wrap {
+        width: 100%;
+        max-width: 100%;
+    }
 }
 
-.action-catalog__toolbar-selects {
+.catalog-pagination-wrap {
+    margin-top: 48px;
+    padding: 24px 0;
     display: flex;
-    gap: 12px;
+    justify-content: center;
+    border-top: 1px solid var(--border-light);
 }
 
-.action-catalog__dropdown {
-    width: 220px !important;
-}
-
-.action-catalog__filter-bar {
-    display: flex;
-    flex-direction: column;
-}
-
-.action-catalog__select-group {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.action-catalog__select-label {
-    font-size: 13px;
+.premium-pagination .ant-pagination-item {
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
+    transition: all 0.2s ease;
     font-weight: 500;
-    color: var(--color-nav-input-placeholder);
 }
 
-.action-catalog__dropdown {
-    min-width: 220px;
+.premium-pagination .ant-pagination-item-active {
+    background: var(--accent);
+    border-color: var(--accent);
 }
 
-/* ── Body (sidebar + grid) ── */
-
-.action-catalog__body {
-    display: flex;
-    flex: 1;
-    min-height: 0;
+.premium-pagination .ant-pagination-item-active a {
+    color: #ffffff !important;
 }
 
-.action-catalog__sidebar-section {
-    display: flex;
-    flex-direction: column;
-}
-
-.action-catalog__filter-title {
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--color-nav-input-placeholder);
-    margin-bottom: 8px;
-    padding: 0 12px;
-}
-
-/* ── Grid ── */
-
-.action-catalog__grid-area {
-    flex: 1;
-    min-width: 0;
-    overflow-y: auto;
-    padding-right: 12px;
-}
-
-.action-catalog__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 20px;
-}
-
-/* ── Loading / Empty ── */
-
-.action-catalog__loading,
-.action-catalog__empty {
+.premium-pagination .ant-pagination-prev .ant-pagination-item-link,
+.premium-pagination .ant-pagination-next .ant-pagination-item-link {
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 300px;
 }
 
-.action-catalog__count-tag {
-    font-size: 10px !important;
-}
+.premium-pagination .ant-select-selector {
+    border-radius: 8px !important;
+}

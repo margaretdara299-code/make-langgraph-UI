@@ -4,6 +4,7 @@
  */
 
 export const ROUTES = {
+    LOGIN: '/login',
     HOME: '/',
     DASHBOARD: '/dashboard',
     SKILLS_LIBRARY: '/skills',
@@ -12,6 +13,8 @@ export const ROUTES = {
     CATEGORIES: '/settings/categories',
     CAPABILITIES: '/settings/capabilities',
     CONNECTORS: '/connectors',
+    VARIABLES: '/variables',
+    GROUPS: '/groups',
     TOOLS: '/tools',
     WORKFLOW: '/workflow',
 } as const;

@@ -20,7 +20,7 @@ export default function Modal({
             title={title}
             width={MODAL_SIZE_MAP[size]}
             footer={null}
-            destroyOnClose
+            destroyOnHidden
         >
             {children}
         </AntModal>

@@ -1,5 +1,8 @@
 .create-action-overview__title {
+    font-size: 16px !important;
+    font-weight: 600 !important;
     margin-bottom: 24px !important;
+    margin-top: 14px !important;
 }
 
 .create-action-overview__row {

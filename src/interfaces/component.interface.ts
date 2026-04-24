@@ -5,6 +5,26 @@
  */
 
 import type { ReactNode } from 'react';
+import type { DashboardCounts } from './engine.interface';
+import type { CanvasNodeData } from './canvas.interface';
+
+export interface ModernNodeProps {
+    id: string;
+    data: CanvasNodeData;
+    theme: {
+        bg: string;
+        stroke: string;
+        iconBg: string;
+        badgeBg?: string;
+    };
+    icon: ReactNode;
+    title?: string;
+    subtitle?: string;
+    badge?: string | ReactNode;
+    showTargetHandle?: boolean;
+    showSourceHandle?: boolean;
+    children?: ReactNode;
+}
 
 export interface StatusPillProps {
     status: 'draft' | 'published';
@@ -122,7 +142,7 @@ export interface CreateActionModalProps {
     isOpen: boolean;
     initialStep?: number;
     onClose: () => void;
-    onCreated: () => void;
+    onCreated: () => void | Promise<void>;
     actionToEdit?: import('./action.interface').ActionDefinition;
 }
 
@@ -136,6 +156,9 @@ export interface CreateActionOverviewProps {
 export interface CreateActionStepProps {
     draft: Partial<import('./action.interface').ActionDefinition>;
     setDraft: import('react').Dispatch<import('react').SetStateAction<Partial<import('./action.interface').ActionDefinition>>>;
+    form?: import('antd').FormInstance;
+    onTestClick?: () => void;
+    isTesting?: boolean;
 }
 
 export interface PlaceholderStepProps {
@@ -166,23 +189,11 @@ export interface StructureSectionProps {
     search: string;
 }
 
-export interface CreateCategoryModalProps {
-    isOpen: boolean;
-    categoryToEdit: import('./category.interface').Category | null;
-    onClose: () => void;
-    onCreated: () => void;
-}
 
-export interface CreateCapabilityModalProps {
-    isOpen: boolean;
-    capabilityToEdit: import('./capability.interface').Capability | null;
-    onClose: () => void;
-    onCreated: () => void;
-}
 
 export interface CodeViewerModalProps {
     isOpen: boolean;
-    code: string;
+    code: string | Record<string, string>; // Support both single file and multiple files
     onClose: () => void;
     fileName?: string;
 }
@@ -200,4 +211,30 @@ export interface TestApiModalProps {
     testState: 'idle' | 'loading' | 'success' | 'error';
     testResponse: any;
     testInputPayload: any;
+}
+
+export interface DashboardMetricsCardProps {
+    type: 'skills' | 'actions';
+    data: DashboardCounts['skills'] | DashboardCounts['actions'];
+}
+
+export interface GridColumns {
+    xs?: number;
+    sm?: number;
+    md?: number;
+    lg?: number;
+    xl?: number;
+}
+
+export interface GridProps<T> {
+    data?: T[];
+    isLoading?: boolean;
+    SkeletonComponent?: React.FC;
+    renderItem?: (item: T) => import('react').ReactNode;
+    count?: number;
+    gutter?: [number, number];
+    columns?: GridColumns;
+    autoFitMinWidth?: number | string;
+    keyExtractor?: (item: T) => string | number;
+    prependItems?: import('react').ReactNode[];
 }

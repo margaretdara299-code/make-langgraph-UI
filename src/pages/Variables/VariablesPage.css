@@ -1,0 +1,46 @@
+.variables-page {
+    padding: 24px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.variables-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.variables-body {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.variable-table-key {
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+}
+
+.variable-type-tag-neat {
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    background: #f1f5f9 !important;
+    border: none !important;
+    color: var(--text-muted) !important;
+    text-transform: uppercase;
+    padding: 0 8px !important;
+}
+
+.variable-table-value {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-main);
+}

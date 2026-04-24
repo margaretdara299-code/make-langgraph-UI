@@ -1,0 +1,109 @@
+.dashboard-card {
+    border-radius: var(--radius-lg) !important;
+    border: 1px solid var(--border-light) !important;
+    background: var(--bg-card) !important;
+    box-shadow: var(--shadow-sm) !important;
+    transition: transform var(--motion-base) var(--ease-out), box-shadow var(--motion-base) var(--ease-out) !important;
+    overflow: hidden;
+    height: 100%;
+    position: relative;
+}
+
+/* Color-coded top accent bar */
+.dashboard-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--border-light);
+}
+
+.dashboard-card.skills-card::before {
+    background: var(--accent);
+}
+
+.dashboard-card.actions-card::before {
+    background: var(--color-node-connector);
+}
+
+.dashboard-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg) !important;
+    border-color: var(--border-medium) !important;
+}
+
+.dashboard-card__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1-5);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+    color: var(--text-main);
+}
+
+.dashboard-card__icon {
+    font-size: 20px;
+    padding: var(--space-1);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.skills-icon {
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.actions-icon {
+    color: var(--color-node-connector);
+    background: var(--color-node-connector-bg);
+}
+
+.dashboard-card__primary-stat {
+    display: flex;
+    padding: var(--space-3) 0 var(--space-2);
+}
+
+.dashboard-card__stat-main .ant-statistic-content-value {
+    font-size: var(--text-3xl) !important;
+    font-weight: var(--weight-bold) !important;
+    letter-spacing: -0.03em;
+}
+
+.stat-color-primary .ant-statistic-content-value { color: var(--accent) !important; }
+.stat-color-connector .ant-statistic-content-value { color: var(--color-node-connector) !important; }
+.stat-color-success .ant-statistic-content-value { color: var(--color-success) !important; }
+.stat-color-secondary .ant-statistic-content-value { color: var(--text-muted) !important; }
+.stat-color-warning .ant-statistic-content-value { color: var(--color-warning) !important; }
+
+.dashboard-card__divider {
+    margin: var(--space-2) 0 !important;
+    border-top-color: var(--border-light) !important;
+}
+
+.dashboard-card .ant-statistic-title {
+    font-size: var(--text-xs) !important;
+    color: var(--text-subtle) !important;
+    font-weight: var(--weight-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-05) !important;
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.dashboard-card .ant-statistic-content {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-05);
+}
+
+.dashboard-card .ant-statistic-content-value {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    color: var(--text-main);
+}

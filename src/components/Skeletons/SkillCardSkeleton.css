@@ -1,0 +1,94 @@
+.skill-card-premium-skeleton {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+    padding: 20px;
+    height: 240px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    opacity: 1 !important;
+}
+
+/* Premium Industry Shimmer Overlay */
+.skill-card-premium-skeleton::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0,
+        rgba(255, 255, 255, 0.4) 20%,
+        rgba(255, 255, 255, 0.7) 60%,
+        rgba(255, 255, 255, 0)
+    );
+    animation: industrial-shimmer 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+    z-index: 5;
+}
+
+@keyframes industrial-shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.skeleton-header-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.header-badges {
+    display: flex;
+    gap: 8px;
+}
+
+.skeleton-content-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.title-placeholder { margin-bottom: 4px; }
+.key-placeholder { margin-bottom: 12px; }
+
+.skeleton-meta-divider {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 16px;
+    margin-top: auto;
+    border-top: 1px solid var(--border-light);
+    margin-bottom: 12px;
+}
+
+.skeleton-footer-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tags-placeholder {
+    display: flex;
+    gap: 4px;
+}
+
+/* Force AntD Skeletons to use our theme colors */
+.skill-card-premium-skeleton .ant-skeleton-input,
+.skill-card-premium-skeleton .ant-skeleton-avatar,
+.skill-card-premium-skeleton .ant-skeleton-button,
+.skill-card-premium-skeleton .ant-skeleton-paragraph > li {
+    background: var(--border-light) !important;
+}
+
+.skill-card-premium-skeleton .ant-skeleton.ant-skeleton-active .ant-skeleton-input,
+.skill-card-premium-skeleton .ant-skeleton.ant-skeleton-active .ant-skeleton-button,
+.skill-card-premium-skeleton .ant-skeleton.ant-skeleton-active .ant-skeleton-paragraph > li {
+    background: linear-gradient(90deg, var(--border-light) 25%, #f1f5f9 37%, var(--border-light) 63%) !important;
+    background-size: 400% 100% !important;
+}

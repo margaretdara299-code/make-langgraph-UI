@@ -1,0 +1,69 @@
+.capability-card-premium.capability-card-skeleton {
+    cursor: default !important;
+    pointer-events: none;
+    background-color: var(--bg-card);
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid var(--border-light);
+    height: 140px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Industry-Level Shimmer Animation */
+.capability-card-skeleton::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0,
+        rgba(255, 255, 255, 0.5) 20%,
+        rgba(255, 255, 255, 0.8) 60%,
+        rgba(255, 255, 255, 0)
+    );
+    animation: industry-shimmer 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+    z-index: 5;
+}
+
+@keyframes industry-shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.capability-card-skeleton .cc-premium-icon-box {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--border-light) !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+.capability-card-skeleton .ant-skeleton-paragraph > li {
+    height: 11px !important;
+    border-radius: 4px !important;
+    background: var(--border-light) !important;
+}
+
+.capability-card-skeleton .ant-skeleton-input {
+    background: var(--border-light) !important;
+    border-radius: 6px !important;
+}
+
+/* Matching the "active" pulse of AntD but controlled */
+.capability-card-skeleton .ant-skeleton.ant-skeleton-active .ant-skeleton-input,
+.capability-card-skeleton .ant-skeleton.ant-skeleton-active .ant-skeleton-avatar,
+.capability-card-skeleton .ant-skeleton.ant-skeleton-active .ant-skeleton-button,
+.capability-card-skeleton .ant-skeleton.ant-skeleton-active .ant-skeleton-paragraph > li {
+    background: linear-gradient(90deg, var(--border-light) 25%, #e5e7eb 37%, var(--border-light) 63%) !important;
+    background-size: 400% 100% !important;
+}

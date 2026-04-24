@@ -1,0 +1,36 @@
+/**
+ * ErrorNode.css
+ * Styles specific to the Error Node. The base card layout is shared with
+ * ActionNode.css (.modern-node-card, etc.). This file only adds the
+ * pulsing red glow that makes the error node visually distinct at a glance.
+ */
+
+/* Pulsing red glow for error identity */
+.error-node-card {
+    animation: error-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes error-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    50%       { box-shadow: 0 0 8px 2px rgba(239, 68, 68, 0.22); }
+}
+
+/* Suppress default glow during active execution status */
+.error-node-card.node-exec-running,
+.error-node-card.node-exec-success,
+.error-node-card.node-exec-error {
+    animation: none;
+}
+
+.error-node-card.node-exec-error {
+    box-shadow: 0 0 0 4px var(--color-error-bg), 0 0 20px var(--color-error) !important;
+}
+
+/* Target handle — inverted red dot so it reads clearly */
+.error-node-handle {
+    width: 10px;
+    height: 10px;
+    background: #EF4444;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+}

@@ -1,182 +1,427 @@
-/**
- * NodePalette styles.
- */
-
-.node-palette {
-    width: 280px;
-    flex-shrink: 0;
-    background: var(--color-bg-white);
-    border-right: 1px solid var(--color-border);
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: hidden;
+.library-control-fixed {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  z-index: 1010;
 }
 
-.node-palette__header {
-    padding: 16px 16px 12px;
-    border-bottom: 1px solid var(--color-border);
+.library-toggle-btn {
+  width: 32px;
+  height: 32px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.node-palette__title {
-    display: block;
-    font-size: 15px;
-    margin-bottom: 10px;
+.library-toggle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
 }
 
-.node-palette__search {
-    width: 100%;
+.library-toggle-btn .toggle-icon {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.node-palette__body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 12px 10px;
+.library-toggle-btn.active {
+  /* No color change, just rotation */
 }
 
-.node-palette__loading,
-.node-palette__empty {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 0;
+.library-toggle-btn.active .toggle-icon {
+  transform: rotate(135deg);
 }
 
-/* ── Top-level Section Headers (Actions / Connectors) ── */
-
-.node-palette__section-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
+.node-library-floating {
+  position: absolute;
+  left: 20px;
+  top: 72px;
+  bottom: 24px;
+  width: auto;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+  z-index: 1000;
+  overflow: hidden;
+  font-family: var(--font-sans);
 }
 
-/* ── Category Groups ── */
-
-.node-palette__category-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
+.sidebar-top {
+  padding: 20px 20px 0px;
+  flex-shrink: 0;
 }
 
-.node-palette__category-count {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--color-nav-input-placeholder);
-    background: var(--color-bg-hover);
-    padding: 0 6px;
-    border-radius: 10px;
-    line-height: 18px;
+.sidebar-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+  font-family: var(--font-sans);
 }
 
-.node-palette__structure-header {
-    padding: 8px 16px;
+.sidebar-search-wrap {
+  margin-top: 12px;
 }
 
-.node-palette__structure-body {
-    padding: 0 8px;
+.sidebar-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 16px 24px 16px;
 }
 
-.node-palette-item__icon--primary {
-    color: var(--color-primary);
+/* Tree Navigation Aesthetics */
+.node-group {
+  margin-bottom: 20px;
 }
 
-.node-palette-item__name--primary {
-    color: var(--color-primary);
+.group-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.node-palette-item__badge--group {
-    background-color: var(--color-primary-bg);
-    color: var(--color-primary);
-    border: 1px solid var(--color-primary);
+.main-group-header .group-label,
+.group-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  font-family: var(--font-sans);
 }
 
-/* ── Root Collapse (Common / Actions / Connectors) ── */
-
-.node-palette__root-collapse .ant-collapse-item {
-    margin-bottom: 12px;
-    border: none !important;
-    background: var(--node-palette-root-bg);
-    border-radius: 12px !important;
-    overflow: hidden;
+.gh-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
 }
 
-.node-palette__root-collapse .ant-collapse-header {
-    padding: 12px 16px !important;
-    background: var(--node-palette-root-bg) !important;
-    border-bottom: none !important;
-    font-size: 13px;
-    border-radius: 12px !important;
+.sub-gh-left {
+  gap: 8px;
 }
 
-.node-palette__root-collapse .ant-collapse-item-active > .ant-collapse-header {
-    border-radius: 12px 12px 0 0 !important;
+.sub-cat-icon {
+  color: #64748b;
+  display: flex;
+  align-items: center;
 }
 
-.node-palette__root-collapse .ant-collapse-content {
-    background: var(--node-palette-content-bg) !important;
-    border-top: 1px solid var(--node-palette-border-subtle);
+.cat-icon-wrapper {
+  width: 27px;
+  height: 27px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f7f7f7;
+  border: 1px solid #e5e8ec;
+  color: #334155;
 }
 
-.node-palette__root-collapse .ant-collapse-content-box {
-    padding: 4px 0 !important;
+.nested-groups {
+  position: relative;
+  margin-left: 17px; /* Align with center of icon */
+  padding-left: 0;
+  margin-top: 4px;
+  border-left: 1.2px solid #838f9c; /* Vertical Trunk */
+  overflow: visible;
 }
 
-/* ── Child Collapse (Category groupings inside Actions) ── */
-
-.node-palette__child-collapse > .ant-collapse-item > .ant-collapse-header {
-    padding: 6px 16px 6px 24px !important;
-    font-size: 11px;
-    background: var(--node-palette-child-bg);
+/* Ant Design Tree Overrides */
+.antd-tree-container .ant-tree {
+  background: transparent;
+  font-family: inherit;
 }
 
-.node-palette__child-collapse > .ant-collapse-item > .ant-collapse-content {
-    background: var(--node-palette-content-bg);
+.antd-tree-container .ant-tree .ant-tree-treenode {
+  /* margin-bottom: 8px; Added spacing between nodes */
 }
 
-.node-palette__child-collapse > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
-    padding: 0 8px 0 16px !important;
+.antd-tree-container .ant-tree-node-content-wrapper {
+  background: transparent !important;
+  cursor: pointer !important;
+  padding-left: 0px !important;
+  display: flex !important;
+  align-items: center;
 }
 
-/* ── Connector Items inside the Node Library ── */
-
-.node-palette__connector-item {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding: 8px 12px;
-    margin: 4px 0;
-    border-radius: 8px;
-    background: var(--color-bg-white);
-    border: 1px solid var(--color-border);
-    transition: background-color 0.15s ease, border-color 0.15s ease;
-    cursor: grab;
+.antd-tree-container .ant-tree-node-selected {
+  background: transparent !important;
 }
 
-.node-palette__connector-item:active {
-    cursor: grabbing;
+.antd-tree-container .ant-tree-switcher {
+  background: transparent !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 25px !important;
+  color: #838f9c !important;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-.node-palette__connector-item:hover {
-    background: var(--color-bg-hover);
-    border-color: var(--color-surface-border-strong);
+.antd-tree-container .ant-tree-switcher svg {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.node-palette__connector-name {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+.antd-tree-container .ant-tree-switcher_open svg {
+  transform: rotate(-180deg);
 }
 
-.node-palette__connector-icon {
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    color: var(--color-text-secondary);
+/* Tree Lines styling in antd */
+.antd-tree-container .ant-tree-show-line .ant-tree-indent-unit::before {
+  border-right: 1.2px solid #838f9c !important;
 }
+
+.antd-tree-container .ant-tree-show-line .ant-tree-switcher-line::before {
+  display: none !important;
+}
+
+/* Aligning our custom group headers and nodes in antd */
+.group-label {
+  margin-left: 0;
+}
+
+.sub-group-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #334155;
+  margin-left: 0;
+  padding: 4px 0;
+  font-family: var(--font-sans);
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px; /* Prevent long sub-group titles from wrapping */
+  vertical-align: middle;
+}
+
+.node-library-item-wrapper {
+  width: 100%;
+  /* margin-left: -5px; Offset antd default child padding */
+}
+
+/* Ensure common section looks consistent */
+.antd-tree-wrapper {
+  margin-top: 4px;
+  padding: 0 8px 16px 8px;
+}
+
+/* Sub-groups */
+.sub-node-group {
+  position: relative;
+  margin-bottom: 2px;
+}
+
+.sub-group-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 8px 0 8px 24px;
+  background: transparent;
+  border: none;
+  position: relative;
+  cursor: pointer;
+}
+
+.sub-group-header::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  border-bottom: 1.2px solid #838f9c;
+  border-left: 1.2px solid #838f9c;
+  border-bottom-left-radius: 10px;
+}
+
+
+
+.sub-group-items {
+  position: relative;
+  padding-left: 20px;
+}
+
+/* Node Items (Leafs) */
+.node-library-item-wrapper {
+  position: relative;
+  /* padding-left: 4px; Reduced to let AntD handle the indent */
+  width: 100%;
+}
+
+.node-library-item {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Adjusted gap for a cleaner look */
+  /* padding: 8px 12px; Better vertical padding for evenness */
+  padding: 5px 2px;
+  border-radius: 8px; /* Slightly tighter radius for rows */
+  cursor: grab;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  background: transparent;
+}
+
+.node-library-item:hover {
+  background: #f1f5f9;
+  transform: translateX(4px); /* Smoother hover intent */
+}
+
+.nli-icon {
+  width: 26px; /* Slightly more compact */
+  height: 26px;
+  border-radius: 6px;
+  background: white;
+  border: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Softer, slightly larger drop */
+  flex-shrink: 0;
+}
+
+.nli-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #334155;
+  font-family: var(--font-sans);
+  line-height: 1.4;
+  display: inline-block; /* Required for max-width on spans */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 155px; /* Prevent long action names from breaking layout */
+  vertical-align: middle;
+}
+
+.node-library-item:hover .nli-label {
+  color: #0f172a;
+}
+
+/* Loading/Empty states */
+.sidebar-loading, .sidebar-empty {
+  padding: 40px 0;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ── Category header (top-level + sub-level) ─────────────── */
+.cat-section-header {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 4px 0;
+  user-select: none;
+}
+
+.cat-section-header:hover .group-label,
+.cat-section-header:hover .sub-group-label {
+  color: var(--accent, #6366f1);
+}
+
+.cat-section-switcher {
+  width: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #838f9c;
+  flex-shrink: 0;
+}
+
+/* ── CSS Grid accordion — smooth slide at any depth, zero JS ── */
+.acc-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940);
+}
+
+.acc-panel.open {
+  grid-template-rows: 1fr;
+}
+
+.acc-panel > * {
+  overflow: hidden;
+  min-height: 0; /* required for Firefox */
+}/* ── NodePalette design tokens ─────────────────────────────── */
+.antd-tree-container {
+  --np-indent:   12px;           /* half of switcher width → aligns line with arrow center */
+  --np-switcher: 25px;           /* AntD switcher column width                              */
+  --np-line-d1:  1.2px solid #94a3b8;  /* depth-1 line (sub-categories) */
+  --np-line-d2:  1px   solid #dde3eb;  /* depth-2 line (leaf items)     */
+}
+
+/* ── Tree depth indentation classes ────────────────────────── */
+
+/* depth-1: sub-category group container (has line, no leaf padding) */
+.np-depth1-group {
+  margin-left: var(--np-indent);
+  border-left:  var(--np-line-d1);
+}
+
+/* depth-1: leaf container (Common items) */
+.np-depth1 {
+  margin-left:  var(--np-indent);
+  border-left:  var(--np-line-d1);
+  padding-left: var(--np-switcher);
+}
+
+/* depth-2: leaf container (Action / Connector items inside a sub-category) */
+.np-depth2 {
+  margin-left:  var(--np-indent);
+  border-left:  var(--np-line-d2);
+  padding-left: var(--np-switcher);
+}
+
+/* ── Leaf items: slide in from right when accordion opens ──────────────
+   Selector uses:
+     > .np-leaf  — direct-child combinator so the animation fires only when
+                   the IMMEDIATE parent .acc-panel gains .open, not any ancestor.
+   This is depth-agnostic: add np-leaf to any container at any nesting level
+   and the animation will work automatically.
+─────────────────────────────────────────────────────────────────────── */
+@keyframes slide-in-right {
+  from { transform: translateX(14px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+.acc-panel.open > .np-leaf .node-library-item-wrapper {
+  animation: slide-in-right 0.28s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+  animation-delay: 0.22s; /* default — overridden per-child below */
+}
+
+/* Stagger: each card enters 40 ms after the previous one.
+   Base 0.20 s lets the CSS Grid expansion lead. */
+.acc-panel.open > .np-leaf .node-library-item-wrapper:nth-child(1)  { animation-delay: 0.20s; }
+.acc-panel.open > .np-leaf .node-library-item-wrapper:nth-child(2)  { animation-delay: 0.24s; }
+.acc-panel.open > .np-leaf .node-library-item-wrapper:nth-child(3)  { animation-delay: 0.28s; }
+.acc-panel.open > .np-leaf .node-library-item-wrapper:nth-child(4)  { animation-delay: 0.32s; }
+.acc-panel.open > .np-leaf .node-library-item-wrapper:nth-child(5)  { animation-delay: 0.36s; }
+.acc-panel.open > .np-leaf .node-library-item-wrapper:nth-child(6)  { animation-delay: 0.40s; }
+.acc-panel.open > .np-leaf .node-library-item-wrapper:nth-child(7)  { animation-delay: 0.44s; }
+.acc-panel.open > .np-leaf .node-library-item-wrapper:nth-child(8)  { animation-delay: 0.48s; }
+.acc-panel.open > .np-leaf .node-library-item-wrapper:nth-child(n+9){ animation-delay: 0.50s; }
+
 

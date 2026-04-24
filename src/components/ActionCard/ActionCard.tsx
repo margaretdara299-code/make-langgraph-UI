@@ -1,111 +1,113 @@
 /**
- * ActionCard — displays a single action definition as a grid card.
+ * ActionCard — Premium, high-density card architectural pattern.
+ * Synchronized with the SkillCard design system.
  */
 
-import { Card, Typography, Space, Dropdown, Tag, Tooltip } from 'antd';
+import { Typography, Dropdown, Tooltip } from 'antd';
 import type { MenuProps } from 'antd';
-import { EllipsisOutlined } from '@ant-design/icons';
+import {
+    MoreOutlined,
+    EditOutlined,
+    DeleteOutlined,
+    BuildOutlined,
+} from '@ant-design/icons';
+import { Layout, Tag as LucideTag, Boxes } from 'lucide-react';
 import StatusPill from '@/components/StatusPill/StatusPill';
-import IconRenderer from '@/components/IconRenderer/IconRenderer';
-import { CARD_ACTION_KEYS } from '@/constants';
-import { stringToColorParams } from '@/utils';
 import type { ActionCardProps } from '@/interfaces';
 import './ActionCard.css';
 
-const { Text, Title } = Typography;
+const { Text, Paragraph } = Typography;
 
 export default function ActionCard({ action, onAction }: ActionCardProps) {
-    // Dropdown menu items
-    const menuItems: MenuProps['items'] = [
-        { key: CARD_ACTION_KEYS.EDIT_SETTINGS, label: 'Edit' },
-        { key: CARD_ACTION_KEYS.TEST, label: 'Test API' },
-        { type: 'divider' },
-        { key: CARD_ACTION_KEYS.DELETE, label: 'Delete', danger: true },
-    ];
-
-    const formatDate = (isoString: string) => {
-        return new Date(isoString).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-        });
+    const handleMenuClick: MenuProps['onClick'] = (e) => {
+        e.domEvent.stopPropagation();
+        onAction?.(e.key, action.id);
     };
-
-    const capabilityColors: Record<string, string> = {
-        api: 'blue',
-        ai: 'purple',
-        rpa: 'orange',
-        human: 'cyan',
-        rules: 'magenta',
-        message: 'green',
-    };
-
-    const cap = (action.capability || 'default').toLowerCase();
-    
-    // Check if it's a known CSS capability class
-    const isKnown = !!capabilityColors[cap];
-    
-    // If unknown, generate a deterministic color palette
-    const dynamicTheme = isKnown ? null : stringToColorParams(cap);
-
-    const iconColor = isKnown ? `var(--color-badge-text-${cap})` : dynamicTheme?.text;
-    const tagBg = isKnown ? undefined : dynamicTheme?.bg;
-    const tagTextColor = isKnown ? undefined : dynamicTheme?.text;
 
     return (
-        <Card className="action-card" hoverable>
-            {/* Header: Icon, Capability Tag, and Actions Menu */}
-            <div className="action-card__header">
-                <Space size="middle">
-                    <div className="action-card__icon" style={{ color: iconColor }}>
-                        <IconRenderer iconName={action.icon} size={20} />
-                    </div>
-                    <Tag 
-                         color={isKnown ? capabilityColors[cap] : undefined}
-                         style={!isKnown ? { backgroundColor: tagBg, color: tagTextColor, borderColor: tagTextColor } : undefined}
-                    >
-                        {action.capability.toUpperCase()}
-                    </Tag>
-                </Space>
+        <div
+            className="action-card-premium"
+            onClick={() => onAction?.('edit', action.id)}
+        >
+            {/* Row 1: Name + Actions */}
+            <div className="ac-header">
+                <Tooltip title={action.name} mouseEnterDelay={0.2}>
+                    <Text strong className="ac-name">{action.name}</Text>
+                </Tooltip>
                 <Dropdown
                     menu={{
-                        items: menuItems,
-                        onClick: (e) => onAction?.(e.key, action.id),
+                        items: [
+                            { key: 'edit', icon: <EditOutlined />, label: 'Edit' },
+                            { key: 'test', icon: <BuildOutlined />, label: 'Test API' },
+                            { type: 'divider' },
+                            { key: 'delete', icon: <DeleteOutlined />, label: 'Delete', danger: true },
+                        ],
+                        onClick: handleMenuClick
                     }}
                     trigger={['click']}
                     placement="bottomRight"
                 >
-                    <div className="action-card__menu-trigger" onClick={(e) => e.stopPropagation()}>
-                        <EllipsisOutlined />
+                    <div
+                        className="ac-more-btn"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <MoreOutlined />
                     </div>
                 </Dropdown>
             </div>
 
-            {/* Body: Title, Key, and Description */}
-            <div className="action-card__body">
-                <Title level={5} className="action-card__title" ellipsis>
-                    {action.name}
-                </Title>
-                <Tooltip title={action.action_key}>
-                    <Text className="action-card__key" code ellipsis>
-                        {action.action_key}
-                    </Text>
-                </Tooltip>
-                <div className="action-card__description">
-                    <Text type="secondary" ellipsis>{action.description}</Text>
-                </div>
+            {/* Row 2: Key + Status */}
+            <div className="ac-key-row">
+                <span className="ac-key-value">{action.action_key}</span>
+                <StatusPill status={action.status || 'draft'} />
             </div>
 
-            {/* Footer: Status, Category, and Date */}
-            <div className="action-card__footer">
-                <div className="action-card__footer-top">
-                    <StatusPill status={action.status} />
-                    <Tag className="action-card__category">{action.category}</Tag>
+            {/* Row 3: Description */}
+            <div className="ac-body">
+                <Tooltip title={action.description} mouseEnterDelay={0.2} placement="top">
+                    <Paragraph
+                        className="ac-description"
+                        ellipsis={{ rows: 2 }}
+                    >
+                        {action.description || <span className="ac-empty-desc">No description available</span>}
+                    </Paragraph>
+                </Tooltip>
+            </div>
+
+            {/* Footer: Capability & Category + Tags */}
+            <div className="ac-footer">
+                <div className="ac-meta-section">
+                    <Tooltip title={`Capability: ${action.capability || 'General'}`}>
+                        <div className="ac-meta-pill ac-meta-pill--cap">
+                            <Boxes size={11} strokeWidth={2.5} />
+                            <span>{action.capability || 'General'}</span>
+                        </div>
+                    </Tooltip>
                 </div>
-                <div className="action-card__date">
-                    Edited {formatDate(action.updated_at)}
+
+                <div className="ac-right-footer-group">
+                    <Tooltip title={`Category: ${action.category || 'Common'}`}>
+                        <div className="ac-meta-pill ac-meta-pill--cat">
+                            <Layout size={11} strokeWidth={2.5} />
+                            <span>{action.category || 'Common'}</span>
+                        </div>
+                    </Tooltip>
+
+                    <div className="ac-tags-section">
+                        {action.tags && action.tags.length > 0 && (
+                            <div className="ac-mini-tag">
+                                <LucideTag size={9} strokeWidth={2.5} />
+                                {action.tags[0]}
+                            </div>
+                        )}
+                        {action.tags && action.tags.length > 1 && (
+                            <Tooltip title={action.tags.slice(1).join(', ')}>
+                                <div className="ac-mini-tag ac-tag-count">+{action.tags.length - 1}</div>
+                            </Tooltip>
+                        )}
+                    </div>
                 </div>
             </div>
-        </Card>
+        </div>
     );
 }

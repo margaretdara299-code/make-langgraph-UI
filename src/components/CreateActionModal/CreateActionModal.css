@@ -3,64 +3,263 @@
  */
 
 .create-action-modal .ant-modal-content {
-    padding: 0;
-    overflow: hidden;
-    border-radius: 12px;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border-radius: 12px !important;
+    background: linear-gradient(90deg, #F0F8FF 280px, #FFFFFF 280px) !important;
+    height: 700px !important;
+    min-height: 700px !important;
+    max-height: 700px !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.create-action-modal .ant-modal-container {
+    position: relative !important;
+    background-color: #d8d8d8 !important;
+    background-clip: padding-box !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    /* Forces edge-to-edge child positioning */
 }
 
 .create-action-modal .ant-modal-header {
     margin-bottom: 0;
     padding: 24px 32px;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: none !important;
 }
 
 .create-action-modal .ant-modal-body {
-    padding: 0;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: stretch !important;
+    flex: 1 !important;
 }
 
-.create-action-modal__layout {
+.create-action-modal__stepper-col {
+    width: 280px;
+    padding: 40px 32px;
+    background-color: transparent;
     display: flex;
-    height: 700px;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex-shrink: 0;
+    height: 100% !important;
 }
 
-/* ── Form Column (Left) ── */
+.create-action-modal__logo {
+    margin-bottom: 48px;
+    padding-left: 4px;
+}
 
+.create-action-modal__stepper {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+}
+
+/* ── Custom Stepper Styles (Neat & Modern) ── */
+.create-action-stepper {
+    margin-top: 16px;
+}
+
+/* Ensure Icons are Round and Correct Size */
+.create-action-stepper .ant-steps-item-icon {
+    width: 32px !important;
+    height: 32px !important;
+    line-height: 30px !important;
+    /* Center the number/icon */
+    margin-right: 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 50% !important;
+    /* Force round shape */
+    flex-shrink: 0 !important;
+    background: transparent !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+/* Fix Distorted Rectangular Shape */
+.create-action-stepper .ant-steps-item-container {
+    display: flex !important;
+    align-items: flex-start !important;
+    padding-bottom: 24px !important;
+}
+
+/* Vertical Line (Tail) Styling - Force Visibility */
+.create-action-stepper .ant-steps-item-tail {
+    display: block !important;
+    inset-inline-start: 16px !important;
+    padding: 34px 0 6px !important;
+}
+
+.create-action-stepper .ant-steps-item-tail::after {
+    content: '' !important;
+    display: block !important;
+    background-color: #E2E8F0 !important;
+    width: 2px !important;
+    height: 100% !important;
+}
+
+/* Finished Step Colors */
+.create-action-stepper .ant-steps-item-finish .ant-steps-item-icon {
+    border-color: var(--accent) !important;
+    color: var(--accent) !important;
+}
+
+.create-action-stepper .ant-steps-item-finish .ant-steps-item-tail::after {
+    background-color: var(--accent) !important;
+}
+
+/* Active/Process Step Colors */
+.create-action-stepper .ant-steps-item-process .ant-steps-item-icon {
+    background-color: var(--accent) !important;
+    border-color: var(--accent) !important;
+}
+
+.create-action-stepper .ant-steps-item-process .ant-steps-item-icon .ant-steps-icon {
+    color: #fff !important;
+    font-weight: 700;
+}
+
+.create-action-stepper .ant-steps-item-content {
+    font-size: 12px !important;
+}
+
+/* Typography Refresh */
+.create-action-stepper .ant-steps-item-title {
+    font-weight: 700 !important;
+    font-size: 15px !important;
+    color: #0f172a !important;
+    line-height: 32px !important;
+
+}
+
+.create-action-stepper .ant-steps-item-description {
+    font-size: 12px !important;
+    color: #64748b !important;
+    line-height: 1.5 !important;
+    margin-top: -4px !important;
+}
+
+.create-action-stepper .ant-steps-item-process .ant-steps-item-title {
+    color: var(--accent) !important;
+}
+
+.create-action-stepper .ant-steps-item:hover {
+    opacity: 0.9;
+}
+
+/* -- Form Column (Right) -- */
 .create-action-modal__form-col {
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 32px;
-    overflow-y: auto;
-    background-color: var(--color-bg-container);
+    padding: 32px 40px;
+    border-radius: 0 12px 12px 0;
+    background-color: #FFFFFF;
+    height: 100%;
+    overflow: hidden;
 }
 
-.create-action-modal__stepper {
-    margin-bottom: 40px;
+.create-action-modal__header {
+    margin-bottom: 24px;
+    flex-shrink: 0;
+}
+
+.create-action-modal__step-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.create-action-modal__icon-shell {
+    width: 32px;
+    height: 32px;
+    background: #FEF3C7;
+
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.create-action-modal__step-count {
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748B;
+    text-transform: capitalize;
 }
 
 .create-action-modal__step-content {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 32px;
+    overflow-y: auto;
+    padding-right: 12px;
+    margin-bottom: 8px;
 }
 
 /* ── Footer / Actions ── */
 
 .create-action-modal__footer {
+    flex-shrink: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding-top: 24px;
-    border-top: 1px solid var(--color-border);
+    border-top: none !important;
 }
 
-/* ── Preview Column (Right) ── */
+.create-action-modal__footer .ant-btn-primary {
+
+    height: 38px;
+    padding: 0 24px;
+    font-weight: 600;
+}
+
+.create-action-modal__footer .ant-btn-default {
+    height: 38px;
+    padding: 0 24px;
+    font-weight: 600;
+    color: #64748B;
+    border-color: #E2E8F0;
+}
+
+.create-action-modal__footer .ant-btn-default:hover {
+    color: #0F172A !important;
+    border-color: #0F172A !important;
+}
+
+
 
 .create-action-modal__preview-col {
     width: 440px;
     background-color: var(--color-sidebar-bg);
-    border-left: 1px solid var(--color-border);
+    border-left: 0.5px solid #827373;
     padding: 32px;
     overflow-y: auto;
+}
+
+.create-action-modal .ant-modal-close {
+    inset-inline-start: auto !important;
+    inset-inline-end: 20px !important;
+    top: 20px !important;
+}
+
+.create-action-modal .ant-select.ant-select-outlined {
+    --ant-select-border-color: var(--ant-color-border);
+    --ant-select-background-color: var(--ant-select-selector-bg);
+    --ant-select-color: var(--ant-color-text);
+}
+
+.create-action-modal .ant-select.ant-select-outlined .ant-select-selector {
+    height: 36px !important;
+}
+
+.create-action-modal .ant-select-selection-item {
+    line-height: 34px !important;
 }

@@ -21,7 +21,7 @@ export default function SkillDetailsForm({ form }: SkillDetailsFormProps) {
                 label="Skill Name"
                 rules={[{ required: true, message: 'Please enter a skill name' }]}
             >
-                <Input placeholder="e.g. Denial Triage & Resolution" />
+                <Input size="large" placeholder="e.g. Denial Triage & Resolution" />
             </Form.Item>
 
             <Form.Item
@@ -29,7 +29,7 @@ export default function SkillDetailsForm({ form }: SkillDetailsFormProps) {
                 label="Skill Key"
                 rules={[{ required: true, message: 'Please enter a unique skill key' }]}
             >
-                <Input placeholder="e.g. DENTRI (uppercase, 6 chars)" />
+                <Input size="large" placeholder="e.g. DENTRI (uppercase, 6 chars)" />
             </Form.Item>
 
             <Form.Item
@@ -38,8 +38,10 @@ export default function SkillDetailsForm({ form }: SkillDetailsFormProps) {
                 rules={[{ required: true, message: 'Please enter a description' }]}
             >
                 <TextArea
+                    size="large"
                     placeholder="Briefly describe what this skill does..."
-                    rows={3}
+                    rows={4}
+                    style={{ minHeight: '100px' }}
                 />
             </Form.Item>
 
@@ -49,6 +51,7 @@ export default function SkillDetailsForm({ form }: SkillDetailsFormProps) {
                 rules={[{ required: true, message: 'Please select a category' }]}
             >
                 <Select
+                    size="large"
                     placeholder="Select a category"
                     loading={isLoading}
                     disabled={isLoading}
@@ -58,6 +61,7 @@ export default function SkillDetailsForm({ form }: SkillDetailsFormProps) {
 
             <Form.Item name="tags" label="Tags">
                 <Select
+                    size="large"
                     mode="tags"
                     placeholder="Add tags (press Enter after each)"
                 />

@@ -1,5 +1,5 @@
-import { 
-    BulbOutlined, 
+import {
+    BulbOutlined,
     EditOutlined
 } from '@ant-design/icons';
 import type { ActionFieldType, ConnectorType, HttpMethod } from '@/interfaces';
@@ -28,13 +28,21 @@ export const HTTP_METHOD_OPTIONS: { label: string; value: HttpMethod }[] = [
     { label: 'DELETE', value: 'DELETE' },
 ];
 
+export const ACTION_HTTP_METHODS = [
+    { value: 'GET', label: <span className="action-method-label">GET</span> },
+    { value: 'POST', label: <span className="action-method-label">POST</span> },
+    { value: 'PUT', label: <span className="action-method-label">PUT</span> },
+    { value: 'PATCH', label: <span className="action-method-label">PATCH</span> },
+    { value: 'DELETE', label: <span className="action-method-label">DELETE</span> },
+];
+
 export const ENVIRONMENT_OPTIONS = [
     { label: 'Development', value: 'dev' },
     { label: 'Staging', value: 'staging' },
     { label: 'Production', value: 'prod' },
 ];
 
-export const DEFAULT_EXECUTION_CONFIG: import('@/interfaces').ActionExecutionConfig = {
+export const DEFAU̥LT_EXECUTION_CONFIG: import('@/interfaces').ActionExecutionConfig = {
     connectorType: 'rest',
     endpointUrl: '',
     httpMethod: 'POST',
@@ -43,7 +51,7 @@ export const DEFAULT_EXECUTION_CONFIG: import('@/interfaces').ActionExecutionCon
     retryDelayMs: 1000,
 };
 
-export const DEFAULT_UI_FORM_CONFIG: import('@/interfaces').ActionUiFormConfig = {
+export const DEFAULT_̥UI̥_FORM_CONFIG: import('@/interfaces').ActionUiFormConfig = {
     displayMode: 'auto',
     groupLabel: '',
     helpText: '',
