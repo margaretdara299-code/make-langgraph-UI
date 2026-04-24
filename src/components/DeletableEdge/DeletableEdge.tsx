@@ -4,6 +4,7 @@ import type { EdgeProps } from '@xyflow/react';
 import { removeConnectionFromStorage } from '@/services/skillGraphStorage.service';
 import { useParams } from 'react-router-dom';
 import { getNodeStrokeColor } from '@/utils';
+import { Tooltip } from 'antd';
 
 import './DeletableEdge.css';
 
@@ -134,9 +135,11 @@ export default function DeletableEdge(props: EdgeProps) {
                 >
                     <div className="deletable-edge__wrapper">
                         {computedLabel && (
-                            <div className="deletable-edge__label">
-                                {computedLabel}
-                            </div>
+                            <Tooltip title={computedLabel} placement="top">
+                                <div className="deletable-edge__label deletable-edge__icon-only">
+                                    i
+                                </div>
+                            </Tooltip>
                         )}
                         {/* Button visibility is driven by React state, not CSS :hover */}
                         <button

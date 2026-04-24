@@ -25,6 +25,25 @@
     letter-spacing: 0.03em;
 }
 
+.deletable-edge__icon-only {
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--surface-1);
+    color: var(--text-main);
+    border: 2px solid var(--text-main);
+    box-shadow: none;
+    font-family: "Times New Roman", Georgia, serif;
+    font-style: italic;
+    font-weight: 900;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
 .deletable-edge__btn {
     width: 18px;
     height: 18px;
