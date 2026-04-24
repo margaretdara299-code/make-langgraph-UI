@@ -41,7 +41,7 @@ export function Grid<T>({
                 <div className="app-grid__auto" style={autoFitStyle}>
                     {[...Array(displayCount)].map((_, i) =>
                         wrapAutoFitItem(
-                            SkeletonComponent ? <SkeletonComponent /> : <div style={{ height: 200, background: 'var(--border-light)', borderRadius: 16 }} />,
+                            SkeletonComponent ? <SkeletonComponent /> : <div className="app-grid__default-skeleton" />,
                             `skeleton-${i}`
                         )
                     )}
@@ -53,7 +53,7 @@ export function Grid<T>({
             <Row gutter={gutter} className="app-grid__row">
                 {[...Array(displayCount)].map((_, i) => (
                     <Col {...columns} key={`skeleton-${i}`} className="app-grid__col">
-                        {SkeletonComponent ? <SkeletonComponent /> : <div style={{ height: 200, background: 'var(--border-light)', borderRadius: 16 }} />}
+                        {SkeletonComponent ? <SkeletonComponent /> : <div className="app-grid__default-skeleton" />}
                     </Col>
                 ))}
             </Row>

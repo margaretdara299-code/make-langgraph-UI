@@ -26,8 +26,8 @@
 .node-palette-item__icon {
     font-size: 15px;
     line-height: 1;
-
     flex-shrink: 0;
+    color: var(--item-color);
 }
 
 .node-palette-item__info {
@@ -41,7 +41,7 @@
 .node-palette-item__name {
     font-size: 13px;
     font-weight: 500;
-    color: var(--color-nav-input-text);
+    color: var(--item-color, var(--color-nav-input-text));
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

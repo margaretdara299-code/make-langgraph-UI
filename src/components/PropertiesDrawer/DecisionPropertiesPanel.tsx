@@ -48,7 +48,7 @@ const ConditionRow = ({ cField, cIndex, field, removeCond, availableOutputKeys }
                         {/* Value Source — label row WITH delete button */}
                         <div className="senior-cond-field-group">
                             <div className="senior-cond-label-row">
-                                <span className="senior-cond-label">Value Source <span style={{ fontSize: '10px', color: '#94a3b8' }}>(State Key or Node Key)</span></span>
+                                <span className="senior-cond-label">Value Source <span className="senior-cond-hint">(State Key or Node Key)</span></span>
                                 <Tooltip title="Delete Condition">
                                     <Button type="text" size="small" icon={<Trash2 size={13} />} onClick={() => removeCond(cField.name)} className="senior-cond-delete" />
                                 </Tooltip>
@@ -139,26 +139,22 @@ const ConditionRow = ({ cField, cIndex, field, removeCond, availableOutputKeys }
 
 const BranchItem = ({ field, index, remove, availableOutputKeys }: any) => {
     return (
-        <div
-            className="senior-rule-group-container"
-            style={{ display: 'flex', flexDirection: 'column' }}
-        >
+        <div className="senior-rule-group-container senior-flex-col">
             {/* Branch separator */}
             {index > 0 && (
-                <div style={{ display: 'flex', alignItems: 'center', margin: '4px 0 12px 0', width: '100%' }}>
-                    <div style={{ flex: 1, height: '1px', background: 'var(--border-medium)' }} />
-                    <div style={{ padding: '0 12px' }}>
+                <div className="senior-branch-divider">
+                    <div className="senior-divider-line" />
+                    <div className="senior-divider-text">
                         <Form.Item {...field} name={[field.name, 'branch_match_type']} noStyle initialValue="OR">
                             <Select
                                 size="small"
-                                className="senior-operator-toggle-select"
-                                style={{ right: 'auto', top: 'auto', bottom: 'auto' }}
+                                className="senior-operator-toggle-select senior-divider-select"
                                 popupMatchSelectWidth={false}
                                 options={[{ label: 'AND', value: 'AND' }, { label: 'OR', value: 'OR' }]}
                             />
                         </Form.Item>
                     </div>
-                    <div style={{ flex: 1, height: '1px', background: 'var(--border-medium)' }} />
+                    <div className="senior-divider-line" />
                 </div>
             )}
 

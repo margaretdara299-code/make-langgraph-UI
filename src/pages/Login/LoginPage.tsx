@@ -147,7 +147,7 @@ export default function LoginPage() {
                                 strokeWidth={edge.dashed ? 1.5 : 2}
                                 strokeDasharray={edge.dashed ? "5 5" : undefined}
                                 markerEnd={edge.marker ? "url(#arr-main)" : undefined}
-                                style={{ animation: edge.animation }}
+                                style={{ '--edge-anim': edge.animation } as React.CSSProperties}
                             />
                         ))}
 
@@ -161,7 +161,7 @@ export default function LoginPage() {
 
                     {/* Render Workflow Nodes */}
                     {CANVAS_NODES.map((node, i) => (
-                        <div key={node.id} className="lr-node" data-accent={node.iconStyle} style={{ ...node.style, '--node-delay': `${i * 0.15}s` } as React.CSSProperties}>
+                        <div key={node.id} className="lr-node" data-accent={node.iconStyle} style={{ '--node-left': node.style.left, '--node-top': node.style.top, '--node-delay': `${i * 0.15}s` } as React.CSSProperties}>
                             <div className="lr-node-hd">
                                 <span className={`lr-icon lr-icon--${node.iconStyle}`}>{node.icon}</span>
                                 <div className="lr-node-meta">
@@ -173,7 +173,7 @@ export default function LoginPage() {
                             
                             <div className="lr-node-bd">
                                 {node.membar && (
-                                    <div className="lr-membar"><div className="lr-memfill" style={{ width: node.membar }}/></div>
+                                    <div className="lr-membar"><div className="lr-memfill" style={{ '--mem-width': node.membar } as React.CSSProperties}/></div>
                                 )}
                                 {node.typing && (
                                     <div className="lr-typing"><span/><span/><span/></div>

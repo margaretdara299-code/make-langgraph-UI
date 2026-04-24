@@ -29,9 +29,7 @@ export default function SidebarFooter({
             {collapsed && (
                 <Tooltip title="Logout" placement="right">
                     <button 
-                        className="minimal-logout-btn" 
-                        onClick={onLogout}
-                        style={{ margin: '8px auto', display: 'flex' }}
+                        className="minimal-logout-btn sf-logout-collapsed"
                     >
                         <LogoutOutlined />
                     </button>

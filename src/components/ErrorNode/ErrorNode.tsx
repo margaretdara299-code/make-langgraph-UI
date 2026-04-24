@@ -39,10 +39,11 @@ export default function ErrorNode({ id, data }: NodeProps<CanvasNode>) {
         <div
             className={`modern-node-card error-node-card ${nodeData.executionStatus ? `node-exec-${nodeData.executionStatus}` : ''}`}
             style={{
-                background: theme.bg,
-                borderColor: theme.stroke,
-                color: theme.stroke,
-            } as any}
+                '--node-bg': theme.bg,
+                '--node-stroke': theme.stroke,
+                '--node-icon-bg': theme.iconBg,
+                '--node-badge-bg': theme.badgeBg
+            } as React.CSSProperties}
         >
             {/* Delete button */}
             <div className="modern-node-delete" onClick={handleDelete} title="Delete Node">
@@ -59,10 +60,7 @@ export default function ErrorNode({ id, data }: NodeProps<CanvasNode>) {
             {/* Node body */}
             <div className="modern-node-content">
                 <div className="modern-node-left">
-                    <div
-                        className="modern-node-icon"
-                        style={{ background: theme.iconBg, color: theme.stroke }}
-                    >
+                    <div className="modern-node-icon">
                         <ShieldAlert size={13} />
                     </div>
                     <div className="modern-node-text-col">
@@ -71,16 +69,10 @@ export default function ErrorNode({ id, data }: NodeProps<CanvasNode>) {
                     </div>
                 </div>
                 <div className="modern-node-right">
-                    <span
-                        className="modern-node-badge"
-                        style={{ background: theme.badgeBg }}
-                    >
+                    <span className="modern-node-badge">
                         ERR
                     </span>
-                    <span
-                        className="modern-node-dot"
-                        style={{ background: theme.stroke }}
-                    />
+                    <span className="modern-node-dot" />
                 </div>
             </div>
 

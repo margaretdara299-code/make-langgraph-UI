@@ -97,7 +97,7 @@ export default function PublishStepperModal({
         if (error) {
             return (
                 <div className="publish-stepper-modal__content" key="error">
-                    <Text type="danger" style={{ fontSize: 16 }}>{error}</Text>
+                    <Text type="danger" className="psm-error-text">{error}</Text>
                     <Button onClick={startCodeGeneration}>Retry</Button>
                 </div>
             );
@@ -152,11 +152,11 @@ export default function PublishStepperModal({
                             >
                                 View Code
                             </Button>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div className="psm-download-row">
                                 <Input 
                                     value={downloadName} 
                                     onChange={(e) => setDownloadName(e.target.value)} 
-                                    style={{ width: '180px' }} 
+                                    className="psm-download-input"
                                     placeholder="workflow.py"
                                 />
                                 <Button

@@ -88,3 +88,33 @@
 .capabilities-body::-webkit-scrollbar-thumb:hover {
     background: #cbd5e1;
 }
+.header-title-premium {
+    margin: 0 !important;
+    font-size: 24px !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.025em !important;
+    color: var(--text-main) !important;
+}
+
+.header-subtitle-premium {
+    font-size: 13.5px !important;
+    font-weight: 500 !important;
+    color: var(--text-muted) !important;
+    display: block !important;
+    margin-top: 4px !important;
+}
+
+.cp-header-title {
+    margin: 0 !important;
+    font-size: 24px !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.025em !important;
+}
+
+.cp-header-subtitle {
+    font-size: 13.5px !important;
+    font-weight: 500 !important;
+    color: var(--text-muted) !important;
+    display: block !important;
+    margin-top: 4px !important;
+}

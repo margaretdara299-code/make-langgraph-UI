@@ -51,7 +51,7 @@ export default function CategoryCard({ category, onAction }: CategoryCardProps) 
             </div>
 
             <div className="cc-premium-body">
-                <Title level={5} className="category-name">{category.name}</Title>
+                <div className="category-name">{category.name}</div>
                 <Paragraph
                     className="category-desc"
                     type="secondary"

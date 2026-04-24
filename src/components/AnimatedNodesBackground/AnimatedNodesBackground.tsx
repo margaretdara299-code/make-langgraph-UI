@@ -56,7 +56,7 @@ export default function AnimatedNodesBackground() {
                                 x2={to.x}
                                 y2={to.y}
                                 className="animated-nodes-bg__edge"
-                                style={{ animationDelay: `${i * 0.3}s` }}
+                                style={{ '--i': i } as React.CSSProperties}
                             />
                             {/* Data flow dot traveling along the edge */}
                             <path
@@ -83,7 +83,7 @@ export default function AnimatedNodesBackground() {
                     <g
                         key={node.id}
                         className="animated-nodes-bg__node"
-                        style={{ animationDelay: `${i * 0.4}s` }}
+                        style={{ '--i': i } as React.CSSProperties}
                     >
                         {/* Node body */}
                         <rect

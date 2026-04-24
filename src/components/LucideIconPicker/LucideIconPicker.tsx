@@ -192,7 +192,7 @@ export const LucideIconPicker: React.FC<LucideIconPickerProps> = ({ value, onCha
                     <div className="picker-control-group picker-search-control">
                         <span className="picker-control-label">Search</span>
                         <Input
-                            prefix={<LucideIcons.Search size={12} style={{ color: 'var(--text-subtle)' }} />}
+                            prefix={<LucideIcons.Search size={12} className="lip-search-icon" />}
                             placeholder={`Find ${category}...`}
                             variant="filled"
                             size="small"

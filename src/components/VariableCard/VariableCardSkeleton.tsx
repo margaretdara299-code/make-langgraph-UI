@@ -10,30 +10,30 @@ export default function VariableCardSkeleton() {
         <div className="capability-card-premium capability-card-skeleton variable-card-enhanced">
             <div className="cc-premium-header">
                 <div className="cc-premium-icon-box">
-                    <Skeleton.Button active shape="square" style={{ width: '100%', height: '100%', borderRadius: 10 }} />
+                    <Skeleton.Button active shape="square" className="skeleton-premium-icon" />
                 </div>
                 <div className="cc-menu-btn">
-                     <Skeleton.Button active shape="square" style={{ width: 20, height: 20, borderRadius: 4 }} />
+                     <Skeleton.Button active shape="square" className="skeleton-menu-trigger" />
                 </div>
             </div>
 
             <div className="variable-card-content">
                 <div className="variable-header-row-enhanced">
-                    <Skeleton.Input active size="small" style={{ width: '50%', height: 20 }} />
+                    <Skeleton.Input active size="small" className="skeleton-var-title" />
                 </div>
                 
                 <div className="var-metadata-row-table">
-                    <div className="var-meta-column" style={{ width: '30%' }}>
-                        <Skeleton.Input active size="small" style={{ width: '100%', height: 10 }} />
-                        <Skeleton.Input active size="small" style={{ width: '80%', height: 14 }} />
+                    <div className="var-meta-column skeleton-meta-col-30">
+                        <Skeleton.Input active size="small" className="skeleton-meta-label-100" />
+                        <Skeleton.Input active size="small" className="skeleton-meta-value-80" />
                     </div>
-                    <div className="var-meta-column" style={{ width: '20%' }}>
-                        <Skeleton.Input active size="small" style={{ width: '100%', height: 10 }} />
-                        <Skeleton.Input active size="small" style={{ width: '60%', height: 14 }} />
+                    <div className="var-meta-column skeleton-meta-col-20">
+                        <Skeleton.Input active size="small" className="skeleton-meta-label-100" />
+                        <Skeleton.Input active size="small" className="skeleton-meta-value-60" />
                     </div>
                     <div className="var-meta-column var-meta-value-col">
-                        <Skeleton.Input active size="small" style={{ width: '40%', height: 10 }} />
-                        <Skeleton.Input active size="small" style={{ width: '90%', height: 14 }} />
+                        <Skeleton.Input active size="small" className="skeleton-meta-label-40" />
+                        <Skeleton.Input active size="small" className="skeleton-meta-value-90" />
                     </div>
                 </div>
             </div>

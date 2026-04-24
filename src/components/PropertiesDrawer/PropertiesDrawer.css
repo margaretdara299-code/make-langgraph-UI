@@ -1672,3 +1672,64 @@
 .pd-badge-capitalize {
     text-transform: capitalize;
 }
+
+/* Extracted from inline styles */
+.pd-overview-tab-inner {
+    padding: 0 4px;
+}
+
+.senior-cond-hint {
+    font-size: 10px;
+    color: #94a3b8;
+}
+
+.senior-flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.senior-branch-divider {
+    display: flex;
+    align-items: center;
+    margin: 4px 0 12px 0;
+    width: 100%;
+}
+
+.senior-divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border-medium);
+}
+
+.senior-divider-text {
+    padding: 0 12px;
+}
+
+.senior-divider-select {
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+}
+
+/* Output logs styling */
+.pd-code-block--output {
+    max-height: 400px;
+}
+
+.pd-code-block--error {
+    border-color: var(--color-error) !important;
+}
+
+.pd-code-pre--error {
+    color: #ff7875 !important;
+}
+
+.pd-error-method-item {
+    width: 90px !important;
+    flex-shrink: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.pd-status-title--error {
+    color: var(--color-error) !important;
+}

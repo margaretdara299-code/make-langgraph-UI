@@ -18,7 +18,7 @@
   position: relative;
   width: auto;
   border-radius: 12px;
-  border-width: 1.5px;
+  border-width: 2px;
   border-style: solid;
   padding: 12px 14px;
   cursor: pointer;
@@ -27,6 +27,9 @@
   animation: nodePop 0.4s var(--ease-elastic) forwards;
   font-family: inherit;
   box-shadow: var(--shadow-subtle);
+  background: var(--node-bg, var(--bg-card));
+  border-color: var(--node-stroke, var(--border-main));
+  color: var(--node-stroke, var(--text-main));
 }
 
 .modern-node-card:not(.dragging):hover {
@@ -107,6 +110,8 @@
   font-size: var(--text-sm);
   flex-shrink: 0;
   border: 1px solid var(--border-light);
+  background: var(--node-icon-bg, var(--bg-hover));
+  color: var(--node-stroke, var(--text-main));
 }
 
 .modern-node-text-col {
@@ -145,6 +150,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background: var(--node-badge-bg, var(--color-primary));
 }
 
 .modern-node-dot {

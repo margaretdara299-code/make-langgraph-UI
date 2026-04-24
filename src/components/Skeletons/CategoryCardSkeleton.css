@@ -41,3 +41,22 @@
 .skeleton-body {
     margin-bottom: 4px;
 }
+
+/* Extracted from inline styles */
+.cat-sk-icon {
+    width: 26px !important;
+    height: 26px !important;
+    border-radius: 8px !important;
+}
+
+.cat-sk-menu {
+    width: 20px !important;
+    height: 20px !important;
+    border-radius: 4px !important;
+}
+
+.cat-sk-title {
+    width: 60% !important;
+    height: 16px !important;
+    margin-bottom: 4px !important;
+}

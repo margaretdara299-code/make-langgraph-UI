@@ -156,14 +156,13 @@ export default function GeneratedCodeViewer({
       onCancel={onClose}
       width="90vw"
       height="90vh"
-      style={{ maxHeight: "90vh" }}
-      className="generated-code-viewer"
+      className="generated-code-viewer gcv-modal"
       footer={
         <div className="generated-code-viewer__footer">
           <Button onClick={handleDownloadAll} disabled={files.length === 0}>
             Download All
           </Button>
-          <div style={{ marginLeft: "auto", display: "flex", gap: "8px" }}>
+          <div className="gcv-footer-right">
             <Button
               icon={<CopyOutlined />}
               onClick={handleCopyAll}

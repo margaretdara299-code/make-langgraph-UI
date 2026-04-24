@@ -52,7 +52,7 @@ export default function CapabilityCard({ capability, onAction }: CapabilityCardP
             </div>
 
             <div className="cc-premium-body">
-                <Title level={5} className="capability-name">{capability.name}</Title>
+                <div className="capability-name">{capability.name}</div>
                 <Paragraph
                     className="capability-desc"
                     type="secondary"

@@ -46,7 +46,7 @@ export default function TestApiModal({
             centered
             destroyOnHidden
             getContainer={() => document.body}
-            styles={{ body: { padding: '0 24px 24px 24px' } }}
+
         >
             <div className="tam-content-wrapper">
                 <Tabs
@@ -56,9 +56,9 @@ export default function TestApiModal({
                     tabBarExtraContent={
                         <Space size={16} className="tam-tab-meta">
                             <div className="tam-status-row">
-                                <div className="tam-status-dot" style={{ background: statusColor }} />
+                                <div className="tam-status-dot" style={{ '--status-color': statusColor } as React.CSSProperties} />
                                 <Text className="tam-status-text">
-                                    Status: <span className="tam-status-value" style={{ color: statusColor }}>{result?.status || (testState === 'loading' ? 'PENDING' : (testState === 'error' ? 'ERROR' : 'UNKNOWN'))}</span>
+                                    Status: <span className="tam-status-value" style={{ '--status-color': statusColor } as React.CSSProperties}>{result?.status || (testState === 'loading' ? 'PENDING' : (testState === 'error' ? 'ERROR' : 'UNKNOWN'))}</span>
                                 </Text>
                             </div>
                             <div className="tam-divider-vertical" />

@@ -117,3 +117,7 @@
     background: var(--border-strong);
     border-radius: 10px;
 }
+
+.sl-hidden-loader {
+    display: none;
+}

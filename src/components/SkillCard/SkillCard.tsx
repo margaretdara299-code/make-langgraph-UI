@@ -8,7 +8,7 @@ import type { MenuProps } from 'antd';
 import {
     MoreOutlined,
 } from '@ant-design/icons';
-import { Tag as LucideTag, Layers } from 'lucide-react';
+import { Tag as LucideTag, Layers, Workflow } from 'lucide-react';
 import StatusPill from '@/components/StatusPill/StatusPill';
 import { getMenuItems, getTagStyle } from '@/utils';
 import type { SkillCardProps } from '@/interfaces';
@@ -29,9 +29,14 @@ export default function SkillCard({ skill, onClick, onAction }: SkillCardProps) 
         >
             {/* Row 1: Name + Actions */}
             <div className="sc-header">
-                <Tooltip title={skill.name} mouseEnterDelay={0.2}>
-                    <Text strong className="sc-name">{skill.name}</Text>
-                </Tooltip>
+                <div className="sc-title-group">
+                    <div className="sc-icon-container">
+                        <Workflow size={18} strokeWidth={2.5} />
+                    </div>
+                    <Tooltip title={skill.name} mouseEnterDelay={0.2}>
+                        <div className="sc-name">{skill.name}</div>
+                    </Tooltip>
+                </div>
                 <Dropdown
                     menu={{ items: getMenuItems(skill.status, skill.id, skill.latestVersionId), onClick: handleMenuClick }}
                     trigger={['click']}
@@ -81,9 +86,9 @@ export default function SkillCard({ skill, onClick, onAction }: SkillCardProps) 
                                 key={tag}
                                 className="sc-mini-tag"
                                 style={{
-                                    backgroundColor: style.bg,
-                                    color: style.color,
-                                }}
+                                    '--tag-bg': style.bg,
+                                    '--tag-color': style.color,
+                                } as React.CSSProperties}
                             >
                                 <LucideTag size={9} strokeWidth={2.5} />
                                 {tag}

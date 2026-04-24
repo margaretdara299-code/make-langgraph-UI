@@ -259,7 +259,7 @@ export default function ExecutionDebuggerModal({ isOpen, onClose, nodes, edges }
                             {badgeIcons[statusBadge.icon]}
                             {statusBadge.label}
                         </span>
-                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <div className="edm-header-actions">
                             <button className="exec-debugger-header__close-btn" onClick={() => setIsFullScreen(!isFullScreen)} title={isFullScreen ? "Exit Full Screen" : "Full Screen"}>
                                 {isFullScreen ? <Minimize2 size={15} /> : <Maximize2 size={15} />}
                             </button>
@@ -273,7 +273,7 @@ export default function ExecutionDebuggerModal({ isOpen, onClose, nodes, edges }
                 {/* ── Body — Three Panes ── */}
                 <div className="exec-debugger-body">
                     {/* Left: Mini Canvas (flex-grow fills the rest) */}
-                    <div className="exec-debugger-canvas" style={{ flex: 1 }}>
+                    <div className="exec-debugger-canvas edm-canvas-inner">
                         <ReactFlowProvider>
                             <DebuggerCanvasInner nodes={nodes} edges={edges} panelWidthToggle={isDragging ? 0 : ioWidth} />
                         </ReactFlowProvider>

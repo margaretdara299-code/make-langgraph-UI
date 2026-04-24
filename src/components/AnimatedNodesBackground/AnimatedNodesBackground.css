@@ -75,3 +75,11 @@
         stroke-opacity: 1;
     }
 }
+
+.animated-nodes-bg__edge {
+    animation-delay: calc(var(--i, 0) * 0.3s) !important;
+}
+
+.animated-nodes-bg__node {
+    animation-delay: calc(var(--i, 0) * 0.4s) !important;
+}

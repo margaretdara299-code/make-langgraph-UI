@@ -395,3 +395,7 @@
 .breadcrumb-separator.between-selects::after {
     content: '/';
 }
+
+.sdh-search-icon {
+    color: var(--text-muted) !important;
+}

@@ -444,3 +444,8 @@
     flex-direction: column;
     gap: 12px;
 }
+
+.sf-logout-collapsed {
+    margin: 8px auto !important;
+    display: flex !important;
+}

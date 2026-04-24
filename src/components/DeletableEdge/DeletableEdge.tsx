@@ -114,7 +114,7 @@ export default function DeletableEdge(props: EdgeProps) {
                 stroke="transparent"
                 strokeWidth={20}
                 fill="none"
-                style={{ cursor: 'pointer' }}
+                className="deletable-edge__interaction-path"
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
             />

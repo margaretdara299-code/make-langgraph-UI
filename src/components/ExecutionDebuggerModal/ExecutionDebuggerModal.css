@@ -600,3 +600,13 @@
         background: none;
     }
 }
+
+.edm-header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.edm-canvas-inner {
+    flex: 1 !important;
+}

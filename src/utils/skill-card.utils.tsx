@@ -20,12 +20,11 @@ export function getMenuItems(status: string, skillId: string, versionId?: string
             key: CARD_ACTION_KEYS.BUILD_SKILL,
             icon: <PartitionOutlined />,
             label: versionId ? (
-                <Link to={`/skills/${skillId}/versions/${versionId}/design`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                <Link to={`/skills/${skillId}/versions/${versionId}/design`} className="skill-card-menu-link">
                     Build Skill
                 </Link>
             ) : 'Build Skill',
-            className: 'skill-card__menu-item-build',
-            style: { color: 'var(--color-primary)', fontWeight: 600 }
+            className: 'skill-card__menu-item-build skill-card-menu-item-primary'
         },
         {
             key: CARD_ACTION_KEYS.EDIT_SETTINGS,

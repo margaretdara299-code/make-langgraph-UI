@@ -89,7 +89,7 @@ export default function CapabilitiesPage() {
             <header className="capabilities-header">
                 <div className="title-section">
                     <div className="title-row">
-                        <Title level={2} style={{ margin: 0, fontSize: '28px', fontWeight: 700, letterSpacing: '-0.022em' }}>{CAPABILITIES.title}</Title>
+                        <Title level={2} className="header-title-premium">{CAPABILITIES.title}</Title>
                         <Button 
                             type="primary" 
                             shape="circle"
@@ -98,7 +98,7 @@ export default function CapabilitiesPage() {
                             className="global-header-add-btn"
                         />
                     </div>
-                    <Text type="secondary" style={{ fontSize: '13px', fontWeight: 400, color: 'var(--text-muted)', display: 'block', marginTop: '4px' }}>
+                    <Text type="secondary" className="header-subtitle-premium">
                         {CAPABILITIES.description}
                     </Text>
                 </div>

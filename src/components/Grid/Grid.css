@@ -42,3 +42,10 @@
   flex-direction: column !important;
   border: 1px solid var(--border-medium);
 }
+
+/* Skeleton defaults */
+.app-grid__default-skeleton {
+    height: 200px;
+    background: var(--border-light);
+    border-radius: 16px;
+}

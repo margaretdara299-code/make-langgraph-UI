@@ -32,11 +32,11 @@ export default function ModernNode({
     <div
       className={`modern-node-card ${nodeStatusClass}`}
       style={{
-        background: theme.bg,
-        borderColor: theme.stroke,
-        color: theme.stroke,
-        '--node-stroke': theme.stroke
-      } as React.CSSProperties & { [key: string]: string | number }}
+        '--node-bg': theme.bg,
+        '--node-stroke': theme.stroke,
+        '--node-icon-bg': theme.iconBg,
+        '--node-badge-bg': theme.badgeBg
+      } as React.CSSProperties}
     >
       {/* Shared Delete Button */}
       <div
@@ -58,10 +58,7 @@ export default function ModernNode({
 
       <div className="modern-node-content">
         <div className="modern-node-left">
-          <div
-            className="modern-node-icon"
-            style={{ background: theme.iconBg, color: theme.stroke }}
-          >
+          <div className="modern-node-icon">
             {icon}
           </div>
           <div className="modern-node-text-col">
@@ -74,17 +71,11 @@ export default function ModernNode({
 
         <div className="modern-node-right">
           {badge && (
-            <span
-              className="modern-node-badge"
-              style={{ background: theme.badgeBg }}
-            >
+            <span className="modern-node-badge">
               {badge}
             </span>
           )}
-          <span
-            className="modern-node-dot"
-            style={{ background: theme.stroke }}
-          ></span>
+          <span className="modern-node-dot"></span>
         </div>
       </div>
 

@@ -424,4 +424,15 @@
 .acc-panel.open > .np-leaf .node-library-item-wrapper:nth-child(8)  { animation-delay: 0.48s; }
 .acc-panel.open > .np-leaf .node-library-item-wrapper:nth-child(n+9){ animation-delay: 0.50s; }
 
-
+
+.node-group--first {
+    margin-bottom: 0 !important;
+}
+
+.nli-icon--common {
+    background: #f8fafc !important;
+}
+
+.nli-icon--error-light {
+    background: #FFF5F5 !important;
+}

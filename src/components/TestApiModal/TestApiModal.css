@@ -1,5 +1,4 @@
-
-.custom-scrollbar::-webkit-scrollbar {
+ï»¿.custom-scrollbar::-webkit-scrollbar {
     width: 6px;
     height: 6px;
 }
@@ -85,6 +84,7 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
+    background: var(--status-color);
 }
 
 .tam-status-text {
@@ -95,6 +95,7 @@
 
 .tam-status-value {
     font-weight: 700;
+    color: var(--status-color);
 }
 
 .tam-divider-vertical {
@@ -106,6 +107,11 @@
 .tam-latency-text {
     font-size: var(--text-xs);
     color: #94a3b8;
+}
+
+.tam-latency-value {
+    color: #475569;
+    font-weight: 600;
 }
 
 .tam-latency-value {
@@ -126,7 +132,11 @@
     background: #0f172a;
 }
 
-/* Ant Design Tabs override — replaces style={{ marginTop: 0 }} */
+/* Ant Design Tabs override - replaces style={{ marginTop: 0 }} */
 .tam-tabs.ant-tabs {
     margin-top: 0 !important;
+}
+
+.test-api-modal .ant-modal-body {
+    padding: 0 24px 24px 24px !important;
 }

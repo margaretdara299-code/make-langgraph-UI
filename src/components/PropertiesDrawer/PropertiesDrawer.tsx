@@ -680,7 +680,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                             hidden: { opacity: 0, x: 16 },
                                             visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }
                                         }}
-                                        style={{ padding: '0 4px' }}
+                                        className="pd-overview-tab-inner"
                                     >
                                         {/* Node Metadata Card */}
                                         <div className="properties-drawer__meta">
@@ -825,7 +825,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                             hidden: { opacity: 0, x: 16 },
                                             visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }
                                         }}
-                                        style={{ padding: '0 4px' }}
+                                        className="pd-overview-tab-inner"
                                     >
                                         <Form
                                             form={form}
@@ -837,7 +837,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                 <DecisionPropertiesPanel form={form} nodes={nodes} />
                                             ) : isEnd ? (
                                                 <>
-                                                    <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Response Formatting</div>
+                                                    <div className="properties-drawer__section-title pd-section-title-no-margin">Response Formatting</div>
                                                     <Form.Item label="Response Format" name="response_format">
                                                         <Select options={[
                                                             { label: 'Whatever provider node returned (auto)', value: 'auto' },
@@ -866,7 +866,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                     </Form.Item>
 
                                                     <div className="properties-drawer__flex-row pd-flex-row-end">
-                                                        <Form.Item label="HTTP Method" style={{ width: 90, flexShrink: 0, marginBottom: 0 }}>
+                                                        <Form.Item label="HTTP Method" className="pd-error-method-item">
                                                             <Input value="POST" disabled className="pd-error-method-input" />
                                                         </Form.Item>
                                                         <Form.Item
@@ -895,7 +895,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                             hidden: { opacity: 0, x: 16 },
                                             visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }
                                         }}
-                                        style={{ padding: '0 4px' }}
+                                        className="pd-overview-tab-inner"
                                     >
                                         <Form
                                             form={form}
@@ -948,7 +948,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                             hidden: { opacity: 0, x: 16 },
                                             visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }
                                         }}
-                                        style={{ padding: '0 4px' }}
+                                        className="pd-overview-tab-inner"
                                     >
                                         <div className="properties-drawer__section-title pd-section-title-no-margin">Step Inputs (Scope)</div>
                                         <div className="pd-code-block pd-code-block--inputs">
@@ -957,19 +957,11 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                             </pre>
                                         </div>
 
-                                        <div className="properties-drawer__section-title" style={{ color: executionStep.status === 'error' ? 'var(--color-error)' : undefined }}>
+                                        <div className={`properties-drawer__section-title ${executionStep.status === 'error' ? 'pd-status-title--error' : ''}`}>
                                             Step Output {executionStep.status === 'error' && '(Error)'}
                                         </div>
-                                        <div style={{ 
-                                            backgroundColor: 'var(--color-nav-bg)', 
-                                            border: `1px solid ${executionStep.status === 'error' ? 'var(--color-error)' : 'var(--color-border)'}`, 
-                                            borderRadius: 8, 
-                                            padding: 12, 
-                                            overflow: 'auto', 
-                                            maxHeight: 400,
-                                            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
-                                        }}>
-                                            <pre style={{ margin: 0, fontFamily: 'monospace', fontSize: 'var(--text-sm)', color: executionStep.status === 'error' ? '#ff7875' : 'var(--color-text-primary)' }}>
+                                        <div className={`pd-code-block pd-code-block--output ${executionStep.status === 'error' ? 'pd-code-block--error' : ''}`}>
+                                            <pre className={`pd-code-pre ${executionStep.status === 'error' ? 'pd-code-pre--error' : ''}`}>
                                                 {JSON.stringify(executionStep.data?.data, null, 2)}
                                             </pre>
                                         </div>

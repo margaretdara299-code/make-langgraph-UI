@@ -79,3 +79,7 @@
     transform: scale(1.1);
 }
 
+
+.deletable-edge__interaction-path {
+    cursor: pointer !important;
+}

@@ -40,3 +40,6 @@
 .create-action-overview__scope-select {
     width: 200px;
 }
+.cao-flex-1 {
+    flex: 1;
+}

@@ -5,6 +5,7 @@
 
 import { Form, Input, InputNumber, Select } from 'antd';
 import { DB_ENGINE_OPTIONS } from '@/constants';
+import './DatabaseConnectorFields.css';
 
 export default function DatabaseConnectorFields() {
     return (
@@ -46,7 +47,7 @@ export default function DatabaseConnectorFields() {
                 name={['config_json', 'port']}
                 rules={[{ required: true, message: 'Please enter the port' }]}
             >
-                <InputNumber placeholder="e.g. 5432" min={1} max={65535} style={{ width: '100%' }} />
+                <InputNumber placeholder="e.g. 5432" min={1} max={65535} className="dcf-full-width" />
             </Form.Item>
 
             <Form.Item

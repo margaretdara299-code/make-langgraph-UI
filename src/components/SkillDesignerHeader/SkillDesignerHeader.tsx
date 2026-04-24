@@ -122,7 +122,7 @@ export default function SkillDesignerHeader() {
                   <div className="dropdown-search-wrapper">
                     <Input
                       placeholder="Search skills..."
-                      prefix={<SearchOutlined style={{ color: 'var(--text-muted)' }} />}
+                      prefix={<SearchOutlined className="sdh-search-icon" />}
                       value={searchValue}
                       onChange={(e) => setSearchValue(e.target.value)}
                       onClick={(e) => e.stopPropagation()}

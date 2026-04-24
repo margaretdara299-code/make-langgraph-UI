@@ -181,7 +181,7 @@ export default function NodePalette() {
               )}
 
               {!search && (
-                <div className="node-group" style={{ marginBottom: 0 }}>
+                <div className="node-group node-group--first">
                   <div className="antd-tree-wrapper">
 
                     {/* ════ COMMON ════ */}

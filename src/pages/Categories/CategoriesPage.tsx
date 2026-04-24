@@ -101,7 +101,7 @@ export default function CategoriesPage() {
             <header className="categories-header">
                 <div className="title-section">
                     <div className="title-row">
-                        <Title level={2} style={{ margin: 0, fontSize: '28px', fontWeight: 700, letterSpacing: '-0.022em' }}>{CATEGORIES_UI.title}</Title>
+                        <Title level={2} className="header-title-premium">{CATEGORIES_UI.title}</Title>
                         <Button 
                             type="primary"
                             shape="circle"
@@ -111,7 +111,7 @@ export default function CategoriesPage() {
                             icon={<PlusOutlined />}
                         />
                     </div>
-                    <Text type="secondary" style={{ fontSize: '13px', fontWeight: 400, color: 'var(--text-muted)', display: 'block', marginTop: '4px' }}>
+                    <Text type="secondary" className="header-subtitle-premium">
                         {CATEGORIES_UI.description}
                     </Text>
                 </div>

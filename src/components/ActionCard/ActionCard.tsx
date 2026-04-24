@@ -38,7 +38,7 @@ export default function ActionCard({ action, onAction }: ActionCardProps) {
                         <DynamicLucideIcon name={action.icon} size={20} />
                     </div>
                     <Tooltip title={action.name} mouseEnterDelay={0.2}>
-                        <Text strong className="ac-name">{action.name}</Text>
+                        <div className="ac-name">{action.name}</div>
                     </Tooltip>
                 </div>
                 <Dropdown

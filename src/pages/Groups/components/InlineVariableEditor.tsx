@@ -68,7 +68,7 @@ export const InlineVariableEditor = ({ variable, onUpdated, onCancel }: InlineVa
                             onChange={e => { setName(e.target.value); if (errors.name) setErrors(prev => ({ ...prev, name: '' })); }} 
                             className="inline-input-name"
                         />
-                        {errors.name && <div className="validation-msg-tiny" style={{ marginTop: '-2px', marginBottom: '2px' }}>{errors.name}</div>}
+                        {errors.name && <div className="validation-msg-tiny validation-msg-ive">{errors.name}</div>}
                         <Input 
                             variant="borderless" 
                             size="small" 
@@ -78,7 +78,7 @@ export const InlineVariableEditor = ({ variable, onUpdated, onCancel }: InlineVa
                             onChange={e => { setKey(e.target.value); if (errors.key) setErrors(prev => ({ ...prev, key: '' })); }} 
                             className="inline-input-key"
                         />
-                        {errors.key && <div className="validation-msg-tiny" style={{ marginTop: '-2px', marginBottom: '4px' }}>{errors.key}</div>}
+                        {errors.key && <div className="validation-msg-tiny validation-msg-ive">{errors.key}</div>}
                     </div>
                 </div>
                 <div className="var-meta-column">

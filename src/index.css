@@ -305,18 +305,18 @@ textarea.ant-input {
   border-radius: 6px !important;
   margin-bottom: 2px !important;
   font-weight: 500 !important;
-  font-size: 13px !important;
+  font-size: 14px !important;
   color: #475569 !important;
   transition: all 0.2s ease !important;
 }
 
 /* --- Status Tag Styling (Global 8px Standard) --- */
 .ant-tag:not(.ant-tag-disabled) {
-    font-size: 8px !important;
+    font-size: 10px !important;
     font-weight: 700 !important;
-    padding: 0 6px !important;
-    border-radius: 3px !important;
-    line-height: 14px !important;
+    padding: 0 8px !important;
+    border-radius: 4px !important;
+    line-height: 16px !important;
     border: none !important;
     text-transform: uppercase !important;
     letter-spacing: 0.05em !important;
@@ -442,4 +442,20 @@ textarea.ant-input,
 .global-header-add-btn:hover {
     box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3) !important;
     transform: translateY(-1px);
+}
+/* --- Premium Page Headers --- */
+.header-title-premium {
+  margin: 0 !important;
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.022em !important;
+  line-height: 1.2 !important;
+}
+
+.header-subtitle-premium {
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  color: var(--text-muted) !important;
+  display: block !important;
+  margin-top: 4px !important;
 }

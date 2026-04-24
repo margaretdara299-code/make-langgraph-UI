@@ -236,3 +236,7 @@
     width: 100%;
     position: relative;
 }
+
+.lip-search-icon {
+    color: var(--text-subtle) !important;
+}

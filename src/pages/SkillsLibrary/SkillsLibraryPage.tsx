@@ -123,7 +123,7 @@ export default function SkillsLibraryPage() {
             <header className="skills-library-header">
                 <div className="title-section">
                     <div className="title-row">
-                        <Title level={2}>{SKILLS_LIBRARY.title}</Title>
+                        <Title level={2} className="header-title-premium">{SKILLS_LIBRARY.title}</Title>
                         <Button
                             type="primary"
                             shape="circle"
@@ -133,7 +133,7 @@ export default function SkillsLibraryPage() {
                             title="Create New Skill"
                         />
                     </div>
-                    <Text type="secondary" style={{ fontSize: '12px', fontWeight: 500, color: '#64748b', display: 'block', marginTop: '4px' }}>
+                    <Text type="secondary" className="header-subtitle-premium">
                         {SKILLS_LIBRARY.description}
                     </Text>
                 </div>
@@ -162,7 +162,7 @@ export default function SkillsLibraryPage() {
             <div className="skills-library-body">
                 {isLoading ? (
                     <div className="skills-library-grid">
-                        <span style={{ display: 'none' }}>GRID_LOADING_ACTIVE</span>
+                        <span className="sl-hidden-loader">GRID_LOADING_ACTIVE</span>
                         {[1, 2, 3, 4, 5, 6].map((i) => (
                             <SkillCardSkeleton key={i} />
                         ))}

@@ -241,3 +241,13 @@
     padding: 3px 7px;
   }
 }
+
+.gcv-modal {
+    max-height: 90vh !important;
+}
+
+.gcv-footer-right {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+}

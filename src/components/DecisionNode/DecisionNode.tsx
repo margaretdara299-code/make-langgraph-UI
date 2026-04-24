@@ -58,13 +58,12 @@ export default function DecisionNode({ id, data }: NodeProps<CanvasNode>) {
                 <div 
                     className="decision-node__icon-diamond" 
                     style={{ 
-                        borderColor: theme.stroke, 
-                        background: theme.iconBg, // Apply the theme background to the diamond itself
-                        color: theme.stroke 
-                    }}
+                        '--icon-stroke': theme.stroke, 
+                        '--icon-bg': theme.iconBg
+                    } as React.CSSProperties}
                 >
                     <div className="decision-node__icon-inner">
-                        <div className="decision-node__icon-dot" style={{ background: theme.stroke }} />
+                        <div className="decision-node__icon-dot" />
                     </div>
                 </div>
             }
@@ -79,7 +78,7 @@ export default function DecisionNode({ id, data }: NodeProps<CanvasNode>) {
                         position={Position.Bottom}
                         id={hId}
                         className="decision-node__source-handle modern-node-handle"
-                        style={{ left: leftPercent(idx + 1) }}
+                        style={{ left: leftPercent(idx + 1), '--p': leftPercent(idx + 1) } as React.CSSProperties}
                     />
                 );
             })}
@@ -90,7 +89,7 @@ export default function DecisionNode({ id, data }: NodeProps<CanvasNode>) {
                 position={Position.Bottom}
                 id="default"
                 className="decision-node__source-handle decision-node__source-handle--default modern-node-handle"
-                style={{ left: leftPercent(rules.length + 1) }}
+                style={{ left: leftPercent(rules.length + 1), '--p': leftPercent(rules.length + 1) } as React.CSSProperties}
             />
         </ModernNode>
     );
