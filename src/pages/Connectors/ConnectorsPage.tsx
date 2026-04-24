@@ -113,12 +113,11 @@ export default function ConnectorsPage() {
                 <Title level={3} className="connectors-page__title">Connectors</Title>
                 <Button
                     type="primary"
+                    shape="circle"
                     icon={<PlusOutlined />}
-                    size="large"
                     onClick={handleOpenCreate}
-                >
-                    {currentTabConfig.createLabel}
-                </Button>
+                    className="global-header-add-btn"
+                />
             </div>
 
             {/* ── Search Bar & Tabs ── */}

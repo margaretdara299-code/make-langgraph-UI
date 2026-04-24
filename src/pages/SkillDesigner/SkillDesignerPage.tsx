@@ -6,17 +6,20 @@
 import { ReactFlowProvider } from '@xyflow/react';
 import SkillDesignerCanvas from '@/components/SkillDesignerCanvas/SkillDesignerCanvas';
 import SkillDesignerHeader from '@/components/SkillDesignerHeader/SkillDesignerHeader';
+import { ExecutionProvider } from '@/contexts';
 import './SkillDesignerPage.css';
 
 export default function SkillDesignerPage() {
     return (
         <ReactFlowProvider>
-            <div className="skill-designer-page">
-                <SkillDesignerHeader />
-                <div className="skill-designer-page__content">
-                    <SkillDesignerCanvas />
+            <ExecutionProvider>
+                <div className="skill-designer-page">
+                    <SkillDesignerHeader />
+                    <div className="skill-designer-page__content">
+                        <SkillDesignerCanvas />
+                    </div>
                 </div>
-            </div>
+            </ExecutionProvider>
         </ReactFlowProvider>
     );
 }

@@ -39,12 +39,14 @@ export async function fetchSkills(
             (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
         );
 
+        const totalFromApi = result.data.total ?? filtered.length;
+
         return {
             data: filtered.slice(start, start + pageSize),
-            total: filtered.length,
+            total: totalFromApi,
             page,
             pageSize,
-            totalPages: Math.ceil(filtered.length / pageSize),
+            totalPages: Math.ceil(totalFromApi / pageSize),
         };
     } catch (error) {
         console.error('fetchSkills API error:', error);

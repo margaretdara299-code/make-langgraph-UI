@@ -1,0 +1,243 @@
+/**
+ * GeneratedCodeViewer — VS Code-style split-pane layout styles
+ */
+
+.generated-code-viewer {
+  /* Override modal body padding */
+}
+
+.generated-code-viewer .ant-modal-body {
+  padding: 0;
+  height: calc(90vh - 130px);
+  display: flex;
+  flex-direction: column;
+}
+
+.generated-code-viewer .ant-modal-header {
+  background-color: #1e1e1e;
+  border-bottom: 1px solid #3e3e42;
+  padding: 12px 16px;
+}
+
+.generated-code-viewer .ant-modal-title {
+  color: #cccccc;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.generated-code-viewer .ant-modal-close {
+  color: #cccccc;
+  inset-inline-end: 16px !important;
+  inset-inline-start: auto !important;
+  top: 16px !important;
+}
+
+.generated-code-viewer .ant-modal-close:hover {
+  color: #ffffff;
+}
+
+/* Loading state */
+.generated-code-viewer__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  background-color: #1e1e1e;
+}
+
+/* Main container */
+.generated-code-viewer__container {
+  display: flex;
+  height: 100%;
+  background-color: #1e1e1e;
+  overflow: hidden;
+}
+
+/* Sidebar (File Explorer) */
+.generated-code-viewer__sidebar {
+  width: 280px;
+  background-color: #252526;
+  border-right: 1px solid #3e3e42;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.generated-code-viewer__sidebar-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #3e3e42;
+  color: #cccccc;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #1e1e1e;
+}
+
+/* File list */
+.generated-code-viewer__file-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.generated-code-viewer__file-tree {
+  display: flex;
+  flex-direction: column;
+}
+
+/* File item */
+.generated-code-viewer__file-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #cccccc;
+  font-size: 13px;
+  transition: background-color 0.15s ease;
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.generated-code-viewer__file-item:hover {
+  background-color: #2d2d30;
+  color: #ffffff;
+}
+
+.generated-code-viewer__file-item.active {
+  background-color: #37373d;
+  color: #ffffff;
+  border-left: 3px solid #007acc;
+  padding-left: 13px;
+}
+
+.generated-code-viewer__file-icon {
+  font-size: 12px;
+  flex-shrink: 0;
+  color: #ccb300;
+}
+
+.generated-code-viewer__file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Editor pane */
+.generated-code-viewer__editor-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: #1e1e1e;
+}
+
+.generated-code-viewer__editor-header {
+  padding: 8px 16px;
+  border-bottom: 1px solid #3e3e42;
+  background-color: #252526;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.generated-code-viewer__file-path {
+  color: #cccccc;
+  font-size: 12px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Footer */
+.generated-code-viewer__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid #3e3e42;
+  background-color: #1e1e1e;
+}
+
+/* Scrollbar styling for VS Code-like appearance */
+.generated-code-viewer__file-list::-webkit-scrollbar {
+  width: 10px;
+}
+
+.generated-code-viewer__file-list::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.generated-code-viewer__file-list::-webkit-scrollbar-thumb {
+  background-color: #464647;
+  border-radius: 5px;
+}
+
+.generated-code-viewer__file-list::-webkit-scrollbar-thumb:hover {
+  background-color: #5a5a5a;
+}
+
+/* Monaco editor theme adjustments */
+.generated-code-viewer .monaco-editor {
+  background-color: #1e1e1e;
+}
+
+.generated-code-viewer .monaco-scrollbars-vertical {
+  background-color: transparent;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .generated-code-viewer__sidebar {
+    width: 240px;
+  }
+
+  .generated-code-viewer__file-item {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .generated-code-viewer {
+    width: 95vw !important;
+  }
+
+  .generated-code-viewer .ant-modal-body {
+    height: auto;
+  }
+
+  .generated-code-viewer__container {
+    flex-direction: column;
+  }
+
+  .generated-code-viewer__sidebar {
+    width: 100%;
+    height: 150px;
+    border-right: none;
+    border-bottom: 1px solid #3e3e42;
+  }
+
+  .generated-code-viewer__file-item {
+    display: inline-flex;
+    margin: 4px;
+    padding: 4px 8px;
+    background-color: #2d2d30;
+    border-radius: 4px;
+    border: none;
+  }
+
+  .generated-code-viewer__file-item.active {
+    background-color: #37373d;
+    border: 1px solid #007acc;
+    padding: 3px 7px;
+  }
+}

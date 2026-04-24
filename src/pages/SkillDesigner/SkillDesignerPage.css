@@ -1,15 +1,16 @@
 /**
  * SkillDesignerPage styles.
- * Manages the flex-column layout: Header top, Canvas bottom.
+ * Manages the flex-column layout: Custom Designer Header top, Canvas bottom.
+ * The Global MainLayout header and padding are hidden for this route.
  */
 
 .skill-designer-page {
     display: flex;
     flex-direction: column;
-    /* Main Layout header is 64px, negative margin from main content is 24px top/bottom */
-    height: calc(100vh - 64px);
-    margin: -24px;
-    background: var(--color-bg-layout);
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    background: var(--bg-page);
 }
 
 .skill-designer-page__content {
@@ -17,4 +18,5 @@
     min-height: 0;
     display: flex;
     flex-direction: column;
+    position: relative;
 }

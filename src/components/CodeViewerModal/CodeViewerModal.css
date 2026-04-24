@@ -1,22 +1,752 @@
 /**
- * CodeViewerModal — Monaco editor code viewer with download.
+ * CodeViewerModal CSS — VS Code-style read-only code viewer.
+ *
+ * Architecture:
+ *  - BEM namespace: .cv-modal, .cv-sidebar, .cv-tabs, .cv-toolbar, .cv-editor-pane, .cv-split
+ *  - Dual-theme via CSS custom properties on .cv-modal--dark / .cv-modal--light
+ *  - No !important except for unavoidable Ant Design modal resets
+ *  - Transitions on bg/color for smooth theme switching
  */
 
-.code-viewer-modal .ant-modal-body {
-    padding: 0;
+/* ─────────────────────────────────────────────────────────
+   DESIGN TOKENS — Dark theme (default)
+   ───────────────────────────────────────────────────────── */
+.cv-modal--dark {
+  --cv-bg-primary: #1e1e1e;
+  --cv-bg-sidebar: #252526;
+  --cv-bg-tab-bar: #2d2d30;
+  --cv-bg-tab-active: #1e1e1e;
+  --cv-bg-tab-hover: #2a2d2e;
+  --cv-bg-item-hover: #2a2d2e;
+  --cv-bg-item-active: #37373d;
+  --cv-bg-toolbar: #252526;
+  --cv-bg-btn-hover: #2a2d2e;
+  --cv-bg-btn-active: #37373d;
+  --cv-border: #3c3c3c;
+  --cv-border-light: #454545;
+  --cv-text-primary: #cccccc;
+  --cv-text-secondary: #858585;
+  --cv-text-active: #ffffff;
+  --cv-accent: #007acc;
+  --cv-accent-hover: #1e90ff;
+  --cv-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --cv-tab-indicator: #007acc;
+  --cv-scrollbar-thumb: #424242;
+  --cv-scrollbar-thumb-hover: #555;
+  --cv-close-hover-bg: rgba(255, 255, 255, 0.08);
 }
 
-.code-viewer-modal__editor-wrapper {
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    overflow: hidden;
-    margin: 16px;
+/* ─────────────────────────────────────────────────────────
+   DESIGN TOKENS — Light theme
+   ───────────────────────────────────────────────────────── */
+.cv-modal--light {
+  --cv-bg-primary: #ffffff;
+  --cv-bg-sidebar: #f3f3f3;
+  --cv-bg-tab-bar: #ececec;
+  --cv-bg-tab-active: #ffffff;
+  --cv-bg-tab-hover: #e8e8e8;
+  --cv-bg-item-hover: #e8e8e8;
+  --cv-bg-item-active: #d6ebf7;
+  --cv-bg-toolbar: #f3f3f3;
+  --cv-bg-btn-hover: #e0e0e0;
+  --cv-bg-btn-active: #d0d0d0;
+  --cv-border: #d4d4d4;
+  --cv-border-light: #c8c8c8;
+  --cv-text-primary: #333333;
+  --cv-text-secondary: #717171;
+  --cv-text-active: #000000;
+  --cv-accent: #007acc;
+  --cv-accent-hover: #005a9e;
+  --cv-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  --cv-tab-indicator: #007acc;
+  --cv-scrollbar-thumb: #c1c1c1;
+  --cv-scrollbar-thumb-hover: #aaa;
+  --cv-close-hover-bg: rgba(0, 0, 0, 0.06);
 }
 
-.code-viewer-modal__footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    padding: 12px 16px;
-    border-top: 1px solid var(--color-border);
+/* ─────────────────────────────────────────────────────────
+   ANT DESIGN MODAL OVERRIDES
+   ───────────────────────────────────────────────────────── */
+.cv-modal .ant-modal-content {
+  padding: 0;
+  background: var(--cv-bg-primary);
+  border: 1px solid var(--cv-border);
+  box-shadow: var(--cv-shadow);
+  border-radius: 6px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+/* Hide default header — we use our own toolbar */
+.cv-modal .ant-modal-header {
+  display: none !important;
+}
+
+/* Remove default body padding */
+.cv-modal .ant-modal-body {
+  padding: 0 !important;
+}
+
+/* Remove default footer */
+.cv-modal .ant-modal-footer {
+  display: none !important;
+}
+
+/* Close button — black circle on the outer corner of the modal */
+.cv-modal .ant-modal-close {
+  position: absolute !important;
+  top: 0 !important;
+  inset-inline-end: 0 !important;
+  inset-inline-start: auto !important;
+  transform: translate(40%, -40%);
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px;
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  z-index: 10;
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  padding: 0 !important;
+  line-height: 1 !important;
+}
+
+.cv-modal .ant-modal-close:hover {
+  background: #1a1a1a !important;
+  color: #ffffff !important;
+  transform: translate(40%, -40%) scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+.cv-modal .ant-modal-close .ant-modal-close-x {
+  font-size: 12px;
+  line-height: 1;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* ─────────────────────────────────────────────────────────
+   ROOT LAYOUT
+   ───────────────────────────────────────────────────────── */
+.cv-modal__root {
+  display: flex;
+  flex-direction: column;
+  height: min(calc(100vh - 80px), 720px);
+  min-height: 480px;
+  background: var(--cv-bg-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  transition: background 0.2s ease;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+/* Title bar — minimal strip at the top with modal title + close area */
+.cv-modal__titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 36px;
+  min-height: 36px;
+  padding: 0 44px 0 12px; /* right padding = space for Ant close button */
+  background: var(--cv-bg-tab-bar);
+  border-bottom: 1px solid var(--cv-border);
+  flex-shrink: 0;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.cv-modal__titlebar-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--cv-text-secondary);
+  letter-spacing: 0.2px;
+  user-select: none;
+}
+
+/* Main body — sidebar + editor area */
+.cv-modal__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Mobile: stack vertically */
+.cv-modal__body--mobile {
+  flex-direction: column;
+}
+
+/* Editor area (right of sidebar) */
+.cv-modal__editor-area {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--cv-bg-primary);
+  transition: background 0.2s ease;
+}
+
+/* Tab bar + toolbar row */
+.cv-modal__tab-row {
+  display: flex;
+  align-items: stretch;
+  background: var(--cv-bg-tab-bar);
+  border-bottom: 1px solid var(--cv-border);
+  flex-shrink: 0;
+  min-height: 35px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+/* Editor area content (below tabs) */
+.cv-modal__editor-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Mobile file selector */
+.cv-modal__mobile-select-wrap {
+  padding: 8px 12px;
+  background: var(--cv-bg-sidebar);
+  border-bottom: 1px solid var(--cv-border);
+  flex-shrink: 0;
+}
+
+.cv-modal__mobile-select {
+  width: 100%;
+  padding: 6px 10px;
+  background: var(--cv-bg-primary);
+  color: var(--cv-text-primary);
+  border: 1px solid var(--cv-border);
+  border-radius: 4px;
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+}
+
+.cv-modal__mobile-select:focus {
+  border-color: var(--cv-accent);
+}
+
+/* ─────────────────────────────────────────────────────────
+   FILE SIDEBAR
+   ───────────────────────────────────────────────────────── */
+.cv-sidebar {
+  width: 200px;
+  min-width: 180px;
+  max-width: 220px;
+  background: var(--cv-bg-sidebar);
+  border-right: 1px solid var(--cv-border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.cv-sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px 8px;
+  border-bottom: 1px solid var(--cv-border);
+  flex-shrink: 0;
+  transition: border-color 0.2s ease;
+}
+
+.cv-sidebar__title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--cv-text-secondary);
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.cv-sidebar__count {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--cv-text-secondary);
+  background: var(--cv-bg-btn-hover);
+  border-radius: 8px;
+  padding: 1px 6px;
+  min-width: 18px;
+  text-align: center;
+  line-height: 16px;
+}
+
+.cv-sidebar__list {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.cv-sidebar__list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cv-sidebar__list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cv-sidebar__list::-webkit-scrollbar-thumb {
+  background: var(--cv-scrollbar-thumb);
+  border-radius: 3px;
+}
+
+.cv-sidebar__list::-webkit-scrollbar-thumb:hover {
+  background: var(--cv-scrollbar-thumb-hover);
+}
+
+.cv-sidebar__item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 8px 5px 0;
+  cursor: pointer;
+  position: relative;
+  color: var(--cv-text-primary);
+  font-size: 13px;
+  line-height: 1.4;
+  border-radius: 3px;
+  margin: 1px 5px 1px 0;
+  transition: background 0.12s ease, color 0.12s ease;
+  min-width: 0;
+  user-select: none;
+}
+
+.cv-sidebar__item:hover {
+  background: var(--cv-bg-item-hover);
+  color: var(--cv-text-active);
+}
+
+.cv-sidebar__item--active {
+  background: var(--cv-bg-item-active);
+  color: var(--cv-text-active);
+  font-weight: 500;
+}
+
+/* Left accent bar for active file */
+.cv-sidebar__active-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--cv-accent);
+  border-radius: 0 2px 2px 0;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.cv-sidebar__item--active .cv-sidebar__active-bar {
+  opacity: 1;
+}
+
+/* Blue right border on split-active file */
+.cv-sidebar__item--split-active {
+  border-right: 2px solid var(--cv-accent-hover);
+}
+
+.cv-sidebar__file-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 12px;
+}
+
+.cv-sidebar__file-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* Split button — hidden by default, shown on item hover */
+.cv-sidebar__split-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  border-radius: 3px;
+  color: var(--cv-text-secondary);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0;
+  transition: background 0.12s ease, color 0.12s ease;
+  margin-right: 4px;
+}
+
+.cv-sidebar__item:hover .cv-sidebar__split-btn {
+  display: flex;
+}
+
+.cv-sidebar__split-btn:hover {
+  background: var(--cv-bg-btn-active);
+  color: var(--cv-text-active);
+}
+
+/* ─────────────────────────────────────────────────────────
+   EDITOR TABS
+   ───────────────────────────────────────────────────────── */
+.cv-tabs {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.cv-tabs--split .cv-tabs__pane {
+  flex: 1;
+}
+
+.cv-tabs__pane {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.cv-tabs__strip {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--cv-scrollbar-thumb) transparent;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.cv-tabs__strip--focused {
+  opacity: 1;
+}
+
+.cv-tabs__strip::-webkit-scrollbar {
+  height: 3px;
+}
+
+.cv-tabs__strip::-webkit-scrollbar-thumb {
+  background: var(--cv-scrollbar-thumb);
+  border-radius: 2px;
+}
+
+.cv-tabs__split-divider {
+  width: 1px;
+  background: var(--cv-border);
+  flex-shrink: 0;
+  align-self: stretch;
+}
+
+.cv-tabs__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  min-width: 100px;
+  max-width: 180px;
+  height: 100%;
+  background: var(--cv-bg-tab-bar);
+  border: none;
+  border-right: 1px solid var(--cv-border);
+  border-bottom: 2px solid transparent;
+  color: var(--cv-text-secondary);
+  font-size: 12.5px;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  position: relative;
+  transition: background 0.12s ease, color 0.12s ease, border-bottom-color 0.12s ease;
+}
+
+.cv-tabs__tab:hover {
+  background: var(--cv-bg-tab-hover);
+  color: var(--cv-text-primary);
+}
+
+.cv-tabs__tab--active {
+  background: var(--cv-bg-tab-active);
+  color: var(--cv-text-active);
+  border-bottom-color: var(--cv-tab-indicator);
+  font-weight: 500;
+}
+
+.cv-tabs__tab-icon {
+  font-size: 13px;
+  flex-shrink: 0;
+  display: inline-flex;
+}
+
+.cv-tabs__tab-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Close (×) button — visible on hover or when active */
+.cv-tabs__tab-close {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  font-size: 10px;
+  flex-shrink: 0;
+  color: var(--cv-text-secondary);
+  cursor: pointer;
+  transition: background 0.1s ease, color 0.1s ease;
+}
+
+.cv-tabs__tab:hover .cv-tabs__tab-close,
+.cv-tabs__tab--active .cv-tabs__tab-close {
+  display: inline-flex;
+}
+
+.cv-tabs__tab-close:hover {
+  background: rgba(255, 100, 100, 0.25);
+  color: #e05252;
+}
+
+/* ─────────────────────────────────────────────────────────
+   VIEWER TOOLBAR
+   ───────────────────────────────────────────────────────── */
+.cv-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 8px;
+  flex-shrink: 0;
+  border-left: 1px solid var(--cv-border);
+  background: var(--cv-bg-toolbar);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.cv-toolbar__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: var(--cv-text-secondary);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  transition: background 0.12s ease, color 0.12s ease;
+  flex-shrink: 0;
+}
+
+.cv-toolbar__btn:hover:not(:disabled) {
+  background: var(--cv-bg-btn-hover);
+  color: var(--cv-text-active);
+}
+
+.cv-toolbar__btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.cv-toolbar__btn--active {
+  background: var(--cv-bg-btn-active);
+  color: var(--cv-accent);
+}
+
+.cv-toolbar__btn--primary {
+  color: var(--cv-accent);
+}
+
+.cv-toolbar__btn--primary:hover:not(:disabled) {
+  background: var(--cv-accent);
+  color: #fff;
+}
+
+.cv-toolbar__divider {
+  width: 1px;
+  height: 16px;
+  background: var(--cv-border);
+  margin: 0 2px;
+  flex-shrink: 0;
+}
+
+/* ─────────────────────────────────────────────────────────
+   EDITOR PANE
+   ───────────────────────────────────────────────────────── */
+.cv-editor-pane {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Pane label pill (LEFT / RIGHT) */
+.cv-editor-pane__label {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  z-index: 5;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.3;
+  transition: opacity 0.2s ease;
+}
+
+.cv-editor-pane__label--active {
+  opacity: 0.9;
+}
+
+.cv-editor-pane__label--left {
+  background: rgba(0, 122, 204, 0.25);
+  color: #007acc;
+  border: 1px solid rgba(0, 122, 204, 0.4);
+}
+
+.cv-editor-pane__label--right {
+  background: rgba(138, 99, 210, 0.25);
+  color: #b07ef8;
+  border: 1px solid rgba(138, 99, 210, 0.4);
+}
+
+/* Loading skeleton */
+.cv-editor-pane__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 100%;
+  background: var(--cv-bg-primary);
+}
+
+.cv-editor-pane__loading-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cv-accent);
+  animation: cv-blink 1.2s ease-in-out infinite;
+}
+
+.cv-editor-pane__loading-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.cv-editor-pane__loading-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes cv-blink {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1); }
+}
+
+/* ─────────────────────────────────────────────────────────
+   SPLIT EDITOR LAYOUT
+   ───────────────────────────────────────────────────────── */
+.cv-split {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.cv-split__pane {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  height: 100%;
+}
+
+.cv-split__divider {
+  width: 1px;
+  background: var(--cv-border);
+  flex-shrink: 0;
+  align-self: stretch;
+}
+
+/* ─────────────────────────────────────────────────────────
+   FILE ICON COLOR CLASSES (shared with existing codebase)
+   ───────────────────────────────────────────────────────── */
+.code-viewer-modal__tree-file-icon.is-python   { color: #3776ab; }
+.code-viewer-modal__tree-file-icon.is-javascript { color: #f7df1e; }
+.code-viewer-modal__tree-file-icon.is-typescript { color: #3178c6; }
+.code-viewer-modal__tree-file-icon.is-json    { color: #cbcb41; }
+.code-viewer-modal__tree-file-icon.is-markdown { color: #58a6ff; }
+.code-viewer-modal__tree-file-icon.is-web     { color: #ff9f43; }
+.code-viewer-modal__tree-file-icon.is-asset   { color: #7c3aed; }
+.code-viewer-modal__tree-file-icon.is-default { color: var(--cv-text-secondary); }
+
+/* Dark theme icon overrides for better contrast */
+.cv-modal--light .code-viewer-modal__tree-file-icon.is-javascript { color: #c5a800; }
+.cv-modal--light .code-viewer-modal__tree-file-icon.is-json       { color: #9a7700; }
+
+/* ─────────────────────────────────────────────────────────
+   RESPONSIVE — MOBILE
+   ───────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .cv-modal__root {
+    height: min(calc(100vh - 40px), 680px);
+    border-radius: 0;
+  }
+
+  .cv-sidebar {
+    display: none;
+  }
+
+  .cv-modal__titlebar-text {
+    font-size: 11px;
+  }
+
+  .cv-tabs__tab {
+    min-width: 80px;
+    max-width: 140px;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cv-toolbar__btn {
+    width: 24px;
+    height: 24px;
+    font-size: 13px;
+  }
+
+  .cv-tabs__tab {
+    min-width: 70px;
+    padding: 0 8px;
+  }
+
+  .cv-tabs__tab-icon {
+    display: none;
+  }
 }

@@ -24,8 +24,9 @@
 }
 
 .node-palette-item__icon {
-    font-size: 18px;
+    font-size: 15px;
     line-height: 1;
+
     flex-shrink: 0;
 }
 
@@ -55,3 +56,17 @@
     letter-spacing: 0.3px;
     flex-shrink: 0;
 }
+
+/* Decision node variants */
+.node-palette-item__badge--decision {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+}
+
+.node-palette-item__icon--decision {
+    color: #f59e0b;
+}
+
+.node-palette-item__name--decision {
+    color: color-mix(in srgb, #f59e0b, var(--color-nav-input-text) 60%);
+}

@@ -1,0 +1,74 @@
+.metric-card {
+  padding: 16px !important;
+  background: var(--bg-card);
+  border-radius: 12px !important;
+  border: 1px solid var(--border-medium) !important;
+  box-shadow: var(--shadow-subtle) !important;
+  transition: all var(--motion-base) var(--ease-in-out) !important;
+  height: 100%;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card) !important;
+  border-color: var(--accent) !important;
+}
+
+.metric-card .ant-card-body {
+  padding: 0 !important;
+}
+
+.metric-card__content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+@media (max-width: 480px) {
+  .metric-card {
+    padding: 20px !important;
+  }
+  .metric-card__content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .metric-card__value {
+    font-size: 20px !important;
+  }
+}
+
+.metric-card__icon-box {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.metric-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.metric-card__label {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin: 0 !important;
+  letter-spacing: 0.01em;
+}
+
+.metric-card__value {
+  margin: 0 !important;
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  color: var(--text-main) !important;
+  letter-spacing: -0.01em;
+  line-height: 1 !important;
+}
+
+

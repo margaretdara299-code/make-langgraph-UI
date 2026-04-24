@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Modal, Form, message, Button, Space } from 'antd';
 import { updateSkill } from '@/services';
 import { SkillDetailsForm } from '@/components';
-import type { CreateSkillFormData, EditSkillModalProps } from '@/interfaces';
+import type { EditSkillModalProps, CreateSkillFormData } from '@/interfaces';
+import './EditSkillModal.css';
 
 export default function EditSkillModal({ isOpen, onClose, onUpdated, skill }: EditSkillModalProps) {
     const [form] = Form.useForm<CreateSkillFormData>();
@@ -53,7 +54,8 @@ export default function EditSkillModal({ isOpen, onClose, onUpdated, skill }: Ed
             open={isOpen}
             onCancel={handleClose}
             title="Edit Skill Details"
-            width={640}
+            width={540}
+            zIndex={1300}
             destroyOnHidden
             className="edit-skill-modal"
             footer={

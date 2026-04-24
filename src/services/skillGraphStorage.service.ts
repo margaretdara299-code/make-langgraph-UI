@@ -15,6 +15,7 @@ function getStorageKey(versionId: string): string {
 interface StoredGraph {
     nodes: Record<string, any>;       // keyed by nodeId
     connections: Record<string, any>;  // keyed by edgeId
+    viewport?: { x: number; y: number; zoom: number };
 }
 
 // ── Read ──
@@ -35,10 +36,19 @@ export function loadGraphFromStorage(versionId: string): StoredGraph | null {
 export function saveGraphToStorage(
     versionId: string,
     nodes: Record<string, any>,
-    connections: Record<string, any>
+    connections: Record<string, any>,
+    viewport?: { x: number; y: number; zoom: number }
 ): void {
-    const payload: StoredGraph = { nodes, connections };
+    const payload: StoredGraph = { nodes, connections, viewport };
     localStorage.setItem(getStorageKey(versionId), JSON.stringify(payload));
+}
+
+// ── Viewport CRUD ──
+
+export function upsertViewportInStorage(versionId: string, viewport: { x: number; y: number; zoom: number }): void {
+    const graph = loadGraphFromStorage(versionId) || { nodes: {}, connections: {} };
+    graph.viewport = viewport;
+    localStorage.setItem(getStorageKey(versionId), JSON.stringify(graph));
 }
 
 // ── Node CRUD ──

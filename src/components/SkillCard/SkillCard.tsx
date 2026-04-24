@@ -1,101 +1,102 @@
 /**
- * SkillCard — displays a single skill as a card in the Skills Library grid.
- * Includes a dropdown action menu for Edit, Test, Publish, Archive, Delete.
+ * SkillCard — Premium, high-density card architectural pattern.
+ * Uses div-based layout and framer-motion for industry-level feel.
  */
 
-import { Card, Tag, Typography, Space, Tooltip, Dropdown } from 'antd';
+import { Typography, Tooltip, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import {
-    ClockCircleOutlined,
-    BranchesOutlined,
-    TagOutlined,
     MoreOutlined,
 } from '@ant-design/icons';
+import { Tag as LucideTag, Layers } from 'lucide-react';
 import StatusPill from '@/components/StatusPill/StatusPill';
-import { getMenuItems } from '@/utils';
+import { getMenuItems, getTagStyle } from '@/utils';
 import type { SkillCardProps } from '@/interfaces';
 import './SkillCard.css';
 
 const { Text, Paragraph } = Typography;
 
 export default function SkillCard({ skill, onClick, onAction }: SkillCardProps) {
-    const updatedDate = new Date(skill.updatedAt).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-    });
-
     const handleMenuClick: MenuProps['onClick'] = (e) => {
         e.domEvent.stopPropagation();
         onAction?.(e.key, skill.id);
     };
 
     return (
-        <Card
-            hoverable
-            className="skill-card"
+        <div
+            className="skill-card-premium"
             onClick={onClick}
         >
-            <div className="skill-card__header">
-                <div className="skill-card__header-left">
-                    <StatusPill status={skill.status} />
-                    <Tag color="blue">{skill.environment.toUpperCase()}</Tag>
-                </div>
+            {/* Row 1: Name + Actions */}
+            <div className="sc-header">
+                <Tooltip title={skill.name} mouseEnterDelay={0.2}>
+                    <Text strong className="sc-name">{skill.name}</Text>
+                </Tooltip>
                 <Dropdown
                     menu={{ items: getMenuItems(skill.status, skill.id, skill.latestVersionId), onClick: handleMenuClick }}
                     trigger={['click']}
                     placement="bottomRight"
                 >
-                    <MoreOutlined
-                        className="skill-card__actions-btn"
+                    <div
+                        className="sc-more-btn"
                         onClick={(e) => e.stopPropagation()}
-                    />
+                    >
+                        <MoreOutlined />
+                    </div>
                 </Dropdown>
             </div>
 
-            <Text strong className="skill-card__name">{skill.name}</Text>
-            <Text type="secondary" className="skill-card__key">{skill.skillKey}</Text>
-
-            <Paragraph
-                type="secondary"
-                className="skill-card__description"
-                ellipsis={{ rows: 2 }}
-            >
-                {skill.description}
-            </Paragraph>
-
-            <div className="skill-card__meta">
-                <Space size={4}>
-                    <TagOutlined className="skill-card__meta-icon" />
-                    <Text type="secondary">{skill.category}</Text>
-                </Space>
-                <Space size={4}>
-                    <BranchesOutlined className="skill-card__meta-icon" />
-                    <Tag color="geekblue" bordered={false} className="skill-card__version-tag">
-                        v{skill.version || '1.0.0'}
-                    </Tag>
-                </Space>
+            {/* Row 2: Key + Status */}
+            <div className="sc-key-row">
+                <span className="sc-key-value">{skill.skillKey}</span>
+                <StatusPill status={skill.status} />
             </div>
 
-            <div className="skill-card__footer">
-                <Tooltip title={`Last updated: ${updatedDate}`}>
-                    <Space size={4}>
-                        <ClockCircleOutlined className="skill-card__meta-icon" />
-                        <Text type="secondary" className="skill-card__date">{updatedDate}</Text>
-                    </Space>
+            {/* Row 4: Description */}
+            <div className="sc-body">
+                <Tooltip title={skill.description || 'No description available'} mouseEnterDelay={0.2} placement="top">
+                    <Paragraph
+                        className="sc-description"
+                        ellipsis={{ rows: 2 }}
+                    >
+                        {skill.description || <span className="sc-empty-desc">No description provided</span>}
+                    </Paragraph>
+                </Tooltip>
+            </div>
+
+            {/* Footer: Capabilities (Category) + Tags */}
+            <div className="sc-footer">
+                <Tooltip title={`Category: ${skill.category || 'General'}`} mouseEnterDelay={0.2}>
+                    <div className="sc-cap-section">
+                        <Layers size={12} strokeWidth={2.5} color="var(--accent)" />
+                        <span className="sc-cap-label">{skill.category || 'General'}</span>
+                    </div>
                 </Tooltip>
 
-                <div className="skill-card__tags">
-                    {skill.tags.slice(0, 2).map((tag) => (
-                        <Tag key={tag} className="skill-card__tag">{tag}</Tag>
-                    ))}
-                    {skill.tags.length > 2 && (
-                        <Tooltip title={skill.tags.slice(2).join(', ')}>
-                            <Tag className="skill-card__tag">+{skill.tags.length - 2}</Tag>
+                <div className="sc-tags-section">
+                    {skill.tags.slice(0, 1).map((tag) => {
+                        const style = getTagStyle(tag);
+                        return (
+                            <div
+                                key={tag}
+                                className="sc-mini-tag"
+                                style={{
+                                    backgroundColor: style.bg,
+                                    color: style.color,
+                                }}
+                            >
+                                <LucideTag size={9} strokeWidth={2.5} />
+                                {tag}
+                            </div>
+                        );
+                    })}
+                    {skill.tags.length > 1 && (
+                        <Tooltip title={skill.tags.slice(1).join(', ')}>
+                            <div className="sc-mini-tag sc-tag-count">+{skill.tags.length - 1}</div>
                         </Tooltip>
                     )}
                 </div>
             </div>
-        </Card>
+        </div>
     );
 }

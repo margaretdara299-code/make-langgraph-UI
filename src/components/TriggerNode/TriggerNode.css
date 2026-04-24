@@ -4,10 +4,10 @@
 
 .trigger-node {
     background: transparent;
-    border-radius: var(--turbo-border-radius);
+    border-radius: var(--radius-lg);
     min-width: 200px;
     max-width: 280px;
-    font-family: var(--turbo-font-mono);
+    font-family: var(--font-sans);
     position: relative;
     padding: 0;
     overflow: visible; 
@@ -19,7 +19,7 @@
     position: relative;
     width: 100%;
     height: 100%;
-    border-radius: var(--turbo-border-radius);
+    border-radius: var(--radius-lg);
     overflow: hidden;
     padding: 1px;
     background: var(--color-bg-white);
@@ -48,7 +48,7 @@
 .trigger-node__content {
     background: color-mix(in srgb, var(--color-node-trigger), var(--color-bg-white) 95%);
     border: 1px solid color-mix(in srgb, var(--color-node-trigger), transparent 70%);
-    border-radius: calc(var(--turbo-border-radius) - 1px);
+    border-radius: calc(var(--radius-lg) - 1px);
     width: 100%;
     height: 100%;
     display: flex;

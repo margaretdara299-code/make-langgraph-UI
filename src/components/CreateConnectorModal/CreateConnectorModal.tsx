@@ -100,7 +100,7 @@ export default function CreateConnectorModal({
             okText={isEditMode ? 'Save' : 'Create'}
             confirmLoading={isSubmitting}
             width={640}
-            destroyOnClose
+            destroyOnHidden
             className="create-connector-modal"
         >
             {isApi ? (

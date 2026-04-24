@@ -40,8 +40,9 @@ export default function NodePaletteItem({ action }: NodePaletteItemProps) {
             onDragStart={handleDragStart}
         >
             <span className="node-palette-item__icon" style={{ color: itemColor }}>
-                <IconRenderer iconName={action.icon} size={18} fallback="⚡" />
+                <IconRenderer iconName={action.icon} size={15} fallback="⚡" />
             </span>
+
             <span className="node-palette-item__name" style={{ color: itemColor }}>{action.name}</span>
         </div>
     );

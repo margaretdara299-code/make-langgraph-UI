@@ -1,127 +1,158 @@
-/**
- * ActionCard base styles.
- * Uses specific token overrides to match SkillCard aesthetics.
- */
-
-.action-card {
+.action-card-premium {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
     border-radius: 12px;
-    overflow: hidden;
-    height: 100%;
+    padding: 18px;
+    height: 195px; /* Slightly taller to accommodate multi-pill footer */
     display: flex;
     flex-direction: column;
-    /* border: 1px solid var(--color-border); */
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-.action-card:hover {
+.action-card-premium:hover {
+    border-color: var(--accent);
     transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
 }
 
-.action-card .ant-card-body {
-    padding: 20px;
+/* ── Row 1: Name ── */
+.ac-header {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.ac-name {
+    font-size: 15px !important;
+    font-weight: 750 !important;
+    color: var(--text-main) !important;
+    letter-spacing: -0.015em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     flex: 1;
 }
 
-/* ── Header ── */
-
-.action-card__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 12px;
-}
-
-.action-card__icon {
-    font-size: 24px;
+.ac-more-btn {
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
-    background-color: var(--color-surface-element);
     border-radius: 8px;
-    border: 1px solid var(--color-surface-border);
-}
-
-.action-card__menu-trigger {
+    color: var(--text-subtle);
     cursor: pointer;
-    font-size: 24px;
-    color: inherit;
-    padding: 4px;
-    border-radius: 4px;
-    transition: background-color 0.2s ease;
-    line-height: 1;
+    transition: all 0.2s ease;
 }
 
-.action-card__menu-trigger:hover {
-    background-color: var(--color-surface-element-hover);
+.ac-more-btn:hover {
+    background: var(--surface-1);
+    color: var(--text-main);
 }
 
-/* ── Body ── */
-
-.action-card__body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 20px;
-}
-
-.action-card__title {
-    margin: 0 !important;
-    font-size: 16px !important;
-    font-weight: 600 !important;
-}
-
-.action-card__key {
-    font-size: 12px !important;
-    background-color: var(--color-surface-element) !important;
-    color: inherit !important;
-    border: 1px solid var(--color-surface-border-strong) !important;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-bottom: 4px;
-    display: inline-block;
-}
-
-.action-card__description {
-    min-height: 44px;
-    /* Space for roughly 2 lines */
-}
-
-.action-card__description .ant-typography {
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-/* ── Footer ── */
-
-.action-card__footer {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding-top: 16px;
-    border-top: 1px solid var(--color-border);
-    margin-top: auto;
-}
-
-.action-card__footer-top {
+/* ── Row 2: Key + Status ── */
+.ac-key-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 12px;
 }
 
-.action-card__category {
-    margin: 0;
-    border-radius: 12px;
-    background-color: var(--color-surface-element);
-    border-color: var(--color-surface-border-strong);
-    color: inherit;
+.ac-key-value {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    letter-spacing: 0.02em;
 }
 
-.action-card__date {
-    font-size: 12px;
-    color: GrayText;
+/* ── Row 3: Description ── */
+.ac-body {
+    flex: 1;
+    min-height: 0;
+}
+
+.ac-description {
+    font-size: 12px !important;
+    color: var(--text-muted) !important;
+    line-height: 1.5 !important;
+    margin: 0 !important;
+}
+
+.ac-empty-desc {
+    font-style: italic;
+    opacity: 0.5;
+}
+
+/* ── Footer: Meta + Tags ── */
+.ac-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-light);
+}
+
+.ac-meta-section {
+    display: flex;
+    align-items: center;
+}
+
+.ac-right-footer-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ac-meta-pill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #000000;
+    background: transparent;
+    padding: 2px 6px;
+    /* border-radius: 4px; */
+    /* border: 1px solid var(--border-light); */
+}
+
+.ac-meta-pill svg {
+    color: var(--accent);
+}
+
+.ac-meta-pill--cap {
+    background: transparent;
+    border-color: var(--accent-soft);
+    color: #000000;
+}
+
+.ac-tags-section {
+    display: flex;
+    gap: 4px;
+}
+
+.ac-mini-tag {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--surface-1);
+    border: 1px solid var(--border-light);
+    color: var(--text-subtle);
+}
+
+.ac-tag-count {
+    background: var(--surface-1);
+    color: var(--text-subtle);
 }

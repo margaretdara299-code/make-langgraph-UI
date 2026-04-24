@@ -70,7 +70,6 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
 
     return (
         <div className="create-action-overview">
-            <Title level={4} className="create-action-overview__title">Action Overview</Title>
 
             <Form
                 form={form}
@@ -86,9 +85,9 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                         rules={[{ required: true, message: 'Name is required' }]}
                         className="create-action-overview__flex-1"
                     >
-                        <Input placeholder="e.g., Verify Eligibility" size="large" />
+                        <Input placeholder="e.g., Verify Eligibility" />
                     </Form.Item>
-
+ 
                     <Form.Item
                         name="action_key"
                         label="Action Key"
@@ -98,13 +97,13 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                         ]}
                         className="create-action-overview__flex-1"
                     >
-                        <Input placeholder="e.g., verify_eligibility" size="large" />
+                        <Input placeholder="e.g., verify_eligibility" />
                     </Form.Item>
                 </div>
-
+ 
                 <div className="create-action-overview__row">
                     <Form.Item name="category_id" label="Category" rules={[{ required: true, message: 'Category is required' }]} className="create-action-overview__flex-1">
-                        <Select size="large" placeholder="Select a category" loading={isCategoriesLoading}>
+                        <Select placeholder="Select a category" loading={isCategoriesLoading}>
                             {categories.map(cat => (
                                 <Select.Option key={cat.categoryId ?? cat.id} value={cat.categoryId ?? cat.id}>
                                     {cat.name}
@@ -112,9 +111,9 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                             ))}
                         </Select>
                     </Form.Item>
-
+ 
                     <Form.Item name="capability_id" label="Capability" rules={[{ required: true, message: 'Capability is required' }]} className="create-action-overview__flex-1">
-                        <Select size="large" placeholder="Select a capability" loading={isCapabilitiesLoading}>
+                        <Select placeholder="Select a capability" loading={isCapabilitiesLoading}>
                             {capabilities.map(cap => (
                                 <Select.Option key={cap.capabilityId} value={cap.capabilityId}>
                                     {cap.name}
@@ -123,33 +122,19 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                         </Select>
                     </Form.Item>
                 </div>
-
+ 
                 <Form.Item
                     name="description"
                     label="Description"
                 >
                     <TextArea
                         placeholder="Describe what this action does..."
-                        rows={3}
+                        rows={4}
                         maxLength={ACTION_DESCRIPTION_MAX_LENGTH}
                         showCount
                     />
                 </Form.Item>
 
-                <div className="create-action-overview__footer-row">
-                    <Form.Item name="icon" label="Icon Reference">
-                        <Input size="large" className="create-action-overview__icon-input" />
-                    </Form.Item>
-
-                    <Form.Item name="scope" label="Deployment Scope">
-                        <Select size="large" className="create-action-overview__scope-select">
-                            <Select.Option value="global">
-                                <Space>Global <Tooltip title="Visible to all clients"><InfoCircleOutlined /></Tooltip></Space>
-                            </Select.Option>
-                            <Select.Option value="client">Client Only</Select.Option>
-                        </Select>
-                    </Form.Item>
-                </div>
             </Form>
         </div>
     );

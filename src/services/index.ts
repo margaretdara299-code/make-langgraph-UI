@@ -8,3 +8,4 @@ export * from './connector.service';
 export * from './http.service';
 export * from './category.service';
 export * from './capability.service';
+export * from './engine.service';
