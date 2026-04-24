@@ -105,7 +105,9 @@ export default function SkillDesignerCanvas() {
             const fromDecision = Boolean(params.sourceHandle) && params.sourceHandle !== 'default' && params.sourceHandle !== 'src' && params.sourceHandle !== 'error';
 
             // Edges from the action node's `error` handle route to the Error Node.
-            const isErrorPath = params.sourceHandle === 'error';
+            // Edges originating from the Error Node route to the End Node.
+            // Both should use the dotted red error path styling.
+            const isErrorPath = params.sourceHandle === 'error' || sourceNode?.type === 'error';
 
             setEdges((eds) => addEdge({
                 ...params,

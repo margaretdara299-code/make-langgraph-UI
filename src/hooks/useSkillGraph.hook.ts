@@ -78,7 +78,7 @@ export function useSkillGraph() {
                     const fromDecision = Boolean(conn.sourceHandle)
                         && conn.sourceHandle !== 'default'
                         && conn.sourceHandle !== 'error';
-                    const isErrorPath = conn.sourceHandle === 'error' || targetNode?.type === 'error';
+                    const isErrorPath = conn.sourceHandle === 'error' || targetNode?.type === 'error' || sourceNode?.type === 'error';
 
                     return {
                         id: edgeId,
