@@ -11,12 +11,8 @@ import type { Category, ApiResponse } from '@/interfaces';
  */
 export async function fetchCategories(): Promise<Category[]> {
     try {
-        const result = await apiClient.get<Category[] | { items: Category[] }>(API_ENDPOINTS.CATEGORIES.BASE);
-        const data = result.data;
-
-        if (Array.isArray(data)) return data;
-        if (data && Array.isArray((data as any).items)) return (data as any).items;
-        return [];
+        const result = await apiClient.get<Category[]>(API_ENDPOINTS.CATEGORIES.BASE);
+        return Array.isArray(result.data) ? result.data : [];
     } catch (error) {
         console.error('fetchCategories API error:', error);
         return [];
@@ -26,7 +22,7 @@ export async function fetchCategories(): Promise<Category[]> {
 /**
  * Create a new category.
  */
-export async function createCategory(payload: { name: string; description?: string }): Promise<ApiResponse<any>> {
+export async function createCategory(payload: { name: string; description?: string; icon?: string }): Promise<ApiResponse<any>> {
     try {
         const result = await apiClient.post(API_ENDPOINTS.CATEGORIES.BASE, payload);
         return { success: true, data: result.data, message: result.message };
@@ -40,7 +36,7 @@ export async function createCategory(payload: { name: string; description?: stri
  */
 export async function updateCategory(
     categoryId: number,
-    payload: { name?: string; description?: string }
+    payload: { name?: string; description?: string; icon?: string }
 ): Promise<ApiResponse<any>> {
     try {
         const result = await apiClient.patch(API_ENDPOINTS.CATEGORIES.BY_ID(categoryId), payload);

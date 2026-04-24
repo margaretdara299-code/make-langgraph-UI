@@ -18,12 +18,23 @@ export default function VariableCardSkeleton() {
             </div>
 
             <div className="variable-card-content">
-                <div className="variable-header-row">
-                    <Skeleton.Input active size="small" style={{ width: '40%', height: 18 }} />
-                    <Skeleton.Input active size="small" style={{ width: '30%', height: 10 }} />
+                <div className="variable-header-row-enhanced">
+                    <Skeleton.Input active size="small" style={{ width: '50%', height: 20 }} />
                 </div>
-                <div className="capability-desc">
-                    <Skeleton active paragraph={{ rows: 2, width: ['100%', '80%'] }} title={false} />
+                
+                <div className="var-metadata-row-table">
+                    <div className="var-meta-column" style={{ width: '30%' }}>
+                        <Skeleton.Input active size="small" style={{ width: '100%', height: 10 }} />
+                        <Skeleton.Input active size="small" style={{ width: '80%', height: 14 }} />
+                    </div>
+                    <div className="var-meta-column" style={{ width: '20%' }}>
+                        <Skeleton.Input active size="small" style={{ width: '100%', height: 10 }} />
+                        <Skeleton.Input active size="small" style={{ width: '60%', height: 14 }} />
+                    </div>
+                    <div className="var-meta-column var-meta-value-col">
+                        <Skeleton.Input active size="small" style={{ width: '40%', height: 10 }} />
+                        <Skeleton.Input active size="small" style={{ width: '90%', height: 14 }} />
+                    </div>
                 </div>
             </div>
         </div>

@@ -44,26 +44,39 @@ export default function VariableCard({ variable, onAction }: Props) {
             </div>
 
             <div className="variable-card-content">
-                <div className="variable-header-row">
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <Text className="variable-group-name">
-                            {variable.groupName || 'General'}
-                        </Text>
-                        <Text className="variable-key-mini">
-                            {variable.variableKey}
-                        </Text>
+                <div className="variable-header-row-enhanced">
+                    <Text className="variable-display-name">
+                        {variable.variableName}
+                    </Text>
+                </div>
+                
+                <div className="var-metadata-row-table">
+                    <div className="var-meta-column">
+                        <span className="var-column-header">Key</span>
+                        <span className="var-key-code">{variable.variableKey}</span>
                     </div>
-                    <div className="variable-type-tag">
-                        {variable.dataType}
+                    <div className="var-meta-column">
+                        <span className="var-column-header">Type</span>
+                        <span className="variable-type-mini">{variable.dataType}</span>
+                    </div>
+                    <div className="var-meta-column var-meta-value-col">
+                        <span className="var-column-header">Value</span>
+                        <Paragraph 
+                            className="var-value-text-enhanced" 
+                            ellipsis={{ rows: 1, tooltip: true }}
+                        >
+                            {variable.variableValue}
+                        </Paragraph>
                     </div>
                 </div>
                 
-                <Paragraph 
-                    className="capability-desc" 
-                    ellipsis={{ rows: 2, tooltip: true }}
-                >
-                    {variable.value}
-                </Paragraph>
+                {variable.groupName && (
+                    <div className="variable-card-footer-group">
+                        <Text className="variable-group-pill">
+                            {variable.groupName}
+                        </Text>
+                    </div>
+                )}
             </div>
         </div>
     );

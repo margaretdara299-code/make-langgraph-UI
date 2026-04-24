@@ -116,7 +116,7 @@ export default function ActionCatalogPage() {
                                 className="global-header-add-btn"
                             />
                         </div>
-                        <Text type="secondary" style={{ fontSize: '13px', fontWeight: 400, color: 'var(--text-subtle)', display: 'block', marginTop: '4px' }}>
+                        <Text type="secondary" style={{ fontSize: '13px', fontWeight: 400, color: 'var(--text-muted)', display: 'block', marginTop: '4px' }}>
                             {ACTION_CATALOG.description}
                         </Text>
                     </div>

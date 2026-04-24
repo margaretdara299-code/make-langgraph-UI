@@ -33,8 +33,9 @@
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  justify-content: center; 
-  border-radius: 8px;
+  justify-content: center;
+  /* border: 1px solid #e2e8f0; */
+  /* border-radius: 8px; */
   padding: 0 16px;
 }
 
@@ -45,7 +46,8 @@
   height: 34px;
   display: flex;
   align-items: center;
-  gap: 4px; /* Tighter — was 8px */
+  gap: 4px;
+  /* Tighter — was 8px */
 }
 
 /* Generic item handling */
@@ -61,7 +63,8 @@
 .breadcrumb-item.link {
   font-size: 14px;
   font-weight: 500;
-  color: #94a3b8; /* Lighter/Quieter */
+  color: #94a3b8;
+  /* Lighter/Quieter */
   background: none;
   border: none;
   padding: 4px 6px;
@@ -78,10 +81,12 @@
 /* Separator styling (Quiet) */
 .breadcrumb-separator {
   font-size: 14px;
-  color: #cbd5e1; /* Very light grey */
+  color: #cbd5e1;
+  /* Very light grey */
   font-weight: 400;
   user-select: none;
-  margin: 0 -2px; /* Pull items closer to separators */
+  margin: 0 -2px;
+  /* Pull items closer to separators */
 }
 
 .breadcrumb-container {
@@ -98,7 +103,8 @@
   font-size: 13.5px;
   font-weight: 700;
   letter-spacing: -0.018em;
-  padding: 4px 8px;   /* was 6px 10px */
+  padding: 4px 8px;
+  /* was 6px 10px */
   border-radius: 7px;
   background: transparent;
   transition: all 0.15s ease;
@@ -116,7 +122,8 @@
 }
 
 .breadcrumb-item.skill-name .dropdown-arrow {
-  color: #94a3b8; /* Quieter arrow */
+  color: #94a3b8;
+  /* Quieter arrow */
   margin-top: 1px;
 }
 
@@ -124,11 +131,14 @@
 .version-label {
   font-size: 11.5px;
   font-weight: 600;
-  color: #6366f1; /* Brand accent color */
-  background: #eef2ff; /* Very soft brand wash */
+  color: #6366f1;
+  /* Brand accent color */
+  background: #eef2ff;
+  /* Very soft brand wash */
   padding: 1px 7px;
   border-radius: 5px;
-  font-family: var(--font-mono); /* Technical feel */
+  font-family: var(--font-mono);
+  /* Technical feel */
   letter-spacing: -0.01em;
   border: 1px solid #e0e7ff;
 }
@@ -189,7 +199,8 @@
 }
 
 .builder-dropdown .ant-dropdown-menu-item {
-  padding: 5px 8px !important;  /* was 6px 10px */
+  padding: 5px 8px !important;
+  /* was 6px 10px */
   border-radius: 6px !important;
   margin: 1px 0 !important;
   font-size: 11px !important;
@@ -211,11 +222,13 @@
   border-radius: 12px;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
   overflow: hidden;
-  min-width: 220px; /* was 240px */
+  min-width: 220px;
+  /* was 240px */
 }
 
 .dropdown-search-wrapper {
-  padding: 6px 10px;  /* was 8px 12px */
+  padding: 6px 10px;
+  /* was 8px 12px */
   background: #f8fafc;
 }
 
@@ -269,7 +282,8 @@
 }
 
 .skill-status-tag {
-  font-size: 8px; /* Tiny badge */
+  font-size: 8px;
+  /* Tiny badge */
   text-transform: uppercase;
   font-weight: 800;
   letter-spacing: 0.03em;
@@ -279,8 +293,15 @@
   opacity: 0.8;
 }
 
-.skill-status-tag.published { background: #ecfdf5; color: #059669; }
-.skill-status-tag.draft { background: #fffbeb; color: #d97706; }
+.skill-status-tag.published {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.skill-status-tag.draft {
+  background: #fffbeb;
+  color: #d97706;
+}
 
 .status-dot {
   width: 6px;
@@ -310,7 +331,8 @@
   gap: 8px;
   font-family: var(--font-sans);
   font-size: 14px;
-  font-weight: 500; /* Slightly lighter for a more "lean" look */
+  font-weight: 500;
+  /* Slightly lighter for a more "lean" look */
   padding: 0 14px;
   height: 34px;
   border-radius: 8px;

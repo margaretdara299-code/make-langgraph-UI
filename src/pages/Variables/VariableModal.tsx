@@ -47,7 +47,7 @@ export default function VariableModal({ visible, variable, defaultGroupName, def
             setLoading(true);
 
             // The service handles camelCase to snake_case mapping for the API
-            const res = await (variable ? updateVariable(variable.variableId, values) : createVariable(values));
+            const res = await (variable ? updateVariable(variable.groupKey, variable.variableKey, values) : createVariable(values));
 
             if (res.success) {
                 message.success(variable ? 'Variable updated' : 'Variable created');

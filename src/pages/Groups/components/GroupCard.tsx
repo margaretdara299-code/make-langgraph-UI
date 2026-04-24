@@ -29,7 +29,7 @@ export const GroupCard = ({
     refreshData 
 }: GroupCardProps) => {
     const [addingVariable, setAddingVariable] = useState(false);
-    const [editingVariableId, setEditingVariableId] = useState<number | null>(null);
+    const [editingVariableKey, setEditingVariableKey] = useState<string | null>(null);
 
     return (
         <div className="group-card" key={group.groupName}>
@@ -78,22 +78,27 @@ export const GroupCard = ({
                 )}
                 
                 <div className="group-variables-list">
+                    <div className="variable-table-header">
+                        <span className="var-column-header">Name / Key</span>
+                        <span className="var-column-header">Type</span>
+                        <span className="var-column-header">Value</span>
+                    </div>
                     {variables.map(variable => (
-                        editingVariableId === variable.variableId ? (
+                        editingVariableKey === variable.variableKey ? (
                             <InlineVariableEditor 
-                                key={variable.variableId} 
+                                key={variable.variableKey} 
                                 variable={variable} 
                                 onUpdated={() => { 
-                                    setEditingVariableId(null); 
+                                    setEditingVariableKey(null); 
                                     refreshData(); 
                                 }} 
-                                onCancel={() => setEditingVariableId(null)} 
+                                onCancel={() => setEditingVariableKey(null)} 
                             />
                         ) : (
                             <VariableListItem 
-                                key={variable.variableId}
+                                key={variable.variableKey}
                                 variable={variable}
-                                onEdit={(v) => setEditingVariableId(v.variableId)}
+                                onEdit={(v) => setEditingVariableKey(v.variableKey)}
                                 onDelete={onDeleteVariable}
                             />
                         )

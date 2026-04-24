@@ -8,6 +8,7 @@ import { Dropdown, Typography } from 'antd';
 import { MoreOutlined, EditOutlined, DeleteOutlined, FolderOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import type { CategoryCardProps } from '@/interfaces';
+import { DynamicLucideIcon } from '../LucideIconPicker/LucideIconPicker';
 import './CategoryCard.css';
 
 const { Paragraph, Title } = Typography;
@@ -22,7 +23,7 @@ export default function CategoryCard({ category, onAction }: CategoryCardProps) 
         >
             <div className="cc-premium-header">
                 <div className="cc-premium-icon-box">
-                    <FolderOutlined className="category-icon" />
+                    <DynamicLucideIcon name={category.icon || 'Folder'} size={18} />
                 </div>
                 <Dropdown
                     menu={{

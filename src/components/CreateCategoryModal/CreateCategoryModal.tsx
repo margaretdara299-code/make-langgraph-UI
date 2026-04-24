@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { Modal, Form, Input, message, Typography, Space, Button } from 'antd';
 import { createCategory, updateCategory } from '@/services/category.service';
 import type { CreateCategoryModalProps } from '@/interfaces';
+import LucideIconPicker from '../LucideIconPicker/LucideIconPicker';
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -27,6 +28,7 @@ export default function CreateCategoryModal({
             form.setFieldsValue({
                 name: categoryToEdit.name,
                 description: categoryToEdit.description,
+                icon: categoryToEdit.icon || 'Folder'
             });
         } else if (isOpen && !categoryToEdit) {
             form.resetFields();
@@ -39,7 +41,7 @@ export default function CreateCategoryModal({
             setIsSubmitting(true);
 
             if (isEditMode) {
-                const categoryId = (categoryToEdit as any).categoryId ?? categoryToEdit!.category_id;
+                const categoryId = categoryToEdit!.categoryId;
                 const result = await updateCategory(categoryId, values);
                 if (result.success) {
                     message.success(result.message || 'Category updated successfully');
@@ -78,14 +80,14 @@ export default function CreateCategoryModal({
             onCancel={handleCancel}
             okText={isEditMode ? "Save Changes" : "Create Category"}
             confirmLoading={isSubmitting}
-            width={520}
+            width={540}
             zIndex={1300}
             centered
             destroyOnHidden
             footer={null}
             className="create-category-modal-v2"
         >
-            <div className="modal-header-neat">
+            <div className="modal-header-neat" style={{ marginBottom: '28px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span className="modal-header-title">
                         {isEditMode ? "Edit Category" : "Create New Category"}
@@ -96,7 +98,7 @@ export default function CreateCategoryModal({
                 </div>
             </div>
 
-            <div>
+            <div style={{ minHeight: '440px' }}>
                 <Form form={form} layout="vertical" requiredMark>
                     <Form.Item
                         label="Category Name"
@@ -108,10 +110,21 @@ export default function CreateCategoryModal({
                     >
                         <Input placeholder="e.g. AI & NLP, Automation" />
                     </Form.Item>
+
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '24px', padding: '12px 0', borderBottom: '1px dotted var(--border-light)', marginBottom: '16px' }}>
+                        <span style={{ fontSize: '14px', color: 'var(--text-main)' }}>Category Icon</span>
+                        <Form.Item 
+                            name="icon" 
+                            rules={[{ required: true, message: 'Icon is required' }]}
+                        >
+                            <LucideIconPicker />
+                        </Form.Item>
+                    </div>
+
                     <Form.Item label="Description" name="description">
                         <TextArea 
                             placeholder="What is this category for?" 
-                            rows={4} 
+                            rows={8} 
                             showCount
                             maxLength={200}
                         />

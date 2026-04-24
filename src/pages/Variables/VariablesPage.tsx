@@ -77,7 +77,7 @@ export default function VariablesPage() {
     };
 
     const handleDelete = async (v: Variable) => {
-        const res = await deleteVariable(v.variableId);
+        const res = await deleteVariable(v.groupKey, v.variableKey);
         if (res.success) {
             message.success('Variable deleted');
             loadData();
@@ -128,7 +128,7 @@ export default function VariablesPage() {
                                                 dataSource={items}
                                                 columns={columns}
                                                 pagination={false}
-                                                rowKey="variableId"
+                                                rowKey="variableKey"
                                                 size="middle"
                                                 className="minimal-nested-table"
                                             />
