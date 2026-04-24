@@ -33,8 +33,7 @@
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  justify-content: center;
-  border: 1px solid #e2e8f0;
+  justify-content: center; 
   border-radius: 8px;
   padding: 0 16px;
 }

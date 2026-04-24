@@ -49,7 +49,13 @@ Thumbs.db
 *.mov
 *.wmv
 
+<<<<<<< HEAD
+# Environment variables
+.env
+.env.*
+=======
 # AI Assistant files
 * .agent/
 * CLAUDE.md
 
+>>>>>>> 412dbe2f3a6e7c6f31c12febb141815f547374d9
