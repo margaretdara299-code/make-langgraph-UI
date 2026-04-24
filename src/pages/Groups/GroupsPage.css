@@ -785,3 +785,48 @@
 .add-var-icon {
     font-size: 12px;
 }
+
+/* =====================================================
+   InlineVariableAdder extracted inline styles
+   ===================================================== */
+
+.iva-name-col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.iva-input-name {
+    font-size: 11px !important;
+}
+
+.iva-error-msg {
+    margin-top: -2px;
+    margin-bottom: 4px;
+}
+
+.iva-input-key {
+    font-size: 10px !important;
+    text-transform: uppercase;
+    font-family: var(--font-mono) !important;
+}
+
+.iva-type-select {
+    width: 100% !important;
+    font-size: 10px !important;
+}
+
+.iva-input-value {
+    width: 100% !important;
+    font-size: 12px !important;
+    font-family: var(--font-mono) !important;
+}
+
+.iva-actions {
+    margin-left: 12px;
+    opacity: 1 !important;
+}
+
+.iva-icon-sm {
+    font-size: 12px !important;
+}

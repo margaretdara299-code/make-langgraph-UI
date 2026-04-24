@@ -1,3 +1,4 @@
+import './ExecutionPromptModal.css';
 import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Typography, Input, Button, message } from 'antd';
 import { PlayCircleOutlined } from '@ant-design/icons';
@@ -57,7 +58,7 @@ export default function ExecutionPromptModal({ isOpen, onClose, onExecutionStart
         <Modal
             title={
                 <div>
-                    <Title level={4} style={{ margin: 0 }}>Start Execution Validation</Title>
+                    <Title level={4} className="epm-modal-title">Start Execution Validation</Title>
                 </div>
             }
             open={isOpen}
@@ -68,28 +69,22 @@ export default function ExecutionPromptModal({ isOpen, onClose, onExecutionStart
             centered
             className="execution-prompt-modal"
         >
-            <div style={{ padding: '1rem 0' }}>
-                <Text type="secondary" style={{ display: 'block', marginBottom: '1rem' }}>
+            <div className="epm-body">
+                <Text type="secondary" className="epm-description">
                     Pass initial contextual data into the workflow run. This simulates an external event (like a webhook or API call) providing state to the Workflow Entry node.
                 </Text>
                 <Input.TextArea
                     value={initialDataStr}
                     onChange={(e) => setInitialDataStr(e.target.value)}
 
-                    style={{
-                        fontFamily: 'monospace',
-                        marginBottom: '1.5rem',
-                        fontSize: 'var(--text-sm)',
-                        padding: '12px',
-                        borderRadius: '8px',
-                    }}
+                    className="epm-code-input"
                 />
                 <Button
                     type="primary"
                     size="large"
                     onClick={handleStart}
                     icon={<PlayCircleOutlined />}
-                    style={{ width: '100%' }}
+                    className="epm-run-btn"
                 >
                     Run Skill
                 </Button>
@@ -97,3 +92,4 @@ export default function ExecutionPromptModal({ isOpen, onClose, onExecutionStart
         </Modal>
     );
 }
+

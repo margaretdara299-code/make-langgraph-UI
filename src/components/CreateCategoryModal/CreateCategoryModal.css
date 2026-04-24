@@ -1,0 +1,45 @@
+/* CreateCategoryModal.css */
+
+.ccm2-header {
+    margin-bottom: 28px !important;
+}
+
+.ccm2-header-inner {
+    display: flex;
+    flex-direction: column;
+}
+
+.ccm2-form-body {
+    min-height: 440px;
+}
+
+.ccm2-icon-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 24px;
+    padding: 12px 0;
+    border-bottom: 1px dotted var(--border-light);
+    margin-bottom: 16px;
+}
+
+.ccm2-icon-label {
+    font-size: 14px;
+    color: var(--text-main);
+}
+
+.ccm2-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 32px;
+}
+
+.ccm2-btn {
+    border-radius: 4px !important;
+    height: 36px !important;
+    font-weight: 600 !important;
+}
+
+.ccm2-btn--primary {
+    padding: 0 24px !important;
+}
