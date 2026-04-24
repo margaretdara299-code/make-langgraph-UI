@@ -436,13 +436,13 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     };
 
     const DynamicParamList = ({ name, title, emptyMessage, hideTitle = false }: { name: string, title: string, emptyMessage: string, hideTitle?: boolean }) => (
-        <div className="properties-drawer__param-group" style={{ marginBottom: hideTitle ? 0 : 16 }}>
-            {!hideTitle && <Text strong className="properties-drawer__subsection-label" style={{ display: 'block', marginBottom: 8 }}>{title}</Text>}
+        <div className="properties-drawer__param-group">
+            {!hideTitle && <Text strong className="properties-drawer__subsection-label pd-subsection-label">{title}</Text>}
             <Form.List name={name}>
                 {(fields, { add, remove }) => (
                     <>
                         {fields.length === 0 && (
-                            <Text type="secondary" className="properties-drawer__empty-hint" style={{ display: 'block', marginBottom: 8, fontSize: 'var(--text-sm)' }}>
+                            <Text type="secondary" className="properties-drawer__empty-hint pd-empty-hint">
                                 {emptyMessage}
                             </Text>
                         )}
@@ -487,8 +487,8 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
         const data = Form.useWatch(name, formInstance);
         const count = Array.isArray(data) ? data.filter((d: any) => d && d.key).length : 0;
         return (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontWeight: 500 }}>{title}</span>
+            <div className="pd-accordion-label">
+                <span className="pd-accordion-title">{title}</span>
                 <AnimatePresence>
                     {count > 0 && (
                         <motion.div 
@@ -496,21 +496,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                             animate={{ scale: 1, opacity: 1 }} 
                             exit={{ scale: 0, opacity: 0 }}
                             transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                            style={{ 
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                minWidth: 20,
-                                height: 20,
-                                background: '#ecfdf5', 
-                                color: '#059669', 
-                                border: '1px solid #6ee7b7',
-                                fontSize: 'var(--text-xs)', 
-                                fontWeight: 700, 
-                                padding: '0 6px', 
-                                borderRadius: '10px',
-                                boxShadow: '0 1px 2px rgba(16, 185, 129, 0.1)',
-                            }}
+                            className="pd-count-badge"
                         >
                             {count}
                         </motion.div>
@@ -525,13 +511,13 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
         return (
             <>
                 {/* ── Section 1: Endpoint ── */}
-                <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Endpoint</div>
+                <div className="properties-drawer__section-title pd-section-title-no-margin">Endpoint</div>
                 <div className="properties-drawer__flex-row">
                     <Form.Item label="URL" name="url" className="properties-drawer__flex-item">
                         <Input placeholder="https://api.example.com/v1/resource" />
                     </Form.Item>
                 </div>
-                <div style={{ marginTop: 12 }}>
+                <div className="pd-method-wrap">
                     <Form.Item label="HTTP Method" name="method">
                         <Select options={HTTP_METHODS} />
                     </Form.Item>
@@ -557,27 +543,27 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     };
 
     const renderStateManagement = () => (
-        <div style={{ marginTop: 0 }}>
-            <Text type="secondary" style={{ fontSize: 'var(--text-sm)', display: 'block', marginBottom: 16, lineHeight: 1.5 }}>
+        <div className="pd-state-management">
+            <Text type="secondary" className="pd-state-description">
                 Map values from the API response directly to global state variables. Use <strong>$</strong> to select the entire response payload, or use dot notation (e.g., <strong>data.id</strong>) to extract specific nested fields.
             </Text>
             <Form.List name="response_to_state_mapping">
                 {(fields, { add, remove }) => (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    <div className="pd-mapping-list">
                         {fields.length === 0 && (
-                            <Text type="secondary" style={{ fontSize: 'var(--text-sm)' }}>
+                            <Text type="secondary" className="pd-empty-mapping">
                                 No output mappings defined.
                             </Text>
                         )}
                         {fields.map(({ key, name: fieldName, ...restField }) => (
-                            <div key={key} style={{ display: 'flex', gap: 8, alignItems: 'center', background: 'var(--color-bg-container)', padding: 12, border: '1px solid var(--color-border)', borderRadius: 8 }}>
-                                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                            <div key={key} className="pd-mapping-row">
+                                <div className="pd-mapping-fields">
                                     
-                                    <div style={{ display: 'flex', gap: 8 }}>
+                                    <div className="pd-mapping-top-row">
                                         <Form.Item
                                             {...restField}
                                             name={[fieldName, 'state_key']}
-                                            style={{ margin: 0, flex: 1 }}
+                                            className="pd-mapping-state-key"
                                             rules={[{ required: true, message: 'State Key required' }]}
                                         >
                                             <Select
@@ -590,7 +576,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                         <Form.Item
                                             {...restField}
                                             name={[fieldName, 'datatype']}
-                                            style={{ margin: 0, width: 110 }}
+                                            className="pd-mapping-datatype"
                                             initialValue="string"
                                         >
                                             <Select
@@ -610,7 +596,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                     <Form.Item
                                         {...restField}
                                         name={[fieldName, 'source_path']}
-                                        style={{ margin: 0 }}
+                                        className="pd-mapping-source-path"
                                         rules={[{ required: true, message: 'Source Path required' }]}
                                     >
                                         <Input placeholder="Source Path (e.g. data.id or $)" />
@@ -618,7 +604,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                     
                                 </div>
                                 <DeleteOutlined
-                                    style={{ color: '#ef4444', cursor: 'pointer', padding: 8 }}
+                                    className="pd-mapping-delete-btn"
                                     onClick={() => remove(fieldName)}
                                 />
                             </div>
@@ -658,7 +644,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
 
             if (isLoadingAction) {
                 return (
-                    <div style={{ display: 'flex', justifyContent: 'center', padding: '48px 0' }}>
+                    <div className="pd-empty-center">
                         <Spin tip="Loading action details..." />
                     </div>
                 );
@@ -700,7 +686,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                         <div className="properties-drawer__meta">
                                             <div className="properties-drawer__meta-item">
                                                 <span className="properties-drawer__meta-label">Type</span>
-                                                <span className="properties-drawer__meta-value" style={{ fontWeight: 'bold', fontStyle: 'italic', fontSize: 'var(--text-sm)' }}>
+                                                <span className="properties-drawer__meta-value pd-meta-value-bold">
                                                     {isStart     ? 'Workflow Entry'
                                                     : isEnd      ? 'Workflow Exit'
                                                     : isError    ? 'Error Handler'
@@ -713,7 +699,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                             {isAction && (
                                                 <div className="properties-drawer__meta-item">
                                                     <span className="properties-drawer__meta-label">Key</span>
-                                                    <span className="properties-drawer__meta-value" style={{ fontFamily: 'monospace', fontWeight: 'bold', fontStyle: 'italic', fontSize: 'var(--text-sm)' }}>
+                                                    <span className="properties-drawer__meta-value pd-meta-value-mono">
                                                         {nodeData?.action_key}                                                     
                                                     </span>                                                 
                                                 </div>
@@ -739,7 +725,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                         >
                                             {!isConnector && (
                                                 <>
-                                                    <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Identity</div>
+                                                    <div className="properties-drawer__section-title pd-section-title-no-margin">Identity</div>
                                                     <Form.Item
                                                         label="Node Label"
                                                         name="label"
@@ -763,27 +749,27 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                 <>
                                                     <div className="properties-drawer__divider" />
                                                     <div className="properties-drawer__section-title">Initial State Variables</div>
-                                                    <Text type="secondary" style={{ fontSize: 'var(--text-sm)', display: 'block', marginBottom: 16, lineHeight: 1.5 }}>
+                                                    <Text type="secondary" className="pd-state-description">
                                                         State is used to store and pass data between all nodes in a workflow so 
                                                         they can share and update information.
                                                     </Text>
                                                     <Form.List name="initial_state">
                                                         {(fields, { add, remove }) => (
-                                                            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                                                            <div className="pd-mapping-list">
                                                                 {fields.map(({ key, name: fieldName, ...restField }) => (
-                                                                    <div key={key} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                                                                    <div key={key} className="pd-initial-state-row">
                                                                         <Form.Item
                                                                             {...restField}
                                                                             name={[fieldName, 'key']}
-                                                                            style={{ margin: 0, flex: 2 }}
+                                                                            className="pd-form-item-key"
                                                                             rules={[{ required: true, message: 'Key required' }]}
                                                                         >
-                                                                            <Input placeholder="Variable Name" style={{ fontFamily: 'monospace' }} />
+                                                                            <Input placeholder="Variable Name" className="pd-input-mono" />
                                                                         </Form.Item>
                                                                         <Form.Item
                                                                             {...restField}
                                                                             name={[fieldName, 'type']}
-                                                                            style={{ margin: 0, flex: 1.5 }}
+                                                                            className="pd-form-item-type"
                                                                             initialValue="string"
                                                                         >
                                                                             <Select
@@ -803,12 +789,12 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                                         <Form.Item
                                                                             {...restField}
                                                                             name={[fieldName, 'value']}
-                                                                            style={{ margin: 0, flex: 2 }}
+                                                                            className="pd-form-item-value"
                                                                         >
                                                                             <Input placeholder="Default Value" />
                                                                         </Form.Item>
                                                                         <DeleteOutlined
-                                                                            style={{ color: '#ef4444', cursor: 'pointer', padding: 8, marginTop: 4 }}
+                                                                            className="pd-delete-btn pd-delete-btn--offset"
                                                                             onClick={() => remove(fieldName)}
                                                                         />
                                                                     </div>
@@ -862,7 +848,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                         {({ getFieldValue }) => {
                                                             return getFieldValue('response_format') === 'custom' ? (
                                                                 <Form.Item label="Message / Raw JSON" name="custom_message">
-                                                                    <Input.TextArea rows={6} style={{ fontFamily: 'monospace' }} placeholder="{\n  &quot;status&quot;: &quot;success&quot;\n}" />
+                                                                    <Input.TextArea rows={6} className="pd-font-mono" placeholder="{\n  &quot;status&quot;: &quot;success&quot;\n}" />
                                                                 </Form.Item>
                                                             ) : null;
                                                         }}
@@ -871,7 +857,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                             ) : isError ? (
                                                 <>
                                                     {/* ── Error API Configuration ── */}
-                                                    <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Error API</div>
+                                                    <div className="properties-drawer__section-title pd-section-title-no-margin">Error API</div>
                                                     <Form.Item
                                                         label="API Title"
                                                         name="label"
@@ -879,14 +865,14 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                         <Input placeholder="Error Handler" />
                                                     </Form.Item>
 
-                                                    <div className="properties-drawer__flex-row" style={{ alignItems: 'flex-end', gap: 8 }}>
+                                                    <div className="properties-drawer__flex-row pd-flex-row-end">
                                                         <Form.Item label="HTTP Method" style={{ width: 90, flexShrink: 0, marginBottom: 0 }}>
-                                                            <Input value="POST" disabled style={{ textAlign: 'center', fontWeight: 600, color: '#ef4444', background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 6 }} />
+                                                            <Input value="POST" disabled className="pd-error-method-input" />
                                                         </Form.Item>
                                                         <Form.Item
                                                             label="Error API URL"
                                                             name="error_api_url"
-                                                            style={{ flex: 1, marginBottom: 0 }}
+                                                            className="pd-error-url-item"
                                                             rules={[{ type: 'url', message: 'Enter a valid URL' }]}
                                                         >
                                                             <Input placeholder="https://api.example.com/error-logs" />
@@ -919,8 +905,8 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                         >
                                             {isEnd ? (
                                                 <>
-                                                    <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Failure Settings</div>
-                                                    <Text type="secondary" style={{ fontSize: 'var(--text-sm)', display: 'block', marginBottom: 16 }}>
+                                                    <div className="properties-drawer__section-title pd-section-title-no-margin">Failure Settings</div>
+                                                    <Text type="secondary" className="pd-state-description">
                                                         If the workflow fails before naturally reaching an exit, define the error response mapping.
                                                     </Text>
                                                     <div className="properties-drawer__flex-row">
@@ -934,7 +920,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                 </>
                                             ) : (
                                                 <>
-                                                    <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Fallback Settings</div>
+                                                    <div className="properties-drawer__section-title pd-section-title-no-margin">Fallback Settings</div>
                                                     <Form.Item name="fallback_message" label="Fallback Message">
                                                         <Input.TextArea placeholder="Used if action fails..." rows={4} />
                                                     </Form.Item>
@@ -951,12 +937,8 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                             ...(executionStep && (executionStep.status === 'success' || executionStep.status === 'error') ? [{
                                 key: 'exec_logs',
                                 label: (
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                        <span style={{ 
-                                            width: 8, height: 8, borderRadius: '50%', 
-                                            backgroundColor: executionStep.status === 'success' ? 'var(--color-success)' : 'var(--color-error)',
-                                            boxShadow: `0 0 4px ${executionStep.status === 'success' ? 'var(--color-success)' : 'var(--color-error)'}`
-                                        }} />
+                                    <div className="pd-flex-center pd-gap-6">
+                                        <span className={`pd-status-dot ${executionStep.status === 'success' ? 'pd-status-success' : 'pd-status-error'}`} />
                                         Execution
                                     </div>
                                 ),
@@ -968,18 +950,9 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                         }}
                                         style={{ padding: '0 4px' }}
                                     >
-                                        <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Step Inputs (Scope)</div>
-                                        <div style={{ 
-                                            backgroundColor: 'var(--color-nav-bg)', 
-                                            border: '1px solid var(--color-border)', 
-                                            borderRadius: 8, 
-                                            padding: 12, 
-                                            overflow: 'auto', 
-                                            maxHeight: 250, 
-                                            marginBottom: 20,
-                                            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
-                                        }}>
-                                            <pre style={{ margin: 0, fontFamily: 'monospace', fontSize: 'var(--text-sm)', color: 'var(--color-text-primary)' }}>
+                                        <div className="properties-drawer__section-title pd-section-title-no-margin">Step Inputs (Scope)</div>
+                                        <div className="pd-code-block pd-code-block--inputs">
+                                            <pre className="pd-code-pre">
                                                 {JSON.stringify(executionStep.inputData, null, 2)}
                                             </pre>
                                         </div>
@@ -1036,13 +1009,13 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                     >
                         <div className="properties-drawer__meta-item">
                             <span className="properties-drawer__meta-label">Route</span>
-                            <div className="properties-drawer__capability-badge badge-default" style={{ textTransform: 'capitalize' }}>
+                            <div className="properties-drawer__capability-badge badge-default pd-badge-capitalize">
                                 {edgeData?.routeType || 'unconditional'}
                             </div>
                         </div>
                         <div className="properties-drawer__meta-item">
                             <span className="properties-drawer__meta-label">ID</span>
-                            <span className="properties-drawer__meta-value" style={{ fontFamily: 'monospace' }}>
+                            <span className="properties-drawer__meta-value pd-meta-value-mono">
                                 {selectedEdge.id}
                             </span>
                         </div>

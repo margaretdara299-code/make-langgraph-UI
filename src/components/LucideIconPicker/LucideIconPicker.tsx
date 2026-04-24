@@ -175,7 +175,7 @@ export const LucideIconPicker: React.FC<LucideIconPickerProps> = ({ value, onCha
         <div className="lucide-icon-picker-popover">
             <div className="picker-search-header">
                 <div className="picker-header-row">
-                    <div className="picker-control-group" style={{ width: '160px' }}>
+                    <div className="picker-control-group picker-category-control">
                         <span className="picker-control-label">Category</span>
                         <Select 
                             size="small"
@@ -189,7 +189,7 @@ export const LucideIconPicker: React.FC<LucideIconPickerProps> = ({ value, onCha
                             dropdownStyle={{ minWidth: '200px' }}
                         />
                     </div>
-                    <div className="picker-control-group" style={{ flex: 1 }}>
+                    <div className="picker-control-group picker-search-control">
                         <span className="picker-control-label">Search</span>
                         <Input
                             prefix={<LucideIcons.Search size={12} style={{ color: 'var(--text-subtle)' }} />}
@@ -225,7 +225,7 @@ export const LucideIconPicker: React.FC<LucideIconPickerProps> = ({ value, onCha
                     <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No icons found" />
                 )}
                 {/* Sentinel element for infinite scroll */}
-                <div ref={observerTarget} style={{ height: '20px', width: '100%' }} />
+                <div ref={observerTarget} className="picker-scroll-sentinel" />
             </div>
             
             <div className="picker-footer-tip">
@@ -248,7 +248,7 @@ export const LucideIconPicker: React.FC<LucideIconPickerProps> = ({ value, onCha
             overlayClassName="premium-icon-picker-overlay"
         >
             <Button className={`lucide-picker-trigger icon-only ${isOpen ? 'is-open' : ''}`} variant="filled">
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', position: 'relative' }}>
+                <div className="picker-trigger-inner">
                     <div className="selected-icon-preview">
                         {value ? (
                             <DynamicLucideIcon name={value} size={24} color="var(--accent)" />

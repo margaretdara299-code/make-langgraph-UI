@@ -211,3 +211,28 @@
     background: var(--border-strong);
     border-radius: 10px;
 }
+
+/* =====================================================
+   Extracted from LucideIconPicker inline styles
+   ===================================================== */
+
+.picker-category-control {
+    width: 160px;
+}
+
+.picker-search-control {
+    flex: 1;
+}
+
+.picker-scroll-sentinel {
+    height: 20px;
+    width: 100%;
+}
+
+.picker-trigger-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    position: relative;
+}

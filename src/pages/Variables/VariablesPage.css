@@ -44,3 +44,73 @@
     font-size: 13px;
     color: var(--text-main);
 }
+
+/* =====================================================
+   Extracted from VariablesPage inline styles
+   ===================================================== */
+
+.var-page-title {
+    margin: 0 !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.015em;
+}
+
+.var-page-subtitle {
+    font-size: 12px !important;
+    color: var(--text-subtle) !important;
+}
+
+.var-header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.var-loading-state {
+    display: flex;
+    justify-content: center;
+    padding: 100px;
+}
+
+.var-empty-state {
+    margin-top: 100px;
+}
+
+/* =====================================================
+   VariableModal extracted from inline styles
+   (VariableModal.tsx uses VariablesPage.css since no dedicated file)
+   ===================================================== */
+
+.vm-header-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.vm-grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.vm-grid-1-2col {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 12px;
+}
+
+.vm-form-item {
+    margin-bottom: 14px !important;
+}
+
+.vm-footer-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.vm-submit-btn {
+    font-weight: 600 !important;
+    padding: 0 32px !important;
+}

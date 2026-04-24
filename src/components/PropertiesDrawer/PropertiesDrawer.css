@@ -1396,3 +1396,279 @@
     text-overflow: ellipsis;
     align-self: center;
 }
+/* =====================================================
+   Extracted from PropertiesDrawer inline styles
+   ===================================================== */
+
+/* DynamicParamList helpers */
+.pd-subsection-label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.pd-empty-hint {
+    display: block;
+    margin-bottom: 8px;
+    font-size: var(--text-sm);
+}
+
+/* Accordion param label */
+.pd-accordion-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pd-accordion-title {
+    font-weight: 500;
+}
+
+/* Animated count badge */
+.pd-count-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    background: #ecfdf5;
+    color: #059669;
+    border: 1px solid #6ee7b7;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    padding: 0 6px;
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(16, 185, 129, 0.1);
+}
+
+/* Section title variant with no top margin */
+.pd-section-title-no-margin {
+    margin-top: 0 !important;
+}
+
+/* method wrapper spacing */
+.pd-method-wrap {
+    margin-top: 12px;
+}
+
+/* State management container */
+.pd-state-management {
+    margin-top: 0;
+}
+
+.pd-state-description {
+    font-size: var(--text-sm);
+    display: block;
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+/* Mapping list & rows */
+.pd-mapping-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pd-mapping-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: var(--color-bg-container);
+    padding: 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+}
+
+.pd-mapping-fields {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pd-mapping-top-row {
+    display: flex;
+    gap: 8px;
+}
+
+.pd-mapping-state-key {
+    margin: 0 !important;
+    flex: 1;
+}
+
+.pd-mapping-datatype {
+    margin: 0 !important;
+    width: 110px;
+}
+
+.pd-mapping-source-path {
+    margin: 0 !important;
+}
+
+.pd-mapping-delete-btn {
+    color: #ef4444 !important;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.pd-empty-mapping {
+    font-size: var(--text-sm);
+}
+
+/* Meta value modifiers */
+.pd-meta-value-bold {
+    font-weight: bold !important;
+    font-style: italic;
+    font-size: var(--text-sm);
+}
+
+.pd-meta-value-mono {
+    font-family: monospace !important;
+    font-weight: bold !important;
+    font-style: italic;
+    font-size: var(--text-sm);
+}
+
+/* Initial state rows */
+.pd-initial-state-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pd-initial-state-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.pd-form-item-key {
+    margin: 0 !important;
+    flex: 2;
+}
+
+.pd-input-mono {
+    font-family: monospace !important;
+}
+
+.pd-form-item-type {
+    margin: 0 !important;
+    flex: 1.5;
+}
+
+.pd-form-item-value {
+    margin: 0 !important;
+    flex: 2;
+}
+
+.pd-delete-btn {
+    color: #ef4444 !important;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.pd-delete-btn--offset {
+    margin-top: 4px;
+}
+
+/* Execution tab label */
+.pd-flex-center {
+    display: flex;
+    align-items: center;
+}
+
+.pd-gap-6 {
+    gap: 6px;
+}
+
+.pd-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.pd-status-success {
+    background-color: var(--color-success);
+    box-shadow: 0 0 4px var(--color-success);
+}
+
+.pd-status-error {
+    background-color: var(--color-error);
+    box-shadow: 0 0 4px var(--color-error);
+}
+
+/* =====================================================
+   Second pass — additional extracted inline styles
+   ===================================================== */
+
+/* Empty/loading center state */
+.pd-empty-center {
+    display: flex;
+    justify-content: center;
+    padding: 48px 0;
+}
+
+/* Monospace font classes */
+.pd-font-mono {
+    font-family: monospace !important;
+}
+
+.pd-input-mono {
+    font-family: monospace !important;
+}
+
+/* flex-row end variant (Error API section) */
+.pd-flex-row-end {
+    align-items: flex-end;
+    gap: 8px;
+}
+
+/* HTTP Method form item width override */
+.pd-flex-row-end > .ant-form-item:first-child {
+    width: 90px;
+    flex-shrink: 0;
+    margin-bottom: 0;
+}
+
+/* Error method input styling */
+.pd-error-method-input {
+    text-align: center !important;
+    font-weight: 600 !important;
+    color: #ef4444 !important;
+    background: rgba(239, 68, 68, 0.07) !important;
+    border: 1px solid rgba(239, 68, 68, 0.25) !important;
+    border-radius: 6px !important;
+}
+
+/* Error URL Form.Item */
+.pd-error-url-item {
+    flex: 1;
+    margin-bottom: 0 !important;
+}
+
+/* Code block for execution output */
+.pd-code-block {
+    background-color: var(--color-nav-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 12px;
+    overflow: auto;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.pd-code-block--inputs {
+    max-height: 250px;
+    margin-bottom: 20px;
+}
+
+.pd-code-pre {
+    margin: 0 !important;
+    font-family: monospace;
+    font-size: var(--text-sm);
+    color: var(--color-text-primary);
+}
+
+/* Capability badge with capitalize */
+.pd-badge-capitalize {
+    text-transform: capitalize;
+}

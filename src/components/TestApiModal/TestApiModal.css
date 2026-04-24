@@ -28,3 +28,100 @@
     inset-inline-end: 16px !important;
     top: 16px !important;
 }
+
+/* =====================================================
+   Extracted from TestApiModal inline styles
+   ===================================================== */
+
+.tam-loading-text {
+    padding: 16px;
+    display: block;
+    color: #cbd5e1;
+}
+
+.tam-empty-text {
+    padding: 16px;
+    display: block;
+    color: #64748b;
+}
+
+.tam-response-pre {
+    margin: 0;
+    padding: 16px;
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    background: transparent;
+    border-radius: 12px;
+    overflow: auto;
+    height: 100%;
+    font-family: var(--ant-font-family-mono, monospace);
+    color: #cbd5e1;
+    border: none;
+    white-space: pre;
+    word-wrap: normal;
+}
+
+.tam-modal-title {
+    font-weight: 700;
+    font-size: var(--text-base);
+    color: #1e293b;
+}
+
+.tam-content-wrapper {
+    margin-top: 20px;
+}
+
+.tam-tab-meta {
+    margin-bottom: 6px;
+}
+
+.tam-status-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tam-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.tam-status-text {
+    font-size: var(--text-sm);
+    color: #64748b;
+    font-weight: 500;
+}
+
+.tam-status-value {
+    font-weight: 700;
+}
+
+.tam-divider-vertical {
+    width: 1px;
+    height: 12px;
+    background: #e2e8f0;
+}
+
+.tam-latency-text {
+    font-size: var(--text-xs);
+    color: #94a3b8;
+}
+
+.tam-latency-value {
+    color: #475569;
+    font-weight: 600;
+}
+
+.tam-tab-label {
+    font-size: var(--text-sm);
+    font-weight: 600;
+}
+
+.tam-code-pane {
+    height: 450px;
+    overflow: hidden;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    background: #0f172a;
+}

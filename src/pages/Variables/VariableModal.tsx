@@ -75,7 +75,7 @@ export default function VariableModal({ visible, variable, defaultGroupName, def
             zIndex={2000}
         >
             <div className="modal-header-neat">
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className="vm-header-content">
                     <span className="modal-header-title">
                         {variable ? 'Edit Variable' : 'Create New Variable'}
                     </span>
@@ -86,12 +86,12 @@ export default function VariableModal({ visible, variable, defaultGroupName, def
             </div>
 
             <Form form={form} layout="vertical" requiredMark={false} size="large">
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div className="vm-grid-2col">
                     <Form.Item
                         name="groupName"
                         label={<Text strong>Group Name</Text>}
                         rules={[{ required: true, message: 'Required' }]}
-                        style={{ marginBottom: '14px' }}
+                        className="vm-form-item"
                     >
                         <Input placeholder="e.g. Security" />
                     </Form.Item>
@@ -101,18 +101,18 @@ export default function VariableModal({ visible, variable, defaultGroupName, def
                         label={<Text strong>Group Key</Text>}
                         rules={[{ required: true, message: 'Required' }]}
                         normalize={(val) => (val || '').toUpperCase().replace(/\s+/g, '_').replace(/[^A-Z0-9_]/g, '')}
-                        style={{ marginBottom: '14px' }}
+                        className="vm-form-item"
                     >
                         <Input placeholder="e.g. SECURITY" className="variable-monospace-input" />
                     </Form.Item>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div className="vm-grid-2col">
                     <Form.Item
                         name="variableName"
                         label={<Text strong>Display Name</Text>}
                         rules={[{ required: true, message: 'Required' }]}
-                        style={{ marginBottom: '14px' }}
+                        className="vm-form-item"
                     >
                         <Input placeholder="e.g. API Key" />
                     </Form.Item>
@@ -122,18 +122,18 @@ export default function VariableModal({ visible, variable, defaultGroupName, def
                         label={<Text strong>Variable Key</Text>}
                         rules={[{ required: true, message: 'Required' }]}
                         normalize={(val) => (val || '').toUpperCase().replace(/\s+/g, '_').replace(/[^A-Z0-9_]/g, '')}
-                        style={{ marginBottom: '14px' }}
+                        className="vm-form-item"
                     >
                         <Input placeholder="e.g. API_KEY" className="variable-monospace-input" />
                     </Form.Item>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '12px' }}>
+                <div className="vm-grid-1-2col">
                     <Form.Item
                         name="dataType"
                         label={<Text strong>Data Type</Text>}
                         initialValue="string"
-                        style={{ marginBottom: '14px' }}
+                        className="vm-form-item"
                     >
                         <Select>
                             <Option value="string">String</Option>
@@ -146,7 +146,7 @@ export default function VariableModal({ visible, variable, defaultGroupName, def
                     <Form.Item
                         name="variableValue"
                         label={<Text strong>Default Value</Text>}
-                        style={{ marginBottom: '14px' }}
+                        className="vm-form-item"
                     >
                         {dataType === 'json' ? (
                             <Input.TextArea 
@@ -160,9 +160,9 @@ export default function VariableModal({ visible, variable, defaultGroupName, def
                     </Form.Item>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>
+                <div className="vm-footer-actions">
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button type="primary" onClick={handleSubmit} loading={loading} style={{ fontWeight: 600, padding: '0 32px' }}>
+                    <Button type="primary" onClick={handleSubmit} loading={loading} className="vm-submit-btn">
                         {variable ? 'Update' : 'Create Variable'}
                     </Button>
                 </div>

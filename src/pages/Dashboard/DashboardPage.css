@@ -499,3 +499,28 @@
   background: #3B82F6;
   border-radius: 2px;
 }
+/* =====================================================
+   Extracted from DashboardPage inline styles
+   ===================================================== */
+
+.db-page-title {
+    margin: 0 !important;
+    font-weight: 800 !important;
+    font-size: 24px !important;
+    letter-spacing: -0.02em;
+}
+
+.db-page-subtitle {
+    font-size: 13px !important;
+    color: var(--text-muted) !important;
+    margin-top: 4px;
+}
+
+.db-title-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.add-var-icon {
+    font-size: 12px;
+}

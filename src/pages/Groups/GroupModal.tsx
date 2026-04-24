@@ -80,7 +80,7 @@ export default function GroupModal({ visible, group, onClose, onSuccess }: Props
             className="group-modal-neat"
         >
             <div className="modal-header-neat">
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className="gm-header-content">
                     <span className="modal-header-title">
                         {group ? 'Edit Group' : 'Create New Group'}
                     </span>
@@ -98,7 +98,7 @@ export default function GroupModal({ visible, group, onClose, onSuccess }: Props
                 >
                     <Input 
                         placeholder="e.g. Core Security Settings" 
-                        style={{ height: '40px' }}
+                        className="gm-input-standard"
                     />
                 </Form.Item>
 
@@ -107,12 +107,11 @@ export default function GroupModal({ visible, group, onClose, onSuccess }: Props
                     label={<Text strong>Group Key</Text>}
                     rules={[{ required: true, message: 'Please enter a group key' }]}
                     normalize={(val) => (val || '').toUpperCase().replace(/\s+/g, '_').replace(/[^A-Z0-9_]/g, '')}
-                    extra={<span style={{ fontSize: '11px', color: 'var(--text-subtle)' }}>Internal identifier (e.g. CORE_MODULE)</span>}
+                    extra={<span className="gm-helper-text">Internal identifier (e.g. CORE_MODULE)</span>}
                 >
                     <Input 
                         placeholder="e.g. SECURITY" 
-                        className="variable-monospace-input"
-                        style={{ height: '40px' }}
+                        className="variable-monospace-input gm-input-standard"
                     />
                 </Form.Item>
 
@@ -137,20 +136,20 @@ export default function GroupModal({ visible, group, onClose, onSuccess }: Props
                     <Input.TextArea 
                         rows={4} 
                         placeholder="What is the purpose of this group?" 
-                        style={{ borderRadius: '6px', padding: '12px' }}
+                        className="gm-textarea"
                     />
                 </Form.Item>
 
 
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '32px' }}>
-                    <Button onClick={handleClose} style={{ height: '38px', borderRadius: '6px', padding: '0 20px' }}>
+                <div className="gm-footer-actions">
+                    <Button onClick={handleClose} className="gm-cancel-btn">
                         Cancel
                     </Button>
                     <Button 
                         type="primary" 
                         onClick={handleSubmit} 
                         loading={loading}
-                        style={{ height: '38px', borderRadius: '6px', padding: '0 24px', fontWeight: 600 }}
+                        className="gm-submit-btn"
                     >
                         {group ? 'Save Changes' : 'Create Group'}
                     </Button>

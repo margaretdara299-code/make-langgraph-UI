@@ -15,7 +15,7 @@ export default function LoginPage() {
             <ThreeBackground />
 
             {/* Static left-panel curve overlay (unchanged) */}
-            <div className="login-bg-layer" style={{ pointerEvents: 'none' }}>
+            <div className="login-bg-layer">
                 <svg className="login-curve-overlay" viewBox="0 0 1000 1000" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M 0 0 L 520 0 C 520 150, 440 300, 440 500 C 440 700, 480 850, 480 1000 L 0 1000 Z"

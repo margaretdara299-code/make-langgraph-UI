@@ -435,3 +435,12 @@
     transform: translateX(0);
   }
 }
+
+/* =====================================================
+   Extracted from Sidebar inline styles
+   ===================================================== */
+
+.user-info-row--collapsed {
+    flex-direction: column;
+    gap: 12px;
+}

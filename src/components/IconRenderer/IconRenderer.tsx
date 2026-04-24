@@ -35,5 +35,5 @@ export default function IconRenderer({ iconName, fallback = <icons.HelpCircle si
         return <>{fallback}</>;
     }
 
-    return <IconComponent fill="currentColor" {...props} />;
+    return <IconComponent {...props} />;
 }

@@ -38,9 +38,9 @@ export const GroupCard = ({
                     <DynamicLucideIcon name={group.icon || 'Folder'} size={18} />
                 </div>
 
-                <div className="group-card-header-main" style={{ flex: 1 }}>
-                    <div className="group-card-name-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                <div className="group-card-header-main gc-header-main">
+                    <div className="group-card-name-row gc-name-row">
+                        <div className="gc-name-left">
                             <span className="group-card-title">{group.groupName}</span>
                             <span className="group-card-subtitle">{group.groupKey}</span>
                         </div>
@@ -73,7 +73,7 @@ export const GroupCard = ({
 
             <div className="group-card-body">
                 {variables.length === 0 && !addingVariable && (
-                    <div style={{ padding: '20px 0' }}>
+                    <div className="gc-empty-state">
                         <Empty description="No variables yet" image={Empty.PRESENTED_IMAGE_SIMPLE} />
                     </div>
                 )}
@@ -122,7 +122,7 @@ export const GroupCard = ({
                             className="add-variable-trigger-row"
                             onClick={() => setAddingVariable(true)}
                         >
-                            <PlusOutlined style={{ fontSize: '12px' }} />
+                            <PlusOutlined className="add-var-icon" />
                             <span>Add Variable</span>
                         </button>
                     )}

@@ -451,3 +451,337 @@
 
 
 
+
+/* =====================================================
+   Extracted inline styles - NewGroupCard / InlineGroupEditor
+   ===================================================== */
+
+/* NewGroupCard */
+.ngc-root {
+    padding: 0;
+    border: 1px solid var(--accent-light);
+    box-sizing: border-box;
+}
+
+.ngc-header {
+    padding: 12px 16px;
+    background: var(--bg-main);
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ngc-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ngc-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+.ngc-title {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text-main);
+}
+
+.ngc-action-btn {
+    border-radius: 6px;
+    width: 36px;
+    height: 30px;
+}
+
+.ngc-body {
+    padding: 16px 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ngc-fields-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.ngc-picker-wrap {
+    padding: 0 4px;
+    position: relative;
+}
+
+.ngc-picker-border {
+    border-radius: 8px;
+    display: flex;
+}
+
+.ngc-picker-border--error {
+    border: 1px solid #ef4444;
+}
+
+.ngc-validation-msg {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    white-space: nowrap;
+}
+
+.ngc-name-field {
+    flex: 1.5;
+}
+
+.ngc-input-name {
+    width: 100% !important;
+    font-weight: 600 !important;
+    height: 32px !important;
+}
+
+.ngc-key-field {
+    flex: 1;
+}
+
+.ngc-input-key {
+    width: 100% !important;
+    text-transform: uppercase !important;
+    font-family: var(--font-mono) !important;
+    font-size: 11px !important;
+    height: 32px !important;
+}
+
+.ngc-description-wrap {
+    margin-top: 8px;
+}
+
+.ngc-textarea {
+    border-radius: 6px !important;
+    font-size: 13px !important;
+    font-family: var(--font-sans) !important;
+    color: var(--text-main) !important;
+    padding: 8px 12px !important;
+}
+
+/* InlineGroupEditor */
+.ige-root {
+    padding: 0;
+    border: 1.5px solid var(--accent, #6366f1);
+    box-sizing: border-box;
+}
+
+.ige-header {
+    padding: 8px 12px;
+    background: var(--bg-main);
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ige-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ige-icon {
+    background: var(--accent);
+    color: #fff;
+    width: 32px;
+    height: 32px;
+}
+
+.ige-title {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text-main);
+}
+
+.ige-action-btn {
+    border-radius: 6px;
+    width: 32px;
+    height: 28px;
+}
+
+.ige-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ige-fields-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.ige-picker-wrap {
+    padding: 0 4px;
+    position: relative;
+}
+
+.ige-picker-border {
+    border-radius: 8px;
+    display: flex;
+}
+
+.ige-picker-border--error {
+    border: 1px solid #ef4444;
+}
+
+.ige-validation-msg {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    white-space: nowrap;
+}
+
+.ige-name-field {
+    flex: 1.5;
+}
+
+.ige-input-name {
+    width: 100% !important;
+    font-weight: 600 !important;
+    height: 32px !important;
+}
+
+.ige-key-field {
+    flex: 1;
+}
+
+.ige-input-key {
+    width: 100% !important;
+    text-transform: uppercase !important;
+    font-family: var(--font-mono) !important;
+    font-size: 11px !important;
+    height: 32px !important;
+}
+
+.ige-description-wrap {
+    margin-top: 8px;
+}
+
+.ige-textarea {
+    border-radius: 6px !important;
+    font-size: 13px !important;
+    font-family: var(--font-sans) !important;
+    color: var(--text-main) !important;
+    padding: 8px 12px !important;
+}
+
+/* GroupCard helpers */
+.gc-header-main {
+    flex: 1;
+}
+
+.gc-name-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.gc-name-left {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.gc-empty-state {
+    padding: 20px 0;
+}
+
+/* GroupsPage.helpers table column classes */
+.gph-name-cell {
+    display: flex;
+    flex-direction: column;
+}
+
+.gph-variable-name {
+    font-weight: 600;
+    font-size: 13.5px;
+}
+
+.gph-variable-key {
+    font-size: 11px;
+    color: var(--accent);
+    opacity: 0.8;
+    font-family: var(--font-mono);
+}
+
+.gph-type-badge {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.gph-value-cell {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--text-main);
+    opacity: 0.85;
+}
+
+.gph-actions-cell {
+    display: flex;
+    gap: 8px;
+}
+
+.gph-action-edit {
+    color: var(--text-subtle);
+}
+
+.gph-action-delete {
+    color: #ff4d4f;
+}
+
+/* GroupModal classes */
+.gm-header-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.gm-input-standard {
+    height: 40px !important;
+}
+
+.gm-helper-text {
+    font-size: 11px;
+    color: var(--text-subtle);
+}
+
+.gm-textarea {
+    border-radius: 6px !important;
+    padding: 12px !important;
+}
+
+.gm-footer-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 32px;
+}
+
+.gm-cancel-btn {
+    height: 38px;
+    border-radius: 6px;
+    padding: 0 20px;
+}
+
+.gm-submit-btn {
+    height: 38px;
+    border-radius: 6px;
+    padding: 0 24px;
+    font-weight: 600;
+}
+
+.add-var-icon {
+    font-size: 12px;
+}

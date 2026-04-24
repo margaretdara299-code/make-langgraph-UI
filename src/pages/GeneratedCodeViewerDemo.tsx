@@ -7,13 +7,14 @@ import { useState } from "react";
 import { Button, Space } from "antd";
 import { CodeOutlined, FolderOutlined } from "@ant-design/icons";
 import { GeneratedCodeViewer } from "@/components";
+import './GeneratedCodeViewerDemo.css';
 
 export default function GeneratedCodeViewerDemo() {
   const [isViewerOpen, setIsViewerOpen] = useState(false);
 
   return (
-    <div style={{ padding: "40px", minHeight: "100vh", background: "#f5f5f5" }}>
-      <div style={{ maxWidth: "800px", margin: "0 auto" }}>
+    <div className="gcv-demo-page">
+      <div className="gcv-demo-container">
         <h1>Generated Code Viewer — VS Code Style</h1>
         <p>
           View auto-generated project files from the Tensaw Skill Studio in a VS
@@ -24,7 +25,7 @@ export default function GeneratedCodeViewerDemo() {
         {/* Demo Buttons */}
         <Space
           direction="vertical"
-          style={{ width: "100%", marginTop: "30px" }}
+          className="gcv-demo-space"
         >
           <div>
             <h3>Demo: View Skill #18 Generated Code</h3>
@@ -38,14 +39,7 @@ export default function GeneratedCodeViewerDemo() {
             </Button>
           </div>
 
-          <div
-            style={{
-              marginTop: "40px",
-              padding: "20px",
-              background: "white",
-              borderRadius: "8px",
-            }}
-          >
+          <div className="gcv-demo-features-card">
             <h3>Features:</h3>
             <ul>
               <li>✅ File explorer panel on the left (like VS Code)</li>
@@ -60,23 +54,9 @@ export default function GeneratedCodeViewerDemo() {
             </ul>
           </div>
 
-          <div
-            style={{
-              marginTop: "20px",
-              padding: "20px",
-              background: "#f9f9f9",
-              borderRadius: "8px",
-            }}
-          >
+          <div className="gcv-demo-code-card">
             <h3>Usage Example:</h3>
-            <pre
-              style={{
-                overflow: "auto",
-                background: "#1e1e1e",
-                color: "#d4d4d4",
-                padding: "16px",
-              }}
-            >
+            <pre className="gcv-demo-code-block">
               {`import { GeneratedCodeViewer } from '@/components';
 import { useState } from 'react';
 
@@ -101,52 +81,45 @@ export default function MyComponent() {
             </pre>
           </div>
 
-          <div
-            style={{
-              marginTop: "20px",
-              padding: "20px",
-              background: "#f9f9f9",
-              borderRadius: "8px",
-            }}
-          >
+          <div className="gcv-demo-code-card">
             <h3>Component Props:</h3>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <table className="gcv-demo-props-table">
               <thead>
-                <tr style={{ borderBottom: "2px solid #ccc" }}>
-                  <th style={{ textAlign: "left", padding: "8px" }}>Prop</th>
-                  <th style={{ textAlign: "left", padding: "8px" }}>Type</th>
-                  <th style={{ textAlign: "left", padding: "8px" }}>Default</th>
-                  <th style={{ textAlign: "left", padding: "8px" }}>
+                <tr className="gcv-demo-table-head-row">
+                  <th className="gcv-demo-th">Prop</th>
+                  <th className="gcv-demo-th">Type</th>
+                  <th className="gcv-demo-th">Default</th>
+                  <th className="gcv-demo-th">
                     Description
                   </th>
                 </tr>
               </thead>
               <tbody>
-                <tr style={{ borderBottom: "1px solid #eee" }}>
-                  <td style={{ padding: "8px" }}>isOpen</td>
-                  <td style={{ padding: "8px" }}>boolean</td>
-                  <td style={{ padding: "8px" }}>—</td>
-                  <td style={{ padding: "8px" }}>Controls modal visibility</td>
-                </tr>
-                <tr style={{ borderBottom: "1px solid #eee" }}>
-                  <td style={{ padding: "8px" }}>onClose</td>
-                  <td style={{ padding: "8px" }}>() =&gt; void</td>
-                  <td style={{ padding: "8px" }}>—</td>
-                  <td style={{ padding: "8px" }}>
-                    Callback when closing modal
-                  </td>
-                </tr>
-                <tr style={{ borderBottom: "1px solid #eee" }}>
-                  <td style={{ padding: "8px" }}>skillId</td>
-                  <td style={{ padding: "8px" }}>string | number</td>
-                  <td style={{ padding: "8px" }}>"18"</td>
-                  <td style={{ padding: "8px" }}>Skill ID to fetch code for</td>
-                </tr>
-                <tr style={{ borderBottom: "1px solid #eee" }}>
-                  <td style={{ padding: "8px" }}>apiBaseUrl</td>
-                  <td style={{ padding: "8px" }}>string</td>
-                  <td style={{ padding: "8px" }}>"http://localhost:8000"</td>
-                  <td style={{ padding: "8px" }}>API base URL</td>
+                <tr className="gcv-demo-table-row">
+                   <td className="gcv-demo-td">isOpen</td>
+                   <td className="gcv-demo-td">boolean</td>
+                   <td className="gcv-demo-td">—</td>
+                   <td className="gcv-demo-td">Controls modal visibility</td>
+                 </tr>
+                 <tr className="gcv-demo-table-row">
+                   <td className="gcv-demo-td">onClose</td>
+                   <td className="gcv-demo-td">() =&gt; void</td>
+                   <td className="gcv-demo-td">—</td>
+                   <td className="gcv-demo-td">
+                     Callback when closing modal
+                   </td>
+                 </tr>
+                 <tr className="gcv-demo-table-row">
+                   <td className="gcv-demo-td">skillId</td>
+                   <td className="gcv-demo-td">string | number</td>
+                   <td className="gcv-demo-td">"18"</td>
+                   <td className="gcv-demo-td">Skill ID to fetch code for</td>
+                 </tr>
+                 <tr className="gcv-demo-table-row">
+                   <td className="gcv-demo-td">apiBaseUrl</td>
+                   <td className="gcv-demo-td">string</td>
+                   <td className="gcv-demo-td">"http://localhost:8000"</td>
+                   <td className="gcv-demo-td">API base URL</td>
                 </tr>
               </tbody>
             </table>

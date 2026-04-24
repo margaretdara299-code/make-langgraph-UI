@@ -36,9 +36,9 @@ export default function DashboardPage() {
             {/* Header */}
             <div className="industry-header-modern reveal-up">
                 <div className="header-title-row">
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <Title level={2} style={{ margin: 0, fontWeight: 800, fontSize: '24px', letterSpacing: '-0.02em' }}>{DASHBOARD.title}</Title>
-                        <Text type="secondary" style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                    <div className="db-title-column">
+                        <Title level={2} className="db-page-title">{DASHBOARD.title}</Title>
+                        <Text type="secondary" className="db-page-subtitle">
                             {DASHBOARD.description}
                         </Text>
                     </div>

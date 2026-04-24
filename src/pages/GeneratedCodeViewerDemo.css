@@ -1,0 +1,63 @@
+/* =========================================================
+   GeneratedCodeViewerDemo.css
+   Extracted from inline styles in GeneratedCodeViewerDemo.tsx
+   ========================================================= */
+
+.gcv-demo-page {
+    padding: 40px;
+    min-height: 100vh;
+    background: #f5f5f5;
+}
+
+.gcv-demo-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.gcv-demo-space {
+    width: 100%;
+    margin-top: 30px;
+}
+
+.gcv-demo-features-card {
+    margin-top: 40px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+}
+
+.gcv-demo-code-card {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.gcv-demo-code-block {
+    overflow: auto;
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 16px;
+}
+
+.gcv-demo-props-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.gcv-demo-table-head-row {
+    border-bottom: 2px solid #ccc;
+}
+
+.gcv-demo-th {
+    text-align: left;
+    padding: 8px;
+}
+
+.gcv-demo-table-row {
+    border-bottom: 1px solid #eee;
+}
+
+.gcv-demo-td {
+    padding: 8px;
+}
