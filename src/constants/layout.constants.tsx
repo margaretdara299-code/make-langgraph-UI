@@ -34,7 +34,7 @@ export const SIDEBAR_MENU_ITEMS = [
     {
         key: ROUTES.GROUPS,
         icon: TeamOutlined,
-        label: 'Groups',
+        label: 'Variables',
     },
     {
         key: ROUTES.TOOLS,

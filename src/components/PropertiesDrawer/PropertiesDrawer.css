@@ -110,7 +110,7 @@
     font-weight: 600;
     font-size: 10px;
     letter-spacing: 0.04em;
-    text-transform: uppercase;
+     
 }
 
 .properties-drawer__meta-value {
@@ -274,7 +274,7 @@
     font-weight: 700;
     padding: 1px 6px;
     border-radius: 4px;
-    text-transform: uppercase;
+     
     letter-spacing: 0.04em;
     background: #eef2ff;
     color: var(--accent);
@@ -325,13 +325,12 @@
 .decision-props {
     display: flex;
     flex-direction: column;
-    gap: 3px;
-    padding: 24px;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+    gap: 6px;
+    padding: 20px;
+    background: #fafbff;
+    border: 1px solid #e8eaf2;
     border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-    /* margin-top: 12px; */
+    box-shadow: 0 2px 12px rgba(79, 70, 229, 0.04);
 }
 
 .decision-props__banner {
@@ -447,17 +446,17 @@
 
 .senior-rule-group {
     background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
     overflow: hidden;
     width: 100%;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+    box-shadow: 0 1px 4px rgba(79, 70, 229, 0.04);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .senior-rule-group:hover {
-    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.07);
-    border-color: #cbd5e1;
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.08);
+    border-color: #c7d2fe;
 }
 
 .senior-rule-header {
@@ -558,7 +557,7 @@
     background: #f1f5f9;
     padding: 2px 8px;
     border-radius: 20px;
-    text-transform: uppercase;
+     
     letter-spacing: 0.06em;
     flex-shrink: 0;
     border: 1px solid #e2e8f0;
@@ -611,16 +610,17 @@
 }
 
 .senior-rule-content {
-    padding: 16px 14px 14px;
+    padding: 14px 14px 12px;
     position: relative;
+    background: #fafbff;
 }
 
 .senior-conditions-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 8px;
     position: relative;
-    padding-left: 28px;
+    padding-left: 0;
     overflow: visible;
     overflow-y: visible;
     padding-bottom: 4px;
@@ -631,11 +631,47 @@
     display: none;
 }
 
+/* Condition field label + input wrapper */
+.senior-cond-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+    padding-bottom: 10px;
+}
+
+.senior-cond-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: none;
+    letter-spacing: 0.05em;
+    padding-left: 2px;
+    user-select: none;
+    line-height: 1;
+}
+
+/* Label + delete button inline row */
+.senior-cond-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1px;
+}
+
+.senior-cond-label-row .senior-cond-label {
+    padding-left: 0;
+}
+
+/* Visible column label row — hidden since fields are now stacked */
+.senior-conditions-header--visible {
+    display: none;
+}
+
 .col-label {
     font-size: 11px;
     font-weight: 800;
-    color: #94a3b8;
-    text-transform: uppercase;
+    color: #94a3b8;     
     letter-spacing: 0.05em;
     overflow: hidden;
     white-space: nowrap;
@@ -646,28 +682,44 @@
 }
 
 .senior-conditions-pipe {
-    position: absolute;
-    left: 10px;
-    top: 30px;
-    bottom: 32px;
-    width: 1px;
-    background-image: linear-gradient(to bottom, #cbd5e1 50%, rgba(255, 255, 255, 0) 0%);
-    background-position: left;
-    background-size: 1px 4px;
-    background-repeat: repeat-y;
+    display: none;
 }
 
 .senior-condition-row-container {
     position: relative;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-left: 3px solid #c7d2fe;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 5px;
+    box-shadow: 0 1px 3px rgba(79, 70, 229, 0.04);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-/* Operator Select on Pipe */
-.senior-operator-pill-wrap {
-    position: absolute;
-    left: -10px;
-    top: -12px;
-    z-index: 10;
+.senior-condition-row-container:hover {
+    border-left-color: #6366f1;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.08);
 }
+
+/* AND / OR pill between conditions — inline centered divider */
+.senior-operator-pill-wrap {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 4px;
+}
+
+.senior-operator-pill-wrap::before,
+.senior-operator-pill-wrap::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e2e8f0;
+}
+
+.senior-operator-pill-wrap::before { margin-right: 8px; }
+.senior-operator-pill-wrap::after  { margin-left:  8px; }
 
 .senior-operator-toggle-select {
     right: 27px;
@@ -695,34 +747,14 @@
 }
 
 .senior-condition-row {
-    display: grid;
-    grid-template-columns: 14px minmax(0, 1fr) 28px;
-    align-items: center;
-    /* gap: 12px; */
+    display: block;
     min-height: 0;
     position: relative;
     min-width: 0;
     width: 100%;
-    padding: 2px 0;
+    padding: 0;
     border: none;
     background: transparent;
-    padding-bottom: 9px;
-}
-
-.senior-drag-handle {
-    cursor: grab;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #e2e8f0;
-    width: 14px;
-    height: 34px;
-    flex-shrink: 0;
-    transition: color 0.1s ease;
-}
-
-.senior-condition-row:hover .senior-drag-handle {
-    color: #cbd5e1;
 }
 
 .senior-expression-group {
@@ -753,9 +785,8 @@
 }
 
 .senior-match-condition-group {
-    display: grid;
-    grid-template-columns: 120px 1fr 1fr;
-    align-items: center;
+    display: flex;
+    flex-direction: column;
     gap: 6px;
     min-width: 0;
 }
@@ -874,7 +905,7 @@
     border: 1px solid transparent !important;
     align-self: flex-start;
     position: relative;
-    top: 22px;
+    /* top: 22px; */
 }
 
 .senior-cond-delete svg {
@@ -948,6 +979,399 @@
     .senior-expression-group {
         grid-template-columns: minmax(142px, 0.45fr) minmax(0, 1fr);
     }
+
+/* ══════════════════════════════════════════════════════════════
+   DP2 — Decision Node Redesign (Business-Friendly UI)
+   All classes are prefixed dp2- to avoid collision.
+══════════════════════════════════════════════════════════════ */
+
+/* Panel wrapper */
+.dp2-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    font-family: var(--font-sans, 'Inter', sans-serif);
+}
+
+/* ── Panel Header ────────────────────────────────────────────── */
+.dp2-panel-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 18px 20px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 20px;
+}
+
+.dp2-header-icon {
+    width: 36px;
+    height: 36px;
+    background: #eef2ff;
+    border: 1px solid #e0e7ff;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.dp2-header-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.3;
+}
+
+.dp2-header-sub {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 2px;
+    line-height: 1.4;
+}
+
+/* ── Routes List ─────────────────────────────────────────────── */
+.dp2-routes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 16px;
+    margin-bottom: 16px;
+}
+
+/* ── Route Card ──────────────────────────────────────────────── */
+.dp2-route-card {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dp2-route-card:hover {
+    border-color: #c7d2fe;
+    box-shadow: 0 4px 16px rgba(79, 70, 229, 0.06);
+}
+
+.dp2-route-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: #f8fafc;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.dp2-route-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 800;
+    color: #4f46e5;
+    background: #eef2ff;
+    border: 1px solid #e0e7ff;
+    padding: 3px 10px 3px 6px;
+    border-radius: 20px;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+     
+    flex-shrink: 0;
+}
+
+.dp2-route-name-wrap {
+    flex: 1;
+    min-width: 0;
+}
+
+.dp2-route-name-input {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    height: 30px !important;
+}
+
+.dp2-route-name-input::placeholder {
+    font-weight: 400 !important;
+    color: #94a3b8 !important;
+}
+
+/* ── Conditions Area ─────────────────────────────────────────── */
+.dp2-route-conditions {
+    padding: 14px;
+}
+
+.dp2-conditions-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+     
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+}
+
+.dp2-cond-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ── Condition Card ──────────────────────────────────────────── */
+.dp2-condition-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: border-color 0.15s ease;
+}
+
+.dp2-condition-card:hover {
+    border-color: #c7d2fe;
+}
+
+.dp2-cond-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dp2-cond-index {
+    font-size: 11px;
+    font-weight: 700;
+    color: #475569;
+    flex: 1;
+     
+    letter-spacing: 0.04em;
+}
+
+.dp2-cond-logic-badge {
+    margin-right: 4px;
+}
+
+/* ── Form Fields ─────────────────────────────────────────────── */
+.dp2-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.dp2-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    display: block;
+}
+
+.dp2-select,
+.dp2-input {
+    width: 100% !important;
+    font-size: 13px !important;
+    border-radius: 8px !important;
+    border-color: #e2e8f0 !important;
+}
+
+.dp2-select .ant-select-selector,
+.dp2-input.ant-input {
+    border-radius: 8px !important;
+    border-color: #e2e8f0 !important;
+    font-size: 13px !important;
+    background: #ffffff !important;
+}
+
+.dp2-select .ant-select-selector:hover,
+.dp2-input.ant-input:hover {
+    border-color: #a5b4fc !important;
+}
+
+.dp2-select .ant-select-selector:focus-within,
+.dp2-input.ant-input:focus {
+    border-color: #4f46e5 !important;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+}
+
+/* ── AND/OR logic toggle ─────────────────────────────────────── */
+.dp2-logic-select {
+    font-size: 10px !important;
+}
+
+.dp2-logic-select .ant-select-selector {
+    background: #eef2ff !important;
+    border-color: #c7d2fe !important;
+    border-radius: 20px !important;
+    padding: 0 8px !important;
+    height: 22px !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    color: #4f46e5 !important;
+}
+
+.dp2-logic-select .ant-select-selection-item {
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    color: #4f46e5 !important;
+    line-height: 22px !important;
+}
+
+.dp2-logic-select .ant-select-arrow {
+    color: #4f46e5 !important;
+    font-size: 8px !important;
+}
+
+/* ── Live Preview Strip ──────────────────────────────────────── */
+.dp2-preview-strip {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-top: 2px;
+}
+
+.dp2-preview-icon {
+    color: #16a34a;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.dp2-preview-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: #166534;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+/* ── Add Condition Button ────────────────────────────────────── */
+.dp2-add-cond-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #4f46e5;
+    background: transparent;
+    border: 1.5px dashed #c7d2fe;
+    border-radius: 8px;
+    padding: 6px 12px;
+    cursor: pointer;
+    width: 100%;
+    justify-content: center;
+    transition: all 0.15s ease;
+    margin-top: 4px;
+}
+
+.dp2-add-cond-btn:hover {
+    background: #eef2ff;
+    border-color: #4f46e5;
+    color: #3730a3;
+}
+
+/* ── Add Route Button ────────────────────────────────────────── */
+.dp2-add-route-btn {
+    height: 44px !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    border-color: #c7d2fe !important;
+    color: #4f46e5 !important;
+    background: #fafbff !important;
+    transition: all 0.15s ease !important;
+}
+
+.dp2-add-route-btn:hover {
+    border-color: #4f46e5 !important;
+    background: #eef2ff !important;
+    color: #3730a3 !important;
+}
+
+/* ── Icon Button ─────────────────────────────────────────────── */
+.dp2-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    color: #cbd5e1;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+    padding: 0;
+}
+
+.dp2-icon-btn:hover {
+    background: #f1f5f9;
+    color: #64748b;
+    border-color: #e2e8f0;
+}
+
+.dp2-icon-btn.dp2-danger:hover {
+    background: #fee2e2;
+    color: #ef4444;
+    border-color: #fecaca;
+}
+
+/* ── Default Route Card ──────────────────────────────────────── */
+.dp2-default-route {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 4px 16px 20px;
+    padding: 14px 16px;
+    background: #f8fafc;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 12px;
+}
+
+.dp2-default-icon {
+    width: 28px;
+    height: 28px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.dp2-default-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 4px;
+}
+
+.dp2-default-desc {
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.5;
+    flex: 1;
+}
+
+.dp2-default-badge {
+    font-size: 9px;
+    font-weight: 800;
+    color: #64748b;
+    background: #e2e8f0;
+    border: 1px solid #cbd5e1;
+    padding: 3px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.06em;
+     
+    flex-shrink: 0;
+    align-self: flex-start;
+}
+
 
     .senior-value-block {
         grid-column: 2;
