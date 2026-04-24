@@ -23,3 +23,65 @@
     color: var(--text-muted);
     margin-top: 4px;
 }
+
+/* =====================================================
+   Extracted from CreateCapabilityModal inline styles
+   ===================================================== */
+
+.ccm-header {
+    margin-bottom: 28px !important;
+}
+
+.ccm-header-inner {
+    display: flex;
+    flex-direction: column;
+}
+
+.ccm-form-body {
+    min-height: 440px;
+}
+
+.ccm-input {
+    border-radius: 4px !important;
+}
+
+.ccm-icon-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 24px;
+    padding: 12px 0;
+    border-bottom: 1px dotted var(--border-light);
+    margin-bottom: 16px;
+}
+
+.ccm-icon-label {
+    font-size: 14px;
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+.ccm-icon-form-item {
+    margin-bottom: 0 !important;
+}
+
+.ccm-textarea {
+    border-radius: 4px !important;
+    min-height: 100px !important;
+}
+
+.ccm-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 32px;
+}
+
+.ccm-btn {
+    border-radius: 4px !important;
+    height: 36px !important;
+    font-weight: 600 !important;
+}
+
+.ccm-btn--primary {
+    padding: 0 24px !important;
+}

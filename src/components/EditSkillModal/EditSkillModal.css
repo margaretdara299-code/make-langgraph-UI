@@ -4,5 +4,10 @@
     top: 16px !important;
 }
 
+.edit-skill-modal .ant-modal-body {
+    padding-top: 24px;
+}
 
-.edit-skill__body {}
+.edit-skill__body {
+    padding-bottom: 8px;
+}

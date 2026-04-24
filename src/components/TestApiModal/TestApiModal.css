@@ -125,3 +125,8 @@
     border-radius: 12px;
     background: #0f172a;
 }
+
+/* Ant Design Tabs override — replaces style={{ marginTop: 0 }} */
+.tam-tabs.ant-tabs {
+    margin-top: 0 !important;
+}

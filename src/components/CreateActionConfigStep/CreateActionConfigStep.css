@@ -546,3 +546,61 @@
     background: #fff;
     border-top: 1px solid #f1f5f9;
 }
+/* =====================================================
+   Extracted from CreateActionConfigStep inline styles
+   ===================================================== */
+
+.request-form-item-no-margin {
+    margin-bottom: 0 !important;
+}
+
+.request-icon-sm {
+    font-size: 12px !important;
+}
+
+.request-url-slot {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.request-url-required-star {
+    color: #ef4444;
+    margin-right: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    display: inline;
+}
+
+.request-url-required-star.is-hidden {
+    display: none;
+}
+
+.request-url-form-item {
+    position: relative;
+    width: 100%;
+    margin-bottom: 0 !important;
+}
+
+.request-accordion-shell {
+    margin-top: 12px;
+}
+
+.request-fallback-label-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.request-side-label--inline {
+    margin-bottom: 0 !important;
+}
+
+.request-fallback-hint {
+    font-size: 11px !important;
+    font-weight: 400 !important;
+}
+
+.request-fallback-body {
+    padding: 0 4px;
+}

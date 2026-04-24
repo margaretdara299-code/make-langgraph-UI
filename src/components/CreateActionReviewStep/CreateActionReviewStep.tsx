@@ -77,20 +77,15 @@ export default function CreateActionReviewStep({ draft }: CreateActionStepProps)
     const finalPayload = getFinalPayload();
 
     return (
-        <div style={{ padding: '0 4px' }}>
+        <div className="review-root">
             <Card
                 size="small"
                 bordered={true}
-                style={{
-                    borderRadius: 12,
-                    border: '1px solid #e2e8f0',
-                    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-                    marginBottom: 20
-                }}
+                className="review-overview-card"
                 title={
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <span style={{ fontWeight: 600, fontSize: '13px' }}>Overview</span>
-                        <Tag color={isEditMode ? 'orange' : 'green'} bordered={false} style={{ fontSize: '10px', borderRadius: 4, margin: 0, fontWeight: 700 }}>
+                    <div className="review-card-title-row">
+                        <span className="review-card-title-text">Overview</span>
+                        <Tag color={isEditMode ? 'orange' : 'green'} bordered={false} className="review-mode-tag">
                             {isEditMode ? 'Update Mode' : 'Create Mode'}
                         </Tag>
                     </div>
@@ -112,30 +107,19 @@ export default function CreateActionReviewStep({ draft }: CreateActionStepProps)
             </Card>
 
             <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                    <Text strong style={{ fontSize: '11px', color: '#94a3b8', letterSpacing: '0.02em' }}>
+                <div className="review-payload-header">
+                    <Text strong className="review-payload-label">
                         Payload Snapshot ({isEditMode ? 'PUT' : 'POST'})
                     </Text>
-                    <Tag color="blue" bordered={false} style={{ fontSize: '10px', borderRadius: 4, margin: 0 }}>JSON</Tag>
+                    <Tag color="blue" bordered={false} className="review-json-tag">JSON</Tag>
                 </div>
                 <Card
                     size="small"
-                    style={{
-                        background: '#0f172a',
-                        borderRadius: 12,
-                        border: '1px solid #1e293b',
-                    }}
+                    className="review-code-card"
                     styles={{ body: { padding: '16px' } }}
                 >
-                    <div className="review-payload-scroll" style={{ maxHeight: '310px', overflowY: 'auto' }}>
-                        <pre style={{
-                            margin: 0,
-                            fontSize: '12px',
-                            color: '#cbd5e1',
-                            lineHeight: 1.6,
-                            letterSpacing: '0.01em',
-                            fontFamily: 'var(--font-mono)'
-                        }}>
+                    <div className="review-payload-scroll">
+                        <pre className="review-payload-pre">
                             {JSON.stringify(finalPayload, null, 2)}
                         </pre>
                     </div>

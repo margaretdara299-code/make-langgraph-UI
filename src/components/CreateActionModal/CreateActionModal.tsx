@@ -350,68 +350,38 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
         >
             {/* -- Left Side: Pure Vertical Navigator -- */}
             <div className="create-action-modal__stepper-col">
-                <div style={{ marginBottom: 32, paddingLeft: 4 }}>
-                    <span style={{ fontSize: '17px', fontWeight: 700, color: '#0F172A', display: 'block' }}>
+                <div className="cam-stepper-heading-wrap">
+                    <span className="cam-stepper-heading">
                         {actionToEdit ? 'Edit Action' : 'Create New Action'}
                     </span>
                 </div>
                 <div className="create-action-modal__stepper">
-                    <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+                    <div className="cam-steps-list">
                         {steps.map((step, index) => {
                             const isFinished = index < currentStep;
                             const isActive = index === currentStep;
                             const isLast = index === steps.length - 1;
                             return (
-                                <div key={index} style={{ display: 'flex', gap: 16, cursor: 'pointer' }} onClick={() => handleStepChange(index)}>
+                                <div key={index} className="cam-step-row" onClick={() => handleStepChange(index)}>
                                     {/* Icon + Line column */}
-                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
+                                    <div className="cam-step-icon-col">
                                         {/* Step icon */}
-                                        <div style={{
-                                            width: 32, height: 32, borderRadius: '50%',
-                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                            flexShrink: 0,
-                                            backgroundColor: isActive || isFinished ? 'var(--accent)' : 'transparent',
-                                            border: `1.5px solid ${isActive || isFinished ? 'var(--accent)' : '#e2e8f0'}`,
-                                            color: isActive || isFinished ? '#fff' : '#94a3b8',
-                                            fontSize: 13, fontWeight: 700,
-                                            transition: 'background-color 0.4s ease, border-color 0.4s ease, color 0.3s ease',
-                                            boxShadow: isActive ? '0 0 0 4px rgba(99,102,241,0.15)' : 'none',
-                                        }}>
-                                            <span style={{ transition: 'transform 0.3s ease', transform: isFinished ? 'scale(1.1)' : 'scale(1)' }}>
+                                        <div className={`cam-step-icon ${isActive ? 'is-active' : ''} ${isFinished ? 'is-finished' : ''}`}>
+                                            <span className={`cam-step-icon-inner ${isFinished ? 'is-finished' : ''}`}>
                                                 {isFinished ? '✓' : index + 1}
                                             </span>
                                         </div>
                                         {/* Connector line */}
                                         {!isLast && (
-                                            <div style={{
-                                                width: 2,
-                                                flex: 1,
-                                                minHeight: 40,
-                                                background: isFinished
-                                                    ? 'var(--accent)'
-                                                    : 'linear-gradient(to bottom, #e2e8f0, #e2e8f0)',
-                                                margin: '4px 0',
-                                                borderRadius: 2,
-                                                transition: 'background 0.5s ease',
-                                            }} />
+                                            <div className={`cam-step-connector ${isFinished ? 'is-finished' : ''}`} />
                                         )}
                                     </div>
                                     {/* Text content */}
-                                    <div style={{ paddingBottom: isLast ? 0 : 28, paddingTop: 4 }}>
-                                        <div style={{
-                                            fontSize: 14, fontWeight: 700,
-                                            color: isActive ? 'var(--accent)' : isFinished ? '#1E293B' : '#94a3b8',
-                                            lineHeight: '24px',
-                                            transition: 'color 0.3s ease',
-                                        }}>
+                                    <div className={`cam-step-text ${isLast ? 'is-last' : ''}`}>
+                                        <div className={`cam-step-title ${isActive ? 'is-active' : ''} ${isFinished ? 'is-finished' : ''}`}>
                                             {step.title}
                                         </div>
-                                        <div style={{
-                                            fontSize: 12,
-                                            color: isActive ? '#334155' : isFinished ? '#64748b' : '#94a3b8',
-                                            lineHeight: 1.5,
-                                            transition: 'color 0.3s ease',
-                                        }}>
+                                        <div className={`cam-step-desc ${isActive ? 'is-active' : ''} ${isFinished ? 'is-finished' : ''}`}>
                                             {step.description}
                                         </div>
                                     </div>
@@ -425,13 +395,13 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
             {/* -- Right Side: Dedicated Form Panel -- */}
             <div className="create-action-modal__form-col">
                 <div className="create-action-modal__header">
-                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#64748B', display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>
+                    <span className="cam-header-step-label">
                         Step {currentStep + 1} / {steps.length}
                     </span>
-                    <Text strong style={{ fontSize: '26px', fontWeight: 700, display: 'block', marginBottom: 6, color: '#0F172A', letterSpacing: '-0.02em' }}>
+                    <Text strong className="cam-header-title">
                         {currentStepObj.title}
                     </Text>
-                    <Text style={{ fontSize: '14px', color: '#64748B', display: 'block', lineHeight: 1.5 }}>
+                    <Text className="cam-header-desc">
                         {currentStepObj.description}
                     </Text>
                 </div>

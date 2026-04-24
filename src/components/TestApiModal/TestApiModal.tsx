@@ -52,7 +52,7 @@ export default function TestApiModal({
                 <Tabs
                     defaultActiveKey="response"
                     size="small"
-                    style={{ marginTop: 0 }}
+                    className="tam-tabs"
                     tabBarExtraContent={
                         <Space size={16} className="tam-tab-meta">
                             <div className="tam-status-row">

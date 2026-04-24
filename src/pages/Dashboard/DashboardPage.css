@@ -524,3 +524,89 @@
 .add-var-icon {
     font-size: 12px;
 }
+
+/* =====================================================
+   Extracted from dashboard.columns.tsx inline styles
+   ===================================================== */
+
+/* Skill name cell */
+.dc-skill-cell {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.dc-skill-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--accent-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid var(--border-light);
+}
+
+.dc-skill-folder-icon {
+    font-size: 15px !important;
+    color: var(--accent) !important;
+}
+
+.dc-skill-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    overflow: visible;
+}
+
+.dc-skill-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main);
+    display: block;
+}
+
+.dc-skill-key {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+/* Description cell */
+.dc-desc-empty {
+    color: var(--text-subtle);
+    font-size: 12px;
+}
+
+.dc-desc-text {
+    font-size: 12px;
+    color: var(--text-muted);
+    cursor: default;
+    line-height: 1.5;
+    display: block;
+}
+
+.dc-desc-text.is-truncated {
+    cursor: help;
+}
+
+/* Date cell */
+.dc-date-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.dc-date-main {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.dc-date-time {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
