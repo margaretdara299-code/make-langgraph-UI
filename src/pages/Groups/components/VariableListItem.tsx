@@ -14,44 +14,39 @@ interface VariableListItemProps {
 export const VariableListItem = ({ variable, onEdit, onDelete }: VariableListItemProps) => {
     return (
         <div className="variable-list-item">
-            <div className="variable-item-main-stack">
-                <div className="var-name-row">
-                    <span className="var-name">{variable.variableName}</span>
-                    <div className="variable-item-actions">
-                        <Button 
-                            type="text" 
-                            icon={<EditOutlined />} 
-                            onClick={() => onEdit(variable)} 
-                            className="var-action-btn-edit" 
-                            size="small"
-                        />
-                        <Button 
-                            type="text" 
-                            danger 
-                            icon={<DeleteOutlined />} 
-                            onClick={() => onDelete(variable)} 
-                            className="var-action-btn-delete" 
-                            size="small"
-                        />
-                    </div>
-                </div>
-                
-                <div className="var-metadata-row-table">
-                    <div className="var-meta-column">
-                        <span className="var-column-header">KEY</span>
+            <div className="var-metadata-row-table">
+                <div className="var-meta-column">
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span className="var-name">{variable.variableName}</span>
                         <span className="var-key-code">{variable.variableKey}</span>
                     </div>
-                    <div className="var-meta-column">
-                        <span className="var-column-header">TYPE</span>
-                        <Tag className="variable-type-tag-neat">{variable.dataType}</Tag>
-                    </div>
-                    <div className="var-meta-column var-meta-value-col">
-                        <span className="var-column-header">VALUE</span>
-                        <Tooltip title={variable.variableValue}>
-                            <span className="var-value-text">{variable.variableValue}</span>
-                        </Tooltip>
-                    </div>
                 </div>
+                <div className="var-meta-column">
+                    <Tag className="variable-type-tag-neat">{variable.dataType}</Tag>
+                </div>
+                <div className="var-meta-column var-meta-value-col">
+                    <Tooltip title={variable.variableValue}>
+                        <span className="var-value-text">{variable.variableValue}</span>
+                    </Tooltip>
+                </div>
+            </div>
+            
+            <div className="variable-item-actions" style={{ marginLeft: '12px' }}>
+                <Button 
+                    type="text" 
+                    icon={<EditOutlined />} 
+                    onClick={() => onEdit(variable)} 
+                    className="var-action-btn-edit" 
+                    size="small"
+                />
+                <Button 
+                    type="text" 
+                    danger 
+                    icon={<DeleteOutlined />} 
+                    onClick={() => onDelete(variable)} 
+                    className="var-action-btn-delete" 
+                    size="small"
+                />
             </div>
         </div>
     );

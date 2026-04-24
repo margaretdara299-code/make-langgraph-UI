@@ -2,6 +2,8 @@ import { apiClient } from './http.service';
 import { API_ENDPOINTS } from './api.endpoints';
 import type { ApiResponse } from '@/interfaces';
 
+import type { Variable } from './variables.service';
+
 /**
  * Group interface matching the backend schema
  * transformed to camelCase by http.service.
@@ -11,6 +13,8 @@ export interface Group {
     groupKey: string;
     groupName: string;
     description: string | null;
+    type?: string | null;
+    variables?: Variable[];
     createdAt?: string;
     updatedAt?: string;
 }

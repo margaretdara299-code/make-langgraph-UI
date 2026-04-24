@@ -19,15 +19,30 @@ export const InlineVariableAdder = ({ groupName, groupKey, onAdded, onCancel }: 
     const [type, setType] = useState('string');
     const [value, setValue] = useState('');
     const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     const handleAdd = async () => {
-        if (!name || !value) return;
+        // Basic Validation
+        const trimmedName = name.trim();
+        const trimmedValue = value.trim();
+        const finalKey = (key.trim() || trimmedName.toUpperCase().replace(/[^A-Z0-9_]/g, '_'));
+
+        const newErrors: Record<string, string> = {};
+        if (!trimmedName) newErrors.name = 'Required';
+        if (!trimmedValue) newErrors.value = 'Required';
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        setErrors({});
         setLoading(true);
         const res = await createVariable({
-            variableName: name,
-            variableKey: key || name.toUpperCase().replace(/[^A-Z0-9_]/g, '_'),
+            variableName: trimmedName,
+            variableKey: finalKey,
             dataType: type,
-            variableValue: value,
+            variableValue: trimmedValue,
             groupName,
             groupKey
         });
@@ -38,69 +53,83 @@ export const InlineVariableAdder = ({ groupName, groupKey, onAdded, onCancel }: 
             setKey('');
             setValue('');
             onAdded();
-            message.success('Variable created');
+            message.success('Variable created successfully');
         } else {
             message.error(res.error || 'Failed to create variable');
         }
     };
 
     return (
-        <div className="variable-list-item postman-add-row" style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '12px' }}>
-            <div style={{ display: 'flex', gap: '8px' }}>
-                <Input 
-                    variant="filled"
-                    size="small" 
-                    placeholder="Variable Name" 
-                    value={name} 
-                    onChange={e => setName(e.target.value)} 
-                    style={{ flex: 1 }} 
-                />
-                <Input 
-                    variant="filled"
-                    size="small" 
-                    placeholder="VARIABLE_KEY" 
-                    value={key} 
-                    onChange={e => setKey(e.target.value)} 
-                    style={{ flex: 1, textTransform: 'uppercase' }} 
-                />
+        <div className="variable-list-item postman-add-row adder-row">
+            <div className="var-metadata-row-table">
+                <div className="var-meta-column">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <Input 
+                            variant="filled" 
+                            size="small" 
+                            placeholder="Variable Name" 
+                            value={name} 
+                            status={errors.name ? 'error' : ''}
+                            onChange={e => { setName(e.target.value); if (errors.name) setErrors(prev => ({ ...prev, name: '' })); }} 
+                            style={{ fontSize: '11px' }}
+                        />
+                        {errors.name && <div className="validation-msg-tiny" style={{ marginTop: '-2px', marginBottom: '4px' }}>{errors.name}</div>}
+                        <Input 
+                            variant="filled" 
+                            size="small" 
+                            placeholder="KEY" 
+                            value={key} 
+                            onChange={e => setKey(e.target.value)} 
+                            style={{ fontSize: '10px', textTransform: 'uppercase', fontFamily: 'var(--font-mono)' }}
+                        />
+                    </div>
+                </div>
+                <div className="var-meta-column">
+                    <Select 
+                        variant="filled" 
+                        size="small" 
+                        value={type} 
+                        onChange={setType} 
+                        style={{ width: '100%', fontSize: '10px' }} 
+                        options={[
+                            { label: 'String', value: 'string' },
+                            { label: 'Number', value: 'number' },
+                            { label: 'Boolean', value: 'boolean' },
+                            { label: 'JSON', value: 'json' }
+                        ]} 
+                    />
+                </div>
+                <div className="var-meta-column var-meta-value-col">
+                    <Input.TextArea 
+                        variant="filled" 
+                        size="small" 
+                        placeholder="Variable Value"
+                        value={value} 
+                        status={errors.value ? 'error' : ''}
+                        onChange={e => { setValue(e.target.value); if (errors.value) setErrors(prev => ({ ...prev, value: '' })); }} 
+                        onPressEnter={e => { if (!e.shiftKey) { e.preventDefault(); handleAdd(); } }} 
+                        autoSize={{ minRows: 1, maxRows: 4 }}
+                        style={{ width: '100%', fontSize: '12px', fontFamily: 'var(--font-mono)' }} 
+                    />
+                    {errors.value && <div className="validation-msg-tiny">{errors.value}</div>}
+                </div>
             </div>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                <Select 
-                    variant="filled"
-                    size="small" 
-                    value={type} 
-                    onChange={setType} 
-                    style={{ width: '100px' }} 
-                    options={[
-                        { label: 'string', value: 'string' },
-                        { label: 'number', value: 'number' },
-                        { label: 'boolean', value: 'boolean' },
-                        { label: 'object', value: 'object' }
-                    ]} 
-                />
-                <Input.TextArea 
-                    variant="filled"
-                    size="small" 
-                    placeholder="Enter variable value..." 
-                    value={value} 
-                    onChange={e => setValue(e.target.value)} 
-                    onPressEnter={e => { if (!e.shiftKey) { e.preventDefault(); handleAdd(); } }} 
-                    autoSize={{ minRows: 1, maxRows: 8 }}
-                    style={{ flex: 1 }} 
-                />
+            
+            <div className="variable-item-actions" style={{ marginLeft: '12px', opacity: 1 }}>
                 <Space size={4}>
                     <Button 
                         type="primary" 
-                        icon={<CheckOutlined />} 
+                        size="small"
+                        icon={<CheckOutlined style={{ fontSize: '12px' }} />} 
                         onClick={handleAdd} 
                         loading={loading} 
-                        disabled={!name || !value} 
-                        style={{ borderRadius: '6px', height: '32px' }}
+                        className="inline-save-btn"
                     />
                     <Button 
-                        icon={<CloseOutlined />} 
+                        size="small"
+                        icon={<CloseOutlined style={{ fontSize: '12px' }} />} 
                         onClick={onCancel} 
-                        style={{ borderRadius: '6px', height: '32px' }}
+                        className="inline-cancel-btn"
                     />
                 </Space>
             </div>
