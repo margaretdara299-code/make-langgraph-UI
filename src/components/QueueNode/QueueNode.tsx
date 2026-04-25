@@ -16,6 +16,7 @@ export default function QueueNode({ id, data }: NodeProps<CanvasNode>) {
     const theme = getNodeTheme('queue');
 
     const handleDelete = (e: React.MouseEvent) => {
+        console.log("test")
         e.stopPropagation();
         setNodes((nodes) => nodes.filter((node) => node.id !== id));
         if (versionId) removeNodeFromStorage(versionId, id);
