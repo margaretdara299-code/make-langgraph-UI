@@ -1,0 +1,530 @@
+Conversation:
+
+Of comment and we go through the functionalities. Today I will present what I. So mainly in our Skill studio, what we are doing is like building the langraph. By building the lang graph means like.
+We are defining the nodes as actions. Like in each action we are giving an API which calls the node or a symbol function which will be deploying some other server. So currently what I observed is we can define the nodes as action, it is working perfectly and also we can.
+Make the skills like the in the.
+Skill studio notes means actions and skill means langraph we can make the line graph.
+Also like after creating the number of.
+Skills number of actions, we can drag and drop the actions to a workflow which can be made to a skill is also working fine and each action is defined by the apa. So we also check like after giving.
+One or two actions to a skill.
+And we also check the working of.
+The skill, it is correctly calling the API.
+Like we used some dummy aps. Like so it is correctly calling the APS and getting the response.
+It is also working fine.
+And for the decision notes, like some.
+Of the output of the some action,.
+Some nodes need to decide which flow.
+The workflow need to take.
+So for that we have checked the decision nodes.
+They are implemented it, but there are some bugs so it is currently not working. So they are working on it.
+And also in each actions like in each node there can be a chance to getting an error.
+So if error comes according to our.
+Idea that when error comes, it has to redirect to the error node. Like every action, every node in the workflow in the skill it need to.
+Map to the error node. So whenever an error comes on that particular node, it has to go to the error node for logging the error.
+Into the RCM errors table and it is working fine.
+Like if an error comes, it is go to the error node. If there are no error, it will go the happy path. So after going to the error not.
+Currently they are not implemented this one.
+Like after going to the error not.
+It has to come out to the last node, the closer node. So we can store the error in the payload and signal the temporary like error happened and human error task need to be created.
+Those things are not there, so we.
+Have to develop that. Also for checking that like installation or.
+Close out node, these two are common for all lang graphs.
+So we can make those initialize node.
+And close out node as a micro service or anything and we can deploy.
+That and we can create the actions.
+For those things in our skill studio.
+And we can add it in A additive skill.
+And we can check it is working fine or not fine.
+So after that we checked the LANG graph. Like there are some functionalities in LANGF itself. So we also check like that like parallel executions. Like there can be situations like the.
+Nodes need to be parallel executed. We also check that the those things they have to build. Also the retry of nodes they have to build.
+Yeah.
+So the.
+So we have decision nodes, but the parallel execution is branching and then merging. Is that parallel execution where you merge back?
+Because a decision is either you go this way or you go that way.
+Yeah, yeah.
+And that is.
+Those are different.
+Like in a decision we will select one of the flow in the language. But in parallel execution there is a situation like these two need two nodes need to run parallelly. Like we cannot exclude one node and only focus one. Or like some that scenarios we are.
+Not encountered it yet. But there can be chances those need to.
+No, actually we implemented for the Ashwin coder. We are facing some issues, but it is working parallel. We implemented while calling the LLM. We have to see that.
+So when you do parallel execution,.
+How.
+Will you merge back?
+Yeah, like from my idea.
+What is like if there is two nodes, node A and node B and both of. Like, we also have a node C.
+Which is sitting under these two nodes.
+Like for doing the logic in node C it need to have the result.
+From node and node B. I think.
+In our traditional language this can be achieved by the shared state.
+Like shared state is common for all the nodes in Langda in the Skill Studio. How to implement that we have to.
+Check because visually it is too just like branching. It is a branch, but they don't join back. But if you have two things coming, you know, usually you will just see one incoming connector per node visually. But if you have two or three or four, how many of them more than one.
+It's a merge that is happening and.
+That we will have to.
+Visually it is somewhat easy because you just.
+You know, you just have from node B and nodes node A and B is coming into node C. But I.
+Think yes, we will have to.
+Convert that back into land graph so that.
+So I think that is also clear. I think.
+Pardon, Samil. Like from what have you. When you look at this right now,.
+It is only partially functional because we.
+Haven't fully integrated that as land graph.
+Everything is not true land graph in the sense of a land graph.
+It is almost like mimicking a land graph. So we will do the full land graph.
+But the focus is how do we.
+Make we have gone through all these exercises, right? Working with Manoj and.
+And so on. So we work with these business teams and the goal is that the Skill.
+Studio should be something that they can easily use.
+And it is something that is easy.
+And intuitive for them to understand and kind of drag and drop and connect and then it all works like magic.
+What, what else is coming to you?
+So when we check, like me and Kannan discuss, like in the current version of this and this Skill Studio, I don't think like Manoj and Oriyami, they.
+Can truly understand these things.
+Like there are some things we need to connect more. Like.
+What are they?
+What do you think?
+So the APIs are one area that the actions and if you have rest.
+APIs that they would have to configure,.
+They would not fully understand what these REST APIs are and how to put.
+All the parameters and they wouldn't know that.
+So that was one concern I had. What else do you think,.
+Like giving.
+The APIs and other than that, like.
+It is a visual tool.
+Like if somehow they used to it,.
+They can simply drag and drop and.
+Test like it is working fine or not. Okay,.
+Here is the next thing that I'm thinking visually, the next challenge for us. Amal, we haven't combined workflow into this. Yeah. So right now it is a orchestration tool. But somebody like Yamini would not think.
+About what's the difference between an orchestration and a workflow. For them, they are both the same thing.
+So visually also, I think it should.
+Be the same thing.
+Because they don't.
+Distinguish what's a workflow and what's an orchestration.
+I don't think they think in those terms.
+We think in those terms because there are two technologies. The workflow is a temporal, a land graph is. The orchestration is lang graph. But they don't make the distinction.
+For them, it's a flow.
+Whether it's a workflow or an orchestration flow, they just think it's a flow.
+So we also have to bring the.
+Workflow into this visual tool. And then the user, Yamini doesn't need.
+To know whether we implement it using.
+Temporal or whether we implement it using a land graph.
+The to me, my thinking is we.
+Have to introduce queues into this diagram.
+So right now you have node. Everything is a node.
+It's a start node, it's an end.
+Node or an action node or a decision node. But I think the one piece that.
+Is missing is queues. And if you introduce queues, it immediately becomes a workflow is the way I'm thinking about that.
+What do you think?
+Like the workflows are consist of multiple tasks. Like for each task we are defining the language. Like using the skill Studio, we can define the lang for each task. Like when we, like when we try to implement the workflow to this skill studio. Like it has to be in a different screen. Like there he can defend the task.
+Related to that one.
+Like denil or remit. Like they can defend the task and the possible outcomes. For each possible outcomes, they have to.
+Map another queue, another task to it.
+Like for each a task like AI queues, they have to define the language.
+Of in this screen that it has to follow.
+What I mean is, so what if.
+The only thing that we ask them to do is. So you have a node, a start node. You can from there you go to whatever the first step is and from that node you can go to a queue or you can go to the next node, it can go to like those are the choices and then it comes.
+Finally you can go into decisions. So far, whatever you saw is all land graph.
+Like, there is no need to introduce a GoPro. But tomorrow let's say that I introduce a queue because I need a human.
+Review.
+Introducing a queue for that purpose, for any purpose, I'm going to say.
+I need a coder queue.
+Because whether it's a human or a agent, a coding queue is from where.
+They're going to pick it up at their own pace. Whether it is one a day, one an hour, they are going to pick it up and work it. Then we have immediately introduced workflow. The minute they put a connection into a queue.
+And just like decision connection is a.
+Special type of node. The minute you put a node a.
+Queue in, we know this is going.
+To end up in a workflow.
+And so.
+The start and the queue, whatever is in between is the land graph.
+But that much is a task, that task becomes a land graph. But we have immediately introduced workflow concept into that.
+So like when we introduce a workflow.
+Like multiple land graph will be connected to task.
+Yeah, I'm not getting like how we can merge workflow and the language.
+Yeah, yeah, yeah. So if you want to stop presenting.
+For a minute, then I can try.
+I can, we can try, see if this concept will work. So let's just kind of talk through this and see if this will work.
+Okay, so I have a start node and I have a end node.
+In the simplest case, this is all that is happening. There is nothing in between. And let's say that. So this is start and this is end. Next.
+I'm introducing something in between.
+This is an action node and so far we have said everything is a simple land graph.
+We don't need to do anything.
+Where this gets wired up we don't fully know.
+But it is a land graph so.
+Far no reason to bring anything else into this. It is simply going to be a land graph.
+Now.
+We have a decision, in which case we say we're going to add a decision box to this and in which case we are going to.
+A greater.
+Than B some decision like this, in which case we are saying this comes like this. And.
+So so far we. We introduced a decision.
+This is also exactly the same thing. It is the branching.
+The whole thing can be implemented in landgraph. So far we are, you know, all.
+Sitting in land graph. Now what I was really saying is.
+Let's say that I introduced a new.
+Concept of a queue and the queue is something. Let's say like this is a special type of node. Just like branch decision is a special type of node. We have a queue and with queue what happens is let's say you take this. I shouldn't let this. It is like this with a.
+With the queue.
+Let's say that you have another line that is going to go from. In which case we have just. With this we have introduced a queue and we have introduced a workflow concept.
+So the minute you have a queue,.
+This is equivalent to an end. It is kind of the same thing. And now we know this has got to fit into.
+A workflow concept because you have a land graph. But it's going to get invoked from somewhere, right?
+Okay, we have a start and we have an end. But who is going to call this thing? Somebody has got to call it.
+So even as a land graph, we.
+Are saying somebody is going to. Is going to invoke this. I mean, we don't know who, but somebody has to come around and then invoke this process. Otherwise it is just going to sit there forever. I mean it's not going to actually do anything unless somebody comes along.
+Similarly, when it says end it is going to come to a full end. I mean it doesn't go anywhere after that.
+That.
+So it is going to possibly take.
+This action or this action. Then it comes to an end with a queue.
+It is. To me, I feel this is the same thing that we are doing except that we could say this orchestration is.
+Going to be invoked by somebody.
+Somebody is going to invoke could be a task in a workflow and a scheduler in the workflow is invoking this orchestration flow. It could be that it is another REST API that has got a FAST.
+API that is just going to directly invoke this.
+It's going to get invoked somewhere or the other.
+It's just a land graph as far as we are concerned or the user is concerned. It's just land graph. It's going to get invoked one way or the other.
+But it could very well be a.
+Task inside a workflow. It could be a task and we.
+Have some scheduler that is invoking it.
+It kind of comes and ends and.
+Then it is done, but partially could also be put into a queue in which case this is the start of.
+The task and this is the end of the task.
+It just ends up being, you know,.
+The task could end here or it could end here.
+Like I got the idea like oh, this one lang graph. There can be two outcomes. One is going to trigger the N1 and trigger the nest task. Or the nest outcome will trigger this human cube. After this human queue, it will automatically trigger the nest langra.
+Yeah, because on this queue somebody else, another land graph just like this is sitting on the other side of this potentially. Like again, it could be a human.
+Or it could be somebody that is sitting there with it could be that also.
+But somebody or another landgraph is sitting on the other side waiting and working on this particular.
+We don't know who it is, but.
+This floor doesn't care who it is. Some it's somebody else's responsibility. But it's going to end the task.
+It is going to. It's going to say oh, my job is done. Here it is. And then it sits there until somebody else comes and picks it up.
+And we don't know, but we don't.
+Need to know because we have a normalized case and the advanced case and the minute we introduce queues it immediately.
+I mean this is all still land graph, but it defi. We are trying to define the boundaries of workflow and the boundaries of the orchestration. And my thinking is the start, the end and the queue are the three things that define the boundary.
+Because the.
+One of the things with landgraab is.
+Everything just kind of flows and just like it's usually just flowing through without any stop.
+But the workflow really puts it to.
+A full stop because the.
+What the workflow does is it says this person can come after 10 minutes,.
+Can come after one day or.
+Or it can come after one month. It's very durable.
+Whereas land graphs, we want it to just kind of continuously flow through without any stops because if there is a power outage or the computer restarts or something happens, then we could lose a lot of information.
+It's not ideal.
+It's not well suited for this durable.
+Like long running process.
+And so that's why we bring the workflow content concept in and the boundary really begins to me with the start, end and queue.
+Yeah. So yeah.
+So basically we are defining by the.
+Cues like the outcome of the line graphs.
+Like in every lang graph, the outcome is triggering one queue.
+Could be, but it also could end up with the end and can also trigger the ending of the land graph.
+Like also in ending of the land graph, it has to trigger one nested aspect.
+Right.
+It. We don't know the. The land graph.
+The ending of end just means that.
+The land graph ended.
+Now.
+Okay, I'll tell you why I'm thinking.
+That the answer is what if the land graph is because it's a sub flow? That's, that's the example that I can think of. So here is an example. This is not an action, but let's just say this is a subflow. So if you see request medical record,.
+It's a land graph flow. But we also see that it is.
+Getting called from multiple places.
+It's getting called from denial, it may get called from coder, it may get call from even a claims process, it may get called.
+So in some of these instances we define a subflow and then we would just call that this is nothing but.
+Another land graph, this whole thing.
+But it just kind of.
+We don't want to write the every flow. We are not going to detail out.
+The whole thing because it's just too much work. It gets way too complex because many of these flows are oftentimes complex. But if you have reusable pieces like request medical record, we will define it as a subflow and then we would just call it across all the main flows in many different places. So that's why I feel this,.
+What.
+We say as a start and an end inside the subflow will look like this, right?
+Will be.
+Yes, this one will be an end and it will have one action saying request.
+But also in the subflow, after the subfloin, it has to trigger a task. Right?
+Well, that's why do we need to.
+I think that's the question.
+Do we need to. I. I don't know.
+Like, can it not just come continue just.
+We treat it as a flow and Then it just does the next one. Can it not do that?
+That's the question, right?
+Because it is like this. It's like a. It's a.
+It's like a chunk. It is, it's. It's definitely a subflow is like this,.
+But.
+It calls this basically. And then when it is complete.
+It.
+Kind of goes back and continues. So does it have to be a task.
+Like previously? What we test is like for example in build up kill packet task the build up will packet task is created and in that task we are encountered.
+Like the medical record is missing and it will give an outcome code like medical record is missing which is triggering the medical record missing subfloor. And after completing the last task of missing medical record it will redirect to the.
+Like the. It will again create the build up fill packet.
+So inside a workflow it may be like that.
+But can we always assume that's going to be the case.
+That we won't have.
+Can we always say that it is going to be a task.
+Like. Like if it is not a task.
+Like here in the line graph itself.
+It is calling the subflow and after executing the supply it is coming back to the lang graph.
+Like in the subflow it can contain many lang graph itself.
+Yeah.
+Or it might have another queue here.
+Also from here it may go to a Q. That's also possible. Yeah.
+The Q is also a different task.
+So yeah, the Q does to me what I'm. I think. Let me articulate again what I'm.
+I feel this start and end is.
+Really telling the boundaries of the land graph. The land graph may be invoked by a workflow. It may be. The scheduler in the workflow may invoke it. But I'll tell you why we are also doing another project, right?
+And there are two other projects where landgraf is involved. That's why I'm so the first one is support agents that Tibin and Muthu is working on.
+It is implemented as a land graph.
+The orchestration layer in Support agents is a land graph.
+It doesn't have any workflow in it.
+At all that the patient sends a chat, it runs through the LAN graph.
+And it comes out at the other end.
+There is no workflow in it at all. It's an immediate response.
+But we still have land graph because the land graph gives us the ability to do all of these retries and.
+Errors and all of these things. It's a very flexible way to build the orchestration. So it's still doing the same thing.
+Instead of just pure Python code. We don't you just have python code in there. Intelligence is another one. Intelligence is also a bunch of nodes.
+It is. It's land graph, it is orchestration. No, there's no workflow intelligence either.
+So what we see is that durability.
+Defines the workflow where you have.
+Time delays, like where there is a concept of you have you from this bucket,.
+You're going to take something, work on.
+It, then you're going to put it.
+Into this bucket and then the next guy comes and takes up from that cube, works on it, puts into that queue.
+That mechanism really introduces the workflow into the whole.
+So the orchestration is kind of running.
+It may be called in real time or it may be called from a workflow. It doesn't really know who is calling it.
+It just tell what tells.
+That's what it's told to do.
+Now, meaning to say we can't,.
+You know, when we think about it being called from a workflow, we say,.
+Hey, this workflow has got to complete a normalized action. Normalized case.
+But that's a workflow concept. And if that is the case, if.
+It is a workflow, then yes, we.
+Will have a normal.
+But we cannot say that this will always have a normalized case.
+We don't know that for a fact.
+If it is a workflow. Yes, this was your point, right? Like this normalized case, there will be a queue.
+Now if it is being called from.
+A workflow, yes, there will be some normalized case like this, where it updates the status of the current task and.
+Then it is done. But we don't always know that this.
+Is getting called from. It can. In this case we will have to explicitly handle this normalized case.
+But if it is not being called so the advanced case on the other hand is sitting somewhere else, right?
+Is it sitting right here? And then advanced keys and then this guy has a corresponding.
+The.
+So the scheduler sits here. Then it is. Scheduler is picking up a case, then it is going to advance the case and then it is going to say call this guy. Maybe it is. If it is a workflow, then this is what happens. Yeah. Whereas if it is, the other scenario is a very different one where you have a. So an example is. I'll give you an example. An example is census. Census is a good example. Census reconciliation. It's still a. It's still an orchestration. This, this thing is still an orchestration.
+However,.
+It's still an orchestration, but it.
+Is,.
+It is a REST API.
+Call that is going to call from here to this. Like this.
+Like now I got like. I was only thinking from the workflow side.
+Yeah.
+So I think we.
+If we. It will be more. I feel it will be a lot more complete if you give it the ability.
+The Skill Studio is simply the ability.
+To build the flow. We don't tell the user like hey,.
+Like it has got to be a workflow or it's got to be. This has got to be. Not saying that. Instead we are saying.
+You kind of draw your picture and you tell what needs to happen.
+You start off and draw a nice picture like this and the ability is.
+You are automatically going to have a start and an end.
+Then you start to introduce the actions that need to happen. Then you start to introduce the decisions that you got to make.
+So like we talked about earlier, the.
+Decision means it's going to fork and take. Not fork. It's going to take one of two paths.
+But then we also going to give the ability for them to branch and.
+Execute in parallel and then merge back.
+We are going to give that ability to them.
+That's all lamb graph. But we also have something else, a node called a queue.
+And if you introduce a queue, the outcome, whatever, it's going to sit at this queue until somebody else comes along.
+And takes out of that queue. And that immediately brings in the workflow concept.
+Other than if you don't have this queue be don't. We don't introduce a workflow.
+It just depends on who is invoking.
+This land graph to decide whether it is going to be a workflow with.
+A normalized case or it's simply a regular land graph where it's like a census reconciliation kind of runs through and it just ends with the result.
+I got that. Like if we get a scenario like we can understand more.
+The other type.
+Yeah,.
+The other type that we have.
+Is I think the. The thing that we talked about which is the. It is.
+We'll have like a split.
+This is a branch concept. And here we will have something like a split concept where we say, hey, you got to split. In which case again, just like this, we are going to have an action and an action. But then we will have a merge condition right here, this one. And in this case it is a little bit like this.
+So this is the third kind of. Which is also land graph.
+But it just kind of.
+Like if the lang graph is triggered by a workflow, it has to put the nested task into a queue. This will trigger a land graph of a human Task.
+Yeah. So the big piece that I think we are trying to figure out is.
+How do we draw the boundary of the workflow or the land graph.
+Yeah.
+So to me, what are the things? So from I'm thinking and I think the. The land. The boundaries are defined by. The boundaries are defined by.
+Let's just take this also a little further out. Pull this in a little bit.
+The boundaries are.
+This is kind of how I am.
+Thinking.
+These to be the boundaries.
+Also.
+Yeah.
+Also before like giving it to a queue, we need a close out node.
+For signaling the term so it can create the task for that particular flow.
+And I think that.
+I think we have to in somewhere we will have to know in the skill Studio is this a. A going Is a.
+We may really. We may allow the user or we may.
+The system might need to know are.
+We doing a workflow or are we.
+Actually doing something else?
+Because if it is a workflow then.
+We might have the advanced case.
+We don't need to because that's not our job. It's not.
+It's a workflow's job.
+But the langgraph will need to do.
+This normalized case in a close out.
+Yeah. Also if it is coming from a.
+Workflow we need a initialized node for.
+Yeah.
+From the task. Yeah.
+So I think if it is a. It's an interesting thing.
+Like I think we will have to do a little bit of.
+It requires a little bit of knowledge.
+If. So. Can we do this Another idea.
+Another idea. See if this will work. So if it is a workflow then.
+If it is a workflow then I'm going to map out the workflow.
+If it is a workflow it really comes to. Let's just say this red color indicates what happens. The connector flows like this and then. You know, whatever happens. And then let me not close out.
+But the initialize.
+Happens here. Then comes through. Finally it comes into this closeout and then from here it goes to the end. Now instead if it is the census.
+Then let's take a look at that probe.
+What happens is this happens. It comes to a start instead of an initialize. It comes to the start and then from there it flows into this decision. Let's say it flows into this orders either way. But it is going to.
+Then it doesn't come into the closeout.
+Instead it just comes into the specific action like this and then it just ends right here like that. So meaning to say can so if it is workflow use.
+I'm trying to think.
+Okay, this is not. I'm not saying this is what it is, but I'm just thinking we replace start and end with initialize and close out for workflow. And can we replace.
+For regular Land graph we'll have start and end nodes.
+For workflow we will have initialize and close out. So workflow, it is going to come start. This is the start, the replacement of a start. Because it is a workflow and kind of comes through, blah blah.
+It either goes to another queue or.
+It goes into a close out. Whereas maybe even for closeout do we need.
+Even for queues do we need.
+Yeah, we need close out.
+Then only the temporal can understand.
+So then can be replaced. Either the Skill Studio can do one of two things. Either it can have pure land graph,.
+In which case it is start and.
+End, or it can have workflow, in.
+Which case it's going to start with a. It is a task which starts with an initialize and ends with a closeout.
+Yeah, like for the queues.
+Also we need a close out node and I think the subflow will come.
+Out from this one and it will.
+Act as a separate language.
+It will be a separate line graph, but it is still a land graph.
+And that's where I was trying to draw the distinction that it may not.
+Even involve a workflow at all.
+Even though this is a sub.
+Sub land graph, it might just be another land graph.
+This completely possible, right? Because it's just a node and then.
+We can invoke a. No, another node.
+Even if it's a subflow. Does Land graph have that concept of subflows?
+Like Langraph have a concept of subflow?
+Like in our workflow scenario?
+Like Lang Cow, like the workflow aside,.
+But purely in Land Graph, do they.
+Have the concept of a subflow?
+Yeah, yeah, there's a concept.
+Okay, that's probably. That's.
+I think the way we think about.
+It, we just think subflow is a subflow.
+If they want it to be a task, a separate task, they have the ability to. I mean that's completely up to them. We provide the flexibility for them to.
+Do it.
+Either way, they can break it up into tasks. Up to them, they can break it up into subflows. Because subflow is a modularity concept.
+When you reuse two or three steps,.
+Two or three nodes from multiple places. If you're going to call it.
+Then it's.
+We are modularizing it into a subflow.
+So that you can.
+You don't have to rewrite it five times.
+You just call it the same subflow from five different Places. So that's the subflow concept.
+The putting it into a task is.
+A different concept because there we are.
+Introducing workflow and then saying that we.
+Want it to be these tasks because there are certain gaps between tasks and.
+Different teams may come in.
+We have to introduce different queues. So that's a different concept.
+It's completely up to them how they want to do that.
+Yeah.
+Okay, so Kannan, Nandu, do we need to digest this a little bit and think about.
+Again, we are still talking visually. How do we represent this?
+I mean, how do,.
+How do we bring this into the skill studio? The visual drawing, dragging and dropping?
+What are your thoughts?
+And then we can, we may possibly.
+We may need to meet one more time to discuss the next steps. Okay.
+Whatever you think is, I understand, I.
+Will.
+Think and I will study and I will let you know.
+So then maybe we can simply.
+They need to implement the land graph features. Whatever is there, they need to implement on their.
+Studio.
+I think what we are saying, Sridhar, is now we are trying to define the boundaries of the land graph and.
+I think we said we are going.
+To figure out how do we understand the.
+Whether these are going to be.
+How do we introduce workflow into this? Because the minute we introduce workflow, we need to know the boundary of where the land graph starts and where it ends.
+And if it is workflow, then we need to have this initialize and close out. Instead of start and end, we may.
+Be thinking more in terms of initialize and closeout. So we may need to know up.
+Front, is this a workflow calling this orchestration, or is this just a census.
+Reconciliation type of a scenario where there.
+Is no workflow at all, it just gets called, it runs through a bunch.
+Of nodes, the output comes up and.
+Then it's a fast API server that is receiving and sending the response back.
+To the client calling that API. I think we are trying to. I think we are laid out all the possibilities, the branching, the splitting, the subflows and the workflow. So there are like four things now that we are trying to bring into this. So the heart of it being landgraf has been defined and I think Amal.
+Gave a good status of where things stand from his perspective.
+I think now we have four other things that are sitting around and it's.
+Still the slightly advanced. The next step, next iteration, next.
+Where do we go next from this base orchestration, I think these are four areas that we need to figure out.
+And I think, yeah, it makes sense for Kannan and Nandu to discuss if.
+Needed to talk to Amal one more time. But to think about. They will need to think about how.
+To represent this all visually in the. In the skill studio.
+Okay, we can.
+What is the one? Branching, splitting, sub workflow. What is the fourth one we need?
+So. So this is this. Yeah. So branching,.
+Splitting the subflow and then the workflow.
+Workflow is like this one.
+Whereas not everything is workflow.
+That's the key difference. Census reconciliation is not overflow. It is.
+There is orchestration it uses, but there is no workflow in it.
+Here. Split is parallel. You are expecting.
+Yeah, that is when you have.
+To.
+Aman's point decision is when you branch.
+Into one or the other.
+You're not taking both of the same time because based on the decision.
+You take one or the other.
+Split is where you have multiple actions and then you merge back.
+So it's a different type of node. This is a decision node. This is a split node.
+Actually we implemented Vineet for the coder project. Actually what we observed is the sequentially when it is executed, it is taken less time after implementing the split because the split nodes now has taken high priority to execute than other sequential nodes. So again we are changing it. I will update you by tomorrow to close that point.
+Well, I don't know. I think in corner it doesn't really quite matter.
+But the thing is the person that is using this, they may require that flexibility because it is a fairly. It is.
+Because we cannot tell them.
+Everything has to be sequential.
+They would look at that and say whether it is good or not.
+They would say that doesn't capture the idea.
+That doesn't visually capture the fact that.
+And we saw this in.
+Denial management.
+Where it does three things in parallel. It has to reach out to the patient. It has to fax out the request.
+To the medical for medical record. And I can't remember if there was.
+An insurance discovery was what we had. But there are three parallel parts.
+They all go off and do the thing.
+We don't say yes, reach out to the patient three times over a span of two weeks and then start to request for facies because that be like,.
+You know, like the time is like there's a lot of time that is lost in that process.
+Right. So they would want that to be parallel activities.
+So we can't tell them that you can't do this.
+And that's where something like this could become important. Okay, so. All right, I'll put this into the.
+Group and then.
+We can discuss more.
+So if you tell me it's like whenever after internal discussion if you tell me it is we can meet again.
+Then we can meet and discuss where.
+We are.
+The next steps. Based on that.
+I do think there is some more visual elements because the.
+Other part was we said the expanding.
+Each node type all of the configuration.
+We said converting from a JSON structure.
+To land graph all of those things are there but I think capturing the.
+Concepts visual concepts representing that in JSON.
+Is the first part and I think.
+There are a few more things to.
+Complete before we go to other areas. So if you are we can make it.
+We can make.
+Okay, very good.
+Okay yeah just keep me.
+I will arrange the coff.
+Okay, very good.
+Okay sounds good. Sounds good. Okay all right then I guess I will stop for now. We'll catch up later then. Yeah thanks. Thank you.
+Thank you. Thanks.
+Yeah.

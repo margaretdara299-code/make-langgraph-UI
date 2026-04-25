@@ -8,6 +8,11 @@ export function getNodeTheme(type: string, capability?: string, category?: strin
         // Orange / Routing
         return { bg: '#FFF7ED', stroke: '#EA580C', badgeBg: '#EA580C', iconBg: '#EA580C' };
     }
+
+    if (type === 'queue') {
+        // Amber — durable hand-off / workflow boundary
+        return { bg: '#FFFBEB', stroke: '#D97706', badgeBg: '#D97706', iconBg: 'rgba(217,119,6,0.10)' };
+    }
     
     if (type === 'start') {
         return { bg: '#F5F3FF', stroke: '#7C3AED', badgeBg: '#7C3AED', iconBg: '#FFFFFF' };
@@ -65,6 +70,10 @@ export function getNodeStrokeColor(node: NodeColorSource): string {
 
     if (nodeType === 'error') {
         return getNodeTheme('error').stroke;
+    }
+
+    if (nodeType === 'queue') {
+        return getNodeTheme('queue').stroke;
     }
 
     return getNodeTheme(nodeType, capability, category).stroke;

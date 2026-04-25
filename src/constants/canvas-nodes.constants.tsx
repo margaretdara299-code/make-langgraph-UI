@@ -11,6 +11,7 @@ import SubFlowNode from '@/components/SubFlowNode/SubFlowNode';
 import StartNode from '@/components/StartNode/StartNode';
 import DecisionNode from '@/components/DecisionNode/DecisionNode';
 import ErrorNode from '@/components/ErrorNode/ErrorNode';
+import QueueNode from '@/components/QueueNode/QueueNode';
 import DeletableEdge from '@/components/DeletableEdge/DeletableEdge';
 
 export const NODE_TYPES = {
@@ -22,6 +23,7 @@ export const NODE_TYPES = {
     start:    StartNode,
     decision: DecisionNode,
     error:    ErrorNode,
+    queue:    QueueNode,
 };
 
 export const EDGE_TYPES = {
