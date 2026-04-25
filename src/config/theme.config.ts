@@ -69,47 +69,53 @@ export const antdTheme: ThemeConfig = {
 
 export const darkTheme: ThemeConfig = {
     token: {
-        colorPrimary: '#6366f1',
+        colorPrimary: '#B39CD0',     /* Lavender CTA */
         colorSuccess: '#10b981',
         colorWarning: '#f59e0b',
-        colorError: '#ef4444',
-        colorInfo: '#6366f1',
-        colorText: '#f8fafc',
-        colorTextSecondary: '#94a3b8',
-        colorTextTertiary: '#64748b',
-        colorBgContainer: '#1e293b',
-        colorBgLayout: '#0f172a',
-        colorBgSpotlight: '#334155',
-        colorBorder: '#334155',
-        colorBorderSecondary: '#1e293b',
+        colorError: '#FFC1CC',       /* Soft Pink */
+        colorInfo: '#A8DADC',        /* Light Cyan */
+        colorText: '#E4E4E4',        /* Light Gray */
+        colorTextSecondary: '#A3A3A3',
+        colorTextTertiary: '#7A7A7A',
+        colorBgContainer: '#363636', /* Elevated Surface */
+        colorBgLayout: '#2C2C2C',    /* Slate Gray Base */
+        colorBgSpotlight: '#404040',
+        colorBorder: '#4a4a4a',
+        colorBorderSecondary: 'rgba(228, 228, 228, 0.05)',
+        colorBgElevated: '#404040',  /* Modal/Dropdown Backgrounds */
     },
     components: {
         Layout: {
-            siderBg: '#111827',
-            headerBg: '#0f172a',
-            bodyBg: '#0f172a',
+            siderBg: '#2C2C2C',
+            headerBg: 'rgba(44, 44, 44, 0.85)',
+            bodyBg: '#2C2C2C',
         },
         Menu: {
             itemBg: 'transparent',
-            itemSelectedBg: 'rgba(99, 102, 241, 0.15)',
-            itemSelectedColor: '#818cf8',
-            itemHoverBg: 'rgba(255, 255, 255, 0.04)',
-            itemColor: '#94a3b8',
+            itemSelectedBg: 'rgba(179, 156, 208, 0.15)',
+            itemSelectedColor: '#B39CD0',
+            itemHoverBg: 'rgba(228, 228, 228, 0.05)',
+            itemColor: '#A3A3A3',
         },
         Button: {
-            defaultBg: '#1e293b',
-            defaultBorderColor: '#334155',
-            defaultColor: '#f8fafc',
+            defaultBg: '#363636',
+            defaultBorderColor: 'rgba(228, 228, 228, 0.15)',
+            defaultColor: '#E4E4E4',
         },
         Card: {
-            colorBgContainer: '#1e293b',
+            colorBgContainer: '#363636',
             colorBorderSecondary: 'transparent',
         },
         Table: {
-            headerBg: '#1e293b',
-            headerColor: '#94a3b8',
-            colorBgContainer: '#1e293b',
-            borderColor: '#334155',
+            headerBg: '#363636',
+            headerColor: '#A3A3A3',
+            colorBgContainer: '#363636',
+            borderColor: 'rgba(228, 228, 228, 0.05)',
+        },
+        Modal: {
+            contentBg: '#363636',
+            headerBg: '#363636',
+            titleColor: '#E4E4E4',
         }
     },
 };

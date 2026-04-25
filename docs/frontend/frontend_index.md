@@ -22,3 +22,4 @@ To preserve technical scale and readability, this documentation is structured vi
 | **13. Build & Deployment** | Vite builder, production scaling | [`13-build-deployment.md`](./13-build-deployment.md) |
 | **14. Performance Optimization**| Framer-motion limits, XYFlow optimizations | [`14-performance.md`](./14-performance.md) |
 | **15. Best Practices** | Naming, component density, code cleanliness | [`15-best-practices.md`](./15-best-practices.md) |
+| **16. Dark Mode Spec** | Implementation guide using Muted Pastels | [`16-dark-mode-spec.md`](./16-dark-mode-spec.md) |

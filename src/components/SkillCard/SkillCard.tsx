@@ -12,6 +12,7 @@ import {
 import { Tag as LucideTag, Layers } from 'lucide-react';
 import StatusPill from '@/components/StatusPill/StatusPill';
 import { getMenuItems, getTagStyle } from '@/utils';
+import { getCategoryColor } from '@/utils/colorHelper';
 import type { SkillCardProps } from '@/interfaces';
 import './SkillCard.css';
 
@@ -34,9 +35,7 @@ export default function SkillCard({ skill, onClick, onAction }: SkillCardProps) 
                     <div className="sc-icon-container">
                         <PartitionOutlined style={{ fontSize: '18px' }} />
                     </div>
-                    <Tooltip title={skill.name} mouseEnterDelay={0.2}>
-                        <div className="sc-name">{skill.name}</div>
-                    </Tooltip>
+                    <div className="sc-name">{skill.name}</div>
                 </div>
                 <Dropdown
                     menu={{ items: getMenuItems(skill.status, skill.id, skill.latestVersionId), onClick: handleMenuClick }}
@@ -60,21 +59,19 @@ export default function SkillCard({ skill, onClick, onAction }: SkillCardProps) 
 
             {/* Row 4: Description */}
             <div className="sc-body">
-                <Tooltip title={skill.description || 'No description available'} mouseEnterDelay={0.2} placement="top">
-                    <Paragraph
-                        className="sc-description"
-                        ellipsis={{ rows: 2 }}
-                    >
-                        {skill.description || <span className="sc-empty-desc">No description provided</span>}
-                    </Paragraph>
-                </Tooltip>
+                <Paragraph
+                    className="sc-description"
+                    ellipsis={{ rows: 2, tooltip: skill.description ? { title: skill.description, mouseEnterDelay: 0.2, placement: "top" } : false }}
+                >
+                    {skill.description || <span className="sc-empty-desc">No description provided</span>}
+                </Paragraph>
             </div>
 
             {/* Footer: Capabilities (Category) + Tags */}
             <div className="sc-footer">
                 <Tooltip title={`Category: ${skill.category || 'General'}`} mouseEnterDelay={0.2}>
                     <div className="sc-cap-section">
-                        <Layers size={12} strokeWidth={2.5} color="var(--accent)" />
+                        <Layers size={12} strokeWidth={2.5} color={getCategoryColor(skill.category || 'General')} />
                         <span className="sc-cap-label">{skill.category || 'General'}</span>
                     </div>
                 </Tooltip>
