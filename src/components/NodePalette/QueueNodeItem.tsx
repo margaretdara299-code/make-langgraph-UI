@@ -31,16 +31,14 @@ export default function QueueNodeItem() {
       onDragStart={handleDragStart}
     >
       <motion.div className="node-library-item" variants={variants}>
-        <div
-          className="nli-icon"
-          style={{ background: "rgba(217,119,6,0.10)" }}
-        >
-          <Layers size={12} color="#D97706" strokeWidth={2.2} />
+        <div className="nli-icon nli-icon--common">
+          <Layers size={12} color="var(--color-node-queue)" strokeWidth={2.4} />
         </div>
         <div className="nli-content">
           <span className="nli-label">Queue</span>
-        </div>
+        </div>        
       </motion.div>
     </div>
   );
 }
+

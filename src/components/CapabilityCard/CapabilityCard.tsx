@@ -22,7 +22,7 @@ export default function CapabilityCard({ capability, onAction }: CapabilityCardP
             onDoubleClick={() => onAction?.('edit', (capability as any).capabilityId ?? capability.capability_id)}
         >
             <div className="cc-premium-header">
-                <div className="cc-premium-icon-box">
+                <div className="ts-icon-container">
                     <DynamicLucideIcon name={capability.icon || 'Rocket'} size={22} />
                 </div>
 
@@ -52,7 +52,7 @@ export default function CapabilityCard({ capability, onAction }: CapabilityCardP
             </div>
 
             <div className="cc-premium-body">
-                <Title level={5} className="capability-name">{capability.name}</Title>
+                <div className="capability-name">{capability.name}</div>
                 <Paragraph
                     className="capability-desc"
                     type="secondary"

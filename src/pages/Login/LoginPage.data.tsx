@@ -12,13 +12,13 @@ export const CANVAS_EDGES = [
 ];
 
 export const PACKETS = [
-    { r: 5, fill: "#6366f1", dur: "2.4s", begin: "0s", path: "M 160 108 C 220 108 220 178 280 178" },
-    { r: 5, fill: "#6366f1", dur: "2.4s", begin: "1.2s", opacity: 0.6, path: "M 160 108 C 220 108 220 178 280 178" },
-    { r: 5, fill: "#8b5cf6", dur: "2.1s", begin: "0.7s", path: "M 420 158 C 450 158 450 103 490 103" },
-    { r: 4.5, fill: "#f59e0b", dur: "2.7s", begin: "1.4s", path: "M 420 198 C 450 198 450 285 490 285" },
-    { r: 4.5, fill: "#10b981", dur: "1.9s", begin: "0.4s", path: "M 660 103 C 710 103 710 185 770 195" },
-    { r: 4.5, fill: "#10b981", dur: "2.2s", begin: "1.8s", path: "M 660 285 C 710 285 720 220 770 215" },
-    { r: 3.5, fill: "#3b82f6", dur: "3.6s", begin: "1s", path: "M 150 122 C 180 122 180 345 260 345" }
+    { r: 5, fill: "var(--accent)", dur: "2.4s", begin: "0s", path: "M 160 108 C 220 108 220 178 280 178" },
+    { r: 5, fill: "var(--accent)", dur: "2.4s", begin: "1.2s", opacity: 0.6, path: "M 160 108 C 220 108 220 178 280 178" },
+    { r: 5, fill: "var(--color-node-trigger)", dur: "2.1s", begin: "0.7s", path: "M 420 158 C 450 158 450 103 490 103" },
+    { r: 4.5, fill: "var(--color-warning)", dur: "2.7s", begin: "1.4s", path: "M 420 198 C 450 198 450 285 490 285" },
+    { r: 4.5, fill: "var(--color-success)", dur: "1.9s", begin: "0.4s", path: "M 660 103 C 710 103 710 185 770 195" },
+    { r: 4.5, fill: "var(--color-success)", dur: "2.2s", begin: "1.8s", path: "M 660 285 C 710 285 720 220 770 215" },
+    { r: 3.5, fill: "var(--color-info)", dur: "3.6s", begin: "1s", path: "M 150 122 C 180 122 180 345 260 345" }
 ];
 
 export const CANVAS_NODES = [

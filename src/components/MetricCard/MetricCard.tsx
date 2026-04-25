@@ -50,8 +50,8 @@ export const MetricCard: React.FC<MetricCardProps> = ({
     return (
         <Card className="metric-card" bordered={false}>
             <div className="metric-card__content">
-                <div className="metric-card__icon-box" style={{ color: color, backgroundColor: `${color}15` }}>
-                    <Icon style={{ fontSize: '24px' }} />
+                <div className="metric-card__icon-box" style={{ '--metric-color': color } as React.CSSProperties}>
+                    <Icon className="metric-card__icon" />
                 </div>
                 <div className="metric-card__info">
                     <Text className="metric-card__label">{label}</Text>

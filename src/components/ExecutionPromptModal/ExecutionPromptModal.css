@@ -1,0 +1,28 @@
+/* =====================================================
+   ExecutionPromptModal extracted inline styles
+   ===================================================== */
+
+.epm-modal-title {
+    margin: 0 !important;
+}
+
+.epm-body {
+    padding: 1rem 0;
+}
+
+.epm-description {
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.epm-code-input {
+    font-family: monospace !important;
+    margin-bottom: 1.5rem !important;
+    font-size: var(--text-sm) !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+}
+
+.epm-run-btn {
+    width: 100% !important;
+}

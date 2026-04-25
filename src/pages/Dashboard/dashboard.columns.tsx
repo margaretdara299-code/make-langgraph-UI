@@ -12,26 +12,15 @@ export const getDashboardColumns = (navigate: (path: string) => void): ColumnsTy
         width: 300,
         render: (_: any, record: Skill) => {
             return (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                    <span style={{
-                        width: 32, height: 32, borderRadius: 8,
-                        background: 'var(--accent-soft)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        flexShrink: 0,
-                        border: '1px solid var(--border-light)'
-                    }}>
-                        <FolderOutlined style={{ fontSize: 15, color: 'var(--accent)' }} />
+                <div className="dc-skill-cell">
+                    <span className="dc-skill-icon">
+                        <FolderOutlined className="dc-skill-folder-icon" />
                     </span>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0, overflow: 'visible' }}>
-                        <span style={{
-                            fontSize: 13,
-                            fontWeight: 600,
-                            color: 'var(--text-main)',
-                            display: 'block'
-                        }}>
+                    <div className="dc-skill-info">
+                        <span className="dc-skill-name">
                             {record.name || 'Untitled Skill'}
                         </span>
-                        <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                        <span className="dc-skill-key">
                             {record.skillKey || 'no-key-found'}
                         </span>
                     </div>
@@ -45,17 +34,11 @@ export const getDashboardColumns = (navigate: (path: string) => void): ColumnsTy
         key: 'description',
         width: 350,
         render: (desc: string) => {
-            if (!desc) return <span style={{ color: 'var(--text-subtle)', fontSize: 12 }}>—</span>;
+            if (!desc) return <span className="dc-desc-empty">—</span>;
             const truncated = desc.length > 80 ? desc.slice(0, 80) + '...' : desc;
             return (
                 <Tooltip title={desc.length > 80 ? desc : undefined} placement="topLeft">
-                    <span style={{ 
-                        fontSize: 12, 
-                        color: 'var(--text-muted)', 
-                        cursor: desc.length > 80 ? 'help' : 'default',
-                        lineHeight: 1.5,
-                        display: 'block'
-                    }}>
+                    <span className={`dc-desc-text ${desc.length > 80 ? 'is-truncated' : ''}`}>
                         {truncated}
                     </span>
                 </Tooltip>
@@ -69,11 +52,11 @@ export const getDashboardColumns = (navigate: (path: string) => void): ColumnsTy
         key: 'updatedAt',
         width: 150,
         render: (date: string) => (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-main)' }}>
+            <div className="dc-date-cell">
+                <span className="dc-date-main">
                     {new Date(date).toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' })}
                 </span>
-                <span style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 500 }}>
+                <span className="dc-date-time">
                     {new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
                 </span>
             </div>

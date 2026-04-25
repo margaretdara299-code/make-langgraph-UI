@@ -61,14 +61,14 @@ export const NewGroupCard = ({ onAdded, onCancel }: NewGroupCardProps) => {
     };
 
     return (
-        <div className="group-card new-group-card reveal-up" style={{ padding: '0', border: '1px solid var(--accent-light)', boxSizing: 'border-box' }}>
-            <div className="group-card-header" style={{ padding: '12px 16px', background: 'var(--bg-main)', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div className="group-card-icon" style={{ width: '32px', height: '32px', background: 'var(--accent-soft)', color: 'var(--accent)' }}>
+        <div className="group-card new-group-card reveal-up ngc-root">
+            <div className="group-card-header ngc-header">
+                <div className="ngc-header-left">
+                    <div className="group-card-icon ngc-icon">
                         <DynamicLucideIcon name={icon || 'Plus'} size={16} />
                     </div>
 
-                    <span style={{ fontWeight: 700, fontSize: '15px', color: 'var(--text-main)' }}>Create New Group</span>
+                    <span className="ngc-title">Create New Group</span>
                 </div>
 
                 <Space size={8}>
@@ -78,32 +78,32 @@ export const NewGroupCard = ({ onAdded, onCancel }: NewGroupCardProps) => {
                         icon={<CheckOutlined />} 
                         onClick={handleCreate} 
                         loading={loading} 
-                        style={{ borderRadius: '6px', width: '36px', height: '30px' }}
+                        className="ngc-action-btn"
                     />
                     <Button 
                         size="small"
                         icon={<CloseOutlined />} 
                         onClick={onCancel} 
-                        style={{ borderRadius: '6px', width: '36px', height: '30px' }}
+                        className="ngc-action-btn"
                     />
                 </Space>
             </div>
             
-            <div className="group-card-body" style={{ padding: '16px 16px 20px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                    <div className="group-icon-picker-inline" style={{ padding: '0 4px', position: 'relative' }}>
-                        <div style={{ border: errors.icon ? '1px solid #ef4444' : 'none', borderRadius: '8px', display: 'flex' }}>
+            <div className="group-card-body ngc-body">
+                <div className="ngc-fields-row">
+                    <div className="group-icon-picker-inline ngc-picker-wrap">
+                        <div className={`ngc-picker-border ${errors.icon ? 'ngc-picker-border--error' : ''}`}>
                             <LucideIconPicker value={icon} onChange={(val) => { setIcon(val); if (errors.icon) setErrors(prev => ({ ...prev, icon: '' })); }} />
                         </div>
-                        {errors.icon && <div className="validation-msg-tiny" style={{ position: 'absolute', top: '100%', left: 0, whiteSpace: 'nowrap' }}>Required</div>}
+                        {errors.icon && <div className="validation-msg-tiny ngc-validation-msg">Required</div>}
                     </div>
 
-                    <div style={{ flex: 1.5 }}>
+                    <div className="ngc-name-field">
                         <Input 
                             variant="filled"
                             placeholder="Group Name" 
                             size="small"
-                            style={{ width: '100%', fontWeight: 600, height: '32px' }} 
+                            className="ngc-input-name"
                             status={errors.name ? 'error' : ''}
                             value={name}
                             onChange={e => { setName(e.target.value); if (errors.name) setErrors(prev => ({ ...prev, name: '' })); }}
@@ -111,12 +111,12 @@ export const NewGroupCard = ({ onAdded, onCancel }: NewGroupCardProps) => {
                         />
                         {errors.name && <div className="validation-msg-tiny">{errors.name}</div>}
                     </div>
-                    <div style={{ flex: 1 }}>
+                    <div className="ngc-key-field">
                         <Input 
                             variant="filled"
                             placeholder="KEY" 
                             size="small"
-                            style={{ width: '100%', textTransform: 'uppercase', fontFamily: 'var(--font-mono)', fontSize: '11px', height: '32px' }} 
+                            className="ngc-input-key"
                             status={errors.key ? 'error' : ''}
                             value={key}
                             onChange={e => { setKey(e.target.value); if (errors.key) setErrors(prev => ({ ...prev, key: '' })); }}
@@ -126,7 +126,7 @@ export const NewGroupCard = ({ onAdded, onCancel }: NewGroupCardProps) => {
                 </div>
 
                 
-                <div style={{ marginTop: '8px' }}>
+                <div className="ngc-description-wrap">
                     <Input.TextArea 
                         variant="filled"
                         size="small"
@@ -134,7 +134,7 @@ export const NewGroupCard = ({ onAdded, onCancel }: NewGroupCardProps) => {
                         value={description}
                         onChange={e => setDescription(e.target.value)}
                         autoSize={{ minRows: 2, maxRows: 4 }}
-                        style={{ borderRadius: '6px', fontSize: '13px', fontFamily: 'var(--font-sans)', color: 'var(--text-main)', padding: '8px 12px' }}
+                        className="ngc-textarea"
                     />
                 </div>
             </div>

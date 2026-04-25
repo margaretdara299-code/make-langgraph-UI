@@ -31,8 +31,8 @@ export default function ErrorNodeItem() {
     return (
         <div className="node-library-item-wrapper" draggable onDragStart={handleDragStart}>
             <motion.div className="node-library-item" variants={variants}>
-                <div className="nli-icon" style={{ background: '#FFF5F5' }}>
-                    <ShieldAlert size={12} color="#EF4444" strokeWidth={2.4} />
+                <div className="nli-icon nli-icon--error-light">
+                    <ShieldAlert size={12} color="var(--color-error)" strokeWidth={2.4} />
                 </div>
                 <div className="nli-content">
                     <span className="nli-label">Error Node</span>

@@ -1,0 +1,7 @@
+name: execution-flow
+description: Agent that handles logic for routing and executing nodes in a LangGraph workflow.
+responsibilities:
+  - Read nodes and edges from the React Flow canvas data structure.
+  - Evaluate conditional routing on edges based on routeType and conditionLabel.
+  - Map node output states back to the global state via response_to_state_mapping.
+  - Handle error flows, standard exits, and fallback routing for the compiled StateGraph.

@@ -50,7 +50,7 @@
 }
 
 .create-skill__method-icon {
-    font-size: 32px;
+    font-size: var(--text-3xl);
     color: var(--color-primary);
     margin-bottom: 12px;
     display: block;
@@ -65,4 +65,33 @@
 .create-skill__method-desc {
     font-size: 13px;
     margin-bottom: 0 !important;
+}
+/* =====================================================
+   CreateSkillModal extracted inline styles
+   ===================================================== */
+
+.csm-header-inner {
+    display: flex;
+    flex-direction: column;
+}
+
+.csm-body {
+    padding: 0 4px;
+}
+
+.csm-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 24px;
+    padding: 0 4px;
+}
+
+.csm-btn {
+    border-radius: 4px !important;
+    height: 36px !important;
+    font-weight: 600 !important;
+}
+
+.csm-btn--primary {
+    padding: 0 24px !important;
 }

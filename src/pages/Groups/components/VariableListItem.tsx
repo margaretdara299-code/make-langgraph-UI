@@ -16,7 +16,7 @@ export const VariableListItem = ({ variable, onEdit, onDelete }: VariableListIte
         <div className="variable-list-item">
             <div className="var-metadata-row-table">
                 <div className="var-meta-column">
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div className="var-name-stack">
                         <span className="var-name">{variable.variableName}</span>
                         <span className="var-key-code">{variable.variableKey}</span>
                     </div>
@@ -31,7 +31,7 @@ export const VariableListItem = ({ variable, onEdit, onDelete }: VariableListIte
                 </div>
             </div>
             
-            <div className="variable-item-actions" style={{ marginLeft: '12px' }}>
+            <div className="variable-item-actions var-item-actions-gap">
                 <Button 
                     type="text" 
                     icon={<EditOutlined />} 

@@ -36,9 +36,9 @@ export default function DashboardPage() {
             {/* Header */}
             <div className="industry-header-modern reveal-up">
                 <div className="header-title-row">
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <Title level={2} style={{ margin: 0, fontWeight: 800, fontSize: '24px', letterSpacing: '-0.02em' }}>{DASHBOARD.title}</Title>
-                        <Text type="secondary" style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                    <div className="db-title-column">
+                        <Title level={2} className="db-page-title">{DASHBOARD.title}</Title>
+                        <Text type="secondary" className="db-page-subtitle">
                             {DASHBOARD.description}
                         </Text>
                     </div>
@@ -46,16 +46,16 @@ export default function DashboardPage() {
             </div>
 
             {/* Metric Cards */}
-            <Row gutter={[16, 16]} className="metrics-section reveal-up" style={{ animationDelay: '0.05s' }}>
+            <Row gutter={[16, 16]} className="metrics-section reveal-up db-metrics-reveal">
                 {metricsData.map((data, idx) => (
-                    <Col xs={24} sm={12} md={8} lg={6} key={idx} style={{ animationDelay: `${idx * 0.08}s` }} className="reveal-up">
-                        <MetricCard {...data} />
+                    <Col xs={24} sm={12} md={8} lg={6} key={idx} style={{ '--anim-delay': `${idx * 0.08}s` } as React.CSSProperties} className="reveal-up">
+                        <MetricCard subtext={''} isPositive={false} {...data} />
                     </Col>
                 ))}
             </Row>
 
             {/* Recent Skill Updates — Table */}
-            <div className="activity-container card-elevated reveal-up" style={{ marginTop: 16, animationDelay: '0.3s' }}>
+            <div className="activity-container card-elevated reveal-up db-activity-reveal">
                 <div className="activity-header-modern">
                     <div className="header-content-left">
                         <div className="title-row">
@@ -91,7 +91,7 @@ export default function DashboardPage() {
                     tableLayout="fixed"
                     scroll={{ y: 320 }}
                     onRow={(record) => ({
-                        style: { cursor: 'pointer' },
+                        className: 'db-row-clickable',
                         onClick: () => {
                             if (record.id && record.latestVersionId) {
                                 navigate(`/skills/${record.id}/versions/${record.latestVersionId}/design`);

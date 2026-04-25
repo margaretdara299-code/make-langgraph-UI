@@ -23,13 +23,7 @@ export default function ThreeBackground() {
         <div
             ref={containerRef}
             aria-hidden="true"
-            style={{
-                position: 'absolute',
-                inset: 0,
-                zIndex: 0,
-                pointerEvents: 'none',
-                overflow: 'hidden',
-            }}
+            className="three-bg-fixed"
         />
     );
 }

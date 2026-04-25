@@ -20,7 +20,7 @@
 }
 
 .picker-category-select .ant-select-selection-item {
-    font-size: 11px !important;
+    font-size: var(--text-xs) !important;
     font-weight: 600 !important;
     color: var(--text-main) !important;
 }
@@ -72,7 +72,7 @@
 }
 
 .picker-search-input input {
-    font-size: 11px !important;
+    font-size: var(--text-xs) !important;
     font-weight: 500 !important;
     color: var(--text-main) !important;
 }
@@ -210,4 +210,37 @@
 .picker-grid-container::-webkit-scrollbar-thumb {
     background: var(--border-strong);
     border-radius: 10px;
+}
+
+/* =====================================================
+   Extracted from LucideIconPicker inline styles
+   ===================================================== */
+
+.picker-category-control {
+    width: 160px;
+}
+
+.picker-search-control {
+    flex: 1;
+}
+
+.picker-scroll-sentinel {
+    height: 20px;
+    width: 100%;
+}
+
+.picker-trigger-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    position: relative;
+}
+
+.lip-search-icon {
+    color: var(--text-subtle) !important;
+}
+
+.picker-category-dropdown {
+    min-width: 200px;
 }

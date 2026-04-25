@@ -3,7 +3,8 @@
     border: 1px solid var(--border-light);
     border-radius: 12px;
     padding: 18px;
-    height: 190px; /* Tighter layout since rows merged */
+    height: 190px;
+    /* Tighter layout since rows merged */
     display: flex;
     flex-direction: column;
     cursor: pointer;
@@ -26,15 +27,34 @@
     margin-bottom: 4px;
 }
 
+.sc-title-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+
+
+.skill-card-premium:hover .ts-icon-container {
+    background: var(--accent-light);
+    border-color: var(--accent-soft);
+    transform: scale(1.05);
+}
+
+.sc-partition-icon {
+    font-size: var(--text-xl);
+}
+
 .sc-name {
-    font-size: 15px !important;
+    font-size: var(--text-sm) !important;
     font-weight: 750 !important;
     color: var(--text-main) !important;
     letter-spacing: -0.015em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    flex: 1;
 }
 
 .sc-more-btn {
@@ -63,7 +83,7 @@
 }
 
 .sc-key-value {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 700;
     color: var(--accent);
     font-family: var(--font-mono);
@@ -77,7 +97,7 @@
 }
 
 .sc-description {
-    font-size: 12.5px !important;
+    font-size: 12px !important;
     color: var(--text-muted) !important;
     line-height: 1.5 !important;
     margin: 0 !important;
@@ -106,7 +126,7 @@
 }
 
 .sc-cap-label {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 700;
     color: var(--text-main);
     letter-spacing: -0.01em;
@@ -118,7 +138,7 @@
 }
 
 .sc-mini-tag {
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
     padding: 2px 8px;
@@ -126,10 +146,22 @@
     display: flex;
     align-items: center;
     gap: 4px;
+    background: var(--tag-bg);
+    color: var(--tag-color);
 }
 
 .sc-tag-count {
     background: var(--surface-1);
     color: var(--text-subtle);
     border: 1px solid var(--border-light);
+}
+
+.skill-card-menu-link {
+    color: inherit !important;
+    text-decoration: none !important;
+}
+
+.skill-card-menu-item-primary {
+    color: var(--color-primary) !important;
+    font-weight: 600 !important;
 }

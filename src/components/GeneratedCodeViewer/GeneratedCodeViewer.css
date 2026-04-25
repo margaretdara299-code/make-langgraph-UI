@@ -21,7 +21,7 @@
 
 .generated-code-viewer .ant-modal-title {
   color: #cccccc;
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 500;
 }
 
@@ -240,4 +240,14 @@
     border: 1px solid #007acc;
     padding: 3px 7px;
   }
+}
+
+.gcv-modal {
+    max-height: 90vh !important;
+}
+
+.gcv-footer-right {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
 }

@@ -40,3 +40,67 @@
     justify-content: space-between;
     align-items: flex-start;
 }
+
+/* Extracted from inline styles */
+.skeleton-header-stack {
+    display: flex;
+    flex-direction: column;
+}
+
+.skeleton-title-bar {
+    width: 220px !important;
+    height: 32px !important;
+    margin-bottom: 8px !important;
+}
+
+.skeleton-subtitle-bar {
+    width: 380px !important;
+    height: 16px !important;
+}
+
+.skeleton-metric-badge {
+    width: 40px !important;
+    height: 20px !important;
+}
+
+.skeleton-metric-title {
+    width: 100% !important;
+    height: 28px !important;
+    margin-bottom: 8px !important;
+}
+
+.skeleton-metric-subtitle {
+    width: 60% !important;
+    height: 14px !important;
+}
+
+.skeleton-activity-box {
+    margin-top: 16px !important;
+}
+
+.skeleton-box-header-stack {
+    display: flex;
+    flex-direction: column;
+}
+
+.skeleton-box-title {
+    width: 180px !important;
+    height: 24px !important;
+    margin-bottom: 8px !important;
+}
+
+.skeleton-box-subtitle {
+    width: 260px !important;
+    height: 14px !important;
+}
+
+.skeleton-box-search {
+    width: 320px !important;
+    height: 40px !important;
+    border-radius: 10px !important;
+}
+
+.skeleton-table-body {
+    padding: 24px;
+    min-height: 400px;
+}

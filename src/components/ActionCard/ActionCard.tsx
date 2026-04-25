@@ -16,6 +16,7 @@ import { Tag as LucideTag } from 'lucide-react';
 import StatusPill from '@/components/StatusPill/StatusPill';
 import { DynamicLucideIcon } from '../LucideIconPicker/LucideIconPicker';
 import type { ActionCardProps } from '@/interfaces';
+import { getCapabilityColor, getCategoryColor } from '@/utils/colorHelper';
 import './ActionCard.css';
 
 const { Text, Paragraph } = Typography;
@@ -34,12 +35,10 @@ export default function ActionCard({ action, onAction }: ActionCardProps) {
             {/* Row 1: Name + Actions */}
             <div className="ac-header">
                 <div className="ac-title-group">
-                    <div className="ac-icon-container">
+                    <div className="ts-icon-container">
                         <DynamicLucideIcon name={action.icon} size={20} />
                     </div>
-                    <Tooltip title={action.name} mouseEnterDelay={0.2}>
-                        <Text strong className="ac-name">{action.name}</Text>
-                    </Tooltip>
+                    <div className="ac-name">{action.name}</div>
                 </div>
                 <Dropdown
                     menu={{
@@ -71,14 +70,12 @@ export default function ActionCard({ action, onAction }: ActionCardProps) {
 
             {/* Row 3: Description */}
             <div className="ac-body">
-                <Tooltip title={action.description} mouseEnterDelay={0.2} placement="top">
-                    <Paragraph
-                        className="ac-description"
-                        ellipsis={{ rows: 2 }}
-                    >
-                        {action.description || <span className="ac-empty-desc">No description available</span>}
-                    </Paragraph>
-                </Tooltip>
+                <Paragraph
+                    className="ac-description"
+                    ellipsis={{ rows: 2, tooltip: action.description ? { title: action.description, mouseEnterDelay: 0.2, placement: "top" } : false }}
+                >
+                    {action.description || <span className="ac-empty-desc">No description available</span>}
+                </Paragraph>
             </div>
 
             {/* Footer: Capability & Category + Tags */}
@@ -86,7 +83,7 @@ export default function ActionCard({ action, onAction }: ActionCardProps) {
                 <div className="ac-meta-section">
                     <Tooltip title={`Capability: ${action.capability || 'General'}`}>
                         <div className="ac-meta-pill ac-meta-pill--cap">
-                            <DynamicLucideIcon name={action.capability_icon || 'Boxes'} size={11} />
+                            <DynamicLucideIcon name={action.capability_icon || 'Boxes'} size={11} color={getCapabilityColor(action.capability)} />
                             <span>{action.capability || 'General'}</span>
                         </div>
                     </Tooltip>
@@ -95,7 +92,7 @@ export default function ActionCard({ action, onAction }: ActionCardProps) {
                 <div className="ac-right-footer-group">
                     <Tooltip title={`Category: ${action.category || 'Common'}`}>
                         <div className="ac-meta-pill ac-meta-pill--cat">
-                            <DynamicLucideIcon name={action.category_icon || 'Layout'} size={11} />
+                            <DynamicLucideIcon name={action.category_icon || 'Layout'} size={11} color={getCategoryColor(action.category)} />
                             <span>{action.category || 'Common'}</span>
                         </div>
                     </Tooltip>

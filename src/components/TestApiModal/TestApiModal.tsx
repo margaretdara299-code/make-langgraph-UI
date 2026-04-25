@@ -19,30 +19,16 @@ export default function TestApiModal({
 
     // Attempt to determine success purely from status or testState
     const isSuccess = testState === 'success' || (result.status >= 200 && result.status < 300) || result.status === 'success';
-    const statusColor = isSuccess ? '#10b981' : (testState === 'error' ? '#ef4444' : '#f59e0b');
+    const statusColor = isSuccess ? 'var(--color-success)' : (testState === 'error' ? 'var(--color-error)' : 'var(--color-warning)');
 
     const renderJson = (data: any) => {
         if (testState === 'loading') {
-            return <Text style={{ padding: '16px', display: 'block', color: '#cbd5e1' }}>Executing request...</Text>;
+            return <Text className="tam-loading-text">Executing request...</Text>;
         }
-        if (!data) return <Text style={{ padding: '16px', display: 'block', color: '#64748b' }}>No content available</Text>;
+        if (!data) return <Text className="tam-empty-text">No content available</Text>;
         const content = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
         return (
-            <pre className="custom-scrollbar" style={{
-                margin: 0,
-                padding: '16px',
-                fontSize: 'var(--text-sm)',
-                lineHeight: '1.6',
-                background: 'transparent',
-                borderRadius: '12px',
-                overflow: 'auto',
-                height: '100%',
-                fontFamily: 'var(--ant-font-family-mono, monospace)',
-                color: '#cbd5e1',
-                border: 'none',
-                whiteSpace: 'pre',
-                wordWrap: 'normal'
-            }}>
+            <pre className="custom-scrollbar tam-response-pre">
                 {content}
             </pre>
         );
@@ -51,7 +37,7 @@ export default function TestApiModal({
     return (
         <Modal
             className="test-api-modal"
-            title={<span style={{ fontWeight: 700, fontSize: 'var(--text-base)', color: '#1e293b' }}>Response Details</span>}
+            title={<span className="tam-modal-title">Response Details</span>}
             open={isOpen}
             onCancel={onClose}
             footer={null}
@@ -60,72 +46,49 @@ export default function TestApiModal({
             centered
             destroyOnHidden
             getContainer={() => document.body}
-            styles={{ body: { padding: '0 24px 24px 24px' } }}
+
         >
-            <div style={{ marginTop: 20 }}>
+            <div className="tam-content-wrapper">
                 <Tabs
                     defaultActiveKey="response"
                     size="small"
-                    style={{ marginTop: 0 }}
+                    className="tam-tabs"
                     tabBarExtraContent={
-                        <Space size={16} style={{ marginBottom: 6 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <div style={{
-                                    width: '6px',
-                                    height: '6px',
-                                    borderRadius: '50%',
-                                    background: statusColor
-                                }} />
-                                <Text style={{ fontSize: 'var(--text-sm)', color: '#64748b', fontWeight: 500 }}>
-                                    Status: <span style={{ color: statusColor, fontWeight: 700 }}>{result?.status || (testState === 'loading' ? 'PENDING' : (testState === 'error' ? 'ERROR' : 'UNKNOWN'))}</span>
+                        <Space size={16} className="tam-tab-meta">
+                            <div className="tam-status-row">
+                                <div className="tam-status-dot" style={{ '--status-color': statusColor } as React.CSSProperties} />
+                                <Text className="tam-status-text">
+                                    Status: <span className="tam-status-value" style={{ '--status-color': statusColor } as React.CSSProperties}>{result?.status || (testState === 'loading' ? 'PENDING' : (testState === 'error' ? 'ERROR' : 'UNKNOWN'))}</span>
                                 </Text>
                             </div>
-                            <div style={{ width: '1px', height: '12px', background: '#e2e8f0' }} />
-                            <Text style={{ fontSize: 'var(--text-xs)', color: '#94a3b8' }}>
-                                Time: <span style={{ color: '#475569', fontWeight: 600 }}>{result?.latency || result?.time || '0'} ms</span>
+                            <div className="tam-divider-vertical" />
+                            <Text className="tam-latency-text">
+                                Time: <span className="tam-latency-value">{result?.latency || result?.time || '0'} ms</span>
                             </Text>
                         </Space>
                     }
                 >
                     <Tabs.TabPane
-                        tab={<span style={{ fontSize: 'var(--text-sm)', fontWeight: 600 }}>Body</span>}
+                        tab={<span className="tam-tab-label">Body</span>}
                         key="response"
                     >
-                        <div style={{
-                            height: '450px',
-                            overflow: 'hidden',
-                            border: '1px solid #1e293b',
-                            borderRadius: 12,
-                            background: '#0f172a'
-                        }}>
+                        <div className="tam-code-pane">
                             {renderJson(result?.data || result?.body || (result && Object.keys(result).length > 0 ? result : null))}
                         </div>
                     </Tabs.TabPane>
                     <Tabs.TabPane
-                        tab={<span style={{ fontSize: 'var(--text-sm)', fontWeight: 600 }}>Headers</span>}
+                        tab={<span className="tam-tab-label">Headers</span>}
                         key="resp-headers"
                     >
-                        <div style={{
-                            height: '450px',
-                            overflow: 'hidden',
-                            border: '1px solid #1e293b',
-                            borderRadius: 12,
-                            background: '#0f172a'
-                        }}>
+                        <div className="tam-code-pane">
                             {renderJson(result?.headers)}
                         </div>
                     </Tabs.TabPane>
                     <Tabs.TabPane
-                        tab={<span style={{ fontSize: 'var(--text-sm)', fontWeight: 600 }}>Request Payload</span>}
+                        tab={<span className="tam-tab-label">Request Payload</span>}
                         key="request-payload"
                     >
-                        <div style={{
-                            height: '450px',
-                            overflow: 'hidden',
-                            border: '1px solid #1e293b',
-                            borderRadius: 12,
-                            background: '#0f172a'
-                        }}>
+                        <div className="tam-code-pane">
                             {renderJson(testInputPayload)}
                         </div>
                     </Tabs.TabPane>

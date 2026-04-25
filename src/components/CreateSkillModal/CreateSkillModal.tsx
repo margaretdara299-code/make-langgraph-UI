@@ -69,26 +69,26 @@ export default function CreateSkillModal({ isOpen, onClose, onCreated }: CreateS
             className="create-skill-modal-v2"
         >
             <div className="modal-header-neat">
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className="csm-header-inner">
                     <span className="modal-header-title">Create New Skill</span>
                     <span className="modal-header-subtitle">Give your skill a name and description to get started.</span>
                 </div>
             </div>
 
-            <div className="create-skill__body" style={{  padding: '0 4px' }}>
+            <div className="create-skill__body csm-body">
                 <SkillDetailsForm form={form} />
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 24, padding: '0 4px' }}>
+            <div className="csm-footer">
                 <Space size={12}>
-                    <Button onClick={handleClose} style={{ borderRadius: '4px', height: '36px', fontWeight: 600 }}>
+                    <Button onClick={handleClose} className="csm-btn">
                         Cancel
                     </Button>
                     <Button 
                         type="primary" 
                         onClick={handleCreate} 
                         loading={isSubmitting}
-                        style={{ borderRadius: '4px', height: '36px', fontWeight: 600, padding: '0 24px' }}
+                        className="csm-btn csm-btn--primary"
                     >
                         Create Skill
                     </Button>

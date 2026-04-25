@@ -6,6 +6,7 @@
 import { Form, Input, Select, Button, Space } from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { API_METHOD_OPTIONS, API_BODY_MODE_OPTIONS } from '@/constants';
+import './ApiConnectorFields.css';
 
 /** Reusable dynamic key-value pair list */
 function KeyValueList({ name, label }: { name: (string | number)[]; label: string }) {
@@ -15,12 +16,12 @@ function KeyValueList({ name, label }: { name: (string | number)[]; label: strin
                 {(fields, { add, remove }) => (
                     <>
                         {fields.map(({ key, name: fieldName, ...restField }) => (
-                            <Space key={key} align="baseline" style={{ display: 'flex', marginBottom: 8 }}>
+                            <Space key={key} align="baseline" className="acf-kv-row">
                                 <Form.Item
                                     {...restField}
                                     name={[fieldName, 'key']}
                                     rules={[{ required: true, message: 'Key is required' }]}
-                                    style={{ marginBottom: 0 }}
+                                    className="acf-kv-field"
                                 >
                                     <Input placeholder="Key" />
                                 </Form.Item>
@@ -28,7 +29,7 @@ function KeyValueList({ name, label }: { name: (string | number)[]; label: strin
                                     {...restField}
                                     name={[fieldName, 'value']}
                                     rules={[{ required: true, message: 'Value is required' }]}
-                                    style={{ marginBottom: 0 }}
+                                    className="acf-kv-field"
                                 >
                                     <Input placeholder="Value" />
                                 </Form.Item>
@@ -100,7 +101,7 @@ export default function ApiConnectorFields() {
                 <Input.TextArea
                     placeholder='e.g. {"status": "active"}'
                     rows={4}
-                    style={{ fontFamily: 'monospace' }}
+                    className="acf-body-textarea"
                 />
             </Form.Item>
         </>

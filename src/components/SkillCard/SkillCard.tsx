@@ -7,10 +7,12 @@ import { Typography, Tooltip, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import {
     MoreOutlined,
+    PartitionOutlined,
 } from '@ant-design/icons';
 import { Tag as LucideTag, Layers } from 'lucide-react';
 import StatusPill from '@/components/StatusPill/StatusPill';
 import { getMenuItems, getTagStyle } from '@/utils';
+import { getCategoryColor } from '@/utils/colorHelper';
 import type { SkillCardProps } from '@/interfaces';
 import './SkillCard.css';
 
@@ -29,9 +31,12 @@ export default function SkillCard({ skill, onClick, onAction }: SkillCardProps) 
         >
             {/* Row 1: Name + Actions */}
             <div className="sc-header">
-                <Tooltip title={skill.name} mouseEnterDelay={0.2}>
-                    <Text strong className="sc-name">{skill.name}</Text>
-                </Tooltip>
+                <div className="sc-title-group">
+                    <div className="ts-icon-container">
+                        <PartitionOutlined className="sc-partition-icon" />
+                    </div>
+                    <div className="sc-name">{skill.name}</div>
+                </div>
                 <Dropdown
                     menu={{ items: getMenuItems(skill.status, skill.id, skill.latestVersionId), onClick: handleMenuClick }}
                     trigger={['click']}
@@ -54,21 +59,19 @@ export default function SkillCard({ skill, onClick, onAction }: SkillCardProps) 
 
             {/* Row 4: Description */}
             <div className="sc-body">
-                <Tooltip title={skill.description || 'No description available'} mouseEnterDelay={0.2} placement="top">
-                    <Paragraph
-                        className="sc-description"
-                        ellipsis={{ rows: 2 }}
-                    >
-                        {skill.description || <span className="sc-empty-desc">No description provided</span>}
-                    </Paragraph>
-                </Tooltip>
+                <Paragraph
+                    className="sc-description"
+                    ellipsis={{ rows: 2, tooltip: skill.description ? { title: skill.description, mouseEnterDelay: 0.2, placement: "top" } : false }}
+                >
+                    {skill.description || <span className="sc-empty-desc">No description provided</span>}
+                </Paragraph>
             </div>
 
             {/* Footer: Capabilities (Category) + Tags */}
             <div className="sc-footer">
                 <Tooltip title={`Category: ${skill.category || 'General'}`} mouseEnterDelay={0.2}>
                     <div className="sc-cap-section">
-                        <Layers size={12} strokeWidth={2.5} color="var(--accent)" />
+                        <Layers size={12} strokeWidth={2.5} color={getCategoryColor(skill.category || 'General')} />
                         <span className="sc-cap-label">{skill.category || 'General'}</span>
                     </div>
                 </Tooltip>
@@ -81,9 +84,9 @@ export default function SkillCard({ skill, onClick, onAction }: SkillCardProps) 
                                 key={tag}
                                 className="sc-mini-tag"
                                 style={{
-                                    backgroundColor: style.bg,
-                                    color: style.color,
-                                }}
+                                    '--tag-bg': style.bg,
+                                    '--tag-color': style.color,
+                                } as React.CSSProperties}
                             >
                                 <LucideTag size={9} strokeWidth={2.5} />
                                 {tag}

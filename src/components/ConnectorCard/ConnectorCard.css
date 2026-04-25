@@ -33,7 +33,7 @@
 }
 
 .connector-card__icon {
-    font-size: 24px;
+    font-size: var(--text-2xl);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -46,7 +46,7 @@
 
 .connector-card__menu-trigger {
     cursor: pointer;
-    font-size: 24px;
+    font-size: var(--text-2xl);
     color: inherit;
     padding: 4px;
     border-radius: 4px;
@@ -70,7 +70,7 @@
 
 .connector-card__title {
     margin: 0 !important;
-    font-size: 16px !important;
+    font-size: var(--text-lg) !important;
     font-weight: 600 !important;
 }
 
@@ -79,7 +79,7 @@
 }
 
 .connector-card__description .ant-typography {
-    font-size: 14px;
+    font-size: var(--text-sm);
     line-height: 1.5;
 }
 

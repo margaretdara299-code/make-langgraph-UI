@@ -38,12 +38,13 @@ export default function NodePaletteItem({ action }: NodePaletteItemProps) {
             className="node-palette-item"
             draggable
             onDragStart={handleDragStart}
+            style={{ '--item-color': itemColor } as React.CSSProperties}
         >
-            <span className="node-palette-item__icon" style={{ color: itemColor }}>
+            <span className="node-palette-item__icon">
                 <IconRenderer iconName={action.icon} size={15} fallback="⚡" />
             </span>
 
-            <span className="node-palette-item__name" style={{ color: itemColor }}>{action.name}</span>
+            <span className="node-palette-item__name">{action.name}</span>
         </div>
     );
 }

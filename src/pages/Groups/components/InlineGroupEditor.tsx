@@ -61,13 +61,13 @@ export const InlineGroupEditor = ({ group, onUpdated, onCancel }: InlineGroupEdi
     };
 
     return (
-        <div className="group-card editing-group-card reveal-up" style={{ padding: '0', border: '1.5px solid var(--accent, #6366f1)', boxSizing: 'border-box' }}>
-            <div className="group-card-header" style={{ padding: '8px 12px', background: 'var(--bg-main)', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div className="group-card-icon" style={{ background: 'var(--accent)', color: '#fff', width: '32px', height: '32px' }}>
+        <div className="group-card editing-group-card reveal-up ige-root">
+            <div className="group-card-header ige-header">
+                <div className="ige-header-left">
+                    <div className="group-card-icon ige-icon">
                         <DynamicLucideIcon name={icon} size={16} />
                     </div>
-                    <span style={{ fontWeight: 700, fontSize: '13px', color: 'var(--text-main)' }}>Editing Group</span>
+                    <span className="ige-title">Editing Group</span>
                 </div>
 
                 <Space size={4}>
@@ -77,44 +77,44 @@ export const InlineGroupEditor = ({ group, onUpdated, onCancel }: InlineGroupEdi
                         icon={<CheckOutlined />} 
                         onClick={handleUpdate} 
                         loading={loading} 
-                        style={{ borderRadius: '6px', width: '32px', height: '28px' }}
+                        className="ige-action-btn"
                     />
                     <Button 
                         size="small"
                         icon={<CloseOutlined />} 
                         onClick={onCancel} 
-                        style={{ borderRadius: '6px', width: '32px', height: '28px' }}
+                        className="ige-action-btn"
                     />
                 </Space>
             </div>
             
-            <div className="group-card-body" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                    <div className="group-icon-picker-inline" style={{ padding: '0 4px', position: 'relative' }}>
-                        <div style={{ border: errors.icon ? '1px solid #ef4444' : 'none', borderRadius: '8px', display: 'flex' }}>
+            <div className="group-card-body ige-body">
+                <div className="ige-fields-row">
+                    <div className="group-icon-picker-inline ige-picker-wrap">
+                        <div className={`ige-picker-border ${errors.icon ? 'ige-picker-border--error' : ''}`}>
                             <LucideIconPicker value={icon} onChange={(val) => { setIcon(val); if (errors.icon) setErrors(prev => ({ ...prev, icon: '' })); }} />
                         </div>
-                        {errors.icon && <div className="validation-msg-tiny" style={{ position: 'absolute', top: '100%', left: 0, whiteSpace: 'nowrap' }}>Required</div>}
+                        {errors.icon && <div className="validation-msg-tiny ige-validation-msg">Required</div>}
                     </div>
-                    <div style={{ flex: 1.5 }}>
+                    <div className="ige-name-field">
 
                         <Input 
                             variant="filled"
                             placeholder="Group Name" 
                             size="small"
-                            style={{ width: '100%', fontWeight: 600, height: '32px' }} 
+                            className="ige-input-name"
                             status={errors.name ? 'error' : ''}
                             value={name}
                             onChange={e => { setName(e.target.value); if (errors.name) setErrors(prev => ({ ...prev, name: '' })); }}
                         />
                         {errors.name && <div className="validation-msg-tiny">{errors.name}</div>}
                     </div>
-                    <div style={{ flex: 1 }}>
+                    <div className="ige-key-field">
                         <Input 
                             variant="filled"
                             placeholder="KEY" 
                             size="small"
-                            style={{ width: '100%', textTransform: 'uppercase', fontFamily: 'var(--font-mono)', fontSize: '11px', height: '32px' }} 
+                            className="ige-input-key"
                             status={errors.key ? 'error' : ''}
                             value={key}
                             onChange={e => { setKey(e.target.value); if (errors.key) setErrors(prev => ({ ...prev, key: '' })); }}
@@ -124,7 +124,7 @@ export const InlineGroupEditor = ({ group, onUpdated, onCancel }: InlineGroupEdi
                 </div>
 
                 
-                <div style={{ marginTop: '8px' }}>
+                <div className="ige-description-wrap">
                     <Input.TextArea 
                         variant="filled"
                         size="small"
@@ -132,7 +132,7 @@ export const InlineGroupEditor = ({ group, onUpdated, onCancel }: InlineGroupEdi
                         value={description}
                         onChange={e => setDescription(e.target.value)}
                         autoSize={{ minRows: 2, maxRows: 4 }}
-                        style={{ borderRadius: '6px', fontSize: '13px', fontFamily: 'var(--font-sans)', color: 'var(--text-main)', padding: '8px 12px' }}
+                        className="ige-textarea"
                     />
                 </div>
             </div>

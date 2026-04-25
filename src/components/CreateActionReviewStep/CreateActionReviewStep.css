@@ -20,3 +20,89 @@
 .review-payload-scroll:hover::-webkit-scrollbar-thumb {
     background: #334155;
 }
+
+/* =====================================================
+   Extracted from CreateActionReviewStep inline styles
+   ===================================================== */
+
+.review-root {
+    padding: 0 4px;
+}
+
+.review-overview-card {
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+    margin-bottom: 20px !important;
+}
+
+.review-card-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.review-card-title-text {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.review-mode-tag {
+    font-size: 10px !important;
+    border-radius: 4px !important;
+    margin: 0 !important;
+    font-weight: 700 !important;
+}
+
+.review-payload-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.review-payload-label {
+    font-size: var(--text-xs) !important;
+    color: #94a3b8 !important;
+    letter-spacing: 0.02em;
+}
+
+.review-descriptions .ant-descriptions-item-label {
+    color: var(--text-subtle) !important;
+    font-size: var(--text-xs) !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.02em !important;
+}
+
+.review-descriptions .ant-descriptions-item-content {
+    color: var(--text-main) !important;
+    font-size: var(--text-sm) !important;
+    font-weight: 500 !important;
+    padding-top: 4px !important;
+}
+
+.review-json-tag {
+    font-size: 10px !important;
+    border-radius: 4px !important;
+    margin: 0 !important;
+}
+
+.review-code-card {
+    background: #0f172a !important;
+    border-radius: 12px !important;
+    border: 1px solid #1e293b !important;
+}
+
+.review-payload-scroll {
+    max-height: 310px;
+    overflow-y: auto;
+}
+
+.review-payload-pre {
+    margin: 0;
+    font-size: 12px;
+    color: #cbd5e1;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+    font-family: var(--font-mono);
+}

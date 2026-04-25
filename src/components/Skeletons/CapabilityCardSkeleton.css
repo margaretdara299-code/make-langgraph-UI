@@ -67,3 +67,41 @@
     background: linear-gradient(90deg, var(--border-light) 25%, #e5e7eb 37%, var(--border-light) 63%) !important;
     background-size: 400% 100% !important;
 }
+
+/* Extracted from inline styles */
+.skeleton-premium-icon {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 10px !important;
+}
+
+.skeleton-menu-trigger {
+    width: 20px !important;
+    height: 20px !important;
+    border-radius: 4px !important;
+}
+
+.skeleton-cap-name {
+    width: 65% !important;
+    height: 18px !important;
+    margin-bottom: 8px !important;
+}
+
+/* Extracted from inline styles for GroupCardSkeleton parity */
+.skeleton-premium-icon {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 10px !important;
+}
+
+.skeleton-menu-trigger {
+    width: 20px !important;
+    height: 20px !important;
+    border-radius: 4px !important;
+}
+
+.skeleton-cap-name {
+    width: 65% !important;
+    height: 18px !important;
+    margin-bottom: 8px !important;
+}

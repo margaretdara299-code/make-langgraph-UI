@@ -190,7 +190,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: var(--text-xl);
     transition: all 0.2s ease;
 }
 
@@ -258,6 +258,8 @@
 
 /* ── Middle + Right Panes ── */
 .exec-debugger-io {
+    width: var(--io-width, 550px);
+    flex: 0 0 var(--io-width, 550px);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -387,7 +389,7 @@
 }
 
 .exec-debugger-pane__header-icon {
-    font-size: 16px;
+    font-size: var(--text-lg);
 }
 
 .exec-debugger-pane__header-icon--input {
@@ -497,7 +499,7 @@
 }
 
 .exec-step-card__message {
-    font-size: 11px;
+    font-size: var(--text-xs);
     font-weight: 600;
     color: var(--text-main);
     margin-bottom: 8px;
@@ -505,7 +507,7 @@
 
 .exec-step-card__json {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: var(--text-xs);
     line-height: 1.5;
     color: var(--text-muted);
     white-space: pre-wrap;
@@ -551,7 +553,7 @@
 }
 
 .exec-debugger-pane__empty-icon {
-    font-size: 32px;
+    font-size: var(--text-3xl);
     opacity: 0.4;
 }
 
@@ -599,4 +601,14 @@
     .exec-debugger-io__scroll {
         background: none;
     }
+}
+
+.edm-header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.edm-canvas-inner {
+    flex: 1 !important;
 }

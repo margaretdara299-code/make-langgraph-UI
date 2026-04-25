@@ -63,7 +63,7 @@ export const InlineVariableAdder = ({ groupName, groupKey, onAdded, onCancel }: 
         <div className="variable-list-item postman-add-row adder-row">
             <div className="var-metadata-row-table">
                 <div className="var-meta-column">
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <div className="iva-name-col">
                         <Input 
                             variant="filled" 
                             size="small" 
@@ -71,16 +71,16 @@ export const InlineVariableAdder = ({ groupName, groupKey, onAdded, onCancel }: 
                             value={name} 
                             status={errors.name ? 'error' : ''}
                             onChange={e => { setName(e.target.value); if (errors.name) setErrors(prev => ({ ...prev, name: '' })); }} 
-                            style={{ fontSize: '11px' }}
+                            className="iva-input-name"
                         />
-                        {errors.name && <div className="validation-msg-tiny" style={{ marginTop: '-2px', marginBottom: '4px' }}>{errors.name}</div>}
+                        {errors.name && <div className="validation-msg-tiny iva-error-msg">{errors.name}</div>}
                         <Input 
                             variant="filled" 
                             size="small" 
                             placeholder="KEY" 
                             value={key} 
                             onChange={e => setKey(e.target.value)} 
-                            style={{ fontSize: '10px', textTransform: 'uppercase', fontFamily: 'var(--font-mono)' }}
+                            className="iva-input-key"
                         />
                     </div>
                 </div>
@@ -90,7 +90,7 @@ export const InlineVariableAdder = ({ groupName, groupKey, onAdded, onCancel }: 
                         size="small" 
                         value={type} 
                         onChange={setType} 
-                        style={{ width: '100%', fontSize: '10px' }} 
+                        className="iva-type-select" 
                         options={[
                             { label: 'String', value: 'string' },
                             { label: 'Number', value: 'number' },
@@ -109,25 +109,25 @@ export const InlineVariableAdder = ({ groupName, groupKey, onAdded, onCancel }: 
                         onChange={e => { setValue(e.target.value); if (errors.value) setErrors(prev => ({ ...prev, value: '' })); }} 
                         onPressEnter={e => { if (!e.shiftKey) { e.preventDefault(); handleAdd(); } }} 
                         autoSize={{ minRows: 1, maxRows: 4 }}
-                        style={{ width: '100%', fontSize: '12px', fontFamily: 'var(--font-mono)' }} 
+                        className="iva-input-value" 
                     />
                     {errors.value && <div className="validation-msg-tiny">{errors.value}</div>}
                 </div>
             </div>
             
-            <div className="variable-item-actions" style={{ marginLeft: '12px', opacity: 1 }}>
+            <div className="variable-item-actions iva-actions">
                 <Space size={4}>
                     <Button 
                         type="primary" 
                         size="small"
-                        icon={<CheckOutlined style={{ fontSize: '12px' }} />} 
+                        icon={<CheckOutlined className="iva-icon-sm" />} 
                         onClick={handleAdd} 
                         loading={loading} 
                         className="inline-save-btn"
                     />
                     <Button 
                         size="small"
-                        icon={<CloseOutlined style={{ fontSize: '12px' }} />} 
+                        icon={<CloseOutlined className="iva-icon-sm" />} 
                         onClick={onCancel} 
                         className="inline-cancel-btn"
                     />

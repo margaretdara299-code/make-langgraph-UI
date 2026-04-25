@@ -247,3 +247,10 @@
     background: var(--text-subtle) !important;
 }
 
+/* ── Dynamic left position via CSS custom property ─────────────
+   --handle-left is injected at runtime: style={{ '--handle-left': '...' }}.
+   React Flow positions handles; we override left to spread them evenly.
+──────────────────────────────────────────────────────────────── */
+.decision-node__source-handle {
+    left: var(--handle-left, 50%) !important;
+}

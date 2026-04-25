@@ -123,7 +123,7 @@ const ParameterSection: React.FC<ParameterSectionProps> = ({ name, form, config 
             )}
 
             {isBody && bodyType === 'raw' && (
-                <Form.Item name={`${name}_raw`} style={{ marginBottom: 0 }}>
+                <Form.Item name={`${name}_raw`} className="request-form-item-no-margin">
                     <Input.TextArea
                         placeholder='{"key": "value"}'
                         rows={8}
@@ -162,7 +162,7 @@ const ParameterSection: React.FC<ParameterSectionProps> = ({ name, form, config 
                                                         type="text"
                                                         danger
                                                         size="small"
-                                                        icon={<DeleteOutlined style={{ fontSize: '12px' }} />}
+                                                        icon={<DeleteOutlined className="request-icon-sm" />}
                                                         onClick={() => remove(fieldName)}
                                                         className="request-delete-btn"
                                                     />
@@ -176,7 +176,7 @@ const ParameterSection: React.FC<ParameterSectionProps> = ({ name, form, config 
                                     type="link"
                                     onClick={() => add({ key: '', value: '' })}
                                     size="small"
-                                    icon={<PlusOutlined style={{ fontSize: '12px' }} />}
+                                    icon={<PlusOutlined className="request-icon-sm" />}
                                     className="request-add-btn"
                                 >
                                     Add Row
@@ -354,12 +354,12 @@ export default function CreateActionConfigStep({ draft, setDraft, form: external
                                     />
                                 </Form.Item>
 
-                                <div className="request-url-slot" style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                                    <span style={{ color: '#ef4444', marginRight: '4px', fontSize: '14px', fontWeight: 'bold', display: watchedUrl ? 'none' : 'inline' }}>*</span>
+                                <div className="request-url-slot">
+                                    <span className={`request-url-required-star ${watchedUrl ? 'is-hidden' : ''}`}>*</span>
                                     <Form.Item
                                         name="url"
                                         rules={[{ required: true, message: 'URL is required.' }]}
-                                        style={{ position: 'relative', width: '100%', marginBottom: 0 }}
+                                        className="request-url-form-item"
                                     >
                                         <Input
                                             size="large"
@@ -406,22 +406,22 @@ export default function CreateActionConfigStep({ draft, setDraft, form: external
                         </div>
 
                         {/* Fallback Message moved here */}
-                        <div className="request-accordion-shell" style={{ marginTop: '12px' }}>
+                        <div className="request-accordion-shell">
                             <Collapse
                                 ghost
                                 items={[{
                                     key: 'fallback',
                                     label: (
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            <span className="request-side-label" style={{ marginBottom: 0 }}>Fallback Config</span>
-                                            <Text type="secondary" style={{ fontSize: '11px', fontWeight: 400 }}>(Display if request fails)</Text>
+                                        <div className="request-fallback-label-row">
+                                            <span className="request-side-label request-side-label--inline">Fallback Config</span>
+                                            <Text type="secondary" className="request-fallback-hint">(Display if request fails)</Text>
                                         </div>
                                     ),
                                     children: (
-                                        <div style={{ padding: '0 4px' }}>
+                                        <div className="request-fallback-body">
                                             <Form.Item
                                                 name="fallback_message"
-                                                style={{ marginBottom: 0 }}
+                                                className="request-form-item-no-margin"
                                             >
                                                 <Input.TextArea
                                                     placeholder="e.g. Service unavailable..."

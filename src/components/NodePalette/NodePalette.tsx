@@ -12,6 +12,8 @@ import SubFlowNodeItem from './SubFlowNodeItem';
 import DecisionNodeItem from './DecisionNodeItem';
 import EndNodeItem from './EndNodeItem';
 import ErrorNodeItem from './ErrorNodeItem';
+import QueueNodeItem from './QueueNodeItem';
+import { ParallelSplitItem, ParallelJoinItem } from './ParallelNodeItems';
 import IconRenderer from '../IconRenderer/IconRenderer';
 import './NodePalette.css';
 
@@ -36,7 +38,7 @@ const TreeTitle: React.FC<{ node: PaletteLeafNode & { type: string; category: st
   return (
     <div className="node-library-item-wrapper" draggable onDragStart={onDragStart}>
       <div className="node-library-item">
-        <div className="nli-icon" style={{ background: colors.bg }}>
+        <div className="nli-icon" style={{ '--nli-bg': colors.bg } as React.CSSProperties}>
           <IconRenderer
             iconName={node.icon}
             size={12}
@@ -181,7 +183,7 @@ export default function NodePalette() {
               )}
 
               {!search && (
-                <div className="node-group" style={{ marginBottom: 0 }}>
+                <div className="node-group node-group--first">
                   <div className="antd-tree-wrapper">
 
                     {/* ════ COMMON ════ */}
@@ -190,6 +192,7 @@ export default function NodePalette() {
                     <div className={`acc-panel ${openCat === 'cat-common' ? 'open' : ''}`}>
                       <div className="np-depth1 np-leaf">
                         <StartNodeItem /><SubFlowNodeItem /><DecisionNodeItem />
+                        <QueueNodeItem /><ParallelSplitItem /><ParallelJoinItem />
                         <EndNodeItem /><ErrorNodeItem />
                       </div>
                     </div>

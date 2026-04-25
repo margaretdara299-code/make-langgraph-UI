@@ -49,7 +49,7 @@ export default function Sidebar({
 
       <div className="sidebar-user-section">
         <ThemeToggle collapsed={collapsed} />
-        <div className="user-info-row" style={{ flexDirection: collapsed ? 'column' : 'row', gap: '12px' }}>
+        <div className={`user-info-row ${collapsed ? 'user-info-row--collapsed' : ''}`}>
           {collapsed && (
             <button
               className="minimal-logout-btn"

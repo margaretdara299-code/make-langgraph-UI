@@ -1,0 +1,13 @@
+/* ApiConnectorFields.css */
+.acf-kv-row {
+    display: flex !important;
+    margin-bottom: 8px !important;
+}
+
+.acf-kv-field {
+    margin-bottom: 0 !important;
+}
+
+.acf-body-textarea {
+    font-family: monospace !important;
+}

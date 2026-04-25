@@ -1,39 +1,39 @@
 import { Form, Input, Select, Button, Typography, Tag, Divider, Tooltip, AutoComplete } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { GitBranch, Trash2, Plus, Info } from 'lucide-react';
+import { GitBranch, Trash2, Plus, Info, Split } from 'lucide-react';
 
 const { Text } = Typography;
 
 // ── Branch accent colors — matched to handle slot order ──────────────────
 const BRANCH_COLORS = [
-    { stroke: '#EA580C', bg: '#FFF7ED', light: 'rgba(234,88,12,0.08)'  }, // orange
-    { stroke: '#2563EB', bg: '#EFF6FF', light: 'rgba(37,99,235,0.08)'  }, // blue
-    { stroke: '#059669', bg: '#ECFDF5', light: 'rgba(5,150,105,0.08)'  }, // green
+    { stroke: '#EA580C', bg: '#FFF7ED', light: 'rgba(234,88,12,0.08)' }, // orange
+    { stroke: '#2563EB', bg: '#EFF6FF', light: 'rgba(37,99,235,0.08)' }, // blue
+    { stroke: '#059669', bg: '#ECFDF5', light: 'rgba(5,150,105,0.08)' }, // green
     { stroke: '#7C3AED', bg: '#F5F3FF', light: 'rgba(124,58,237,0.08)' }, // purple
     { stroke: '#DB2777', bg: '#FDF2F8', light: 'rgba(219,39,119,0.08)' }, // pink
-    { stroke: '#0369A1', bg: '#F0F9FF', light: 'rgba(3,105,161,0.08)'  }, // sky
+    { stroke: '#0369A1', bg: '#F0F9FF', light: 'rgba(3,105,161,0.08)' }, // sky
 ];
 const branchColor = (index: number) => BRANCH_COLORS[index % BRANCH_COLORS.length];
 
 // ── Operators ─────────────────────────────────────────────────────────────
 const OPERATORS = [
-    { value: '==',          label: '== Equals'              },
-    { value: '!=',          label: '!= Not Equals'          },
-    { value: '>',           label: '>  Greater Than'        },
-    { value: '<',           label: '<  Less Than'           },
-    { value: '>=',          label: '>= Greater or Equal'    },
-    { value: '<=',          label: '<= Less or Equal'       },
-    { value: 'contains',    label: 'Contains'               },
-    { value: 'not_contains', label: 'Not Contains'          },
-    { value: 'starts_with', label: 'Starts With'            },
-    { value: 'ends_with',   label: 'Ends With'              },
-    { value: 'in',          label: 'In List'                },
-    { value: 'not_in',      label: 'Not In List'            },
-    { value: 'is_empty',    label: 'Is Empty'               },
-    { value: 'is_not_empty', label: 'Is Not Empty'          },
-    { value: 'exists',      label: 'Exists (not null)'      },
-    { value: 'is_true',     label: 'Is True'                },
-    { value: 'is_false',    label: 'Is False'               },
+    { value: '==', label: '== Equals' },
+    { value: '!=', label: '!= Not Equals' },
+    { value: '>', label: '>  Greater Than' },
+    { value: '<', label: '<  Less Than' },
+    { value: '>=', label: '>= Greater or Equal' },
+    { value: '<=', label: '<= Less or Equal' },
+    { value: 'contains', label: 'Contains' },
+    { value: 'not_contains', label: 'Not Contains' },
+    { value: 'starts_with', label: 'Starts With' },
+    { value: 'ends_with', label: 'Ends With' },
+    { value: 'in', label: 'In List' },
+    { value: 'not_in', label: 'Not In List' },
+    { value: 'is_empty', label: 'Is Empty' },
+    { value: 'is_not_empty', label: 'Is Not Empty' },
+    { value: 'exists', label: 'Exists (not null)' },
+    { value: 'is_true', label: 'Is True' },
+    { value: 'is_false', label: 'Is False' },
 ];
 
 // No-value operators — "Compare With" field hidden for these
@@ -47,22 +47,22 @@ function buildConditionPreview(conditions: any[], matchType: string = 'AND'): st
         .filter(c => c?.field)
         .map(c => {
             const field = c.root_key ? `${c.root_key}.${c.field}` : c.field;
-            const op    = c.operator || '==';
-            const val   = c.value !== undefined && c.value !== '' ? c.value : '?';
+            const op = c.operator || '==';
+            const val = c.value !== undefined && c.value !== '' ? c.value : '?';
 
             if (NO_VALUE_OPS.has(op)) {
-                if (op === 'exists')        return `${field} != null`;
-                if (op === 'is_true')       return `${field} == true`;
-                if (op === 'is_false')      return `${field} == false`;
-                if (op === 'is_empty')      return `${field} == ""`;
-                if (op === 'is_not_empty')  return `${field} != ""`;
+                if (op === 'exists') return `${field} != null`;
+                if (op === 'is_true') return `${field} == true`;
+                if (op === 'is_false') return `${field} == false`;
+                if (op === 'is_empty') return `${field} == ""`;
+                if (op === 'is_not_empty') return `${field} != ""`;
             }
-            if (op === 'contains')     return `"${val}" in ${field}`;
+            if (op === 'contains') return `"${val}" in ${field}`;
             if (op === 'not_contains') return `!("${val}" in ${field})`;
-            if (op === 'starts_with')  return `${field}.startsWith("${val}")`;
-            if (op === 'ends_with')    return `${field}.endsWith("${val}")`;
-            if (op === 'in')           return `${field} in [${val}]`;
-            if (op === 'not_in')       return `!(${field} in [${val}])`;
+            if (op === 'starts_with') return `${field}.startsWith("${val}")`;
+            if (op === 'ends_with') return `${field}.endsWith("${val}")`;
+            if (op === 'in') return `${field} in [${val}]`;
+            if (op === 'not_in') return `!(${field} in [${val}])`;
 
             const needsQuotes = isNaN(Number(val)) && val !== 'true' && val !== 'false';
             return `${field} ${op} ${needsQuotes ? `"${val}"` : val}`;
@@ -93,7 +93,7 @@ const ConditionRow = ({ cField, cIndex, field, removeCond, stateKeyOptions }: an
                             popupMatchSelectWidth={false}
                             options={[
                                 { label: 'AND', value: 'AND' },
-                                { label: 'OR',  value: 'OR'  },
+                                { label: 'OR', value: 'OR' },
                             ]}
                         />
                     </Form.Item>
@@ -108,12 +108,7 @@ const ConditionRow = ({ cField, cIndex, field, removeCond, stateKeyOptions }: an
                         {/* Value Source */}
                         <div className="senior-cond-field-group">
                             <div className="senior-cond-label-row">
-                                <span className="senior-cond-label">
-                                    State Variable
-                                    <span style={{ fontSize: 10, color: '#94a3b8', marginLeft: 4 }}>
-                                        (from Start / Action output)
-                                    </span>
-                                </span>
+                                <span className="senior-cond-label">Value Source <span className="senior-cond-hint">(State Key or Node Key)</span></span>
                                 <Tooltip title="Delete Condition">
                                     <Button
                                         type="text"
@@ -233,46 +228,36 @@ const BranchItem = ({ field, index, remove, stateKeyOptions, form }: any) => {
 
     // Live CEL preview — rebuild whenever anything in this branch changes
     const conditions = form?.getFieldValue(['rules', field.name, 'conditions']) || [];
-    const matchType  = form?.getFieldValue(['rules', field.name, 'match_type']) || 'AND';
-    const preview    = buildConditionPreview(conditions, matchType);
+    const matchType = form?.getFieldValue(['rules', field.name, 'match_type']) || 'AND';
+    const preview = buildConditionPreview(conditions, matchType);
 
     return (
-        <div className="senior-rule-group-container" style={{ display: 'flex', flexDirection: 'column' }}>
-            <div
-                className="senior-rule-group"
-                style={{ borderColor: color.stroke, borderWidth: 1.5 }}
-            >
-                {/* Branch Header */}
-                <div
-                    className="senior-rule-header"
-                    style={{ background: color.light, borderBottom: `1px solid ${color.bg}` }}
-                >
-                    {/* Colored handle indicator */}
-                    <div style={{
-                        width: 10, height: 10, borderRadius: 2,
-                        background: color.stroke, flexShrink: 0,
-                        boxShadow: `0 0 4px ${color.stroke}55`,
-                        transform: 'rotate(45deg)',
-                    }} />
-
-                    <div style={{
-                        fontSize: 10, fontWeight: 700, color: color.stroke,
-                        letterSpacing: '0.04em', flexShrink: 0,
-                    }}>
-                        BRANCH {index + 1}
-                    </div>
-
-                    <div className="branch-name-input-wrap">
-                        <Form.Item {...field} name={[field.name, 'label']} noStyle rules={[{ required: true }]}>
-                            <Input
-                                className="senior-branch-name-header-input"
-                                variant="borderless"
-                                placeholder="Enter branch name…"
-                                style={{ color: color.stroke }}
+        <div className="senior-rule-group-container senior-flex-col">
+            {index > 0 && (
+                <div className="senior-branch-divider">
+                    <div className="senior-divider-line" />
+                    <div className="senior-divider-text">
+                        <Form.Item {...field} name={[field.name, 'branch_match_type']} noStyle initialValue="OR">
+                            <Select
+                                size="small"
+                                className="senior-operator-toggle-select senior-divider-select"
+                                popupMatchSelectWidth={false}
+                                options={[{ label: 'AND', value: 'AND' }, { label: 'OR', value: 'OR' }]}
                             />
                         </Form.Item>
                     </div>
+                    <div className="senior-divider-line" />
+                </div>
+            )}
 
+            <div className="senior-rule-group">
+                <div className="senior-rule-header">
+                    <div className="branch-label">BRANCH {index + 1}</div>
+                    <div className="branch-name-input-wrap">
+                        <Form.Item {...field} name={[field.name, 'label']} noStyle rules={[{ required: true }]}>
+                            <Input className="senior-branch-name-header-input" variant="borderless" placeholder="Enter branch name..." />
+                        </Form.Item>
+                    </div>
                     <Tooltip title="Delete Branch">
                         <Button
                             type="text"
@@ -284,7 +269,7 @@ const BranchItem = ({ field, index, remove, stateKeyOptions, form }: any) => {
                     </Tooltip>
                 </div>
 
-                {/* Conditions */}
+            
                 <div className="senior-rule-content">
                     <Form.List name={[field.name, 'conditions']}>
                         {(condFields, { add: addCond, remove: removeCond }) => (
@@ -326,7 +311,7 @@ const BranchItem = ({ field, index, remove, stateKeyOptions, form }: any) => {
                     </Form.List>
                 </div>
 
-                {/* CEL Preview */}
+ 
                 {preview && (
                     <div style={{
                         padding: '8px 14px 10px',
@@ -387,7 +372,7 @@ export default function DecisionPropertiesPanel({
                     <div className="decision-props__banner-left">
                         <div className="decision-props__banner-title">
                             <div className="decision-props__icon-wrap">
-                                <GitBranch size={14} color="#EA580C" />
+                                <Split size={14} color="var(--accent)" />
                             </div>
                             <span style={{ fontWeight: 700, fontSize: 14, color: '#1e293b' }}>
                                 Decision Rules
@@ -451,8 +436,8 @@ export default function DecisionPropertiesPanel({
                             type="primary"
                             className="senior-add-branch-btn"
                             onClick={() => add({
-                                id:         `branch_${Date.now()}`,
-                                label:      `Branch ${fields.length + 1}`,
+                                id: `branch_${Date.now()}`,
+                                label: `Branch ${fields.length + 1}`,
                                 match_type: 'AND',
                                 conditions: [{ operator: '==' }],
                             })}

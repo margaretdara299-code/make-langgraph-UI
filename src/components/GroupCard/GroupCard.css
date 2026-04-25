@@ -39,7 +39,7 @@
     justify-content: center;
     box-shadow: var(--shadow-subtle);
     border: 1px solid var(--border-medium);
-    font-size: 18px;
+    font-size: var(--text-xl);
     color: var(--accent);
     transition: all var(--motion-base) ease;
 }

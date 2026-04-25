@@ -90,8 +90,8 @@ export default function CreateCapabilityModal({
             footer={null}
             className="create-capability-modal-v2"
         >
-            <div className="modal-header-neat" style={{ marginBottom: '28px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="modal-header-neat ccm-header">
+                <div className="ccm-header-inner">
                     <span className="modal-header-title">
                         {isEditMode ? "Edit Capability" : "Create New Capability"}
                     </span>
@@ -101,7 +101,7 @@ export default function CreateCapabilityModal({
                 </div>
             </div>
 
-            <div style={{ minHeight: '440px' }}>
+            <div className="ccm-form-body">
                 <Form form={form} layout="vertical" requiredMark>
                     <Form.Item
                         label="Capability Name"
@@ -111,15 +111,15 @@ export default function CreateCapabilityModal({
                             { min: 3, message: 'Name must be at least 3 characters long' }
                         ]}
                     >
-                        <Input size="large" placeholder="e.g. RPA, API Integration, AI Triage" style={{ borderRadius: '4px' }} />
+                        <Input size="large" placeholder="e.g. RPA, API Integration, AI Triage" className="ccm-input" />
                     </Form.Item>
 
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '24px', padding: '12px 0', borderBottom: '1px dotted var(--border-light)', marginBottom: '16px' }}>
-                        <span style={{ fontSize: '14px', color: 'var(--text-main)', fontWeight: 500 }}>Capability Icon</span>
+                    <div className="ccm-icon-row">
+                        <span className="ccm-icon-label">Capability Icon</span>
                         <Form.Item 
                             name="icon" 
                             rules={[{ required: true, message: 'Icon is required' }]}
-                            style={{ marginBottom: 0 }}
+                            className="ccm-icon-form-item"
                         >
                             <LucideIconPicker placeholder="Select Icon" />
                         </Form.Item>
@@ -130,7 +130,7 @@ export default function CreateCapabilityModal({
                             size="large"
                             placeholder="What is this capability for?" 
                             rows={4} 
-                            style={{ borderRadius: '4px', minHeight: '100px' }}
+                            className="ccm-textarea"
                             showCount
                             maxLength={200}
                         />
@@ -138,9 +138,9 @@ export default function CreateCapabilityModal({
                 </Form>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 32 }}>
+            <div className="ccm-footer">
                 <Space size={12}>
-                    <Button onClick={handleCancel} style={{ borderRadius: '4px', height: '36px', fontWeight: 600 }}>
+                    <Button onClick={handleCancel} className="ccm-btn">
                         Cancel
                     </Button>
                     <Button 
@@ -148,7 +148,7 @@ export default function CreateCapabilityModal({
                         onClick={handleSubmit} 
                         loading={isSubmitting}
                         disabled={!nameValue || nameValue.trim().length < 3}
-                        style={{ borderRadius: '4px', height: '36px', fontWeight: 600, padding: '0 24px' }}
+                        className="ccm-btn ccm-btn--primary"
                     >
                         {isEditMode ? "Save Changes" : "Create Capability"}
                     </Button>

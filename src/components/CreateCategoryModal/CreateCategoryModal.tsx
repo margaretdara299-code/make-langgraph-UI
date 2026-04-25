@@ -8,6 +8,7 @@ import { Modal, Form, Input, message, Typography, Space, Button } from 'antd';
 import { createCategory, updateCategory } from '@/services/category.service';
 import type { CreateCategoryModalProps } from '@/interfaces';
 import LucideIconPicker from '../LucideIconPicker/LucideIconPicker';
+import './CreateCategoryModal.css';
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -87,8 +88,8 @@ export default function CreateCategoryModal({
             footer={null}
             className="create-category-modal-v2"
         >
-            <div className="modal-header-neat" style={{ marginBottom: '28px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="modal-header-neat ccm2-header">
+                <div className="ccm2-header-inner">
                     <span className="modal-header-title">
                         {isEditMode ? "Edit Category" : "Create New Category"}
                     </span>
@@ -98,7 +99,7 @@ export default function CreateCategoryModal({
                 </div>
             </div>
 
-            <div style={{ minHeight: '440px' }}>
+            <div className="ccm2-form-body">
                 <Form form={form} layout="vertical" requiredMark>
                     <Form.Item
                         label="Category Name"
@@ -111,8 +112,8 @@ export default function CreateCategoryModal({
                         <Input placeholder="e.g. AI & NLP, Automation" />
                     </Form.Item>
 
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '24px', padding: '12px 0', borderBottom: '1px dotted var(--border-light)', marginBottom: '16px' }}>
-                        <span style={{ fontSize: '14px', color: 'var(--text-main)' }}>Category Icon</span>
+                    <div className="ccm2-icon-row">
+                        <span className="ccm2-icon-label">Category Icon</span>
                         <Form.Item 
                             name="icon" 
                             rules={[{ required: true, message: 'Icon is required' }]}
@@ -132,9 +133,9 @@ export default function CreateCategoryModal({
                 </Form>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 32 }}>
+            <div className="ccm2-footer">
                 <Space size={12}>
-                    <Button onClick={handleCancel} style={{ borderRadius: '4px', height: '36px', fontWeight: 600 }}>
+                    <Button onClick={handleCancel} className="ccm2-btn">
                         Cancel
                     </Button>
                     <Button 
@@ -142,7 +143,7 @@ export default function CreateCategoryModal({
                         onClick={handleSubmit} 
                         loading={isSubmitting}
                         disabled={!nameValue || nameValue.trim().length < 3}
-                        style={{ borderRadius: '4px', height: '36px', fontWeight: 600, padding: '0 24px' }}
+                        className="ccm2-btn ccm2-btn--primary"
                     >
                         {isEditMode ? "Save Changes" : "Create Category"}
                     </Button>
@@ -151,3 +152,4 @@ export default function CreateCategoryModal({
         </Modal>
     );
 }
+

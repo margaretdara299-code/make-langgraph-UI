@@ -11,16 +11,16 @@ export default function CapabilityCardSkeleton() {
         <div className="capability-card-premium capability-card-skeleton">
             <div className="cc-premium-header">
                 <div className="cc-premium-icon-box">
-                    <Skeleton.Button active shape="square" style={{ width: '100%', height: '100%', borderRadius: 10 }} />
+                    <Skeleton.Button active shape="square" className="skeleton-premium-icon" />
                 </div>
                 <div className="cc-menu-btn">
-                     <Skeleton.Button active shape="square" style={{ width: 20, height: 20, borderRadius: 4 }} />
+                     <Skeleton.Button active shape="square" className="skeleton-menu-trigger" />
                 </div>
             </div>
 
             <div className="cc-premium-body">
                 <div className="capability-name">
-                    <Skeleton.Input active size="small" style={{ width: '65%', height: 18, marginBottom: 8 }} block />
+                    <Skeleton.Input active size="small" className="skeleton-cap-name" block />
                 </div>
                 <div className="capability-desc">
                     <Skeleton active paragraph={{ rows: 2, width: ['100%', '75%'] }} title={false} />

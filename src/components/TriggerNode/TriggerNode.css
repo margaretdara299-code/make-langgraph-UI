@@ -80,7 +80,7 @@
 }
 
 .trigger-node__title {
-    font-size: 14px;
+    font-size: var(--text-sm);
     font-weight: 700;
     color: color-mix(in srgb, var(--color-node-trigger), var(--color-base-black) 60%);
     display: -webkit-box;
@@ -116,7 +116,7 @@
 }
 
 .trigger-node__category {
-    font-size: 11px;
+    font-size: var(--text-xs);
     color: color-mix(in srgb, var(--color-node-trigger), var(--color-base-black) 50%);
     opacity: 0.7;
     white-space: nowrap;

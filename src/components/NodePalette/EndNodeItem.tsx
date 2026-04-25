@@ -30,8 +30,8 @@ export default function EndNodeItem() {
       onDragStart={handleEndDragStart}
     >
       <motion.div className="node-library-item" variants={variants}>
-        <div className="nli-icon" style={{ background: "#f8fafc" }}>
-          <Square size={12} color="#000000" strokeWidth={2.4} />
+        <div className="nli-icon nli-icon--common">
+          <Square size={12} color="currentColor" strokeWidth={2.4} />
         </div>
         <div className="nli-content">
           <span className="nli-label">End Node</span>

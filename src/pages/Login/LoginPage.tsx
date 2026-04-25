@@ -15,7 +15,7 @@ export default function LoginPage() {
             <ThreeBackground />
 
             {/* Static left-panel curve overlay (unchanged) */}
-            <div className="login-bg-layer" style={{ pointerEvents: 'none' }}>
+            <div className="login-bg-layer">
                 <svg className="login-curve-overlay" viewBox="0 0 1000 1000" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M 0 0 L 520 0 C 520 150, 440 300, 440 500 C 440 700, 480 850, 480 1000 L 0 1000 Z"
@@ -124,19 +124,19 @@ export default function LoginPage() {
                                 <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
                             </filter>
                             <linearGradient id="edge-grad-1" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stopColor="#6366f1" stopOpacity="0.8"/>
-                                <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.8"/>
+                                <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.8"/>
+                                <stop offset="100%" stopColor="var(--color-node-trigger)" stopOpacity="0.8"/>
                             </linearGradient>
                             <linearGradient id="edge-grad-2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.8"/>
-                                <stop offset="100%" stopColor="#22d3ee" stopOpacity="0.8"/>
+                                <stop offset="0%" stopColor="var(--color-node-trigger)" stopOpacity="0.8"/>
+                                <stop offset="100%" stopColor="var(--color-node-connector)" stopOpacity="0.8"/>
                             </linearGradient>
                             <linearGradient id="edge-grad-3" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stopColor="#10b981" stopOpacity="0.8"/>
-                                <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.8"/>
+                                <stop offset="0%" stopColor="var(--color-success)" stopOpacity="0.8"/>
+                                <stop offset="100%" stopColor="var(--color-info)" stopOpacity="0.8"/>
                             </linearGradient>
                             <marker id="arr-main" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
-                                <path d="M0,0 L0,7 L7,3.5 z" fill="#8b5cf6"/>
+                                <path d="M0,0 L0,7 L7,3.5 z" fill="var(--color-node-trigger)"/>
                             </marker>
                         </defs>
 
@@ -147,7 +147,7 @@ export default function LoginPage() {
                                 strokeWidth={edge.dashed ? 1.5 : 2}
                                 strokeDasharray={edge.dashed ? "5 5" : undefined}
                                 markerEnd={edge.marker ? "url(#arr-main)" : undefined}
-                                style={{ animation: edge.animation }}
+                                style={{ '--edge-anim': edge.animation } as React.CSSProperties}
                             />
                         ))}
 
@@ -161,7 +161,7 @@ export default function LoginPage() {
 
                     {/* Render Workflow Nodes */}
                     {CANVAS_NODES.map((node, i) => (
-                        <div key={node.id} className="lr-node" data-accent={node.iconStyle} style={{ ...node.style, '--node-delay': `${i * 0.15}s` } as React.CSSProperties}>
+                        <div key={node.id} className="lr-node" data-accent={node.iconStyle} style={{ '--node-left': node.style.left, '--node-top': node.style.top, '--node-delay': `${i * 0.15}s` } as React.CSSProperties}>
                             <div className="lr-node-hd">
                                 <span className={`lr-icon lr-icon--${node.iconStyle}`}>{node.icon}</span>
                                 <div className="lr-node-meta">
@@ -173,7 +173,7 @@ export default function LoginPage() {
                             
                             <div className="lr-node-bd">
                                 {node.membar && (
-                                    <div className="lr-membar"><div className="lr-memfill" style={{ width: node.membar }}/></div>
+                                    <div className="lr-membar"><div className="lr-memfill" style={{ '--mem-width': node.membar } as React.CSSProperties}/></div>
                                 )}
                                 {node.typing && (
                                     <div className="lr-typing"><span/><span/><span/></div>

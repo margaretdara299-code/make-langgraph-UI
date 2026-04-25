@@ -1,0 +1,141 @@
+{
+  "description": "Rules for detecting and fixing inline style violations in Tensaw Skills Studio UI",
+
+  "violation_categories": {
+    "CAT_1": {
+      "name": "Static Inline Style",
+      "severity": "error",
+      "description": "A style={{ }} prop whose values never change at runtime. Must always live in a CSS class.",
+      "example_bad":  "style={{ color: 'red', fontWeight: 600 }}",
+      "example_good": "className=\"my-component__label\""
+    },
+    "CAT_2": {
+      "name": "Dynamic Inline Style (tokenizable)",
+      "severity": "error",
+      "description": "A style={{ }} prop with a computed value that maps directly to a design token. Use a CSS custom property instead.",
+      "example_bad":  "style={{ width: `${width}px`, color: isActive ? '#5c67f2' : '#9ca3af' }}",
+      "example_good": "style={{ '--panel-width': `${width}px` } as CSSProperties}  →  .panel { width: var(--panel-width); }"
+    },
+    "CAT_3": {
+      "name": "Dynamic CSS Variable Injection",
+      "severity": "allowed",
+      "description": "Runtime value passed as a CSS custom property. This is the ONLY approved inline style pattern.",
+      "example_good": "style={{ '--io-width': `${ioWidth}px` } as CSSProperties}"
+    },
+    "CAT_4": {
+      "name": "AntD Component Style Prop",
+      "severity": "warning",
+      "description": "AntD-specific props like labelStyle, contentStyle, bodyStyle. Move to scoped .ant-* CSS overrides.",
+      "example_bad":  "labelStyle={{ fontSize: '11px', color: '#94a3b8' }}",
+      "example_good": ".my-component .ant-descriptions-item-label { font-size: var(--text-xs); color: var(--text-subtle); }"
+    }
+  },
+
+  "detection_patterns": {
+    "tsx_inline_style": "style=\\{\\{",
+    "antd_style_props": ["labelStyle=", "contentStyle=", "bodyStyle=", "headStyle=", "style="],
+    "hardcoded_hex_in_jsx": "#[0-9a-fA-F]{3,8}",
+    "hardcoded_rgb_in_jsx": "rgb(a)?\\(",
+    "hardcoded_px_in_jsx": "['\"](\\d+)px['\"]",
+    "hardcoded_number_style": "\\b(margin|padding|width|height|gap|top|left|right|bottom|border-radius|font-size):\\s*\\d"
+  },
+
+  "token_map": {
+    "colors": {
+      "#5c67f2":              "var(--accent)",
+      "#4e59e1":              "var(--accent-hover)",
+      "#ffffff":              "var(--bg-card) or var(--surface-0)",
+      "#f9fafb":              "var(--bg-page) or var(--surface-1)",
+      "#f3f4f6":              "var(--border-light) or var(--surface-2)",
+      "#e5e7eb":              "var(--border-medium) or var(--surface-3)",
+      "#d1d5db":              "var(--border-strong)",
+      "#111827":              "var(--text-main)",
+      "#4b5563":              "var(--text-muted)",
+      "#9ca3af":              "var(--text-subtle)",
+      "#10b981":              "var(--color-success)",
+      "#ecfdf5":              "var(--color-success-bg)",
+      "#047857":              "var(--color-success-text)",
+      "#ef4444":              "var(--color-error)",
+      "#fef2f2":              "var(--color-error-bg)",
+      "#b91c1c":              "var(--color-error-text)",
+      "#f59e0b":              "var(--color-warning)",
+      "#fffbeb":              "var(--color-warning-bg)",
+      "#3b82f6":              "var(--color-info)",
+      "#eff6ff":              "var(--color-info-bg)",
+      "#1d4ed8":              "var(--color-info-text)",
+      "#8b5cf6":              "var(--color-node-trigger)",
+      "#0ea5e9":              "var(--color-node-connector)",
+      "#94a3b8":              "var(--text-subtle)"
+    },
+    "spacing": {
+      "4px":  "var(--space-05)",
+      "8px":  "var(--space-1)",
+      "12px": "var(--space-1-5)",
+      "16px": "var(--space-2)",
+      "20px": "var(--space-2-5)",
+      "24px": "var(--space-3)",
+      "32px": "var(--space-4)",
+      "40px": "var(--space-5)",
+      "48px": "var(--space-6)",
+      "64px": "var(--space-8)"
+    },
+    "font_size": {
+      "11px": "var(--text-xs)",
+      "14px": "var(--text-sm)",
+      "16px": "var(--text-lg)",
+      "18px": "var(--text-xl)",
+      "24px": "var(--text-2xl)",
+      "32px": "var(--text-3xl)"
+    },
+    "font_weight": {
+      "400": "var(--weight-regular)",
+      "500": "var(--weight-medium)",
+      "600": "var(--weight-semibold)",
+      "700": "var(--weight-bold)"
+    },
+    "shadows": {
+      "0 1px 3px rgba(0,0,0,0.02)": "var(--shadow-subtle)",
+      "0 4px 6px":                   "var(--shadow-card)",
+      "0 20px 25px":                 "var(--shadow-float)"
+    },
+    "motion": {
+      "120ms": "var(--motion-fast)",
+      "220ms": "var(--motion-base)",
+      "350ms": "var(--motion-slow)"
+    }
+  },
+
+  "allowed_exceptions": [
+    "CSS custom property injection: style={{ '--var-name': runtimeValue } as CSSProperties}",
+    "Monaco editor options object (fontSize, fontFamily inside editor config — NOT a React style prop)",
+    "Third-party library config objects that expect plain numbers (e.g. chart dimensions)",
+    "style prop on SVG elements where className is not supported",
+    "Storybook/test isolation wrappers"
+  ],
+
+  "fix_strategy": {
+    "CAT_1_static": [
+      "1. Identify all properties in the style object",
+      "2. Create or update the component's CSS file with a new class",
+      "3. Replace hardcoded values with appropriate CSS tokens",
+      "4. Remove style={{ }} from JSX, add className"
+    ],
+    "CAT_2_dynamic": [
+      "1. Identify which properties are truly dynamic (depend on state/props)",
+      "2. Set the dynamic value as a CSS custom property on the element",
+      "3. Reference it in CSS with var(--custom-prop, fallback)",
+      "4. Static properties within the same style object → move to CSS class"
+    ],
+    "CAT_4_antd": [
+      "1. Add a className to the AntD component",
+      "2. Add scoped .ant-* overrides in the component's CSS file",
+      "3. Use !important if needed to override AntD defaults",
+      "4. Remove labelStyle/contentStyle/bodyStyle props"
+    ]
+  },
+
+  "naming_convention": {
+    "css_class": "Use BEM: .component-name__element--modifier",
+    "css_variable": "Use kebab-case prefixed with component: --panel-width, --card-height"
+  }
+}

@@ -91,7 +91,7 @@
 .status-tabs .ant-tabs-tab {
     padding: 12px 27px !important;
     margin: 0 !important;
-    font-size: 14px;
+    font-size: var(--text-sm);
     color: var(--text-subtle) !important;
     transition: all 0.3s ease !important;
 }
@@ -174,4 +174,18 @@
 
 .premium-pagination .ant-select-selector {
     border-radius: 8px !important;
+}
+.ac-header-title {
+    margin: 0 !important;
+    font-size: 28px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.022em !important;
+}
+
+.ac-header-subtitle {
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    color: var(--text-muted) !important;
+    display: block !important;
+    margin-top: 4px !important;
 }

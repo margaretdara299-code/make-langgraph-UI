@@ -122,14 +122,14 @@ export default function SkillDesignerHeader() {
                   <div className="dropdown-search-wrapper">
                     <Input
                       placeholder="Search skills..."
-                      prefix={<SearchOutlined style={{ color: 'var(--text-muted)' }} />}
+                      prefix={<SearchOutlined className="sdh-search-icon" />}
                       value={searchValue}
                       onChange={(e) => setSearchValue(e.target.value)}
                       onClick={(e) => e.stopPropagation()}
                       className="dropdown-search-input"
                     />
                   </div>
-                  <Divider style={{ margin: '4px 0' }} />
+                  <Divider className="dropdown-menu-divider" />
                   <div className="dropdown-scroll-area">
                     {menu}
                   </div>
@@ -138,8 +138,8 @@ export default function SkillDesignerHeader() {
             >
               <span className="breadcrumb-item skill-name clickable">
                 {isLoading ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ opacity: 0.5 }}>Syncing...</span>
+                  <div className="breadcrumb-skill-loading">
+                    <span className="breadcrumb-loading-text">Syncing...</span>
                     <Spin size="small" />
                   </div>
                 ) : (
@@ -151,7 +151,7 @@ export default function SkillDesignerHeader() {
               </span>
             </Dropdown>
 
-            <span className="breadcrumb-separator" style={{ margin: '0 8px' }}>/</span>
+            <span className="breadcrumb-separator between-selects" />
 
             <div className={`status-indicator ${statusConfig.className}`}>
               <StatusIcon size={11} strokeWidth={2.5} className="status-icon" />

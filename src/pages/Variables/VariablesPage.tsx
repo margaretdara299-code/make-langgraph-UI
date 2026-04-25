@@ -91,19 +91,19 @@ export default function VariablesPage() {
             <header className="variables-header">
                 <div className="title-section">
                     <div className="title-row">
-                        <Title level={2} style={{ margin: 0, fontSize: '18px', fontWeight: 700, letterSpacing: '-0.015em' }}>{VARIABLES.title}</Title>
+                        <Title level={2} className="var-page-title">{VARIABLES.title}</Title>
                     </div>
-                    <Text type="secondary" style={{ fontSize: '12px', color: 'var(--text-subtle)' }}>{VARIABLES.description}</Text>
+                    <Text type="secondary" className="var-page-subtitle">{VARIABLES.description}</Text>
                 </div>
-                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                <div className="var-header-actions">
                     <SearchInput placeholder="Search variables..." value={search} onChange={setSearch} />
                     <Button type="primary" shape="circle" icon={<PlusOutlined />} onClick={handleCreate} className="global-header-add-btn" />
                 </div>
             </header>
 
             <div className="variables-body">
-                {loading ? <div style={{ display: 'flex', justifyContent: 'center', padding: '100px' }}><Spin size="large" /></div> :
-                    variables.length === 0 ? <Empty description="No variables found" style={{ marginTop: '100px' }} /> : (
+                {loading ? <div className="var-loading-state"><Spin size="large" /></div> :
+                    variables.length === 0 ? <Empty description="No variables found" className="var-empty-state" /> : (
                         <div className="variables-accordion-container">
                             <Collapse accordion ghost expandIconPosition="end" defaultActiveKey={Object.keys(groupedData)} className="variables-main-accordion">
                                 {Object.entries(groupedData).map(([groupName, items]) => (

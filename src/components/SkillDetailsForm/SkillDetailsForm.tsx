@@ -5,6 +5,7 @@
 import { Form, Input, Select } from 'antd';
 import { useCategories } from '@/hooks';
 import type { SkillDetailsFormProps } from '@/interfaces';
+import './SkillDetailsForm.css';
 
 const { TextArea } = Input;
 
@@ -41,7 +42,7 @@ export default function SkillDetailsForm({ form }: SkillDetailsFormProps) {
                     size="large"
                     placeholder="Briefly describe what this skill does..."
                     rows={4}
-                    style={{ minHeight: '100px' }}
+                    className="sdf-textarea"
                 />
             </Form.Item>
 

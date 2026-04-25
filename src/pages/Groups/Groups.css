@@ -1,0 +1,14 @@
+
+.var-name-stack {
+    display: flex;
+    flex-direction: column;
+}
+
+.var-item-actions-gap {
+    margin-left: 12px !important;
+}
+
+.validation-msg-ive {
+    margin-top: -2px !important;
+    margin-bottom: 2px !important;
+}

@@ -79,22 +79,7 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                 requiredMark={true}
             >
                 <div className="create-action-overview__header-row">
-                    <Form.Item
-                        name="icon"
-                        label="Icon"
-                        rules={[{ required: true, message: 'Icon is required' }]}
-                        className="icon-field"
-                    >
-                        <LucideIconPicker 
-                            value={draft.icon} 
-                            onChange={(icon) => {
-                                form.setFieldsValue({ icon });
-                                handleValuesChange({ icon });
-                            }} 
-                        />
-                    </Form.Item>
-
-                    <div style={{ flex: 1 }}>
+                    <div className="cao-flex-1">
                         <Form.Item
                             name="name"
                             label="Action Name"
@@ -114,6 +99,21 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                         className="create-action-overview__flex-1"
                     >
                         <Input placeholder="e.g., verify_eligibility" />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="icon"
+                        label="Icon"
+                        rules={[{ required: true, message: 'Icon is required' }]}
+                        className="icon-field"
+                    >
+                        <LucideIconPicker 
+                            value={draft.icon} 
+                            onChange={(icon) => {
+                                form.setFieldsValue({ icon });
+                                handleValuesChange({ icon });
+                            }} 
+                        />
                     </Form.Item>
                 </div>
 

@@ -60,3 +60,30 @@
     background: linear-gradient(90deg, var(--border-light) 25%, #f1f5f9 37%, var(--border-light) 63%) !important;
     background-size: 400% 100% !important;
 }
+
+/* Extracted from inline styles */
+.ac-skeleton-status {
+    width: 60px !important;
+    height: 18px !important;
+}
+
+.ac-skeleton-date {
+    width: 50px !important;
+    height: 12px !important;
+}
+
+.ac-skeleton-action-btn {
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 6px !important;
+}
+
+.ac-skeleton-name {
+    width: 60% !important;
+    height: 18px !important;
+}
+
+.ac-skeleton-type {
+    width: 40px !important;
+    height: 14px !important;
+}

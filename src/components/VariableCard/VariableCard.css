@@ -83,8 +83,59 @@
 }
 
 .var-key-code {
-    font-size: 11px;
+    font-size: var(--text-xs);
     color: var(--accent) !important;
     font-family: var(--font-mono);
     font-weight: 600;
+}
+
+/* Skeleton Classes */
+.skeleton-premium-icon {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 10px !important;
+}
+
+.skeleton-menu-trigger {
+    width: 20px !important;
+    height: 20px !important;
+    border-radius: 4px !important;
+}
+
+.skeleton-var-title {
+    width: 50% !important;
+    height: 20px !important;
+}
+
+.skeleton-meta-col-30 {
+    width: 30% !important;
+}
+
+.skeleton-meta-col-20 {
+    width: 20% !important;
+}
+
+.skeleton-meta-label-100 {
+    width: 100% !important;
+    height: 10px !important;
+}
+
+.skeleton-meta-value-80 {
+    width: 80% !important;
+    height: 14px !important;
+}
+
+.skeleton-meta-value-60 {
+    width: 60% !important;
+    height: 14px !important;
+}
+
+.skeleton-meta-label-40 {
+    width: 40% !important;
+    height: 10px !important;
+}
+
+.skeleton-meta-value-90 {
+    width: 90% !important;
+    height: 14px !important;
 }

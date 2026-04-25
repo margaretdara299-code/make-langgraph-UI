@@ -12,9 +12,9 @@ export const DashboardSkeleton: React.FC = () => {
             {/* Header Mirror */}
             <div className="industry-header-modern">
                 <div className="header-title-row">
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <Skeleton.Button active style={{ width: 220, height: 32, marginBottom: 8 }} />
-                        <Skeleton.Button active style={{ width: 380, height: 16 }} />
+                    <div className="skeleton-header-stack">
+                        <Skeleton.Button active className="skeleton-title-bar" />
+                        <Skeleton.Button active className="skeleton-subtitle-bar" />
                     </div>
                 </div>
             </div>
@@ -26,11 +26,11 @@ export const DashboardSkeleton: React.FC = () => {
                         <div className="skeleton-metric-card">
                             <div className="skeleton-card-header">
                                 <Skeleton.Avatar active size="small" shape="square" />
-                                <Skeleton.Button active style={{ width: 40, height: 20 }} />
+                                <Skeleton.Button active className="skeleton-metric-badge" />
                             </div>
                             <div className="skeleton-card-body">
-                                <Skeleton.Button active style={{ width: '100%', height: 28, marginBottom: 8 }} />
-                                <Skeleton.Button active style={{ width: '60%', height: 14 }} />
+                                <Skeleton.Button active className="skeleton-metric-title" />
+                                <Skeleton.Button active className="skeleton-metric-subtitle" />
                             </div>
                         </div>
                     </Col>
@@ -38,16 +38,16 @@ export const DashboardSkeleton: React.FC = () => {
             </Row>
 
             {/* Table Container Mirror */}
-            <div className="skeleton-activity-box" style={{ marginTop: 16 }}>
+            <div className="skeleton-activity-box">
                 <div className="skeleton-box-header">
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <Skeleton.Button active style={{ width: 180, height: 24, marginBottom: 8 }} />
-                        <Skeleton.Button active style={{ width: 260, height: 14 }} />
+                    <div className="skeleton-box-header-stack">
+                        <Skeleton.Button active className="skeleton-box-title" />
+                        <Skeleton.Button active className="skeleton-box-subtitle" />
                     </div>
-                    <Skeleton.Input active style={{ width: 320, height: 40, borderRadius: 10 }} />
+                    <Skeleton.Input active className="skeleton-box-search" />
                 </div>
                 
-                <div style={{ padding: '24px', minHeight: '400px' }}>
+                <div className="skeleton-table-body">
                     <Skeleton active paragraph={{ rows: 12 }} title={false} />
                 </div>
             </div>
