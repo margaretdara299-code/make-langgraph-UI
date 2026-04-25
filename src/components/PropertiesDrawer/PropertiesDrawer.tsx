@@ -164,6 +164,45 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             return;
         }
 
+        // For queue nodes
+        if (selectedNode.type === 'queue') {
+            const stored = versionId ? loadGraphFromStorage(versionId) : null;
+            const qd = (stored?.nodes?.[selectedNode.id]?.data || selectedNode.data) as any;
+            form.setFieldsValue({
+                label: qd.label || 'Queue Engine',
+                description: qd.description || '',
+                queue_name: qd.queue_name || '',
+                priority: qd.priority || 'normal',
+                wait_for_completion: qd.wait_for_completion ?? false,
+            });
+            return;
+        }
+
+        // For parallel split
+        if (selectedNode.type === 'parallel_split') {
+            const stored = versionId ? loadGraphFromStorage(versionId) : null;
+            const pd = (stored?.nodes?.[selectedNode.id]?.data || selectedNode.data) as any;
+            form.setFieldsValue({
+                label: pd.label || 'Parallel Split',
+                description: pd.description || '',
+                branches: pd.branches || 3,
+            });
+            return;
+        }
+
+        // For parallel join
+        if (selectedNode.type === 'parallel_join') {
+            const stored = versionId ? loadGraphFromStorage(versionId) : null;
+            const pj = (stored?.nodes?.[selectedNode.id]?.data || selectedNode.data) as any;
+            form.setFieldsValue({
+                label: pj.label || 'Parallel Join',
+                description: pj.description || '',
+                join_strategy: pj.join_strategy || 'all',
+                inputs: pj.inputs || 3,
+            });
+            return;
+        }
+
         // For decision nodes: read from localStorage first, fallback to node.data
         if (selectedNode.type === 'decision') {
             const stored = versionId ? loadGraphFromStorage(versionId) : null;
@@ -343,6 +382,39 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                         ...currentNode.data,
                         label: newValues.label,
                         description: newValues.description,
+                    },
+                };
+            } else if (selectedNode.type === 'queue') {
+                updatedNode = {
+                    ...currentNode,
+                    data: {
+                        ...currentNode.data,
+                        label: newValues.label,
+                        description: newValues.description,
+                        queue_name: newValues.queue_name,
+                        priority: newValues.priority,
+                        wait_for_completion: newValues.wait_for_completion,
+                    },
+                };
+            } else if (selectedNode.type === 'parallel_split') {
+                updatedNode = {
+                    ...currentNode,
+                    data: {
+                        ...currentNode.data,
+                        label: newValues.label,
+                        description: newValues.description,
+                        branches: newValues.branches,
+                    },
+                };
+            } else if (selectedNode.type === 'parallel_join') {
+                updatedNode = {
+                    ...currentNode,
+                    data: {
+                        ...currentNode.data,
+                        label: newValues.label,
+                        description: newValues.description,
+                        join_strategy: newValues.join_strategy,
+                        inputs: newValues.inputs,
                     },
                 };
             } else if (selectedNode.type === 'decision') {
@@ -639,8 +711,17 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             const isEnd       = selectedNode.type === 'end';
             const isAction    = selectedNode.type === 'action';
             const isError     = selectedNode.type === 'error';
+            const isQueue     = selectedNode.type === 'queue';
+            const isParallelSplit = selectedNode.type === 'parallel_split';
+            const isParallelJoin  = selectedNode.type === 'parallel_join';
 
-            const activeColor = isDecision ? '#f59e0b' : isError ? '#EF4444' : ((isStart || isEnd) ? '#10b981' : 'var(--accent)');
+            const isStructural = isDecision || isQueue || isParallelSplit || isParallelJoin;
+            const activeColor = 
+                (isDecision || isQueue) ? 'var(--color-warning)' : 
+                isParallelSplit ? 'var(--color-node-split)' : 
+                isParallelJoin ? 'var(--color-node-join)' : 
+                isError ? 'var(--color-error)' : 
+                ((isStart || isEnd) ? 'var(--color-success)' : 'var(--accent)');
 
             if (isLoadingAction) {
                 return (
@@ -693,6 +774,9 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                     : isAction   ? 'Action'
                                                     : isDecision ? 'Router'
                                                     : isSubFlow  ? 'Group'
+                                                    : isQueue    ? 'Async Queue'
+                                                    : isParallelSplit ? 'Split'
+                                                    : isParallelJoin  ? 'Merge'
                                                     : (nodeData?.category || 'Action')}
                                                 </span>                                                
                                             </div>
@@ -706,12 +790,15 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                             )}
                                             <div className="properties-drawer__meta-item">
                                                 <span className="properties-drawer__meta-label">Capability</span>
-                                                <div className={`properties-drawer__capability-badge badge-${isDecision ? 'decision' : nodeData?.capability}`}>
+                                                <div className={`properties-drawer__capability-badge badge-${isDecision ? 'decision' : (isQueue ? 'queue' : nodeData?.capability)}`}>
                                                     {isStart    ? 'START'
                                                     : isDecision ? 'DECISION'
                                                     : isEnd      ? 'END'
                                                     : isError    ? 'ERR'
                                                     : isSubFlow  ? 'STRUCTURE'
+                                                    : isQueue    ? 'QUEUE'
+                                                    : isParallelSplit ? 'SPLIT'
+                                                    : isParallelJoin  ? 'MERGE'
                                                     : (nodeData?.capability || 'API').toUpperCase()}
                                                 </div>
                                             </div>
@@ -742,6 +829,24 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                     name="description"
                                                 >
                                                     <Input.TextArea rows={4} placeholder="What does this group do?" />
+                                                </Form.Item>
+                                            )}
+
+                                            {isQueue && (
+                                                <Form.Item
+                                                    label="Description"
+                                                    name="description"
+                                                >
+                                                    <Input placeholder="e.g. Handoff to human review queue" />
+                                                </Form.Item>
+                                            )}
+
+                                            {(isParallelSplit || isParallelJoin) && (
+                                                <Form.Item
+                                                    label="Description"
+                                                    name="description"
+                                                >
+                                                    <Input placeholder={isParallelSplit ? "e.g. Split execution for sub-tasks" : "e.g. Merge parallel results"} />
                                                 </Form.Item>
                                             )}
 
@@ -875,13 +980,80 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                             className="pd-error-url-item"
                                                             rules={[{ type: 'url', message: 'Enter a valid URL' }]}
                                                         >
-                                                            <Input placeholder="https://api.example.com/error-logs" />
-                                                        </Form.Item>
-                                                    </div>
-                                                </>
-                                            ) : (
-                                                renderNodeConfig(nodeData as CanvasNodeData)
-                                            )}
+                                                    <Input placeholder="https://api.example.com/error-logs" />
+                                                </Form.Item>
+                                            </div>
+                                        </>
+                                    ) : isQueue ? (
+                                        <>
+                                            <div className="properties-drawer__section-title pd-section-title-no-margin">Queue Settings</div>
+                                            <Form.Item label="Target Queue" name="queue_name" rules={[{ required: true }]}>
+                                                <Select options={[
+                                                    { label: 'Manual Review (Human)', value: 'manual_review' },
+                                                    { label: 'Claims Audit (Financial)', value: 'claims_audit' },
+                                                    { label: 'Provider Verification', value: 'provider_verify' },
+                                                    { label: 'General Exception', value: 'exception' },
+                                                ]} placeholder="Select a destination queue..." />
+                                            </Form.Item>
+
+                                            <div className="properties-drawer__flex-row">
+                                                <Form.Item label="Priority" name="priority" className="properties-drawer__flex-item">
+                                                    <Select options={[
+                                                        { label: 'Critical', value: 'critical' },
+                                                        { label: 'High', value: 'high' },
+                                                        { label: 'Normal', value: 'normal' },
+                                                        { label: 'Low', value: 'low' },
+                                                    ]} />
+                                                </Form.Item>
+                                            </div>
+
+                                            <Form.Item label="Execution Mode" name="wait_for_completion">
+                                                <Select options={[
+                                                    { label: 'Asynchronous (Fire and Forget)', value: false },
+                                                    { label: 'Synchronous (Wait for Pickup)', value: true },
+                                                ]} />
+                                            </Form.Item>
+                                        </>
+                                    ) : isParallelSplit ? (
+                                        <>
+                                            <div className="properties-drawer__section-title pd-section-title-no-margin">Split Configuration</div>
+                                            <Form.Item label="Number of Branches" name="branches" tooltip="Number of concurrent execution paths to create.">
+                                                <Select options={[
+                                                    { label: '2 Branches', value: 2 },
+                                                    { label: '3 Branches', value: 3 },
+                                                    { label: '4 Branches', value: 4 },
+                                                    { label: '5 Branches', value: 5 },
+                                                ]} />
+                                            </Form.Item>
+                                            <Text type="secondary" className="pd-state-description">
+                                                The workflow state will be cloned across all branches. Use a Join node later to synchronize results.
+                                            </Text>
+                                        </>
+                                    ) : isParallelJoin ? (
+                                        <>
+                                            <div className="properties-drawer__section-title pd-section-title-no-margin">Merge Strategy</div>
+                                            <Form.Item label="Incoming Inputs" name="inputs" tooltip="Number of parallel paths to wait for.">
+                                                <Select options={[
+                                                    { label: '2 Paths', value: 2 },
+                                                    { label: '3 Paths', value: 3 },
+                                                    { label: '4 Paths', value: 4 },
+                                                    { label: '5 Paths', value: 5 },
+                                                ]} />
+                                            </Form.Item>
+                                            <Form.Item label="Synchronization Logic" name="join_strategy">
+                                                <Select options={[
+                                                    { label: 'Wait for All (Consensus)', value: 'all' },
+                                                    { label: 'Wait for Any (First Responder)', value: 'any' },
+                                                    { label: 'Race (First Success)', value: 'race' },
+                                                ]} />
+                                            </Form.Item>
+                                            <Text type="secondary" className="pd-state-description">
+                                                Defines how the graph state is consolidated once parallel branches meet this node.
+                                            </Text>
+                                        </>
+                                    ) : (
+                                        renderNodeConfig(nodeData as CanvasNodeData)
+                                    )}
                                         </Form>
                                     </motion.div>
                                 )

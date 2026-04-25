@@ -12,6 +12,18 @@ export function getNodeTheme(type: string, capability?: string, category?: strin
     if (type === 'start') {
         return { bg: '#F5F3FF', stroke: '#7C3AED', badgeBg: '#7C3AED', iconBg: '#FFFFFF' };
     }
+
+    if (type === 'queue') {
+        return { bg: '#FFF7ED', stroke: '#EA580C', badgeBg: '#EA580C', iconBg: '#FFFFFF' };
+    }
+
+    if (type === 'parallel_split') {
+        return { bg: '#FDF2F8', stroke: '#DB2777', badgeBg: '#DB2777', iconBg: '#FFFFFF' };
+    }
+
+    if (type === 'parallel_join') {
+        return { bg: '#EEF2FF', stroke: '#4F46E5', badgeBg: '#4F46E5', iconBg: '#FFFFFF' };
+    }
     
     if (type === 'end') {
         return { bg: '#F8FAFC', stroke: '#000000', badgeBg: '#27272A', iconBg: '#FFFFFF' };
@@ -65,6 +77,14 @@ export function getNodeStrokeColor(node: NodeColorSource): string {
 
     if (nodeType === 'error') {
         return getNodeTheme('error').stroke;
+    }
+
+    if (nodeType === 'queue') {
+        return getNodeTheme('queue').stroke;
+    }
+
+    if (nodeType === 'parallel_split' || nodeType === 'parallel_join') {
+        return getNodeTheme('parallel_split').stroke;
     }
 
     return getNodeTheme(nodeType, capability, category).stroke;

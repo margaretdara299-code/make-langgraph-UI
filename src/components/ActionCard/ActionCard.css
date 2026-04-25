@@ -35,28 +35,16 @@
     min-width: 0;
 }
 
-.ac-icon-container {
-    width: 34px;
-    height: 34px;
-    background: var(--surface-1);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    color: var(--accent);
-    border: 1px solid var(--border-light);
-    transition: all 0.2s ease;
-}
 
-.action-card-premium:hover .ac-icon-container {
+
+.action-card-premium:hover .ts-icon-container {
     background: var(--accent-light);
     border-color: var(--accent-soft);
     transform: scale(1.05);
 }
 
 .ac-name {
-    font-size: 14px !important;
+    font-size: var(--text-sm) !important;
     font-weight: 750 !important;
     color: var(--text-main) !important;
     letter-spacing: -0.015em;

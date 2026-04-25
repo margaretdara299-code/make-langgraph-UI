@@ -32,8 +32,8 @@ export default function SkillCard({ skill, onClick, onAction }: SkillCardProps) 
             {/* Row 1: Name + Actions */}
             <div className="sc-header">
                 <div className="sc-title-group">
-                    <div className="sc-icon-container">
-                        <PartitionOutlined style={{ fontSize: '18px' }} />
+                    <div className="ts-icon-container">
+                        <PartitionOutlined className="sc-partition-icon" />
                     </div>
                     <div className="sc-name">{skill.name}</div>
                 </div>

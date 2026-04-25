@@ -38,22 +38,9 @@
     z-index: 1;
 }
 
-.cc-premium-icon-box {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    background-color: var(--bg-page);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    color: var(--text-main);
-    border: 1px solid var(--border-light);
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    box-shadow: var(--shadow-sm);
-}
 
-.category-card-premium:hover .cc-premium-icon-box {
+
+.category-card-premium:hover .ts-icon-container {
     transform: scale(1.1) rotate(5deg);
     background-color: var(--accent);
     color: #ffffff;
@@ -81,7 +68,7 @@
 
 .category-name {
     margin: 0 0 6px 0 !important;
-    font-size: 14px !important;
+    font-size: var(--text-sm) !important;
     font-weight: 700 !important;
     color: var(--text-main) !important;
     letter-spacing: -0.015em !important;

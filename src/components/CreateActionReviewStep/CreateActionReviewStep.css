@@ -62,9 +62,23 @@
 }
 
 .review-payload-label {
-    font-size: 11px !important;
+    font-size: var(--text-xs) !important;
     color: #94a3b8 !important;
     letter-spacing: 0.02em;
+}
+
+.review-descriptions .ant-descriptions-item-label {
+    color: var(--text-subtle) !important;
+    font-size: var(--text-xs) !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.02em !important;
+}
+
+.review-descriptions .ant-descriptions-item-content {
+    color: var(--text-main) !important;
+    font-size: var(--text-sm) !important;
+    font-weight: 500 !important;
+    padding-top: 4px !important;
 }
 
 .review-json-tag {

@@ -90,7 +90,7 @@
 }
 .header-title-premium {
     margin: 0 !important;
-    font-size: 24px !important;
+    font-size: var(--text-2xl) !important;
     font-weight: 800 !important;
     letter-spacing: -0.025em !important;
     color: var(--text-main) !important;
@@ -106,7 +106,7 @@
 
 .cp-header-title {
     margin: 0 !important;
-    font-size: 24px !important;
+    font-size: var(--text-2xl) !important;
     font-weight: 800 !important;
     letter-spacing: -0.025em !important;
 }

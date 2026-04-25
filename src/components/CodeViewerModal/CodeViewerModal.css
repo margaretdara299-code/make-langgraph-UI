@@ -360,7 +360,7 @@
 }
 
 .cv-sidebar__file-icon {
-  font-size: 14px;
+  font-size: var(--text-sm);
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -556,7 +556,7 @@
   border-radius: 4px;
   color: var(--cv-text-secondary);
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--text-sm);
   padding: 0;
   transition: background 0.12s ease, color 0.12s ease;
   flex-shrink: 0;
@@ -723,7 +723,7 @@
   }
 
   .cv-modal__titlebar-text {
-    font-size: 11px;
+    font-size: var(--text-xs);
   }
 
   .cv-tabs__tab {

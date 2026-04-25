@@ -167,6 +167,61 @@ export default function useCanvasDragDrop(
                 return;
             }
 
+            // ── Handle Queue node drop ──
+            if (data.nodeType === 'queue') {
+                const newNode: Node = {
+                    id: getNextNodeId(),
+                    type: 'queue',
+                    position,
+                    data: {
+                        label: data.label || 'Queue',
+                        category: 'structure',
+                        icon: 'ListOrdered',
+                        description: '',
+                        queue_name: '',
+                        priority: 'normal',
+                        wait_for_completion: false,
+                    } as any,
+                };
+                setNodes((nds) => [...nds, newNode]);
+                if (versionId) upsertNodeInStorage(versionId, newNode.id, newNode);
+                return;
+            }
+
+            // ── Handle Parallel Split drop ──
+            if (data.nodeType === 'parallel_split') {
+                const newNode: Node = {
+                    id: getNextNodeId(),
+                    type: 'parallel_split',
+                    position,
+                    data: {
+                        label: data.label || 'Parallel Split',
+                        category: 'structure',
+                        icon: 'GitFork',
+                    } as any,
+                };
+                setNodes((nds) => [...nds, newNode]);
+                if (versionId) upsertNodeInStorage(versionId, newNode.id, newNode);
+                return;
+            }
+
+            // ── Handle Parallel Join drop ──
+            if (data.nodeType === 'parallel_join') {
+                const newNode: Node = {
+                    id: getNextNodeId(),
+                    type: 'parallel_join',
+                    position,
+                    data: {
+                        label: data.label || 'Parallel Join',
+                        category: 'structure',
+                        icon: 'Merge',
+                    } as any,
+                };
+                setNodes((nds) => [...nds, newNode]);
+                if (versionId) upsertNodeInStorage(versionId, newNode.id, newNode);
+                return;
+            }
+
             // ── Handle Connector node drop ──
             if (data.nodeType === 'connector') {
                 const parentSubFlow = findSubFlowAtPosition(position.x, position.y);

@@ -61,7 +61,7 @@
 
 /* "Skills" - Parent link (Quieter) */
 .breadcrumb-item.link {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 500;
   color: #94a3b8;
   /* Lighter/Quieter */
@@ -80,7 +80,7 @@
 
 /* Separator styling (Quiet) */
 .breadcrumb-separator {
-  font-size: 14px;
+  font-size: var(--text-sm);
   color: #cbd5e1;
   /* Very light grey */
   font-weight: 400;
@@ -170,7 +170,7 @@
 }
 
 .status-badge {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   text-transform: capitalize;
   letter-spacing: -0.01em;
@@ -203,7 +203,7 @@
   /* was 6px 10px */
   border-radius: 6px !important;
   margin: 1px 0 !important;
-  font-size: 11px !important;
+  font-size: var(--text-xs) !important;
   border-bottom: 1px solid #f1f5f9;
 }
 
@@ -330,7 +330,7 @@
   align-items: center;
   gap: 8px;
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 500;
   /* Slightly lighter for a more "lean" look */
   padding: 0 14px;

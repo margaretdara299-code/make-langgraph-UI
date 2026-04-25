@@ -56,7 +56,7 @@
 }
 
 .ccm-icon-label {
-    font-size: 14px;
+    font-size: var(--text-sm);
     color: var(--text-main);
     font-weight: 500;
 }

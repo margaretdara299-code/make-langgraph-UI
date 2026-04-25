@@ -76,5 +76,5 @@
 
 
 .metric-card__icon {
-    font-size: 24px !important;
+    font-size: var(--text-2xl) !important;
 }

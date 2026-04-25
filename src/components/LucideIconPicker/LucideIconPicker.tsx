@@ -186,7 +186,7 @@ export const LucideIconPicker: React.FC<LucideIconPickerProps> = ({ value, onCha
                                 label: `${c.label} (${PRECOMPUTED_CATEGORY_COUNTS[c.value] || 0})`, 
                                 value: c.value 
                             }))}
-                            dropdownStyle={{ minWidth: '200px' }}
+                            dropdownClassName="picker-category-dropdown"
                         />
                     </div>
                     <div className="picker-control-group picker-search-control">
@@ -253,7 +253,7 @@ export const LucideIconPicker: React.FC<LucideIconPickerProps> = ({ value, onCha
                         {value ? (
                             <DynamicLucideIcon name={value} size={24} color="var(--accent)" />
                         ) : (
-                            <LucideIcons.Plus size={24} color="#ef4444" />
+                            <LucideIcons.Plus size={24} color="var(--color-error)" />
                         )}
                     </div>
                 </div>

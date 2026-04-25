@@ -19,7 +19,7 @@ export default function TestApiModal({
 
     // Attempt to determine success purely from status or testState
     const isSuccess = testState === 'success' || (result.status >= 200 && result.status < 300) || result.status === 'success';
-    const statusColor = isSuccess ? '#10b981' : (testState === 'error' ? '#ef4444' : '#f59e0b');
+    const statusColor = isSuccess ? 'var(--color-success)' : (testState === 'error' ? 'var(--color-error)' : 'var(--color-warning)');
 
     const renderJson = (data: any) => {
         if (testState === 'loading') {

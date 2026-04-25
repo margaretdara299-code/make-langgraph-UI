@@ -20,7 +20,7 @@
 }
 
 .picker-category-select .ant-select-selection-item {
-    font-size: 11px !important;
+    font-size: var(--text-xs) !important;
     font-weight: 600 !important;
     color: var(--text-main) !important;
 }
@@ -72,7 +72,7 @@
 }
 
 .picker-search-input input {
-    font-size: 11px !important;
+    font-size: var(--text-xs) !important;
     font-weight: 500 !important;
     color: var(--text-main) !important;
 }
@@ -239,4 +239,8 @@
 
 .lip-search-icon {
     color: var(--text-subtle) !important;
+}
+
+.picker-category-dropdown {
+    min-width: 200px;
 }

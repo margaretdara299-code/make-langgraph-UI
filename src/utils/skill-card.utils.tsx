@@ -53,16 +53,16 @@ export function getMenuItems(status: string, skillId: string, versionId?: string
 
 /** Premium color palette for tags - expanded for better variety */
 export const TAG_COLOR_PALETTE = [
-    { bg: '#EFF6FF', color: '#2563EB' }, // Blue
-    { bg: '#F0FDF4', color: '#16A34A' }, // Green
-    { bg: '#FAF5FF', color: '#9333EA' }, // Purple
-    { bg: '#FFF7ED', color: '#EA580C' }, // Orange
-    { bg: '#FFF1F2', color: '#E11D48' }, // Rose
-    { bg: '#F5F3FF', color: '#7C3AED' }, // Indigo
-    { bg: '#ECFDF5', color: '#059669' }, // Emerald
-    { bg: '#FEF3C7', color: '#D97706' }, // Amber
-    { bg: '#FDF2F8', color: '#DB2777' }, // Pink
-    { bg: '#ECFEFF', color: '#0891B2' }, // Cyan
+    { bg: 'var(--tag-blue-bg)', color: 'var(--tag-blue-color)' },
+    { bg: 'var(--tag-green-bg)', color: 'var(--tag-green-color)' },
+    { bg: 'var(--tag-purple-bg)', color: 'var(--tag-purple-color)' },
+    { bg: 'var(--tag-orange-bg)', color: 'var(--tag-orange-color)' },
+    { bg: 'var(--tag-rose-bg)', color: 'var(--tag-rose-color)' },
+    { bg: 'var(--tag-indigo-bg)', color: 'var(--tag-indigo-color)' },
+    { bg: 'var(--tag-emerald-bg)', color: 'var(--tag-emerald-color)' },
+    { bg: 'var(--tag-amber-bg)', color: 'var(--tag-amber-color)' },
+    { bg: 'var(--tag-pink-bg)', color: 'var(--tag-pink-color)' },
+    { bg: 'var(--tag-cyan-bg)', color: 'var(--tag-cyan-color)' },
 ];
 
 /** 

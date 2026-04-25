@@ -22,7 +22,7 @@ export default function CategoryCard({ category, onAction }: CategoryCardProps) 
             onDoubleClick={() => onAction?.('edit', (category as any).categoryId ?? category.category_id)}
         >
             <div className="cc-premium-header">
-                <div className="cc-premium-icon-box">
+                <div className="ts-icon-container">
                     <DynamicLucideIcon name={category.icon || 'Folder'} size={18} />
                 </div>
                 <Dropdown

@@ -123,12 +123,11 @@ export default function DeletableEdge(props: EdgeProps) {
             <EdgeLabelRenderer>
                 <div
                     style={{
-                        position: 'absolute',
-                        transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`,
-                        pointerEvents: 'all',
-                        opacity: style?.opacity,
-                    }}
-                    className="nodrag nopan"
+                        '--edge-label-x': `${labelX}px`,
+                        '--edge-label-y': `${labelY}px`,
+                        '--edge-label-opacity': style?.opacity ?? 1,
+                    } as React.CSSProperties}
+                    className="nodrag nopan deletable-edge__label-positioner"
                     // Keep the hover active if the pointer moves into the label area
                     onMouseEnter={() => setHovered(true)}
                     onMouseLeave={() => setHovered(false)}

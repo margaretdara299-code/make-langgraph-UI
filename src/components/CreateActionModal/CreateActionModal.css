@@ -186,7 +186,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: var(--text-lg);
 }
 
 .create-action-modal__step-count {
@@ -365,7 +365,7 @@
 }
 
 .cam-step-title {
-    font-size: 14px;
+    font-size: var(--text-sm);
     font-weight: 700;
     color: #94a3b8;
     line-height: 24px;
@@ -416,7 +416,7 @@
 }
 
 .cam-header-desc {
-    font-size: 14px;
+    font-size: var(--text-sm);
     color: #64748B;
     display: block;
     line-height: 1.5;

@@ -74,13 +74,13 @@
 }
 
 .connector-node__icon {
-    font-size: 18px;
+    font-size: var(--text-xl);
     line-height: 1;
     color: var(--color-node-connector);
 }
 
 .connector-node__title {
-    font-size: 14px;
+    font-size: var(--text-sm);
     font-weight: 700;
     color: color-mix(in srgb, var(--color-node-connector), var(--color-base-black) 60%);
     display: -webkit-box;
@@ -115,7 +115,7 @@
 }
 
 .connector-node__category {
-    font-size: 11px;
+    font-size: var(--text-xs);
     color: color-mix(in srgb, var(--color-node-connector), var(--color-base-black) 50%);
     opacity: 0.7;
     white-space: nowrap;

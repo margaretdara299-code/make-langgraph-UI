@@ -96,8 +96,7 @@ export default function CreateActionReviewStep({ draft }: CreateActionStepProps)
                     column={4}
                     size="small"
                     colon={false}
-                    labelStyle={{ color: '#94a3b8', fontSize: '11px', fontWeight: 500, letterSpacing: '0.02em' }}
-                    contentStyle={{ color: '#1e293b', fontSize: '13px', fontWeight: 500, paddingTop: 4 }}
+                    className="review-descriptions"
                 >
                     <Descriptions.Item label="Name">{draft.name || 'N/A'}</Descriptions.Item>
                     <Descriptions.Item label="Key">{draft.action_key || 'N/A'}</Descriptions.Item>

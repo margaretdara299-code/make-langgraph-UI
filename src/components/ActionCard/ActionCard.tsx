@@ -35,7 +35,7 @@ export default function ActionCard({ action, onAction }: ActionCardProps) {
             {/* Row 1: Name + Actions */}
             <div className="ac-header">
                 <div className="ac-title-group">
-                    <div className="ac-icon-container">
+                    <div className="ts-icon-container">
                         <DynamicLucideIcon name={action.icon} size={20} />
                     </div>
                     <div className="ac-name">{action.name}</div>

@@ -228,7 +228,7 @@ export default function DecisionPropertiesPanel({ nodes = [] }: DecisionProperti
                     <div className="decision-props__banner-left">
                         <div className="decision-props__banner-title">
                             <div className="decision-props__icon-wrap">
-                                <Split size={14} color="#6366f1" />
+                                <Split size={14} color="var(--accent)" />
                             </div>
                             <Title level={5} className="decision-props__title">Decision Rules</Title>
                         </div>

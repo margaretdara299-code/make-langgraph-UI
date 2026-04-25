@@ -78,7 +78,7 @@ export default function DecisionNode({ id, data }: NodeProps<CanvasNode>) {
                         position={Position.Bottom}
                         id={hId}
                         className="decision-node__source-handle modern-node-handle"
-                        style={{ left: leftPercent(idx + 1), '--p': leftPercent(idx + 1) } as React.CSSProperties}
+                        style={{ '--handle-left': leftPercent(idx + 1), '--p': leftPercent(idx + 1) } as React.CSSProperties}
                     />
                 );
             })}
@@ -89,7 +89,7 @@ export default function DecisionNode({ id, data }: NodeProps<CanvasNode>) {
                 position={Position.Bottom}
                 id="default"
                 className="decision-node__source-handle decision-node__source-handle--default modern-node-handle"
-                style={{ left: leftPercent(rules.length + 1), '--p': leftPercent(rules.length + 1) } as React.CSSProperties}
+                style={{ '--handle-left': leftPercent(rules.length + 1), '--p': leftPercent(rules.length + 1) } as React.CSSProperties}
             />
         </ModernNode>
     );

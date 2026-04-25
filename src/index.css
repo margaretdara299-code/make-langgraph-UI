@@ -58,6 +58,11 @@
   --accent-hover: #4e59e1;
   --accent-contrast: #ffffff;
 
+  /* --- Deep Dark Surfaces (Login/Dash) --- */
+  --bg-deep-0: #080d1a;
+  --bg-deep-1: #0f1628;
+  --bg-deep-2: #0c1220;
+
   --text-main: #111827;
   --text-muted: #4b5563;
   --text-subtle: #9ca3af;
@@ -95,12 +100,31 @@
   --color-node-common-bg: #f9f0ff;
   --color-node-common-text: #531dab;
 
+  /* --- Structural Node Colors --- */
+  --color-node-split:   #DB2777;   /* ParallelSplitNode — pink */
+  --color-node-join:    #4F46E5;   /* ParallelJoinNode — indigo */
+  --color-node-queue:   #EA580C;   /* QueueNode — orange */
+
+  /* --- Tag Palette (SkillCard tags) --- */
+  --tag-blue-bg:    #EFF6FF; --tag-blue-color:    #2563EB;
+  --tag-green-bg:   #F0FDF4; --tag-green-color:   #16A34A;
+  --tag-purple-bg:  #FAF5FF; --tag-purple-color:  #9333EA;
+  --tag-orange-bg:  #FFF7ED; --tag-orange-color:  #EA580C;
+  --tag-rose-bg:    #FFF1F2; --tag-rose-color:    #E11D48;
+  --tag-indigo-bg:  #F5F3FF; --tag-indigo-color:  #7C3AED;
+  --tag-emerald-bg: #ECFDF5; --tag-emerald-color: #059669;
+  --tag-amber-bg:   #FEF3C7; --tag-amber-color:   #D97706;
+  --tag-pink-bg:    #FDF2F8; --tag-pink-color:    #DB2777;
+  --tag-cyan-bg:    #ECFEFF; --tag-cyan-color:    #0891B2;
+
+
   /* --- Elevation & Radius --- */
   /* --- Elevation & Depth --- */
   --surface-0: #ffffff;
   --surface-1: #f9fafb;
   --surface-2: #f3f4f6;
   --surface-3: #e5e7eb;
+  --surface-soft: rgba(0, 0, 0, 0.03);
 
   --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
@@ -126,6 +150,7 @@
   --surface-1: #363636;
   --surface-2: #404040;
   --surface-3: #4a4a4a;
+  --surface-soft: rgba(255, 255, 255, 0.05);
 
   --glass-bg: rgba(54, 54, 54, 0.7);
   --glass-border: rgba(228, 228, 228, 0.05);
@@ -233,6 +258,20 @@ body {
 .glass {
   backdrop-filter: blur(12px);
   background: var(--bg-header);
+}
+
+.ts-icon-container {
+    width: 32px;
+    height: 32px;
+    background: var(--surface-soft, var(--accent-soft));
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--accent);
+    border: 1px solid var(--border-medium);
+    transition: all 0.2s ease;
 }
 
 .card-elevated {

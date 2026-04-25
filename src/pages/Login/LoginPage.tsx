@@ -124,19 +124,19 @@ export default function LoginPage() {
                                 <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
                             </filter>
                             <linearGradient id="edge-grad-1" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stopColor="#6366f1" stopOpacity="0.8"/>
-                                <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.8"/>
+                                <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.8"/>
+                                <stop offset="100%" stopColor="var(--color-node-trigger)" stopOpacity="0.8"/>
                             </linearGradient>
                             <linearGradient id="edge-grad-2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.8"/>
-                                <stop offset="100%" stopColor="#22d3ee" stopOpacity="0.8"/>
+                                <stop offset="0%" stopColor="var(--color-node-trigger)" stopOpacity="0.8"/>
+                                <stop offset="100%" stopColor="var(--color-node-connector)" stopOpacity="0.8"/>
                             </linearGradient>
                             <linearGradient id="edge-grad-3" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stopColor="#10b981" stopOpacity="0.8"/>
-                                <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.8"/>
+                                <stop offset="0%" stopColor="var(--color-success)" stopOpacity="0.8"/>
+                                <stop offset="100%" stopColor="var(--color-info)" stopOpacity="0.8"/>
                             </linearGradient>
                             <marker id="arr-main" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
-                                <path d="M0,0 L0,7 L7,3.5 z" fill="#8b5cf6"/>
+                                <path d="M0,0 L0,7 L7,3.5 z" fill="var(--color-node-trigger)"/>
                             </marker>
                         </defs>
 

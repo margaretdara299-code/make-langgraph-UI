@@ -74,7 +74,7 @@
 
 .updates-title {
   margin-bottom: 0 !important;
-  font-size: 16px !important;
+  font-size: var(--text-lg) !important;
   font-weight: 700 !important;
   color: var(--text-main) !important;
   letter-spacing: -0.01em;
@@ -87,20 +87,20 @@
 }
 
 .greeting-text h1 {
-  background: linear-gradient(135deg, #1e293b 0%, #475569 50%, #64748b 100%);
+  background: linear-gradient(135deg, var(--text-main) 0%, var(--text-muted) 50%, var(--text-subtle) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin-bottom: 8px !important;
   font-weight: 800 !important;
-  font-size: 32px !important;
+  font-size: var(--text-3xl) !important;
   letter-spacing: -0.02em !important;
   line-height: 1.2 !important;
 }
 
 .greeting-text .subtitle {
   color: var(--text-muted) !important;
-  font-size: 16px !important;
+  font-size: var(--text-lg) !important;
   font-weight: 500 !important;
   max-width: 600px !important;
   line-height: 1.6 !important;
@@ -228,9 +228,9 @@
 }
 
 .title-separator {
-    color: #CBD5E1;
+    color: var(--border-medium);
     font-weight: 300;
-    font-size: 18px;
+    font-size: var(--text-xl);
 }
 
 .header-description {
@@ -259,7 +259,7 @@
 
 .header-subtitle {
   font-size: 13px;
-  color: #94A3B8;
+  color: var(--text-subtle);
 }
 
 .activity-search-bar {
@@ -281,15 +281,210 @@
 }
 
 .search-placeholder {
-  color: #94A3B8;
-  font-size: 14px;
+  color: var(--text-subtle);
+  font-size: var(--text-sm);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px !important;
+  font-weight: 800 !important;
+  font-size: var(--text-3xl) !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.2 !important;
+}
+
+.greeting-text .subtitle {
+  color: var(--text-muted) !important;
+  font-size: var(--text-lg) !important;
+  font-weight: 500 !important;
+  max-width: 600px !important;
+  line-height: 1.6 !important;
+  margin-top: 4px !important;
+}
+
+/* Metrics Grid */
+.dashboard-main-row {
+  margin-top: 8px;
+}
+
+.metrics-section {
+  margin-bottom: 16px;
+}
+
+
+.updates-section {
+  margin-bottom: 0;
+}
+
+/* Skills Table */
+.dashboard-skills-table {
+  min-height: 400px;
+}
+
+.dashboard-skills-table .ant-table {
+  background: transparent !important;
+}
+
+.dashboard-skills-table .ant-table-thead > tr > th {
+  background: var(--surface-1) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: var(--text-muted) !important;
+  letter-spacing: 0.05em;
+  padding: 10px 16px !important;
+  border-bottom: 2px solid var(--border-medium) !important;
+  transition: background 0.3s ease;
+}
+
+/* Ant Design Scroll Fixes */
+.dashboard-skills-table .ant-table-header {
+  background: var(--surface-1) !important;
+  border-radius: 0 !important;
+}
+
+.dashboard-skills-table .ant-table-body::-webkit-scrollbar {
+  width: 6px !important;
+}
+
+.dashboard-skills-table .ant-table-body::-webkit-scrollbar-thumb {
+  background: var(--text-muted) !important;
+  border-radius: 10px !important;
+}
+
+.dashboard-skills-table .ant-table-body::-webkit-scrollbar-track {
+  background: var(--surface-2) !important;
+}
+
+.dashboard-skills-table .ant-table-body {
+  overflow-y: auto !important;
+}
+
+.dashboard-skills-table .ant-table-tbody > tr:not(.ant-table-measure-row) > td {
+  padding: 12px 16px !important;
+  border-bottom: 1px solid var(--border-light) !important;
+  font-size: 13px;
+  color: var(--text-main);
+}
+
+.dashboard-skills-table .ant-table-measure-row > td {
+  padding: 0 !important;
+  height: 0 !important;
+  border: none !important;
+}
+
+.dashboard-skills-table .ant-table-tbody > tr {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dashboard-skills-table .ant-table-tbody > tr:hover > td {
+  background: var(--accent-soft) !important;
+}
+
+.dashboard-skills-table .ant-table-tbody > tr:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-subtle);
+}
+
+.dashboard-skills-table .ant-table-tbody > tr:last-child > td {
+  border-bottom: none !important;
+}
+
+
+/* Activity Timeline Feeds (Reference Style) */
+.activity-container {
+  padding: 0;
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+  margin-top: 24px;
+}
+
+/* Activity Timeline Modern Header */
+.activity-header-modern {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px 24px 16px 24px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.header-content-left {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.title-separator {
+    color: var(--border-medium);
+    font-weight: 300;
+    font-size: var(--text-xl);
+}
+
+.header-description {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.header-actions-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.activity-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.header-subtitle {
+  font-size: 13px;
+  color: var(--text-subtle);
+}
+
+.activity-search-bar {
+  margin-bottom: 20px;
+}
+
+.search-input-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px 0 20px;
+  background: var(--bg-page);
+  border: 1.5px solid var(--border-light);
+  border-radius: 24px;
+}
+
+.header-search {
+  height: 40px;
+}
+
+.search-placeholder {
+  color: var(--text-subtle);
+  font-size: var(--text-sm);
 }
 
 .search-action-btn {
   width: 36px;
   height: 36px;
-  background: #3B82F6;
-  color: #ffffff;
+  background: var(--accent);
+  color: var(--text-inverse);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -313,12 +508,12 @@
 }
 
 .activity-timeline-wrap::-webkit-scrollbar-thumb {
-  background: #E2E8F0;
+  background: var(--border-light);
   border-radius: 10px;
 }
 
 .activity-timeline-wrap::-webkit-scrollbar-thumb:hover {
-  background: #CBD5E1;
+  background: var(--border-medium);
 }
 
 .timeline-item {
@@ -346,7 +541,7 @@
 .marker-line {
   flex: 1;
   width: 1.5px;
-  background-color: #F1F5F9;
+  background-color: var(--bg-page);
   margin-top: 4px;
   margin-bottom: -16px;
 }
@@ -367,7 +562,7 @@
 }
 
 .activity-card:hover {
-  background-color: #F8FAFC;
+  background-color: var(--surface-1);
 }
 
 .card-top {
@@ -384,23 +579,23 @@
 
 .activity-desc {
   font-size: 12px;
-  color: #475569;
+  color: var(--text-muted);
   line-height: 1.4;
 }
 
 .activity-timestamp {
   font-size: 10px;
-  color: #94A3B8;
+  color: var(--text-subtle);
   text-align: right;
   margin-top: 1px;
 }
 
 .section-label {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #6366F1;
+  color: var(--accent);
   margin-bottom: 4px;
 }
 
@@ -422,7 +617,7 @@
 
 
 .view-all-btn {
-  color: #3B82F6 !important;
+  color: var(--accent) !important;
   font-weight: 600 !important;
   font-size: 13px !important;
   display: flex !important;
@@ -431,8 +626,8 @@
 }
 
 .view-all-btn:hover {
-  background-color: #F8FAFC !important;
-  color: #2563EB !important;
+  background-color: var(--surface-1) !important;
+  color: var(--accent-hover) !important;
 }
 
 /* Industry Level Modern Header */
@@ -446,7 +641,7 @@
 }
 
 .workspace-name {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -473,9 +668,9 @@
 }
 
 .tab-item {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 600;
-  color: #64748B;
+  color: var(--text-muted);
   padding-bottom: 12px;
   cursor: pointer;
   position: relative;
@@ -487,7 +682,7 @@
 }
 
 .tab-item.active {
-  color: #3B82F6;
+  color: var(--accent);
 }
 
 .tab-item.active::after {
@@ -497,7 +692,7 @@
   left: 0;
   width: 100%;
   height: 2px;
-  background: #3B82F6;
+  background: var(--accent);
   border-radius: 2px;
 }
 /* =====================================================
@@ -507,7 +702,7 @@
 .db-page-title {
     margin: 0 !important;
     font-weight: 800 !important;
-    font-size: 24px !important;
+    font-size: var(--text-2xl) !important;
     letter-spacing: -0.02em;
 }
 

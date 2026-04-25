@@ -60,7 +60,7 @@
 }
 
 .sidebar-title {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: #0f172a;
   letter-spacing: -0.01em;
@@ -96,7 +96,7 @@
 
 .main-group-header .group-label,
 .group-label {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: #1e293b;
   font-family: var(--font-sans);
@@ -284,8 +284,7 @@
   width: 26px; /* Slightly more compact */
   height: 26px;
   border-radius: 6px;
-  background: white;
-  border: 1px solid #f1f5f9;
+  background: var(--nli-bg, white);\r\n  border: 1px solid #f1f5f9;
   display: flex;
   align-items: center;
   justify-content: center;
