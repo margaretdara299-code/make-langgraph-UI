@@ -1,24 +1,41 @@
-import { Handle, Position } from '@xyflow/react';
-import { ListOrdered } from 'lucide-react';
+import { Handle, Position, useReactFlow } from '@xyflow/react';
+import { Layers } from 'lucide-react';
+import { useParams } from 'react-router-dom';
 import type { NodeProps } from "@xyflow/react";
 import type { CanvasNode } from "@/interfaces";
+import { removeNodeFromStorage } from '@/services/skillGraphStorage.service';
 import { getNodeTheme } from "@/utils";
 import ModernNode from "../ModernNode/ModernNode";
 import "../ModernNode/ModernNode.css";
 
 export default function QueueNode({ id, data }: NodeProps<CanvasNode>) {
-  const nodeData = data;
+  const nodeData = data as any;
+  const { setNodes } = useReactFlow();
+  const { versionId } = useParams<{ versionId: string }>();
   const theme = getNodeTheme("queue");
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setNodes((nodes) => nodes.filter((node) => node.id !== id));
+    if (versionId) removeNodeFromStorage(versionId, id);
+  };
+
+  const queueType = nodeData.queue_type || 'human';
+  const queueTypeLabel =
+    queueType === 'human'    ? 'Human'     :
+    queueType === 'agent'    ? 'AI Agent'  :
+    queueType === 'temporal' ? 'Temporal'  : 'Queue';
 
   return (
     <ModernNode
       id={id}
       data={nodeData}
       theme={theme}
-      title={nodeData.label || "Queue Engine"}
-      subtitle={nodeData.description || "Async Handoff"}
+      title={nodeData.label || "Queue"}
+      subtitle={nodeData.queue_name || queueTypeLabel}
       badge="QUEUE"
-      icon={<ListOrdered size={14} />}
+      icon={<Layers size={14} />}
+      onDelete={handleDelete}
       showTargetHandle={false}
       showSourceHandle={false}
     >

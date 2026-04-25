@@ -96,7 +96,7 @@
   width: 220px;
   height: 100%;
   background-color: var(--bg-sidebar);
-  border-right: 0.3px solid #e1d8d8;
+  border-right: 0.3px solid var(--border-medium);
   display: flex;
   flex-direction: column;
   padding: 22px 16px;

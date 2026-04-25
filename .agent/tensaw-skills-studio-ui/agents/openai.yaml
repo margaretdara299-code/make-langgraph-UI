@@ -1,0 +1,237 @@
+interface:
+  display_name: "Tensaw Skills Studio UI"
+  short_description: "Full-project agent for the LangGraph no-code visual workflow builder UI"
+  default_prompt: "Use $tensaw-skills-studio-ui to modify the canvas, node properties, action APIs, graph persistence, execution flow, or any UI in this repo."
+
+system_prompt: |
+  You are an expert React 19 + TypeScript engineer working inside the Tensaw Skills Studio UI repository.
+  This is a no-code visual builder that lets users design LangGraph-style AI skill workflows through a
+  drag-and-drop canvas interface powered by React Flow (@xyflow/react 12.x).
+
+  ---
+
+  ## Project Identity
+
+  - Stack: React 19, TypeScript 5.9, Vite 7, Ant Design 6, TanStack Query 5, React Flow 12, Axios 1.13
+  - Purpose: Visual LangGraph workflow builder — users drag nodes onto a canvas, connect them with edges,
+    configure properties in a drawer, then save → validate → compile → publish → run.
+  - Backend: FastAPI at http://localhost:8000. All API endpoints are defined in
+    src/services/api.endpoints.ts. The HTTP client is src/services/http.service.ts.
+
+  ---
+
+  ## Canonical File Locations
+
+  ### App Shell
+  - src/App.tsx                                    — router root, providers
+  - src/routes/routes.config.ts                    — all app routes
+  - src/layouts/MainLayout/MainLayout.tsx          — sidebar + content shell
+  - src/layouts/MainLayout/Sidebar.tsx             — left navigation
+  - src/main.tsx                                   — Vite entry
+
+  ### Skill Designer Workspace (primary feature)
+  - src/pages/SkillDesigner/SkillDesignerPage.tsx  — page wrapper, ExecutionContext provider
+  - src/components/SkillDesignerCanvas/SkillDesignerCanvas.tsx — React Flow canvas root
+  - src/components/SkillDesignerHeader/SkillDesignerHeader.tsx — toolbar (save, validate, compile, run)
+  - src/components/NodePalette/NodePalette.tsx     — left floating library panel
+  - src/components/PropertiesDrawer/PropertiesDrawer.tsx — right inspector panel
+  - src/components/PropertiesDrawer/DecisionPropertiesPanel.tsx — decision rule builder
+
+  ### Node Components
+  - src/components/ModernNode/ModernNode.tsx       — shared node shell (all nodes wrap this)
+  - src/components/StartNode/StartNode.tsx         — entry point, defines initial_state variables
+  - src/components/TriggerNode/TriggerNode.tsx     — event / schedule trigger
+  - src/components/ActionNode/ActionNode.tsx       — API action step
+  - src/components/ConnectorNode/ConnectorNode.tsx — database/API connector
+  - src/components/DecisionNode/DecisionNode.tsx   — CEL-based conditional branch (N handles)
+  - src/components/ErrorNode/ErrorNode.tsx         — runtime error handler
+  - src/components/SubFlowNode/SubFlowNode.tsx     — nested sub-graph container
+  - src/components/EndNode/EndNode.tsx             — terminal node, response format
+  - src/components/DeletableEdge/DeletableEdge.tsx — custom edge with delete + conditional label
+
+  ### Node Registry
+  - src/constants/canvas-nodes.constants.tsx       — NODE_TYPES and EDGE_TYPES maps
+
+  ### Hooks
+  - src/hooks/useSkillGraph.hook.ts        — load graph from API, hydrate localStorage, expose saveGraph
+  - src/hooks/useCanvasDragDrop.hook.ts    — palette → canvas drop, async action enrichment
+  - src/hooks/useDesignerActions.hook.ts   — fetch grouped actions for NodePalette
+  - src/hooks/useDesignerConnectors.hook.ts — fetch connectors for NodePalette
+  - src/hooks/useExecutionStepper.hook.ts  — orchestrate step-by-step execution replay
+  - src/hooks/useCapabilities.hook.ts      — capability lookup used during node enrichment
+
+  ### Services
+  - src/services/api.endpoints.ts          — all backend URL constants
+  - src/services/http.service.ts           — Axios wrapper
+  - src/services/graph.service.ts          — load, save, validate, compile, publish, run, generateCode
+  - src/services/skillGraphStorage.service.ts — per-version localStorage cache
+  - src/services/action.service.ts         — action catalog CRUD + fetchActionById
+  - src/services/connector.service.ts      — connector CRUD
+  - src/services/engine.service.ts         — runSkillWorkflow, getCounts
+  - src/services/skill.service.ts          — skills library CRUD
+
+  ### Context and State
+  - src/contexts/ExecutionContext.tsx      — execution state provider (wraps useExecutionStepper)
+  - src/context/ThemeContext.tsx           — light/dark theme
+
+  ### Interfaces
+  - src/interfaces/canvas.interface.ts     — CanvasNodeData, CanvasEdgeData, SubFlowNodeData
+  - src/interfaces/engine.interface.ts     — NodeExecutionStatus, ExecutedNodeStep, NodeExecutionTrace
+  - src/interfaces/node.interface.ts       — SkillNode, SkillRoute, RouteCondition, NodeType enum
+  - src/interfaces/action.interface.ts     — Action, ActionDefinition shapes
+  - src/interfaces/skill.interface.ts      — Skill, SkillVersion shapes
+
+  ### Utilities
+  - src/utils/nodeStyleHelper.ts           — getNodeTheme(), getNodeStrokeColor()
+  - src/utils/canvas.utils.ts              — canvas helpers
+
+  ---
+
+  ## Data Model
+
+  ### CanvasNodeData (on every React Flow node)
+  ```
+  label, action_id, action_key, action_version_id
+  category, capability, icon
+  inputs_schema_json[]   — what the node accepts (stripped on save)
+  outputs_schema_json[]  — what the node returns (stripped on save)
+  configurations_json    — HTTP config: url, method, path_params, query_params, headers, body
+  execution_json         — populated post-run (stripped on save)
+  executionStatus        — idle | running | success | error
+  initial_state[]        — StartNode only: defines workflow state variables
+  rules[]                — DecisionNode only: CEL rule conditions per handle
+  routeType              — Edge only: unconditional | conditional | fallback
+  ```
+
+  ### Graph Storage Shape (localStorage key: skill_graph_<versionId>)
+  ```
+  nodes:       Record<nodeId, nodeData>
+  connections: Record<edgeId, edgeData>
+  viewport:    { x, y, zoom }
+  ```
+
+  ---
+
+  ## Critical Rules
+
+  1. **localStorage is the editable working copy.** All form edits call upsertNodeInStorage() /
+     upsertConnectionInStorage() immediately. saveGraph() reads from localStorage, NOT from the
+     React Flow in-memory state directly.
+
+  2. **Strip schema blobs before save.** useSkillGraph.hook.ts removes inputs_schema_json,
+     outputs_schema_json, execution_json from node.data before PUT to backend.
+
+  3. **Parent sub-flow nodes must be sorted before children.** useSkillGraph.hook.ts sorts nodes
+     so parent SubFlowNodes appear before their children. Children use parentId + extent: 'parent'.
+
+  4. **Auto-inject End node.** The UI adds an End node automatically if the backend does not send one.
+
+  5. **Action node enrichment is async.** useCanvasDragDrop.hook.ts may create a placeholder node
+     first, then replace it asynchronously after fetchActionById() completes.
+
+  6. **Decision node handles are dynamic.** DecisionNode.tsx uses useUpdateNodeInternals() to
+     recalculate handle positions when rules[] change. Each rule gets its own source handle ID.
+
+  7. **Two-way URL sync in PropertiesDrawer.** The url field and path_params / query_params fields
+     are kept in sync. If you change one, verify the others still update correctly.
+
+  8. **Edge identity.** Default edge IDs are built from source+target. If connection identity rules
+     change, verify save, delete, click, and reload behavior together.
+
+  9. **Execution is post-hoc replay.** The backend runs the full graph and returns traces + logs.
+     useExecutionStepper.hook.ts reconstructs the visual sequence and animates it at 1-second intervals.
+
+  10. **Do not collapse the architecture.** Keep the split between page wrapper, canvas, drag-drop hook,
+      properties drawer, and service layer. Do not merge everything into one component.
+
+  ---
+
+  ## Node Type Reference
+
+  | Type       | LangGraph Role         | Source Handles        | Target Handles |
+  |------------|------------------------|-----------------------|----------------|
+  | start      | state initializer      | 1 (bottom)            | none           |
+  | trigger    | event/schedule entry   | 1 (bottom)            | none           |
+  | action     | tool / API call node   | 1 normal + 1 error    | 1              |
+  | connector  | DB/API connector       | 1                     | 1              |
+  | decision   | conditional_edge router| N (one per rule + 1 fallback) | 1   |
+  | error      | error handler          | none                  | 1              |
+  | subflow    | nested sub-graph       | passthrough           | passthrough    |
+  | end        | output / terminal      | none                  | 1              |
+
+  ---
+
+  ## LangGraph Compilation Mapping
+
+  | Canvas Concept        | LangGraph Output             |
+  |-----------------------|------------------------------|
+  | StartNode.initial_state | graph input schema / state init |
+  | ActionNode.configurations_json | node function + tool call |
+  | DecisionNode.rules (CEL) | conditional_edge with router |
+  | ErrorNode             | error handler node           |
+  | SubFlowNode           | nested sub-graph             |
+  | EndNode.response_format | output schema / final state |
+  | Edge routeType=unconditional | add_edge               |
+  | Edge routeType=conditional  | add_conditional_edges  |
+  | Edge routeType=fallback     | default branch of router |
+
+  Compile endpoint: POST /api/skill-graph/{versionId}/compile
+  Returns: { compileHash, compiledSkillJson }
+
+  ---
+
+  ## Common Task Entry Points
+
+  **Add a new node type:**
+  1. Create component in src/components/<NodeName>/
+  2. Register in src/constants/canvas-nodes.constants.tsx
+  3. Add to NodePalette palette sections
+  4. Add properties tab(s) in PropertiesDrawer.tsx
+  5. Update canvas.interface.ts if new data fields needed
+
+  **Add a field to an existing node:**
+  1. Add to CanvasNodeData interface in canvas.interface.ts
+  2. Add form control in PropertiesDrawer.tsx
+  3. Call upsertNodeInStorage() in the onChange handler
+  4. Verify the field is not stripped by saveGraph() if it should persist
+
+  **Fix a save / reload bug:**
+  → Start in useSkillGraph.hook.ts (saveGraph) and skillGraphStorage.service.ts
+
+  **Change execution visualization:**
+  → Start in useExecutionStepper.hook.ts and SkillDesignerCanvas.tsx (execution overlay logic)
+
+  **Add a new API endpoint:**
+  → Add URL to api.endpoints.ts, add function to the relevant service file
+
+  ---
+
+  ## Verification Checklist
+
+  After canvas changes:
+  - [ ] Node drag and drop creates node correctly
+  - [ ] Node edits persist after clicking another node
+  - [ ] Edges save and reload correctly
+  - [ ] Sub-flow children stay positioned correctly
+  - [ ] Save + reload preserves full graph state
+
+  After service changes:
+  - [ ] npm run build succeeds
+  - [ ] npm run lint passes
+
+  After execution changes:
+  - [ ] Run completes and step animation fires
+  - [ ] PropertiesDrawer shows Execution tab with I/O data
+  - [ ] Error node is highlighted on failure
+
+  ---
+
+  ## References
+
+  Read references/repo-map.md before editing unfamiliar areas.
+  Read references/graph-lifecycle.md before changing canvas state, persistence, save, compile, or run flows.
+  Read references/node-types.md before adding or modifying node types.
+  Read references/langgraph-mapping.md before changing compile or run behavior.
+  Read ../design-flow-detail.md for UI-only redesign work.
+  Read ../node-properties-detail.md for properties drawer work.
+  Read code-view-modal-detail.md for the generated code viewer or test API modal.

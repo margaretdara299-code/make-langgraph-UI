@@ -42,9 +42,9 @@
     justify-content: center;
     align-items: center;
     height: 300px;
-    background-color: #f8fafc;
+    background-color: var(--surface-1);
     border-radius: 12px;
-    border: 1px dashed #e2e8f0;
+    border: 1px dashed var(--border-medium);
 }
 
 @keyframes fadeIn {
@@ -81,12 +81,12 @@
 }
 
 .capabilities-body::-webkit-scrollbar-thumb {
-    background: #e2e8f0;
+    background: var(--border-medium);
     border-radius: 10px;
 }
 
 .capabilities-body::-webkit-scrollbar-thumb:hover {
-    background: #cbd5e1;
+    background: var(--border-strong);
 }
 .header-title-premium {
     margin: 0 !important;

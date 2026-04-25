@@ -1,53 +1,54 @@
 export function getNodeTheme(type: string, capability?: string, category?: string) {
     // Explicit error node type — always red regardless of category
     if (type === 'error') {
-        return { bg: '#FFF5F5', stroke: '#EF4444', badgeBg: '#EF4444', iconBg: '#FFFFFF' };
+        return { bg: 'var(--color-error-bg)', stroke: 'var(--color-error)', badgeBg: 'var(--color-error)', iconBg: '#FFFFFF' };
     }
 
     if (type === 'decision' || type === 'router') {
         // Orange / Routing
-        return { bg: '#FFF7ED', stroke: '#EA580C', badgeBg: '#EA580C', iconBg: '#EA580C' };
-    }
-    
-    if (type === 'start') {
-        return { bg: '#F5F3FF', stroke: '#7C3AED', badgeBg: '#7C3AED', iconBg: '#FFFFFF' };
+        return { bg: 'var(--color-warning-bg)', stroke: 'var(--color-warning)', badgeBg: 'var(--color-warning)', iconBg: 'var(--color-warning-bg)' };
     }
 
     if (type === 'queue') {
-        return { bg: '#FFF7ED', stroke: '#EA580C', badgeBg: '#EA580C', iconBg: '#FFFFFF' };
+        // Amber — durable hand-off / workflow boundary
+        return { bg: 'var(--tag-orange-bg)', stroke: 'var(--color-node-queue)', badgeBg: 'var(--color-node-queue)', iconBg: 'var(--accent-soft)' };
+    }
+    
+    if (type === 'start') {
+        return { bg: 'var(--tag-indigo-bg)', stroke: 'var(--tag-indigo-color)', badgeBg: 'var(--tag-indigo-color)', iconBg: '#FFFFFF' };
     }
 
     if (type === 'parallel_split') {
-        return { bg: '#FDF2F8', stroke: '#DB2777', badgeBg: '#DB2777', iconBg: '#FFFFFF' };
+        return { bg: 'var(--tag-pink-bg)', stroke: 'var(--color-node-split)', badgeBg: 'var(--color-node-split)', iconBg: '#FFFFFF' };
     }
 
     if (type === 'parallel_join') {
-        return { bg: '#EEF2FF', stroke: '#4F46E5', badgeBg: '#4F46E5', iconBg: '#FFFFFF' };
+        return { bg: 'var(--tag-indigo-bg)', stroke: 'var(--color-node-join)', badgeBg: 'var(--color-node-join)', iconBg: '#FFFFFF' };
     }
     
     if (type === 'end') {
-        return { bg: '#F8FAFC', stroke: '#000000', badgeBg: '#27272A', iconBg: '#FFFFFF' };
+        return { bg: 'var(--surface-1)', stroke: 'var(--text-main)', badgeBg: 'var(--text-main)', iconBg: '#FFFFFF' };
     }
 
     const cap = (capability || '').toLowerCase();
     
     // DB / Connector - Bright Sky Blue (User approved)
     if (cap === 'database' || cap.includes('db')) {
-        return { bg: '#F0F9FF', stroke: '#0369A1', badgeBg: '#0369A1', iconBg: '#FFFFFF' };
+        return { bg: 'var(--color-node-connector-bg)', stroke: 'var(--color-node-connector)', badgeBg: 'var(--color-node-connector)', iconBg: '#FFFFFF' };
     }
     
     // Skill - Pink/Magenta
     if (cap === 'skill' || cap === 'human') {
-        return { bg: '#FDF2F8', stroke: '#DB2777', badgeBg: '#DB2777', iconBg: '#FFFFFF' };
+        return { bg: 'var(--tag-pink-bg)', stroke: 'var(--tag-pink-color)', badgeBg: 'var(--tag-pink-color)', iconBg: '#FFFFFF' };
     }
 
     // Status - Teal / Dark Green
     if (cap === 'status' || cap.includes('update')) {
-        return { bg: '#F0FDFA', stroke: '#0D9488', badgeBg: '#0D9488', iconBg: '#FFFFFF' };
+        return { bg: 'var(--tag-emerald-bg)', stroke: 'var(--tag-emerald-color)', badgeBg: 'var(--tag-emerald-color)', iconBg: '#FFFFFF' };
     }
 
     // Default LLM / API / Action - Blue
-    return { bg: '#EFF6FF', stroke: '#2563EB', badgeBg: '#2563EB', iconBg: '#FFFFFF' };
+    return { bg: 'var(--color-info-bg)', stroke: 'var(--color-info)', badgeBg: 'var(--color-info)', iconBg: '#FFFFFF' };
 }
 
 type NodeColorSource = {
@@ -84,9 +85,8 @@ export function getNodeStrokeColor(node: NodeColorSource): string {
     }
 
     if (nodeType === 'parallel_split' || nodeType === 'parallel_join') {
-        return getNodeTheme('parallel_split').stroke;
+        return getNodeTheme(nodeType).stroke;
     }
 
     return getNodeTheme(nodeType, capability, category).stroke;
 }
-

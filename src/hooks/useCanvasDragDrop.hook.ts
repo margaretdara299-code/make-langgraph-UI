@@ -174,13 +174,15 @@ export default function useCanvasDragDrop(
                     type: 'queue',
                     position,
                     data: {
-                        label: data.label || 'Queue',
-                        category: 'structure',
-                        icon: 'ListOrdered',
-                        description: '',
-                        queue_name: '',
-                        priority: 'normal',
-                        wait_for_completion: false,
+                        label:       data.label || 'Queue',
+                        category:    'structure',
+                        icon:        'Layers',
+                        queue_name:  '',
+                        queue_type:  'human',
+                        priority:    'normal',
+                        ttl_seconds: 0,
+                        auto_closeout: true,
+                        payload_mappings: [],
                     } as any,
                 };
                 setNodes((nds) => [...nds, newNode]);
@@ -198,6 +200,7 @@ export default function useCanvasDragDrop(
                         label: data.label || 'Parallel Split',
                         category: 'structure',
                         icon: 'GitFork',
+                        branches: 3,
                     } as any,
                 };
                 setNodes((nds) => [...nds, newNode]);
@@ -215,6 +218,8 @@ export default function useCanvasDragDrop(
                         label: data.label || 'Parallel Join',
                         category: 'structure',
                         icon: 'Merge',
+                        join_strategy: 'all',
+                        inputs: 3,
                     } as any,
                 };
                 setNodes((nds) => [...nds, newNode]);
