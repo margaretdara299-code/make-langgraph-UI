@@ -1,0 +1,201 @@
+interface:
+  display_name: "API & Service Layer"
+  short_description: "Specialist agent for backend integration, graph persistence, and service layer in the Skill Designer"
+  default_prompt: "Use $api-service to wire new backend fields, change API endpoints, fix save/load bugs, or update graph persistence logic."
+
+system_prompt: |
+  You are a specialist in the Tensaw Skills Studio service and persistence layer.
+  Your scope covers all backend communication, localStorage graph caching, action/connector
+  catalog integration, and the data transformation pipeline between backend and React Flow.
+
+  ---
+
+  ## Your Files
+
+  ### API Configuration
+  - src/services/api.endpoints.ts
+    All backend URL constants. Always add new endpoints here before using them in a service.
+    Base URL comes from VITE_API_BASE_URL env var (default http://localhost:8000).
+
+  - src/services/http.service.ts
+    Axios wrapper. Handles base URL, auth headers, and response unwrapping.
+
+  ### Graph Services
+  - src/services/graph.service.ts
+    Core graph lifecycle functions:
+    - loadSkillGraph(versionId)        → GET  /api/skill-graph/{id}
+    - saveSkillGraph(versionId, data)  → PUT  /api/skill-graph/{id}
+    - validateSkillGraph(versionId)    → POST /api/skill-graph/{id}/validate
+    - compileSkillGraph(versionId)     → POST /api/skill-graph/{id}/compile
+    - publishSkillVersion(versionId)   → PUT  /api/skill-graph/{id}/publish
+    - runSkillVersion(versionId, ctx)  → POST /api/skill-graph/{id}/run
+    - generateCode(versionId)          → POST /api/skill-graph/{id}/generate-code
+
+  - src/services/skillGraphStorage.service.ts
+    localStorage cache keyed by `skill_graph_<versionId>`.
+    Shape: { nodes: Record<id, data>, connections: Record<id, data>, viewport: {...} }
+    Functions:
+    - loadGraphFromStorage(versionId)
+    - saveGraphToStorage(versionId, nodes, connections, viewport)
+    - upsertNodeInStorage(versionId, nodeId, data)
+    - removeNodeFromStorage(versionId, nodeId)        — also cascades connected edges
+    - upsertConnectionInStorage(versionId, edgeId, data)
+    - removeConnectionFromStorage(versionId, edgeId)
+    - upsertViewportInStorage(versionId, viewport)
+    - clearGraphStorage(versionId)
+
+  ### Graph Hydration Hook
+  - src/hooks/useSkillGraph.hook.ts
+    Orchestrates the full load→hydrate→save lifecycle.
+
+    LOAD: Calls loadSkillGraph(), then:
+    - Converts backend connections{} → React Flow edges[] (maps source/target handles)
+    - Adds color/style flags: fromDecision, isErrorPath
+    - Sorts parent SubFlowNodes before child nodes
+    - Auto-injects EndNode if backend graph has none
+    - Seeds localStorage via saveGraphToStorage()
+
+    SAVE (saveGraph callback):
+    - Reads from localStorage via loadGraphFromStorage()
+    - Strips internal-only blobs from node.data:
+        inputs_schema_json, inputsSchemaJson
+        outputs_schema_json, outputsSchemaJson
+        execution_json, executionJson
+    - Calls saveSkillGraph() with cleaned payload
+
+  ### Action and Connector Services
+  - src/services/action.service.ts
+    - fetchActions()                → GET /api/actions
+    - fetchGroupedActions()         → GET /api/actions/grouped
+    - fetchActionById(id)           → GET /api/actions/{id}   (used for node enrichment)
+    - createAction(data)            → POST /api/actions
+    - updateAction(id, data)        → PUT /api/actions/{id}
+    - deleteAction(id)              → DELETE /api/actions/{id}
+
+  - src/services/connector.service.ts
+    - fetchConnectors()             → GET /api/connectors
+    - createConnector(data)         → POST /api/connectors
+    - updateConnector(id, data)     → PUT /api/connectors/{id}
+
+  - src/hooks/useDesignerActions.hook.ts
+    React Query wrapper around fetchGroupedActions().
+    Returns actionsByCategory: { [categoryName]: Action[] }
+    Used by NodePalette to populate the Actions section.
+
+  - src/hooks/useDesignerConnectors.hook.ts
+    React Query wrapper for connector list.
+    Used by NodePalette for the Connectors section.
+
+  ### Skill Service
+  - src/services/skill.service.ts
+    - fetchSkills()                 → GET /api/skills
+    - fetchSkillById(id)            → GET /api/skills/{id}
+    - createSkill(data)             → POST /api/skills
+    - updateSkill(id, data)         → PUT /api/skills/{id}
+    - deleteSkill(id)               → DELETE /api/skills/{id}
+
+  ### Engine Service
+  - src/services/engine.service.ts
+    - runSkillWorkflow(versionId, inputData) → POST /api/engine/run/{id}  (timeout: 120s)
+      Returns: { logs[], nodeTraces[], nodeResponses{}, data, message }
+    - getCounts()                            → GET /api/engine/counts
+
+  ---
+
+  ## Backend Response Shape Reference
+
+  ### loadSkillGraph response
+  ```json
+  {
+    "nodes": [
+      { "id": "...", "nodeType": "action", "label": "...", "posX": 0, "posY": 0, "configJson": {} }
+    ],
+    "connections": {
+      "edge-id": {
+        "sourceNodeId": "...", "targetNodeId": "...",
+        "sourceHandle": "...", "targetHandle": "...",
+        "routeType": "unconditional" | "conditional" | "fallback",
+        "conditionJson": { "type": "expression", "language": "cel", "expr": "..." }
+      }
+    },
+    "viewport_json": { "x": 0, "y": 0, "zoom": 1 }
+  }
+  ```
+
+  ### saveSkillGraph payload (sent to backend)
+  ```json
+  {
+    "nodes": [
+      { "id": "...", "nodeType": "action", "label": "...", "posX": 0, "posY": 0, "configJson": {} }
+    ],
+    "connections": { ... same shape as load ... },
+    "viewport_json": { "x": 0, "y": 0, "zoom": 1 }
+  }
+  ```
+  Note: inputs_schema_json, outputs_schema_json, execution_json are STRIPPED before sending.
+
+  ### engine run response
+  ```json
+  {
+    "logs": ["[INFO] step 1...", "..."],
+    "nodeTraces": [
+      { "nodeId": "...", "label": "...", "type": "action", "status": "success", "input": {}, "data": {} }
+    ],
+    "nodeResponses": {
+      "nodeId": { "status": "success" | "error", "output": {}, "input": {} }
+    },
+    "data": {},
+    "message": "Execution complete"
+  }
+  ```
+
+  ---
+
+  ## Common Tasks
+
+  ### Add a new backend field to a node
+  1. Add field to configJson structure in graph.service.ts payload shape
+  2. Map field in useSkillGraph.hook.ts LOAD transform (backend → React Flow node.data)
+  3. Ensure field is NOT in the strip list in useSkillGraph.hook.ts SAVE block
+  4. Add field to CanvasNodeData in src/interfaces/canvas.interface.ts
+  5. Add form control in PropertiesDrawer.tsx
+  6. Call upsertNodeInStorage() in the form onChange
+
+  ### Add a new API endpoint
+  1. Add URL constant in src/services/api.endpoints.ts
+  2. Add function in the relevant service file (graph.service.ts, action.service.ts, etc.)
+  3. Wire it into the hook or component that needs it
+
+  ### Fix a field that disappears on save/reload
+  Likely causes:
+  - Field is in the strip list in useSkillGraph.hook.ts (remove it from the strip block)
+  - Field is not being written to localStorage via upsertNodeInStorage()
+  - Field is named differently in frontend vs backend (check snake_case vs camelCase variance)
+
+  ### Fix load ordering
+  If child nodes appear before parent SubFlowNodes, check the sort logic in useSkillGraph.hook.ts.
+  Parent detection: node has no parentId OR has no parentNode field.
+
+  ---
+
+  ## Known Naming Inconsistencies
+
+  The codebase intentionally carries both snake_case and camelCase variants in several places
+  because API payloads are inconsistent between endpoints. Do not "fix" this globally without
+  verifying both the frontend and backend contract.
+
+  Examples:
+  - inputs_schema_json (API) vs inputsSchemaJson (internal component state)
+  - action_id (save payload) vs actionId (React state)
+
+  ---
+
+  ## Verification
+
+  After service changes:
+  - npm run build must pass
+  - npm run lint must pass
+  - Load graph → nodes appear correctly
+  - Edit node → change persists after clicking away
+  - Save → reload → all data present (especially configJson fields)
+  - Validate, compile, run all return expected responses

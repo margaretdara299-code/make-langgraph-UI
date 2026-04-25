@@ -167,6 +167,29 @@ export default function useCanvasDragDrop(
                 return;
             }
 
+            // ── Handle Queue node drop ──
+            if (data.nodeType === 'queue') {
+                const newNode: Node = {
+                    id: getNextNodeId(),
+                    type: 'queue',
+                    position,
+                    data: {
+                        label:       data.label || 'Queue',
+                        category:    'structure',
+                        icon:        'Layers',
+                        queue_name:  '',
+                        queue_type:  'human',
+                        priority:    'normal',
+                        ttl_seconds: 0,
+                        auto_closeout: true,
+                        payload_mappings: [],
+                    } as any,
+                };
+                setNodes((nds) => [...nds, newNode]);
+                if (versionId) upsertNodeInStorage(versionId, newNode.id, newNode);
+                return;
+            }
+
             // ── Handle Connector node drop ──
             if (data.nodeType === 'connector') {
                 const parentSubFlow = findSubFlowAtPosition(position.x, position.y);
