@@ -4,9 +4,13 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Modal, Form, Input, message, Typography, Space } from 'antd';
+import { Modal, Form, Input, message, Typography, Space, Button } from 'antd';
+
 import { createCapability, updateCapability } from '@/services/capability.service';
 import type { CreateCapabilityModalProps } from '@/interfaces';
+import LucideIconPicker from '../LucideIconPicker/LucideIconPicker';
+import './CreateCapabilityModal.css';
+
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -27,6 +31,7 @@ export default function CreateCapabilityModal({
             form.setFieldsValue({
                 name: capabilityToEdit.name,
                 description: capabilityToEdit.description,
+                icon: capabilityToEdit.icon || 'Rocket'
             });
         } else if (isOpen && !capabilityToEdit) {
             form.resetFields();
@@ -73,34 +78,30 @@ export default function CreateCapabilityModal({
 
     return (
         <Modal
-            title={
-                <Space direction="vertical" size={2} style={{ width: '100%', lineHeight: '1.2', paddingBottom: '12px' }}>
-                    <Text style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-main)', display: 'block', letterSpacing: '-0.02em' }}>
-                        {isEditMode ? "Edit Capability" : "Create New Capability"}
-                    </Text>
-                    <Text type="secondary" style={{ fontSize: '13px', fontWeight: 400, display: 'block' }}>
-                        {isEditMode ? "Modify capability details and its core function" : "Define a new capability to extend your skill potential"}
-                    </Text>
-                </Space>
-            }
             open={isOpen}
             onOk={handleSubmit}
             onCancel={handleCancel}
             okText={isEditMode ? "Save Changes" : "Create Capability"}
             confirmLoading={isSubmitting}
-            width={480}
+            width={540}
             zIndex={1300}
             centered
             destroyOnHidden
-            okButtonProps={{ 
-                style: { height: '40px', fontWeight: 600, padding: '0 24px', borderRadius: '8px' },
-                disabled: !nameValue || nameValue.trim().length < 3
-            }}
-            cancelButtonProps={{ 
-                style: { height: '40px', padding: '0 24px', borderRadius: '8px' }
-            }}
+            footer={null}
+            className="create-capability-modal-v2"
         >
-            <div style={{ paddingTop: '12px' }}>
+            <div className="modal-header-neat" style={{ marginBottom: '28px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span className="modal-header-title">
+                        {isEditMode ? "Edit Capability" : "Create New Capability"}
+                    </span>
+                    <span className="modal-header-subtitle">
+                        {isEditMode ? "Modify capability details and its core function" : "Define a new capability to extend your skill potential"}
+                    </span>
+                </div>
+            </div>
+
+            <div style={{ minHeight: '440px' }}>
                 <Form form={form} layout="vertical" requiredMark>
                     <Form.Item
                         label="Capability Name"
@@ -112,6 +113,18 @@ export default function CreateCapabilityModal({
                     >
                         <Input size="large" placeholder="e.g. RPA, API Integration, AI Triage" style={{ borderRadius: '4px' }} />
                     </Form.Item>
+
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '24px', padding: '12px 0', borderBottom: '1px dotted var(--border-light)', marginBottom: '16px' }}>
+                        <span style={{ fontSize: '14px', color: 'var(--text-main)', fontWeight: 500 }}>Capability Icon</span>
+                        <Form.Item 
+                            name="icon" 
+                            rules={[{ required: true, message: 'Icon is required' }]}
+                            style={{ marginBottom: 0 }}
+                        >
+                            <LucideIconPicker placeholder="Select Icon" />
+                        </Form.Item>
+                    </div>
+
                     <Form.Item label="Description" name="description">
                         <TextArea 
                             size="large"
@@ -123,6 +136,23 @@ export default function CreateCapabilityModal({
                         />
                     </Form.Item>
                 </Form>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 32 }}>
+                <Space size={12}>
+                    <Button onClick={handleCancel} style={{ borderRadius: '4px', height: '36px', fontWeight: 600 }}>
+                        Cancel
+                    </Button>
+                    <Button 
+                        type="primary" 
+                        onClick={handleSubmit} 
+                        loading={isSubmitting}
+                        disabled={!nameValue || nameValue.trim().length < 3}
+                        style={{ borderRadius: '4px', height: '36px', fontWeight: 600, padding: '0 24px' }}
+                    >
+                        {isEditMode ? "Save Changes" : "Create Capability"}
+                    </Button>
+                </Space>
             </div>
         </Modal>
     );

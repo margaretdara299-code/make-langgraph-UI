@@ -26,6 +26,34 @@
     margin-bottom: 4px;
 }
 
+.ac-title-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.ac-icon-container {
+    width: 34px;
+    height: 34px;
+    background: var(--surface-1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--accent);
+    border: 1px solid var(--border-light);
+    transition: all 0.2s ease;
+}
+
+.action-card-premium:hover .ac-icon-container {
+    background: var(--accent-light);
+    border-color: var(--accent-soft);
+    transform: scale(1.05);
+}
+
 .ac-name {
     font-size: 15px !important;
     font-weight: 750 !important;
@@ -34,7 +62,6 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    flex: 1;
 }
 
 .ac-more-btn {

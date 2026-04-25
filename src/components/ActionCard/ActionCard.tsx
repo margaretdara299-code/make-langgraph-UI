@@ -11,8 +11,10 @@ import {
     DeleteOutlined,
     BuildOutlined,
 } from '@ant-design/icons';
-import { Layout, Tag as LucideTag, Boxes } from 'lucide-react';
+import { Tag as LucideTag } from 'lucide-react';
+
 import StatusPill from '@/components/StatusPill/StatusPill';
+import { DynamicLucideIcon } from '../LucideIconPicker/LucideIconPicker';
 import type { ActionCardProps } from '@/interfaces';
 import './ActionCard.css';
 
@@ -31,9 +33,14 @@ export default function ActionCard({ action, onAction }: ActionCardProps) {
         >
             {/* Row 1: Name + Actions */}
             <div className="ac-header">
-                <Tooltip title={action.name} mouseEnterDelay={0.2}>
-                    <Text strong className="ac-name">{action.name}</Text>
-                </Tooltip>
+                <div className="ac-title-group">
+                    <div className="ac-icon-container">
+                        <DynamicLucideIcon name={action.icon} size={20} />
+                    </div>
+                    <Tooltip title={action.name} mouseEnterDelay={0.2}>
+                        <Text strong className="ac-name">{action.name}</Text>
+                    </Tooltip>
+                </div>
                 <Dropdown
                     menu={{
                         items: [
@@ -79,7 +86,7 @@ export default function ActionCard({ action, onAction }: ActionCardProps) {
                 <div className="ac-meta-section">
                     <Tooltip title={`Capability: ${action.capability || 'General'}`}>
                         <div className="ac-meta-pill ac-meta-pill--cap">
-                            <Boxes size={11} strokeWidth={2.5} />
+                            <DynamicLucideIcon name={action.capability_icon || 'Boxes'} size={11} />
                             <span>{action.capability || 'General'}</span>
                         </div>
                     </Tooltip>
@@ -88,7 +95,7 @@ export default function ActionCard({ action, onAction }: ActionCardProps) {
                 <div className="ac-right-footer-group">
                     <Tooltip title={`Category: ${action.category || 'Common'}`}>
                         <div className="ac-meta-pill ac-meta-pill--cat">
-                            <Layout size={11} strokeWidth={2.5} />
+                            <DynamicLucideIcon name={action.category_icon || 'Layout'} size={11} />
                             <span>{action.category || 'Common'}</span>
                         </div>
                     </Tooltip>

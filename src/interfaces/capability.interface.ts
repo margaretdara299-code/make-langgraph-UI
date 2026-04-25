@@ -5,9 +5,11 @@ export interface Capability {
     capability_id: number;
     name: string;
     description?: string;
+    icon?: string;
     created_at?: string;
     updated_at?: string;
 }
+
 
 /** Props for components that display or manage capabilities */
 export interface CapabilityCardProps {

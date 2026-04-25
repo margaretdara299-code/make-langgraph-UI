@@ -12,20 +12,20 @@ import SubFlowNodeItem from './SubFlowNodeItem';
 import DecisionNodeItem from './DecisionNodeItem';
 import EndNodeItem from './EndNodeItem';
 import ErrorNodeItem from './ErrorNodeItem';
+import IconRenderer from '../IconRenderer/IconRenderer';
 import './NodePalette.css';
 
 /* ── Draggable leaf item ──────────────────────────────────────
-   Builds the drag payload and renders the icon + label card.
+  Builds the drag payload and renders the icon + label card.
 ─────────────────────────────────────────────────────────────── */
 const TreeTitle: React.FC<{ node: PaletteLeafNode & { type: string; category: string; subCategory: string } }> = ({ node }) => {
-  const Icon = ICON_MAP[node.icon ?? ''] ?? null;
   const colors = SUB_CAT_COLORS[node.subCategory] ?? SUB_CAT_COLORS['Common'];
 
   const onDragStart = (e: React.DragEvent) => {
     const payload: DragNodePayload = {
       type: node.type,
       label: node.name,
-      icon: node.icon ?? '🧩',
+      icon: node.icon ?? 'Package',
       actionId: node.id,
       category: node.category,
     };
@@ -37,10 +37,12 @@ const TreeTitle: React.FC<{ node: PaletteLeafNode & { type: string; category: st
     <div className="node-library-item-wrapper" draggable onDragStart={onDragStart}>
       <div className="node-library-item">
         <div className="nli-icon" style={{ background: colors.bg }}>
-          {Icon
-            ? <Icon size={12} color={colors.color} strokeWidth={2.4} />
-            : <span style={{ fontSize: 12 }}>{(node.icon?.length ?? 0) <= 2 ? node.icon : '🧩'}</span>
-          }
+          <IconRenderer
+            iconName={node.icon}
+            size={12}
+            color={colors.color}
+            strokeWidth={2.4}
+          />
         </div>
         <div className="nli-content">
           <span className="nli-label">{node.name}</span>
@@ -51,8 +53,8 @@ const TreeTitle: React.FC<{ node: PaletteLeafNode & { type: string; category: st
 };
 
 /* ── Top-level category header ────────────────────────────────
-   [25 px animated chevron] [cat-icon] [label]
-   Matches the original AntD Tree top-level node appearance.
+  [25 px animated chevron] [cat-icon] [label]
+  Matches the original AntD Tree top-level node appearance.
 ─────────────────────────────────────────────────────────────── */
 const CategoryHeader: React.FC<CatHeaderProps> = ({ catKey, icon, label, openCat, onToggle }) => (
   <div className="cat-section-header" onClick={() => onToggle(catKey)}>

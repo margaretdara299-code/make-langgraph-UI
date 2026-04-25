@@ -24,8 +24,12 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
     // The single source of truth for the Action being built
     const [actionDraft, setActionDraft] = useState<Partial<ActionDefinition>>({
         category: 'Uncategorized',
-        scope: 'global',
-        icon: '🧩',
+        category_id: 1,
+        capability: 'api',
+        capability_id: 1,
+        scope: 'global' as const,
+        status: 'draft' as const,
+        configurations_json: {}
     });
 
     // Form instances for steps
@@ -43,8 +47,11 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
                 // Reset for creating a new action
                 setActionDraft({
                     category: 'Uncategorized',
+                    category_id: 1,
+                    capability: 'api',
+                    capability_id: 1,
                     scope: 'global' as const,
-                    icon: '🧩',
+                    status: 'draft' as const,
                     configurations_json: {}
                 });
                 // Clear all form fields so no stale data remains

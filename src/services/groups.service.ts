@@ -14,10 +14,12 @@ export interface Group {
     groupName: string;
     description: string | null;
     type?: string | null;
+    icon?: string | null;
     variables?: Variable[];
     createdAt?: string;
     updatedAt?: string;
 }
+
 
 export async function fetchGroups(): Promise<Group[]> {
     const result = await apiClient.get<Group[]>(API_ENDPOINTS.GROUPS.BASE);

@@ -25,7 +25,7 @@ export default function ActionPreviewPanel({
     category: actionDef.category || "Uncategorized",
     capability: actionDef.capability || "api",
     scope: actionDef.scope || "global",
-    icon: actionDef.icon || "🧩",
+    icon: actionDef.icon || "Package",
     default_node_title:
       actionDef.default_node_title || actionDef.name || "Untitled",
     status: "draft",

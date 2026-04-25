@@ -33,8 +33,10 @@ const ICON_CATEGORIES = [
     { label: 'Time & calendar', value: 'time', keywords: ['Clock', 'Calendar', 'History', 'Timer', 'Watch', 'Alarm', 'Hourglass'] },
     { label: 'Tools', value: 'tools', keywords: ['Tool', 'Settings', 'Hammer', 'Wrench', 'Screwdriver', 'Nut', 'Drill', 'Axe', 'Pickaxe'] },
     { label: 'Transportation', value: 'transport', keywords: ['Car', 'Bike', 'Bus', 'Plane', 'Train', 'Ship', 'Truck', 'Tractor', 'Rocket'] },
-    { label: 'Weather', value: 'weather', keywords: ['Sun', 'Moon', 'Cloud', 'Rain', 'Snow', 'Wind', 'Temp', 'Thermometer', 'Sunrise', 'Sunset'] }
+    { label: 'Weather', value: 'weather', keywords: ['Sun', 'Moon', 'Cloud', 'Rain', 'Snow', 'Wind', 'Temp', 'Thermometer', 'Sunrise', 'Sunset'] },
+    { label: 'Folders & Groups', value: 'folders', keywords: ['Folder', 'Archive', 'Package', 'Container', 'Box', 'Bundle', 'Collection', 'Library'] }
 ];
+
 
 // Extract all valid icon names from the library
 const ALL_ICON_NAMES = Object.keys(LucideIcons).filter(key => {
@@ -105,7 +107,8 @@ export const DynamicLucideIcon = ({ name, size = 18, color = 'currentColor', ...
     return <IconComponent size={size} color={color} {...props} />;
 };
 
-const LucideIconPicker: React.FC<LucideIconPickerProps> = ({ value, onChange, placeholder = 'Select Icon' }) => {
+export const LucideIconPicker: React.FC<LucideIconPickerProps> = ({ value, onChange, placeholder = 'Select Icon' }) => {
+
     // Initialize metadata lazily on first use
     initializeIconMetadata();
 
@@ -250,7 +253,7 @@ const LucideIconPicker: React.FC<LucideIconPickerProps> = ({ value, onChange, pl
                         {value ? (
                             <DynamicLucideIcon name={value} size={24} color="var(--accent)" />
                         ) : (
-                            <LucideIcons.Plus size={24} color="var(--accent)" />
+                            <LucideIcons.Plus size={24} color="#ef4444" />
                         )}
                     </div>
                 </div>

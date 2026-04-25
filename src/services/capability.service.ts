@@ -27,7 +27,7 @@ export async function fetchCapabilities(): Promise<Capability[]> {
 /**
  * Create a new capability.
  */
-export async function createCapability(payload: { name: string; description?: string }): Promise<ApiResponse<any>> {
+export async function createCapability(payload: { name: string; description?: string; icon?: string }): Promise<ApiResponse<any>> {
     try {
         const result = await apiClient.post(API_ENDPOINTS.CAPABILITIES.BASE, payload);
         return { success: true, data: result.data, message: result.message };
@@ -41,8 +41,9 @@ export async function createCapability(payload: { name: string; description?: st
  */
 export async function updateCapability(
     capabilityId: number,
-    payload: { name?: string; description?: string }
+    payload: { name?: string; description?: string; icon?: string }
 ): Promise<ApiResponse<any>> {
+
     try {
         const result = await apiClient.patch(API_ENDPOINTS.CAPABILITIES.BY_ID(capabilityId), payload);
         return { success: true, data: result.data, message: result.message };

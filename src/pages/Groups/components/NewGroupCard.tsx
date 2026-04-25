@@ -3,7 +3,7 @@ import { FolderPlus } from 'lucide-react';
 import { Input, Button, Space, message } from 'antd';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { createGroup } from '@/services/groups.service';
-
+import { LucideIconPicker, DynamicLucideIcon } from '@/components/LucideIconPicker/LucideIconPicker';
 import { GROUP_VALIDATION } from '@/constants';
 
 interface NewGroupCardProps {
@@ -19,8 +19,11 @@ export const NewGroupCard = ({ onAdded, onCancel }: NewGroupCardProps) => {
     const [name, setName] = useState('');
     const [key, setKey] = useState('');
     const [description, setDescription] = useState('');
+    const [icon, setIcon] = useState('');
+
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
+
 
     const handleCreate = async () => {
         const trimmedName = name.trim();
@@ -29,6 +32,8 @@ export const NewGroupCard = ({ onAdded, onCancel }: NewGroupCardProps) => {
         const newErrors: Record<string, string> = {};
         if (!trimmedName) newErrors.name = GROUP_VALIDATION.NAME_REQUIRED;
         if (!trimmedKey) newErrors.key = GROUP_VALIDATION.KEY_REQUIRED;
+        if (!icon) newErrors.icon = GROUP_VALIDATION.ICON_REQUIRED;
+
 
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
@@ -41,8 +46,10 @@ export const NewGroupCard = ({ onAdded, onCancel }: NewGroupCardProps) => {
         const res = await createGroup({ 
             groupName: trimmedName, 
             groupKey: trimmedKey,
-            description: description.trim() || null
+            description: description.trim() || null,
+            icon: icon
         });
+
         setLoading(false);
         
         if (res.success) {
@@ -57,11 +64,13 @@ export const NewGroupCard = ({ onAdded, onCancel }: NewGroupCardProps) => {
         <div className="group-card new-group-card reveal-up" style={{ padding: '0', border: '1px solid var(--accent-light)', boxSizing: 'border-box' }}>
             <div className="group-card-header" style={{ padding: '12px 16px', background: 'var(--bg-main)', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div className="group-card-icon" style={{ width: '32px', height: '32px' }}>
-                        <FolderPlus size={16} />
+                    <div className="group-card-icon" style={{ width: '32px', height: '32px', background: 'var(--accent-soft)', color: 'var(--accent)' }}>
+                        <DynamicLucideIcon name={icon || 'Plus'} size={16} />
                     </div>
+
                     <span style={{ fontWeight: 700, fontSize: '15px', color: 'var(--text-main)' }}>Create New Group</span>
                 </div>
+
                 <Space size={8}>
                     <Button 
                         type="primary" 
@@ -82,6 +91,13 @@ export const NewGroupCard = ({ onAdded, onCancel }: NewGroupCardProps) => {
             
             <div className="group-card-body" style={{ padding: '16px 16px 20px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                 <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                    <div className="group-icon-picker-inline" style={{ padding: '0 4px', position: 'relative' }}>
+                        <div style={{ border: errors.icon ? '1px solid #ef4444' : 'none', borderRadius: '8px', display: 'flex' }}>
+                            <LucideIconPicker value={icon} onChange={(val) => { setIcon(val); if (errors.icon) setErrors(prev => ({ ...prev, icon: '' })); }} />
+                        </div>
+                        {errors.icon && <div className="validation-msg-tiny" style={{ position: 'absolute', top: '100%', left: 0, whiteSpace: 'nowrap' }}>Required</div>}
+                    </div>
+
                     <div style={{ flex: 1.5 }}>
                         <Input 
                             variant="filled"
@@ -108,6 +124,7 @@ export const NewGroupCard = ({ onAdded, onCancel }: NewGroupCardProps) => {
                         {errors.key && <div className="validation-msg-tiny">{errors.key}</div>}
                     </div>
                 </div>
+
                 
                 <div style={{ marginTop: '8px' }}>
                     <Input.TextArea 
