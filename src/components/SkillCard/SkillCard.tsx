@@ -7,8 +7,9 @@ import { Typography, Tooltip, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import {
     MoreOutlined,
+    PartitionOutlined,
 } from '@ant-design/icons';
-import { Tag as LucideTag, Layers, Workflow } from 'lucide-react';
+import { Tag as LucideTag, Layers } from 'lucide-react';
 import StatusPill from '@/components/StatusPill/StatusPill';
 import { getMenuItems, getTagStyle } from '@/utils';
 import type { SkillCardProps } from '@/interfaces';
@@ -31,7 +32,7 @@ export default function SkillCard({ skill, onClick, onAction }: SkillCardProps) 
             <div className="sc-header">
                 <div className="sc-title-group">
                     <div className="sc-icon-container">
-                        <Workflow size={18} strokeWidth={2.5} />
+                        <PartitionOutlined style={{ fontSize: '18px' }} />
                     </div>
                     <Tooltip title={skill.name} mouseEnterDelay={0.2}>
                         <div className="sc-name">{skill.name}</div>

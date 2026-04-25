@@ -289,7 +289,7 @@
     gap: 10px;
     padding: 10px 12px;
     background: transparent;
-    border: 1px dashed transparent;
+    border: 1px solid transparent; /* Keep invisible border for sizing */
     border-radius: 10px;
     color: var(--text-subtle, #64748b);
     font-size: 13px;
@@ -297,13 +297,13 @@
     cursor: pointer;
     transition: all 0.2s ease;
     margin: 4px 0;
-    border: 1px dashed #e2e8f0;
 }
 
 .add-variable-trigger-row:hover {
     background: var(--bg-main, #f8fafc);
     color: var(--accent, #6366f1);
-    border-color: var(--accent-soft);
+    /* No border on hover either, just background change */
+    border-color: transparent;
     transform: translateX(4px);
 }
 

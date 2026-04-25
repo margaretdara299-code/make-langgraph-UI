@@ -49,7 +49,7 @@ export default function DashboardPage() {
             <Row gutter={[16, 16]} className="metrics-section reveal-up db-metrics-reveal">
                 {metricsData.map((data, idx) => (
                     <Col xs={24} sm={12} md={8} lg={6} key={idx} style={{ '--anim-delay': `${idx * 0.08}s` } as React.CSSProperties} className="reveal-up">
-                        <MetricCard {...data} />
+                        <MetricCard subtext={''} isPositive={false} {...data} />
                     </Col>
                 ))}
             </Row>

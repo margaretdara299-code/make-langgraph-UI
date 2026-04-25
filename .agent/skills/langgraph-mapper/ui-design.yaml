@@ -1,0 +1,7 @@
+name: ui-design
+description: Agent that handles the visual representation and properties drawer schema for nodes on the canvas.
+responsibilities:
+  - Render node UI components on the React Flow canvas matching high-density SaaS aesthetics.
+  - Construct Forms in the Properties Drawer dynamically based on node type and category.
+  - Render custom configuration forms for Actions, Decisions, Connectors, and other specialized nodes.
+  - Maintain styling consistency by rejecting inline styles and prioritizing global CSS tokens defined in App.css.

@@ -1,0 +1,21 @@
+{
+  "typography": {
+    "cardTitle": "14px",
+    "cardTitleWeight": "700",
+    "cardDescription": "12px",
+    "cardDescriptionColor": "var(--text-muted)",
+    "metaPill": "10px",
+    "metaPillTransform": "uppercase"
+  },
+  "forbidden_patterns": [
+    "style={{",
+    "<Typography.Text",
+    "<Typography.Title",
+    "<Title",
+    "<Text"
+  ],
+  "dom_rules": {
+    "prefer": ["div", "span"],
+    "avoid": ["Typography components"]
+  }
+}
