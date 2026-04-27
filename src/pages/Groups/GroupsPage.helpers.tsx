@@ -70,15 +70,20 @@ export const promptDeleteVariable = (variable: Variable, onSuccess: () => void) 
  */
 export const getVariableColumns = (onEdit: (v: Variable) => void, onDelete: (v: Variable) => void) => [
     {
-        title: 'Name / Key',
+        title: (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <span>Name</span>
+                <span style={{ fontSize: '10px', opacity: 0.6 }}>Key</span>
+            </div>
+        ),
         key: 'nameKey',
         render: (_: any, record: Variable) => (
             <div className="gph-name-cell">
-                <span className="gph-variable-name">{record.variableName}</span>
-                <span className="gph-variable-key">{record.variableKey}</span>
+                <div className="gph-variable-name">{record.variableName}</div>
+                <div className="gph-variable-key">{record.variableKey}</div>
             </div>
         ),
-        width: '30%',
+        width: '35%',
     },
     {
         title: 'Type',

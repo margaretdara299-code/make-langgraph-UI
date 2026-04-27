@@ -1,15 +1,54 @@
 .variables-page {
-    padding: 24px;
+    padding: 32px 40px;
     height: 100%;
     display: flex;
     flex-direction: column;
+    background: var(--bg-page);
 }
 
 .variables-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 24px;
+    align-items: flex-end;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.title-section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.var-page-title {
+    margin: 0 !important;
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em;
+    color: var(--text-main);
+}
+
+.var-page-subtitle {
+    font-size: 14px !important;
+    color: var(--text-muted) !important;
+}
+
+.var-header-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.var-search-input {
+    width: 280px;
+    border-radius: 8px;
+}
+
+.var-create-btn {
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 0 20px;
 }
 
 .variables-body {
@@ -17,110 +56,19 @@
     overflow-y: auto;
 }
 
-.variable-table-key {
-    font-family: var(--font-mono);
-    color: var(--text-muted);
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-}
-
-.variable-type-tag-neat {
-    font-size: 10px !important;
-    font-weight: 600 !important;
-    background: var(--bg-page) !important;
-    border: none !important;
-    color: var(--text-muted) !important;
-    text-transform: uppercase;
-    padding: 0 8px !important;
-}
-
-.variable-table-value {
-    max-width: 300px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--text-main);
-}
-
-/* =====================================================
-   Extracted from VariablesPage inline styles
-   ===================================================== */
-
-.var-page-title {
-    margin: 0 !important;
-    font-size: var(--text-xl) !important;
-    font-weight: 700 !important;
-    letter-spacing: -0.015em;
-}
-
-.var-page-subtitle {
-    font-size: 12px !important;
-    color: var(--text-subtle) !important;
-}
-
-.var-header-actions {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-}
-
-.var-loading-state {
+.var-loading-state, .var-empty-state {
     display: flex;
     justify-content: center;
-    padding: 100px;
-}
-
-.var-empty-state {
-    margin-top: 100px;
+    align-items: center;
+    padding: 100px 0;
 }
 
 /* =====================================================
-   VariableModal extracted from inline styles
-   (VariableModal.tsx uses VariablesPage.css since no dedicated file)
-   ===================================================== */
-
-.vm-header-content {
-    display: flex;
-    flex-direction: column;
-}
-
-.vm-grid-2col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-}
-
-.vm-grid-1-2col {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 12px;
-}
-
-.vm-form-item {
-    margin-bottom: 14px !important;
-}
-
-.vm-footer-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 16px;
-}
-
-.vm-submit-btn {
-    font-weight: 600 !important;
-    padding: 0 32px !important;
-}
-
-/* =====================================================
-   Accordion & Table Styling - VariablesPage
+   Accordion Styling
    ===================================================== */
 
 .variables-accordion-container {
-    margin-top: 12px;
+    margin-top: 8px;
 }
 
 .variables-main-accordion.ant-collapse {
@@ -129,12 +77,18 @@
 }
 
 .variables-main-accordion .ant-collapse-item {
-    background: var(--bg-card);
+    background: var(--bg-card, #ffffff);
     border: 1px solid var(--border-light);
     border-radius: 12px !important;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.variables-main-accordion .ant-collapse-header {
+    padding: 16px 24px !important;
+    background: var(--bg-card-header, #fafafa);
+    border-bottom: 1px solid var(--border-light);
 }
 
 .accordion-group-header {
@@ -153,8 +107,8 @@
 .accordion-group-icon {
     width: 32px;
     height: 32px;
-    background: var(--accent-soft, rgba(99, 102, 241, 0.08));
-    color: var(--accent);
+    background: var(--accent-soft, rgba(99, 102, 241, 0.1));
+    color: var(--accent, #4f46e5);
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -162,48 +116,237 @@
 }
 
 .accordion-group-title {
-    font-weight: 700;
-    font-size: var(--text-sm);
+    font-weight: 600;
+    font-size: 15px;
     color: var(--text-main);
-    letter-spacing: -0.01em;
 }
 
 .neat-count-badge {
     background: var(--border-light);
     color: var(--text-muted);
     font-size: 12px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 6px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 12px;
 }
 
 .accordion-table-wrapper {
-    padding: 0 4px 12px;
+    padding: 0;
 }
 
-/* Nested Table Stylings */
+/* =====================================================
+   Table Styling
+   ===================================================== */
+
 .minimal-nested-table.ant-table-wrapper .ant-table {
     background: transparent;
 }
 
 .minimal-nested-table.ant-table-wrapper .ant-table-thead > tr > th {
-    background: transparent;
+    background: var(--bg-card, #ffffff);
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
     color: var(--text-muted);
-    opacity: 0.6;
     letter-spacing: 0.05em;
     border-bottom: 1px solid var(--border-light);
-    padding: 12px 16px;
+    padding: 16px 24px;
 }
 
 .minimal-nested-table.ant-table-wrapper .ant-table-tbody > tr > td {
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--bg-page);
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-light);
+    background: var(--bg-card, #ffffff);
+    transition: background 0.2s ease;
+    vertical-align: middle;
+}
+
+.minimal-nested-table.ant-table-wrapper .ant-table-tbody > tr:hover > td {
+    background: var(--bg-hover, #f8f9fa);
 }
 
 .minimal-nested-table.ant-table-wrapper .ant-table-tbody > tr:last-child > td {
     border-bottom: none;
 }
+
+/* =====================================================
+   Cell Components
+   ===================================================== */
+
+.var-name-cell {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.var-name-text {
+    font-weight: 600;
+    color: var(--text-main);
+    font-size: 14px;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.var-key-text {
+    font-family: var(--font-mono, monospace);
+    color: var(--text-muted);
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-page);
+    padding: 4px 8px;
+    border-radius: 6px;
+    width: fit-content;
+    line-height: 1.4;
+}
+
+.var-key-icon {
+    opacity: 0.7;
+}
+
+.var-type-cell {
+    display: flex;
+    align-items: center;
+}
+
+.var-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    background: var(--bg-page);
+    border: 1px solid var(--border-light);
+    color: var(--text-muted);
+    text-transform: capitalize;
+    padding: 6px 12px;
+    border-radius: 8px;
+}
+
+.var-type-icon {
+    color: var(--text-subtle);
+}
+
+.var-value-cell {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.var-value-content {
+    font-family: var(--font-mono, monospace);
+    font-size: 13px;
+    color: var(--text-main);
+    background: var(--bg-page);
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 320px;
+    width: 100%;
+}
+
+.var-value-empty {
+    color: var(--text-subtle);
+    font-style: italic;
+}
+
+.var-actions-cell {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.minimal-nested-table.ant-table-wrapper .ant-table-tbody > tr:hover .var-actions-cell {
+    opacity: 1;
+}
+
+.var-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+}
+
+.var-action-btn.edit-btn {
+    color: var(--text-muted);
+}
+
+.var-action-btn.edit-btn:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
+/* =====================================================
+   VariableModal overrides
+   ===================================================== */
+.vm-header-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 24px;
+}
+
+.modal-header-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.modal-header-subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.vm-grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.vm-grid-1-2col {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 16px;
+}
+
+.vm-form-item {
+    margin-bottom: 20px !important;
+}
+
+.vm-form-item .ant-form-item-label > label {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.variable-monospace-input {
+    font-family: var(--font-mono, monospace);
+    font-size: 13px;
+}
+
+.vm-footer-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-light);
+}
+
+.vm-submit-btn {
+    font-weight: 600 !important;
+    padding: 0 24px !important;
+    border-radius: 8px;
+}
+
 

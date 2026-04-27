@@ -48,7 +48,7 @@ export function getNodeTheme(type: string, capability?: string, category?: strin
     }
 
     // Default LLM / API / Action - Blue
-    return { bg: 'var(--color-info-bg)', stroke: 'var(--color-info)', badgeBg: 'var(--color-info)', iconBg: '#FFFFFF' };
+    return { bg: '#F0F9FF', stroke: '#0369A1', badgeBg: '#0369A1', iconBg: '#FFFFFF' };
 }
 
 type NodeColorSource = {

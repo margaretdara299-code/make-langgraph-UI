@@ -248,6 +248,9 @@ export default function useCanvasDragDrop(
                         connector_type: data.connector_type || data.connectorType,
                         config_json: data.config_json || data.configJson,
                     } as any,
+                    // Dynamic extent: set 'parent' only if dropped inside a subflow.
+                    // SkillDesignerCanvas's onNodeDragStop will clear extent when the
+                    // user later drags this node outside the group (detach behavior).
                     ...(parentSubFlow
                         ? {
                             parentId: parentSubFlow.id,
@@ -284,6 +287,9 @@ export default function useCanvasDragDrop(
                     }
                     : position,
                 data: nodeData as any,
+                // Dynamic extent: set 'parent' only if dropped inside a subflow.
+                // SkillDesignerCanvas's onNodeDragStop will clear extent when the
+                // user later drags this node outside the group (detach behavior).
                 ...(parentSubFlow
                     ? {
                         parentId: parentSubFlow.id,

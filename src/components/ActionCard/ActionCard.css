@@ -38,9 +38,10 @@
 
 
 .action-card-premium:hover .ts-icon-container {
-    background: var(--accent-light);
-    border-color: var(--accent-soft);
-    transform: scale(1.05);
+    transform: scale(1.1) rotate(5deg);
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: #ffffff;
 }
 
 .ac-name {
