@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Modal, Form, Input, Select, Button, message, Typography } from 'antd';
 import { createVariable, updateVariable } from '@/services/variables.service';
 import type { Variable } from '@/services/variables.service';
+import { Hash, AlignLeft, Braces, ToggleLeft } from 'lucide-react';
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -46,7 +47,6 @@ export default function VariableModal({ visible, variable, defaultGroupName, def
             const values = await form.validateFields();
             setLoading(true);
 
-            // The service handles camelCase to snake_case mapping for the API
             const res = await (variable ? updateVariable(variable.groupKey, variable.variableKey, values) : createVariable(values));
 
             if (res.success) {
@@ -68,84 +68,99 @@ export default function VariableModal({ visible, variable, defaultGroupName, def
             title={null}
             open={visible}
             onCancel={handleClose}
-            width={580}
+            width={600}
             centered
             footer={null}
             destroyOnClose
             zIndex={2000}
+            className="variable-modern-modal"
         >
-            <div className="modal-header-neat">
-                <div className="vm-header-content">
-                    <span className="modal-header-title">
-                        {variable ? 'Edit Variable' : 'Create New Variable'}
-                    </span>
-                    <span className="modal-header-subtitle">
-                        {variable ? 'Modify system constant properties.' : 'Define a new environment variable for orchestration.'}
-                    </span>
-                </div>
+            <div className="vm-header-content">
+                <span className="modal-header-title">
+                    {variable ? 'Edit Variable' : 'Create New Variable'}
+                </span>
+                <span className="modal-header-subtitle">
+                    {variable ? 'Modify variable properties.' : 'Define a new environment variable for orchestration.'}
+                </span>
             </div>
 
             <Form form={form} layout="vertical" requiredMark={false} size="large">
                 <div className="vm-grid-2col">
                     <Form.Item
                         name="groupName"
-                        label={<Text strong>Group Name</Text>}
+                        label="Group Name"
                         rules={[{ required: true, message: 'Required' }]}
                         className="vm-form-item"
                     >
-                        <Input placeholder="e.g. Security" />
+                        <Input placeholder="e.g. API Credentials" />
                     </Form.Item>
 
                     <Form.Item
                         name="groupKey"
-                        label={<Text strong>Group Key</Text>}
+                        label="Group Key"
                         rules={[{ required: true, message: 'Required' }]}
                         normalize={(val) => (val || '').toUpperCase().replace(/\s+/g, '_').replace(/[^A-Z0-9_]/g, '')}
                         className="vm-form-item"
                     >
-                        <Input placeholder="e.g. SECURITY" className="variable-monospace-input" />
+                        <Input placeholder="e.g. API_CREDENTIALS" className="variable-monospace-input" />
                     </Form.Item>
                 </div>
 
                 <div className="vm-grid-2col">
                     <Form.Item
                         name="variableName"
-                        label={<Text strong>Display Name</Text>}
+                        label="Display Name"
                         rules={[{ required: true, message: 'Required' }]}
                         className="vm-form-item"
                     >
-                        <Input placeholder="e.g. API Key" />
+                        <Input placeholder="e.g. OpenAI Key" />
                     </Form.Item>
 
                     <Form.Item
                         name="variableKey"
-                        label={<Text strong>Variable Key</Text>}
+                        label="Variable Key"
                         rules={[{ required: true, message: 'Required' }]}
                         normalize={(val) => (val || '').toUpperCase().replace(/\s+/g, '_').replace(/[^A-Z0-9_]/g, '')}
                         className="vm-form-item"
                     >
-                        <Input placeholder="e.g. API_KEY" className="variable-monospace-input" />
+                        <Input placeholder="e.g. OPENAI_API_KEY" className="variable-monospace-input" />
                     </Form.Item>
                 </div>
 
                 <div className="vm-grid-1-2col">
                     <Form.Item
                         name="dataType"
-                        label={<Text strong>Data Type</Text>}
+                        label="Data Type"
                         initialValue="string"
                         className="vm-form-item"
                     >
-                        <Select>
-                            <Option value="string">String</Option>
-                            <Option value="number">Number</Option>
-                            <Option value="boolean">Boolean</Option>
-                            <Option value="json">JSON</Option>
+                        <Select dropdownStyle={{ zIndex: 3000 }}>
+                            <Option value="string">
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                    <AlignLeft size={14} className="var-type-icon"/> String
+                                </div>
+                            </Option>
+                            <Option value="number">
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                    <Hash size={14} className="var-type-icon"/> Number
+                                </div>
+                            </Option>
+                            <Option value="boolean">
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                    <ToggleLeft size={14} className="var-type-icon"/> Boolean
+                                </div>
+                            </Option>
+                            <Option value="json">
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                    <Braces size={14} className="var-type-icon"/> JSON
+                                </div>
+                            </Option>
                         </Select>
                     </Form.Item>
 
                     <Form.Item
                         name="variableValue"
-                        label={<Text strong>Default Value</Text>}
+                        label="Default Value"
                         className="vm-form-item"
                     >
                         {dataType === 'json' ? (
@@ -163,10 +178,11 @@ export default function VariableModal({ visible, variable, defaultGroupName, def
                 <div className="vm-footer-actions">
                     <Button onClick={handleClose}>Cancel</Button>
                     <Button type="primary" onClick={handleSubmit} loading={loading} className="vm-submit-btn">
-                        {variable ? 'Update' : 'Create Variable'}
+                        {variable ? 'Save Changes' : 'Create Variable'}
                     </Button>
                 </div>
             </Form>
         </Modal>
     );
 }
+

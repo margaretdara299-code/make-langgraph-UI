@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { Typography, message, Modal, Empty, Tabs, Space, Badge, Select, Button, Pagination } from 'antd';
+import { Typography, message, Modal, Empty, Tabs, Space, Badge, Select, Button } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useActions, useCategories, useCapabilities } from '@/hooks';
 import { 
@@ -200,20 +200,6 @@ export default function ActionCatalogPage() {
                                 />
                             )}
                         />
-                        <div className="catalog-pagination-wrap">
-                            <Pagination 
-                                current={filters.page}
-                                pageSize={filters.pageSize}
-                                total={totalActions}
-                                onChange={(page, pageSize) => {
-                                    setFilters(prev => ({ ...prev, page, pageSize }));
-                                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                                }}
-                                showSizeChanger
-                                pageSizeOptions={['20', '30', '40', '50', '60', '70', '80', '90', '100']}
-                                className="premium-pagination"
-                            />
-                        </div>
                     </>
                 )}
             </div>

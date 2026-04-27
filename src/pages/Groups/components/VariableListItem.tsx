@@ -1,5 +1,6 @@
 import { Tag, Tooltip, Button } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { KeyRound } from 'lucide-react';
 import type { Variable } from '@/services/variables.service';
 
 interface VariableListItemProps {
@@ -17,8 +18,11 @@ export const VariableListItem = ({ variable, onEdit, onDelete }: VariableListIte
             <div className="var-metadata-row-table">
                 <div className="var-meta-column">
                     <div className="var-name-stack">
-                        <span className="var-name">{variable.variableName}</span>
-                        <span className="var-key-code">{variable.variableKey}</span>
+                        <div className="var-name">{variable.variableName}</div>
+                        <div className="var-key-code">
+                            <KeyRound size={12} className="var-key-icon" />
+                            {variable.variableKey}
+                        </div>
                     </div>
                 </div>
                 <div className="var-meta-column">

@@ -1,7 +1,8 @@
 /**
- * SubFlowNode Color-Themed Turbo Style.
+ * SubFlowNode — Resizable group/container node styles.
  */
 
+/* ── Root ── */
 .subflow-node {
     background: transparent;
     border-radius: var(--radius-lg);
@@ -14,23 +15,24 @@
     font-family: var(--font-sans);
     position: relative;
     padding: 0;
-    overflow: visible; 
-    transition: all 0.3s ease;
+    overflow: visible;
+    transition: box-shadow 0.25s ease, opacity 0.25s ease;
 }
 
-/* Border Wrapper */
+/* ── Border Wrapper ── */
 .subflow-node__border-wrapper {
     position: relative;
     width: 100%;
     height: 100%;
     border-radius: var(--radius-lg);
     overflow: hidden;
-    padding: 1px;
-    background: var(--color-bg-white);
+    padding: 1.5px;
+    background: color-mix(in srgb, var(--node-accent-glow) 25%, var(--color-bg-white));
     z-index: 1;
+    transition: background 0.25s ease;
 }
 
-/* Animated Border Layer */
+/* Animated conic-gradient border */
 .subflow-node__border-wrapper::before {
     content: '';
     position: absolute;
@@ -41,66 +43,106 @@
     aspect-ratio: 1;
     background: conic-gradient(
         from 0deg,
-        transparent 0 300deg,
+        transparent 0 270deg,
         var(--node-accent-glow) 360deg
     );
-    animation: spin 5s linear infinite;
+    animation: spin 6s linear infinite;
     z-index: 0;
+    transform: translate(-50%, -50%);
 }
 
-/* Content Wrapper - Tinted */
+@keyframes spin {
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* ── Content wrapper (sits on top of animated border) ── */
 .subflow-node__content {
-    background: color-mix(in srgb, var(--node-accent-glow), var(--color-bg-white) 95%);
-    border: 1px solid color-mix(in srgb, var(--node-accent-glow), transparent 70%);
-    border-radius: calc(var(--radius-lg) - 1px);
+    background: color-mix(in srgb, var(--node-accent-glow) 6%, var(--color-bg-white));
+    border: 1.5px solid color-mix(in srgb, var(--node-accent-glow) 40%, transparent);
+    border-radius: calc(var(--radius-lg) - 2px);
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
     position: relative;
     z-index: 1;
+    transition: border-color 0.2s ease, background 0.2s ease;
 }
 
-.subflow-node--glow {
-    box-shadow: 
-        0 8px 32px var(--color-node-shadow),
-        0 0 30px -10px var(--node-accent-glow);
+/* Selected state — brighter border + glow */
+.subflow-node--selected .subflow-node__border-wrapper {
+    background: color-mix(in srgb, var(--node-accent-glow) 45%, var(--color-bg-white));
+}
+
+.subflow-node--selected .subflow-node__content {
+    border-color: color-mix(in srgb, var(--node-accent-glow) 70%, transparent);
+    box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--node-accent-glow) 50%, transparent),
+        0 8px 32px color-mix(in srgb, var(--node-accent-glow) 30%, transparent);
 }
 
 /* ── Header ── */
 .subflow-node__header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--color-surface-border);
-    background: var(--color-surface-white-glass-less);
+    gap: 8px;
+    padding: 10px 14px;
+    border-bottom: 1px solid color-mix(in srgb, var(--node-accent-glow) 20%, var(--color-surface-border));
+    background: color-mix(in srgb, var(--node-accent-glow) 8%, var(--color-surface-white-glass));
+    border-radius: calc(var(--radius-lg) - 2px) calc(var(--radius-lg) - 2px) 0 0;
+    cursor: grab;
+    user-select: none;
 }
 
 .subflow-node__icon {
-    font-size: var(--text-xl);
+    font-size: 16px;
     line-height: 1;
+    flex-shrink: 0;
 }
 
 .subflow-node__title {
-    font-size: 15px;
-    font-weight: 800;
-    color: color-mix(in srgb, var(--node-accent-glow), var(--color-base-black) 70%);
-    text-shadow: 0 1px 1px var(--color-surface-white-glass);
+    flex: 1;
+    font-size: 13px;
+    font-weight: 700;
+    color: color-mix(in srgb, var(--node-accent-glow) 75%, var(--color-base-black));
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    letter-spacing: -0.01em;
 }
 
+/* Resize hint badge */
+.subflow-node__resize-hint {
+    font-size: 12px;
+    color: color-mix(in srgb, var(--node-accent-glow) 60%, transparent);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    flex-shrink: 0;
+    line-height: 1;
+    cursor: nwse-resize;
+    title: "Drag corners to resize";
+}
+
+.subflow-node:hover .subflow-node__resize-hint,
+.subflow-node--selected .subflow-node__resize-hint {
+    opacity: 1;
+}
+
+/* Delete button */
 .subflow-node__delete {
     display: flex;
     align-items: center;
     justify-content: center;
+    background: none;
+    border: none;
     color: var(--color-text-danger, #ff4d4f);
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 1;
     opacity: 0;
     cursor: pointer;
     transition: all 0.2s ease;
-    padding: 4px;
+    padding: 2px 5px;
     border-radius: 4px;
     flex-shrink: 0;
 }
@@ -111,62 +153,97 @@
 
 .subflow-node__delete:hover {
     opacity: 1 !important;
-    background: rgba(255, 77, 79, 0.1);
+    background: rgba(255, 77, 79, 0.12);
 }
 
 /* ── Body ── */
 .subflow-node__body {
     flex: 1;
-    padding: 16px;
+    padding: 14px;
     position: relative;
-    background: var(--color-surface-white-subtle);
+    background: color-mix(in srgb, var(--node-accent-glow) 3%, transparent);
+    border-radius: 0 0 calc(var(--radius-lg) - 2px) calc(var(--radius-lg) - 2px);
+    overflow: visible;
 }
 
 .subflow-node__description {
-    font-size: var(--text-xs);
-    color: color-mix(in srgb, var(--node-accent-glow), var(--color-base-black) 40%);
-    opacity: 0.7;
+    font-size: 11px;
+    color: color-mix(in srgb, var(--node-accent-glow) 50%, var(--color-base-black));
+    opacity: 0.6;
     line-height: 1.5;
+    margin: 0 0 8px;
+}
+
+/* Drop hint shown in empty body area */
+.subflow-node__drop-hint {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: color-mix(in srgb, var(--node-accent-glow) 55%, transparent);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    letter-spacing: 0.01em;
+    border: 1.5px dashed color-mix(in srgb, var(--node-accent-glow) 25%, transparent);
+    border-radius: calc(var(--radius-lg) - 4px);
+    margin: 6px;
+}
+
+/* Show hint when group is hovered and has no children */
+.subflow-node:hover .subflow-node__drop-hint {
+    opacity: 1;
 }
 
 /* ── Handles ── */
 .subflow-node__handle {
-    width: 16px !important;
-    height: 10px !important;
+    width: 14px !important;
+    height: 8px !important;
     border-radius: 4px !important;
     background: var(--node-accent-glow) !important;
     border: 2px solid var(--color-bg-white) !important;
     z-index: 10 !important;
     transition: all 0.2s ease !important;
-    box-shadow: 0 0 12px var(--node-accent-glow) !important;
+    box-shadow: 0 0 10px color-mix(in srgb, var(--node-accent-glow) 60%, transparent) !important;
 }
 
 .subflow-node__handle-target-top {
-    top: -5px !important;
+    top: -4px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
 }
 
 .subflow-node__handle-source-bottom {
-    bottom: -5px !important;
+    bottom: -4px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
 }
 
 .subflow-node__handle:hover {
-    transform: translateX(-50%) scale(1.2) !important;
     box-shadow: 0 0 18px var(--node-accent-glow) !important;
+    transform: translateX(-50%) scale(1.25) !important;
 }
 
-/* ── Resize Controls ── */
+/* ── NodeResizer controls (from @xyflow/react) ── */
 .subflow-node__resize-handle {
     background: var(--color-bg-white) !important;
     border: 2px solid var(--node-accent-glow) !important;
     width: 10px !important;
     height: 10px !important;
+    border-radius: 3px !important;
+    box-shadow: 0 0 6px color-mix(in srgb, var(--node-accent-glow) 50%, transparent) !important;
+    transition: box-shadow 0.2s ease !important;
+}
+
+.subflow-node__resize-handle:hover {
+    box-shadow: 0 0 12px var(--node-accent-glow) !important;
+    background: color-mix(in srgb, var(--node-accent-glow) 15%, var(--color-bg-white)) !important;
 }
 
 .subflow-node__resize-line {
     border-color: var(--node-accent-glow) !important;
-    opacity: 0.3;
+    opacity: 0.35;
 }

@@ -18,6 +18,7 @@ import {
     type ReactFlowInstance,
     MarkerType,
     BackgroundVariant,
+    useReactFlow,
 } from '@xyflow/react';
 
 import '@xyflow/react/dist/style.css';
@@ -70,6 +71,12 @@ export default function SkillDesignerCanvas() {
     // Track which node or edge is actively opened in the properties drawer
     const [drawerNodeId, setDrawerNodeId] = useState<string | null>(null);
     const [drawerEdgeId, setDrawerEdgeId] = useState<string | null>(null);
+
+    // Track which subflow group is being hovered over during a drag (for visual highlighting)
+    const [draggedOverGroupId, setDraggedOverGroupId] = useState<string | null>(null);
+
+    // Access React Flow's internal API for intersection detection
+    const { getIntersectingNodes } = useReactFlow();
 
     // Call our extracted drag & drop hook
     const { onDragOver, onDrop } = useCanvasDragDrop(reactFlowInstance, setNodes, nodes);
@@ -146,6 +153,114 @@ export default function SkillDesignerCanvas() {
     );
 
 
+    // ── Dynamic Parent-Child Attach / Detach ──
+    //
+    // When a node is dragged:
+    //   • onNodeDrag  → find any overlapping subflow and highlight it
+    //   • onNodeDragStop → commit the attach/detach:
+    //       DETACH: node was a child and is now dragged outside its parent bounds
+    //               → convert relative position to absolute, remove parentId + extent
+    //       ATTACH: free node dragged into a subflow
+    //               → convert absolute position to relative, assign parentId + extent:'parent'
+
+    const onNodeDrag = useCallback(
+        (_: React.MouseEvent, node: Node) => {
+            // Only handle non-subflow nodes
+            if (node.type === 'subflow') return;
+
+            // Find any subflow node that intersects the dragged node
+            const overlapping = getIntersectingNodes(node).find(n => n.type === 'subflow');
+            setDraggedOverGroupId(overlapping?.id ?? null);
+        },
+        [getIntersectingNodes]
+    );
+
+    const onNodeDragStop = useCallback(
+        (_: React.MouseEvent, node: Node) => {
+            // Clear the hover highlight regardless
+            setDraggedOverGroupId(null);
+
+            // Subflow containers themselves don't re-parent
+            if (node.type === 'subflow') {
+                if (versionId) {
+                    const latestNode = nodes.find(n => n.id === node.id) || node;
+                    upsertNodeInStorage(versionId, node.id, latestNode);
+                }
+                return;
+            }
+
+            // Find the subflow that spatially contains the dropped node
+            const overlapping = getIntersectingNodes(node).find(n => n.type === 'subflow');
+            const currentParentId = node.parentId;
+
+            setNodes(nds => {
+                return nds.map(n => {
+                    if (n.id !== node.id) return n;
+
+                    // ── CASE 1: DETACH ──
+                    // Node already has a parent but is now dropped outside every subflow
+                    if (currentParentId && !overlapping) {
+                        const parent = nds.find(p => p.id === currentParentId);
+                        const parentPos = parent?.position ?? { x: 0, y: 0 };
+
+                        // Convert relative → absolute position
+                        const absolutePosition = {
+                            x: parentPos.x + node.position.x,
+                            y: parentPos.y + node.position.y,
+                        };
+
+                        const detachedNode: Node = {
+                            ...n,
+                            position: absolutePosition,
+                            parentId: undefined,
+                            extent: undefined,   // 🔑 Remove extent constraint dynamically
+                        };
+
+                        if (versionId) upsertNodeInStorage(versionId, detachedNode.id, detachedNode);
+                        return detachedNode;
+                    }
+
+                    // ── CASE 2: ATTACH (or re-parent) ──
+                    // Node is over a subflow that is different from its current parent
+                    if (overlapping && overlapping.id !== currentParentId) {
+                        const parent = nds.find(p => p.id === overlapping.id);
+                        const parentPos = parent?.position ?? { x: 0, y: 0 };
+
+                        // If previously a child of a different group, convert through absolute first
+                        let absoluteX = node.position.x;
+                        let absoluteY = node.position.y;
+                        if (currentParentId) {
+                            const oldParent = nds.find(p => p.id === currentParentId);
+                            const oldParentPos = oldParent?.position ?? { x: 0, y: 0 };
+                            absoluteX = oldParentPos.x + node.position.x;
+                            absoluteY = oldParentPos.y + node.position.y;
+                        }
+
+                        // Convert absolute → relative to new parent
+                        const relativePosition = {
+                            x: absoluteX - parentPos.x,
+                            y: absoluteY - parentPos.y,
+                        };
+
+                        const attachedNode: Node = {
+                            ...n,
+                            position: relativePosition,
+                            parentId: overlapping.id,
+                            extent: 'parent' as const,   // 🔑 Set extent constraint dynamically
+                        };
+
+                        if (versionId) upsertNodeInStorage(versionId, attachedNode.id, attachedNode);
+                        return attachedNode;
+                    }
+
+                    // ── CASE 3: NO CHANGE — just persist updated position ──
+                    if (versionId) upsertNodeInStorage(versionId, n.id, n);
+                    return n;
+                });
+            });
+        },
+        [getIntersectingNodes, nodes, setNodes, versionId]
+    );
 
     /** Memoize node/edge types to avoid re-renders */
     const nodeTypes = useMemo(() => NODE_TYPES, []);
@@ -155,28 +270,37 @@ export default function SkillDesignerCanvas() {
     const { steps, isExecuting, isSimulationDone } = useExecution();
 
     const displayNodes = useMemo(() => {
-        if (!isExecuting && !isSimulationDone) return nodes;
-
-        return nodes.map(node => {
-            const step = steps.find(s => s.node.id === node.id);
-
-            // If the node wasn't executed in this simulation, dim it
-            if (!step) {
+        // ── Base: apply execution status highlights ──
+        const executionNodes = (() => {
+            if (!isExecuting && !isSimulationDone) return nodes;
+            return nodes.map(node => {
+                const step = steps.find(s => s.node.id === node.id);
+                if (!step) {
+                    return { ...node, style: { ...node.style, opacity: 0.25 } } as CanvasNode;
+                }
                 return {
                     ...node,
-                    style: { ...node.style, opacity: 0.25 }
+                    data: { ...node.data, executionStatus: step.status }
                 } as CanvasNode;
-            }
+            });
+        })();
 
+        // ── Layer: highlight the subflow group being hovered during a drag ──
+        if (!draggedOverGroupId) return executionNodes;
+
+        return executionNodes.map(node => {
+            if (node.id !== draggedOverGroupId) return node;
             return {
                 ...node,
-                data: {
-                    ...node.data,
-                    executionStatus: step.status // Used by Custom Nodes to glow or show badges
-                }
-            } as CanvasNode;
+                style: {
+                    ...node.style,
+                    outline: '2px dashed var(--color-primary)',
+                    outlineOffset: '4px',
+                    boxShadow: '0 0 12px 2px color-mix(in srgb, var(--color-primary) 40%, transparent)',
+                },
+            };
         });
-    }, [nodes, steps, isExecuting, isSimulationDone]);
+    }, [nodes, steps, isExecuting, isSimulationDone, draggedOverGroupId]);
 
     const displayEdges = useMemo(() => {
         if (!isExecuting && !isSimulationDone) return edges;
@@ -264,11 +388,21 @@ export default function SkillDesignerCanvas() {
                         setDrawerNodeId(prev => (prev === node.id ? null : node.id));
                         setDrawerEdgeId(null);
                     }}
-                    onNodeDragStop={(_, node) => {
-                        if (versionId) {
-                            // Find the latest state of this node (including data) to upsert
-                            const latestNode = nodes.find(n => n.id === node.id) || node;
-                            upsertNodeInStorage(versionId, node.id, latestNode);
+                    onNodeDrag={onNodeDrag}
+                    onNodeDragStop={onNodeDragStop}
+                    onNodeResizeEnd={(_, node) => {
+                        // Persist the updated size (width/height) after a subflow group is resized
+                        if (versionId && node.type === 'subflow') {
+                            const resizedNode = nodes.find(n => n.id === node.id) || node;
+                            const persistNode = {
+                                ...resizedNode,
+                                style: {
+                                    ...resizedNode.style,
+                                    width: node.width,
+                                    height: node.height,
+                                },
+                            };
+                            upsertNodeInStorage(versionId, node.id, persistNode);
                         }
                     }}
                     onEdgeClick={(_, edge) => {
