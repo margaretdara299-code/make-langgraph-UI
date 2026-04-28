@@ -18,7 +18,6 @@ export default function QueueNodeItem() {
       label: "Queue",
       category: "structure",
       icon: "Layers",
-      queue_type: "human",
     });
     e.dataTransfer.setData("application/reactflow", dragData);
     e.dataTransfer.effectAllowed = "move";
