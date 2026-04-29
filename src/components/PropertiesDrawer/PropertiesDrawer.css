@@ -1412,6 +1412,21 @@
     font-size: var(--text-sm);
 }
 
+.pd-body-helper-text {
+    display: block;
+    margin-bottom: 10px;
+    font-size: var(--text-sm);
+    line-height: 1.5;
+}
+
+.pd-body-raw-item {
+    margin-bottom: 0 !important;
+}
+
+.pd-body-raw-input {
+    min-height: 220px;
+}
+
 /* Accordion param label */
 .pd-accordion-label {
     display: flex;

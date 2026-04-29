@@ -74,10 +74,12 @@
 
   /* --- Semantic Colors --- */
   --color-success: #10b981;
+  --color-success-rgb: 16, 185, 129;
   --color-success-bg: #ecfdf5;
   --color-success-text: #047857;
 
   --color-error: #ef4444;
+  --color-error-rgb: 239, 68, 68;
   --color-error-bg: #fef2f2;
   --color-error-text: #b91c1c;
 
@@ -105,8 +107,13 @@
   /* ParallelSplitNode — pink */
   --color-node-join: #4F46E5;
   /* ParallelJoinNode — indigo */
-  --color-node-queue: #EA580C;
-  /* QueueNode — orange */
+  --color-node-queue: #786913;
+  /* QueueNode */
+  --color-node-queue-rgb: 120, 105, 19;
+  --color-node-queue-bg: #F8F5DD;
+  --color-node-queue-text: #786913;
+  --color-node-queue-item-bg: #EDE5A8;
+  --color-node-queue-on-solid: #FFFFFF;
 
   /* --- Tag Palette (SkillCard tags) --- */
   --tag-blue-bg: #EFF6FF;
@@ -134,6 +141,7 @@
   /* --- Elevation & Radius --- */
   /* --- Elevation & Depth --- */
   --surface-0: #ffffff;
+  --surface-0-rgb: 255, 255, 255;
   --surface-1: #f9fafb;
   --surface-2: #f3f4f6;
   --surface-3: #e5e7eb;
@@ -195,10 +203,12 @@
 
   /* --- Semantic Colors --- */
   --color-success: #10b981;
+  --color-success-rgb: 16, 185, 129;
   --color-success-bg: rgba(16, 185, 129, 0.12);
   --color-success-text: #34d399;
 
   --color-error: #FFC1CC;
+  --color-error-rgb: 255, 193, 204;
   --color-error-bg: rgba(255, 193, 204, 0.12);
   --color-error-text: #FF9AA2;
 
@@ -227,6 +237,12 @@
   --color-node-common: #FFC1CC;
   --color-node-common-bg: rgba(255, 193, 204, 0.15);
   --color-node-common-text: #E4E4E4;
+  --color-node-queue: #786913;
+  --color-node-queue-rgb: 120, 105, 19;
+  --color-node-queue-bg: rgba(var(--color-node-queue-rgb), 0.18);
+  --color-node-queue-text: #E4E4E4;
+  --color-node-queue-item-bg: rgba(var(--color-node-queue-rgb), 0.34);
+  --color-node-queue-on-solid: #FFFFFF;
 }
 
 /* --- Base Styles --- */

@@ -1,76 +1,124 @@
 /**
  * QueueNode.css
  * Styles specific to the Queue Node.
- * Amber pulsing glow — visually distinct from Error (red) and Decision (orange).
  */
 
-.queue-node-card {
+.react-flow__node-queue .modern-node-card,
+.modern-node-card:has(.queue-node__fifo) {
+    min-width: 180px;
+    border-color: var(--color-node-queue) !important;
     animation: queue-pulse 2.8s ease-in-out infinite;
-    min-width: 190px;
 }
 
 @keyframes queue-pulse {
-    0%,  100% { box-shadow: 0 0 0 0   rgba(217, 119, 6, 0);    }
-    50%        { box-shadow: 0 0 10px 3px rgba(217, 119, 6, 0.20); }
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(var(--color-node-queue-rgb), 0);
+    }
+
+    50% {
+        box-shadow: 0 0 10px 3px rgba(var(--color-node-queue-rgb), 0.22);
+    }
 }
 
 /* Suppress idle pulse during execution status */
-.queue-node-card.node-exec-running,
-.queue-node-card.node-exec-success,
-.queue-node-card.node-exec-error {
+.react-flow__node-queue .modern-node-card.node-exec-running,
+.react-flow__node-queue .modern-node-card.node-exec-success,
+.react-flow__node-queue .modern-node-card.node-exec-error,
+.modern-node-card.node-exec-running:has(.queue-node__fifo),
+.modern-node-card.node-exec-success:has(.queue-node__fifo),
+.modern-node-card.node-exec-error:has(.queue-node__fifo) {
     animation: none;
 }
 
-.queue-node-card.node-exec-running {
-    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.3), 0 0 18px rgba(217, 119, 6, 0.25) !important;
+.react-flow__node-queue .modern-node-card.node-exec-running,
+.modern-node-card.node-exec-running:has(.queue-node__fifo) {
+    box-shadow: 0 0 0 3px rgba(var(--color-node-queue-rgb), 0.32), 0 0 18px rgba(var(--color-node-queue-rgb), 0.28) !important;
 }
 
-.queue-node-card.node-exec-success {
-    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3), 0 0 18px rgba(34, 197, 94, 0.2) !important;
+.react-flow__node-queue .modern-node-card.node-exec-success,
+.modern-node-card.node-exec-success:has(.queue-node__fifo) {
+    box-shadow: 0 0 0 3px rgba(var(--color-success-rgb), 0.3), 0 0 18px rgba(var(--color-success-rgb), 0.2) !important;
 }
 
-.queue-node-card.node-exec-error {
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.35), 0 0 20px rgba(239, 68, 68, 0.2) !important;
+.react-flow__node-queue .modern-node-card.node-exec-error,
+.modern-node-card.node-exec-error:has(.queue-node__fifo) {
+    box-shadow: 0 0 0 3px rgba(var(--color-error-rgb), 0.35), 0 0 20px rgba(var(--color-error-rgb), 0.2) !important;
 }
 
-/* Icon tile — amber tint background */
-.queue-node-icon {
-    background: rgba(217, 119, 6, 0.1) !important;
+.react-flow__node-queue .modern-node-icon,
+.modern-node-card:has(.queue-node__fifo) .modern-node-icon {
+    background: rgba(var(--color-node-queue-rgb), 0.12) !important;
+    border-color: rgba(var(--color-node-queue-rgb), 0.32) !important;
+    color: var(--color-node-queue-text) !important;
 }
 
-/* Subtitle — queue name in muted amber */
-.queue-node-sub {
-    color: #92400e !important;
-    font-size: var(--text-2xs) !important;
-    font-weight: 500 !important;
-    letter-spacing: 0.02em;
+.react-flow__node-queue .modern-node-sub,
+.modern-node-card:has(.queue-node__fifo) .modern-node-sub {
+    color: var(--color-node-queue-text) !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0;
 }
 
-/* Handle — amber dot */
-.queue-node-handle {
-    background: #FFFBEB !important;
-    border-color: #D97706 !important;
+.react-flow__node-queue .modern-node-badge,
+.modern-node-card:has(.queue-node__fifo) .modern-node-badge {
+    background: var(--color-node-queue) !important;
+    color: var(--color-node-queue-on-solid) !important;
 }
 
-/* Queue name pill — shown beneath node content when queue_name is set */
-.queue-node-name-pill {
-    margin-top: 8px;
-    padding: 3px 0 0;
-    border-top: 1px dashed rgba(217, 119, 6, 0.25);
-    display: flex;
+.react-flow__node-queue .modern-node-dot,
+.modern-node-card:has(.queue-node__fifo) .modern-node-dot {
+    background-color: var(--color-node-queue) !important;
+}
+
+.react-flow__node-queue .modern-node-handle,
+.modern-node-card:has(.queue-node__fifo) .modern-node-handle {
+    background: var(--color-node-queue-bg) !important;
+    border-color: var(--color-node-queue) !important;
+}
+
+.queue-node__fifo {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--color-node-queue-text);
+    vertical-align: middle;
+}
+
+.queue-node__flow-icon {
+    flex-shrink: 0;
+    color: var(--color-node-queue);
+}
+
+.queue-node__lane {
+    height: 16px;
+    min-width: 50px;
+    padding: 2px 3px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 3px;
+    border: 1px solid rgba(var(--color-node-queue-rgb), 0.28);
+    border-radius: 5px;
+    background: linear-gradient(90deg, rgba(var(--color-node-queue-rgb), 0.12), rgba(var(--color-node-queue-rgb), 0.05));
+    box-shadow: inset 0 0 0 1px rgba(var(--surface-0-rgb), 0.7);
+}
+
+.queue-node__item {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
+    background: var(--color-node-queue-item-bg);
+    border: 1px solid rgba(var(--color-node-queue-rgb), 0.42);
 }
 
-.queue-node-name-text {
-    font-size: var(--text-2xs);
-    font-weight: 600;
-    color: #92400e;
-    font-family: monospace;
-    letter-spacing: 0.03em;
-    max-width: 150px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.queue-node__item--first {
+    background: var(--color-node-queue);
+    color: var(--color-node-queue-on-solid);
+    box-shadow: 0 0 0 2px rgba(var(--color-node-queue-rgb), 0.16);
 }

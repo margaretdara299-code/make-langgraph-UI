@@ -3,7 +3,7 @@
  * Slides out to show the properties of the currently selected React Flow node.
  */
 
-import { Drawer, Input, Form, Typography, Select, Spin, theme, Button, Tabs, Collapse, AutoComplete } from 'antd';
+import { Input, Form, Typography, Select, Spin, Button, Tabs, Collapse } from 'antd';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReactFlow, useNodes, useEdges } from '@xyflow/react';
 import { useEffect, useState, useMemo } from 'react';
@@ -13,25 +13,32 @@ import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Settings2, GitBranchPlus, X } from 'lucide-react';
 import { HTTP_METHODS } from '@/constants';
 import type { CanvasNodeData, CanvasEdgeData, PropertiesDrawerProps } from '@/interfaces';
-import { useCategories, useCapabilities } from '@/hooks';
+import { useCapabilities } from '@/hooks';
 import { useExecution } from '@/contexts';
 import { loadGraphFromStorage, upsertNodeInStorage, upsertConnectionInStorage } from '@/services/skillGraphStorage.service';
 import DecisionPropertiesPanel from './DecisionPropertiesPanel';
 import './PropertiesDrawer.css';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
+
+const isQueueDefaultRawTemplate = (rawBody: string | undefined, bodyParams: any) => {
+    const normalizedRaw = (rawBody || '').replace(/\s+/g, '');
+    const normalizedTemplate = '{"payload":"{{last_result}}","workflow_state":"{{workflow_state}}"}';
+    const matchesLegacyObject =
+        bodyParams &&
+        typeof bodyParams === 'object' &&
+        !Array.isArray(bodyParams) &&
+        bodyParams.payload === '{{last_result}}' &&
+        bodyParams.workflow_state === '{{workflow_state}}';
+    return normalizedRaw === normalizedTemplate || matchesLegacyObject;
+};
 
 export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClose }: PropertiesDrawerProps) {
-    const { token } = theme.useToken();
     const { setNodes, setEdges } = useReactFlow();
     const nodes = useNodes();
     const edges = useEdges();
     const { versionId } = useParams<{ versionId: string }>();
     const [isLoadingAction] = useState(false);
-    const { categories } = useCategories();
-    const categoryMap: Record<number, string> = Object.fromEntries(
-        categories.map((category: any) => [category.categoryId ?? category.id ?? category.category_id, category.name])
-    );
 
     const { capabilities: _capabilities } = useCapabilities();
 
@@ -50,7 +57,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             const data = n.data as any;
             if (n.type === 'start' && Array.isArray(data.initial_state)) {
                 data.initial_state.forEach((st: any) => { if (st?.key) keys.add(st.key); });
-            } else if (n.type === 'action') {
+            } else if (n.type === 'action' || n.type === 'queue') {
                 if (data.action_key) keys.add(data.action_key);
 
                 // Gather existing mapped state keys so they auto-suggest cleanly
@@ -98,11 +105,28 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
         const prepareConfigsForForm = (rawConfigs: any) => {
             if (typeof rawConfigs !== 'object' || Array.isArray(rawConfigs) || !rawConfigs) return {};
             const prepared = { ...rawConfigs };
-            ['path_params', 'query_params', 'header_params', 'body_params'].forEach(paramKey => {
+            ['path_params', 'query_params', 'header_params'].forEach(paramKey => {
                 if (prepared[paramKey] && !Array.isArray(prepared[paramKey]) && typeof prepared[paramKey] === 'object') {
                     prepared[paramKey] = Object.entries(prepared[paramKey]).map(([key, value]) => ({ key, value }));
                 }
             });
+
+            const bodyType = prepared.body_params_type || 'form-data';
+            const bodyParams = prepared.body_params;
+            const hasNestedBodyObject =
+                bodyParams &&
+                typeof bodyParams === 'object' &&
+                !Array.isArray(bodyParams) &&
+                Object.values(bodyParams).some((value) => value && typeof value === 'object');
+
+            if (bodyType === 'raw' || hasNestedBodyObject) {
+                prepared.body_params_type = 'raw';
+                if (!prepared.body_params_raw && bodyParams !== undefined) {
+                    prepared.body_params_raw = JSON.stringify(bodyParams, null, 2);
+                }
+            } else if (bodyParams && !Array.isArray(bodyParams) && typeof bodyParams === 'object') {
+                prepared.body_params = Object.entries(bodyParams).map(([key, value]) => ({ key, value }));
+            }
             return prepared;
         };
 
@@ -168,14 +192,20 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
         if (selectedNode.type === 'queue') {
             const stored = versionId ? loadGraphFromStorage(versionId) : null;
             const qd = (stored?.nodes?.[selectedNode.id]?.data || selectedNode.data) as any;
+            const configs = prepareConfigsForForm(qd.configurations_json);
+            const shouldClearLegacyQueueTemplate = isQueueDefaultRawTemplate(configs.body_params_raw, qd.configurations_json?.body_params);
+            const queueBodyParams = shouldClearLegacyQueueTemplate
+                ? []
+                : (Array.isArray(configs.body_params) ? configs.body_params : []);
             form.setFieldsValue({
                 label: qd.label || 'Queue',
+                description: qd.description || '',
                 queue_name: qd.queue_name || '',
-                queue_type: qd.queue_type || 'human',
-                priority: qd.priority || 'normal',
-                ttl_seconds: qd.ttl_seconds ?? 0,
-                auto_closeout: qd.auto_closeout !== false,
-                payload_mappings: Array.isArray(qd.payload_mappings) ? qd.payload_mappings : [],
+                ...configs,
+                method: configs.method || 'POST',
+                inherit_previous_response: configs.inherit_previous_response !== false,
+                body_params_type: 'form-data',
+                body_params: queueBodyParams,
             });
             return;
         }
@@ -353,17 +383,28 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                     },
                 };
             } else if (selectedNode.type === 'queue') {
+                const { label, description, queue_name, name, ...configurations } = newValues;
+                const currentConfigurations = currentNode.data.configurations_json;
+                const currentConfigObject =
+                    currentConfigurations && typeof currentConfigurations === 'object' && !Array.isArray(currentConfigurations)
+                        ? currentConfigurations
+                        : {};
+                const nextConfigurations: Record<string, any> = {
+                    ...currentConfigObject,
+                    inherit_previous_response: configurations.inherit_previous_response !== false,
+                    method: configurations.method || 'POST',
+                    ...configurations,
+                };
+                nextConfigurations.body_params_type = 'form-data';
+                delete nextConfigurations.body_params_raw;
                 updatedNode = {
                     ...currentNode,
                     data: {
                         ...currentNode.data,
-                        label: newValues.label || 'Queue',
-                        queue_name: newValues.queue_name || '',
-                        queue_type: newValues.queue_type || 'human',
-                        priority: newValues.priority || 'normal',
-                        ttl_seconds: newValues.ttl_seconds ?? 0,
-                        auto_closeout: newValues.auto_closeout !== false,
-                        payload_mappings: newValues.payload_mappings || [],
+                        label: label || 'Queue',
+                        description: description || '',
+                        queue_name: queue_name || name || '',
+                        configurations_json: nextConfigurations,
                     },
                 };
             } else if (selectedNode.type === 'subflow') {
@@ -546,9 +587,80 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
         </div>
     );
 
+    const renderBodyConfigPanel = (isQueueNode: boolean) => (
+        <div className="properties-drawer__param-group">
+            {isQueueNode ? (
+                <>
+                    <Text type="secondary" className="pd-body-helper-text">
+                        The Queue request body starts with the previous node response automatically. Add any extra key/value fields below and they will be merged into the same outbound JSON.
+                    </Text>
+                    <Form.Item label="Base Payload (Auto)">
+                        <Input.TextArea
+                            value="{{last_result}}"
+                            rows={4}
+                            disabled
+                            className="pd-font-mono pd-body-raw-input"
+                        />
+                    </Form.Item>
+                    <DynamicParamList name="body_params" title="Additional Body Fields" emptyMessage="No additional fields." hideTitle />
+                </>
+            ) : (
+                <>
+                    <Form.Item label="Body Mode" name="body_params_type" initialValue="form-data">
+                        <Select
+                            options={[
+                                { label: 'No Body', value: 'none' },
+                                { label: 'Form Fields', value: 'form-data' },
+                                { label: 'Raw JSON', value: 'raw' },
+                            ]}
+                        />
+                    </Form.Item>
+                    <Form.Item noStyle shouldUpdate={(prevValues, currentValues) => prevValues.body_params_type !== currentValues.body_params_type}>
+                        {({ getFieldValue }) => {
+                            const bodyMode = getFieldValue('body_params_type') || 'form-data';
+                            if (bodyMode === 'none') {
+                                return (
+                                    <Text type="secondary" className="properties-drawer__empty-hint pd-empty-hint">
+                                        This request will be sent without a body.
+                                    </Text>
+                                );
+                            }
+                            if (bodyMode === 'raw') {
+                                return (
+                                    <Form.Item
+                                        name="body_params_raw"
+                                        initialValue={'{\n  \n}'}
+                                        className="pd-body-raw-item"
+                                    >
+                                        <Input.TextArea
+                                            rows={10}
+                                            className="pd-font-mono pd-body-raw-input"
+                                            placeholder={'{\n  \n}'}
+                                        />
+                                    </Form.Item>
+                                );
+                            }
+                            return <DynamicParamList name="body_params" title="Body Parameters" emptyMessage="No body parameters." hideTitle />;
+                        }}
+                    </Form.Item>
+                </>
+            )}
+        </div>
+    );
+
     const AccordionLabel = ({ name, title, formInstance }: { name: string, title: string, formInstance: any }) => {
         const data = Form.useWatch(name, formInstance);
-        const count = Array.isArray(data) ? data.filter((d: any) => d && d.key).length : 0;
+        const bodyType = Form.useWatch('body_params_type', formInstance);
+        const bodyRaw = Form.useWatch('body_params_raw', formInstance);
+        const count = name === 'body_params'
+            ? (bodyType === 'raw'
+                ? (String(bodyRaw || '').trim() ? 1 : 0)
+                : Array.isArray(data)
+                    ? data.filter((d: any) => d && d.key).length
+                    : 0)
+            : Array.isArray(data)
+                ? data.filter((d: any) => d && d.key).length
+                : 0;
         return (
             <div className="pd-accordion-label">
                 <span className="pd-accordion-title">{title}</span>
@@ -598,7 +710,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                         { key: 'path_params', label: <AccordionLabel name="path_params" title="Path Parameters" formInstance={form} />, children: <DynamicParamList name="path_params" title="Path Parameters" emptyMessage="No path parameters." hideTitle /> },
                         { key: 'query_params', label: <AccordionLabel name="query_params" title="Query Parameters" formInstance={form} />, children: <DynamicParamList name="query_params" title="Query Parameters" emptyMessage="No query parameters." hideTitle /> },
                         { key: 'header_params', label: <AccordionLabel name="header_params" title="Header Parameters" formInstance={form} />, children: <DynamicParamList name="header_params" title="Header Parameters" emptyMessage="No header parameters." hideTitle /> },
-                        { key: 'body_params', label: <AccordionLabel name="body_params" title="Body Parameters" formInstance={form} />, children: <DynamicParamList name="body_params" title="Body Parameters" emptyMessage="No body parameters." hideTitle /> }
+                        { key: 'body_params', label: <AccordionLabel name="body_params" title="Body Parameters" formInstance={form} />, children: renderBodyConfigPanel(selectedNode?.type === 'queue') }
                     ]}
                 />
             </>
@@ -714,6 +826,8 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                             isError ? 'var(--color-error)' :
                                 ((isStart || isEnd) ? 'var(--color-success)' : 'var(--accent)');
 
+
+
             if (isLoadingAction) {
                 return (
                     <div className="pd-empty-center">
@@ -762,14 +876,12 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                     {isStart ? 'Workflow Entry'
                                                         : isEnd ? 'Workflow Exit'
                                                             : isError ? 'Error Handler'
-                                                                : isQueue ? 'Queue Hand-off'
-                                                                    : isAction ? 'Action'
-                                                                        : isDecision ? 'Router'
-                                                                            : isSubFlow ? 'Group'
-                                                                                : isQueue ? 'Async Queue'
-                                                                                    : isParallelSplit ? 'Split'
-                                                                                        : isParallelJoin ? 'Merge'
-                                                                                            : (nodeData?.category || 'Action')}
+                                                                : isDecision ? 'Router'
+                                                                    : isSubFlow ? 'Group'
+                                                                        : isParallelSplit ? 'Split'
+                                                                            : isParallelJoin ? 'Merge'
+                                                                                : isQueue ? 'External Queue API'
+                                                                                    : (nodeData?.category || 'Action')}
                                                 </span>
                                             </div>
                                             {isAction && (
@@ -789,10 +901,9 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                                 : isError ? 'ERR'
                                                                     : isQueue ? 'QUEUE'
                                                                         : isSubFlow ? 'STRUCTURE'
-                                                                            : isQueue ? 'QUEUE'
-                                                                                : isParallelSplit ? 'SPLIT'
-                                                                                    : isParallelJoin ? 'MERGE'
-                                                                                        : (nodeData?.capability || 'API').toUpperCase()}
+                                                                            : isParallelSplit ? 'SPLIT'
+                                                                                : isParallelJoin ? 'MERGE'
+                                                                                    : (nodeData?.capability || 'API').toUpperCase()}
                                                 </div>
                                             </div>
                                         </div>
@@ -830,7 +941,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                     label="Description"
                                                     name="description"
                                                 >
-                                                    <Input placeholder="e.g. Handoff to human review queue" />
+                                                    <Input placeholder="e.g. Update RCM task state" />
                                                 </Form.Item>
                                             )}
 
@@ -935,80 +1046,21 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                 <DecisionPropertiesPanel form={form} nodes={nodes} availableStateKeys={availableStateKeys} />
                                             ) : isQueue ? (
                                                 <>
-                                                    {/* ── Queue Identity ── */}
-                                                    <div className="properties-drawer__section-title pds-section-title-top">Queue Identity</div>
+                                                    <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Queue Target</div>
                                                     <Form.Item
-                                                        label="Queue Name"
+                                                        label="Target Name"
                                                         name="queue_name"
-                                                        rules={[{ required: true, message: 'Queue name is required' }]}
-                                                        extra="e.g. coder_review_queue, human_approval_queue"
+                                                        extra="e.g. rcm_task_update, denial_task_queue"
                                                     >
-                                                        <Input placeholder="coder_review_queue" className="pds-input-mono" />
-                                                    </Form.Item>
-                                                    <Form.Item label="Queue Type" name="queue_type">
-                                                        <Select
-                                                            options={[
-                                                                { label: '👤  Human — person picks up from a task screen', value: 'human' },
-                                                                { label: '🤖  AI Agent — another LangGraph picks up', value: 'agent' },
-                                                                { label: '⏰  Temporal — Temporal workflow task queue', value: 'temporal' },
-                                                                { label: '📨  Message Queue — SQS / RabbitMQ / Kafka', value: 'message' },
-                                                            ]}
-                                                        />
+                                                        <Input placeholder="rcm_task_update" style={{ fontFamily: 'monospace' }} />
                                                     </Form.Item>
 
-                                                    {/* ── Payload Mapping ── */}
                                                     <div className="properties-drawer__divider" />
-                                                    <div className="properties-drawer__section-title">Payload Mapping</div>
-                                                    <Text type="secondary" className="pds-hint">
-                                                        Choose which state variables to send with this queue item.
-                                                        The next LangGraph will receive these as its input.
+                                                    <div className="properties-drawer__section-title">Queue API</div>
+                                                    <Text type="secondary" style={{ fontSize: 'var(--text-sm)', display: 'block', marginBottom: 12, lineHeight: 1.5 }}>
+                                                        Configure the external workflow API that updates the current task payload and can mock creation of the next task.
                                                     </Text>
-                                                    <Form.List name="payload_mappings">
-                                                        {(fields, { add, remove }) => (
-                                                            <div className="pds-env-list">
-                                                                {fields.map(({ key, name: fieldName, ...restField }) => (
-                                                                    <div key={key} className="pds-env-row">
-                                                                        <Form.Item
-                                                                            {...restField}
-                                                                            name={[fieldName, 'state_key']}
-                                                                            className="pds-form-item-flat"
-                                                                            rules={[{ required: true, message: 'Required' }]}
-                                                                        >
-                                                                            <AutoComplete
-                                                                                options={availableStateKeys}
-                                                                                placeholder="state.claim_id"
-                                                                                className="pds-input-mono-sm"
-                                                                                filterOption={(input, option) =>
-                                                                                    (option?.value ?? '').toLowerCase().includes(input.toLowerCase())
-                                                                                }
-                                                                            />
-                                                                        </Form.Item>
-                                                                        <span className="pds-arrow">→</span>
-                                                                        <Form.Item
-                                                                            {...restField}
-                                                                            name={[fieldName, 'payload_key']}
-                                                                            className="pds-form-item-flat"
-                                                                            rules={[{ required: true, message: 'Required' }]}
-                                                                        >
-                                                                            <Input placeholder="payload.claim_id" className="pds-input-mono-sm" />
-                                                                        </Form.Item>
-                                                                        <DeleteOutlined
-                                                                            className="pds-delete"
-                                                                            onClick={() => remove(fieldName)}
-                                                                        />
-                                                                    </div>
-                                                                ))}
-                                                                <Button
-                                                                    type="dashed"
-                                                                    onClick={() => add({ state_key: '', payload_key: '' })}
-                                                                    icon={<PlusOutlined />}
-                                                                    block
-                                                                >
-                                                                    Add Field
-                                                                </Button>
-                                                            </div>
-                                                        )}
-                                                    </Form.List>
+                                                    {renderNodeConfig(nodeData as CanvasNodeData)}
                                                 </>
                                             ) : isEnd ? (
                                                 <>
@@ -1053,36 +1105,6 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                             <Input placeholder="https://api.example.com/error-logs" />
                                                         </Form.Item>
                                                     </div>
-                                                </>
-                                            ) : isQueue ? (
-                                                <>
-                                                    <div className="properties-drawer__section-title pd-section-title-no-margin">Queue Settings</div>
-                                                    <Form.Item label="Target Queue" name="queue_name" rules={[{ required: true }]}>
-                                                        <Select options={[
-                                                            { label: 'Manual Review (Human)', value: 'manual_review' },
-                                                            { label: 'Claims Audit (Financial)', value: 'claims_audit' },
-                                                            { label: 'Provider Verification', value: 'provider_verify' },
-                                                            { label: 'General Exception', value: 'exception' },
-                                                        ]} placeholder="Select a destination queue..." />
-                                                    </Form.Item>
-
-                                                    <div className="properties-drawer__flex-row">
-                                                        <Form.Item label="Priority" name="priority" className="properties-drawer__flex-item">
-                                                            <Select options={[
-                                                                { label: 'Critical', value: 'critical' },
-                                                                { label: 'High', value: 'high' },
-                                                                { label: 'Normal', value: 'normal' },
-                                                                { label: 'Low', value: 'low' },
-                                                            ]} />
-                                                        </Form.Item>
-                                                    </div>
-
-                                                    <Form.Item label="Execution Mode" name="wait_for_completion">
-                                                        <Select options={[
-                                                            { label: 'Asynchronous (Fire and Forget)', value: false },
-                                                            { label: 'Synchronous (Wait for Pickup)', value: true },
-                                                        ]} />
-                                                    </Form.Item>
                                                 </>
                                             ) : isParallelSplit ? (
                                                 <>
@@ -1147,49 +1169,8 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                         >
                                             {isQueue ? (
                                                 <>
-                                                    <div className="properties-drawer__section-title pds-section-title-top">Queue Settings</div>
-                                                    <div className="properties-drawer__flex-row">
-                                                        <Form.Item label="Priority" name="priority" className="properties-drawer__flex-item">
-                                                            <Select
-                                                                options={[
-                                                                    { label: '🔽  Low', value: 'low' },
-                                                                    { label: '➡️  Normal', value: 'normal' },
-                                                                    { label: '🔼  High', value: 'high' },
-                                                                    { label: '🚨  Urgent', value: 'urgent' },
-                                                                ]}
-                                                            />
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            label="TTL (seconds)"
-                                                            name="ttl_seconds"
-                                                            className="properties-drawer__flex-item"
-                                                            extra="0 = no expiry"
-                                                        >
-                                                            <Input type="number" min={0} placeholder="0" />
-                                                        </Form.Item>
-                                                    </div>
-                                                    <div className="properties-drawer__divider" />
-                                                    <div className="properties-drawer__section-title">Workflow Integration</div>
-                                                    <Text type="secondary" className="pds-hint">
-                                                        When enabled, a close_out signal is sent to Temporal after enqueuing so the current workflow task completes cleanly.
-                                                    </Text>
-                                                    <Form.Item name="auto_closeout" valuePropName="checked">
-                                                        <div className="pds-setting-row">
-                                                            <input
-                                                                type="checkbox"
-                                                                id="auto_closeout"
-                                                                checked={form.getFieldValue('auto_closeout') !== false}
-                                                                onChange={e => {
-                                                                    form.setFieldValue('auto_closeout', e.target.checked);
-                                                                    handleValuesChange({ auto_closeout: e.target.checked }, form.getFieldsValue());
-                                                                }}
-                                                                className="pds-checkbox"
-                                                            />
-                                                            <label htmlFor="auto_closeout" className="pds-label">
-                                                                Auto close_out after enqueue
-                                                            </label>
-                                                        </div>
-                                                    </Form.Item>
+                                                    <div className="properties-drawer__section-title pd-section-title-no-margin">Response to State Mapping</div>
+                                                    {renderStateManagement()}
                                                 </>
                                             ) : isEnd ? (
                                                 <>
