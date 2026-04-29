@@ -11,7 +11,7 @@
  */
 
 import { useLayoutEffect } from 'react';
-import { Handle, Position, useUpdateNodeInternals, useEdges } from '@xyflow/react';
+import { Handle, Position, useUpdateNodeInternals, useEdges, useNodes } from '@xyflow/react';
 import { GitMerge } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { NodeProps } from '@xyflow/react';
@@ -30,6 +30,7 @@ export default function ParallelJoinNode({ id, data }: NodeProps<CanvasNode>) {
     const allEdges = useEdges();
     const incomingEdges = allEdges.filter(e => e.target === id);
     const hasIncoming = incomingEdges.length > 0;
+    const allNodes = useNodes();
 
     useLayoutEffect(() => {
         const frameId = window.requestAnimationFrame(() => updateNodeInternals(id));
@@ -43,6 +44,8 @@ export default function ParallelJoinNode({ id, data }: NodeProps<CanvasNode>) {
     const subtitle = hasIncoming
         ? `${incomingEdges.length} branch${incomingEdges.length !== 1 ? 'es' : ''} incoming`
         : 'Connect parallel branches';
+
+    const isWaiting = nodeData.executionStatus === 'waiting';
 
     return (
         <ModernNode
@@ -59,14 +62,19 @@ export default function ParallelJoinNode({ id, data }: NodeProps<CanvasNode>) {
             {/* Incoming branch preview */}
             {hasIncoming ? (
                 <div className="merge-node__incoming">
-                    {incomingEdges.map(edge => (
-                        <div key={edge.id} className="merge-node__branch-row">
-                            <span className="merge-node__branch-dot" />
-                            <span className="merge-node__branch-label">
-                                {edge.sourceHandle ? edge.sourceHandle : edge.source}
-                            </span>
-                        </div>
-                    ))}
+                    {incomingEdges.map(edge => {
+                        const sourceNode = allNodes.find(n => n.id === edge.source);
+                        const sourceNodeData = sourceNode?.data as any;
+                        const labelToDisplay = sourceNodeData?.label || sourceNodeData?.name || edge.sourceHandle || edge.source;
+                        return (
+                            <div key={edge.id} className="merge-node__branch-row">
+                                <span className="merge-node__branch-dot" />
+                                <span className="merge-node__branch-label">
+                                    {labelToDisplay}                                
+                                </span>
+                            </div>
+                        );
+                    })}
                 </div>
             ) : (
                 <div className="merge-node__empty-state">
@@ -75,9 +83,25 @@ export default function ParallelJoinNode({ id, data }: NodeProps<CanvasNode>) {
                     </span>
                 </div>
             )}
+
+            {/* ── Waiting Hourglass Overlay ── */}
+            {isWaiting && (
+                <div className="merge-node__wait-overlay">
+                    <div className="merge-node__wait-badge">
+                        <svg className="merge-node__hourglass" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M5 22h14" />
+                            <path d="M5 2h14" />
+                            <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22" />
+                            <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2" />
+                        </svg>
+                        <span className="merge-node__wait-label">Waiting…</span>
+                    </div>
+                </div>
+            )}
         </ModernNode>
     );
 }
+
 
 const variants = {
   hidden: { opacity: 0, x: -10 },

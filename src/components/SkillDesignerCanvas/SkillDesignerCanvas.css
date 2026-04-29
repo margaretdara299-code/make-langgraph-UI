@@ -75,8 +75,20 @@
     box-shadow: 0 0 0 4px var(--color-error-bg), 0 0 20px var(--color-error) !important;
 }
 
+/* Merge node: waiting for parallel branches to complete */
+.node-exec-waiting {
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15), 0 0 18px rgba(245, 158, 11, 0.5) !important;
+    animation: nodePulseWait 2s infinite;
+}
+
 @keyframes nodePulse {
     0% { box-shadow: 0 0 0 4px var(--color-info-bg), 0 0 8px var(--color-info); }
     50% { box-shadow: 0 0 0 4px var(--color-info-bg), 0 0 25px var(--color-info); }
     100% { box-shadow: 0 0 0 4px var(--color-info-bg), 0 0 8px var(--color-info); }
+}
+
+@keyframes nodePulseWait {
+    0% { box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1), 0 0 6px rgba(245, 158, 11, 0.4); }
+    50% { box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2), 0 0 22px rgba(245, 158, 11, 0.65); }
+    100% { box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1), 0 0 6px rgba(245, 158, 11, 0.4); }
 }

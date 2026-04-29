@@ -82,7 +82,8 @@ export default function DeletableEdge(props: EdgeProps) {
                 markerEnd={markerEnd}
                 style={{
                     ...style,
-                    strokeDasharray: style?.strokeDasharray ?? (props.animated ? '8,4' : 'none'),
+                    // No dash pattern on animated edges — the moving balls convey data-flow
+                    strokeDasharray: style?.strokeDasharray ?? 'none',
                     stroke: style?.stroke ?? edgeColor,
                     strokeWidth: style?.strokeWidth ?? 2,
                 }}
