@@ -272,7 +272,7 @@
 }
 
 .create-action-modal .cam-stepper-heading {
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 600;
     color: #0F172A;
     display: block;
@@ -302,8 +302,7 @@
     align-items: center;
     flex-shrink: 0;
     position: absolute;
-    right: -48px;
-    /* Bridging the boundary as requested */
+    right: -46px;
     align-self: stretch;
     height: 100%;
     z-index: 10;
@@ -389,13 +388,13 @@
 
 /* Form panel header */
 .create-action-modal .cam-header-step-label {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     color: #64748B;
     display: block;
     text-transform: capitalize;
     letter-spacing: 0.05em;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
 .create-action-modal .cam-header-title {
@@ -409,6 +408,7 @@
 
 .create-action-modal .cam-header-desc {
     font-size: var(--text-sm);
+    font-weight: 500;
     color: #64748B;
     display: block;
     line-height: 1.5;
@@ -435,4 +435,8 @@
     /* letter-spacing: -0.01em; */
     line-height: 1.4;
     word-break: break-word;
+}
+
+.create-action-modal .ant-form-item-control-input-content {
+    font-weight: 500 !important;
 }

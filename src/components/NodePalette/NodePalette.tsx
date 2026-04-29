@@ -183,7 +183,56 @@ export default function NodePalette() {
                 </div>
               )}
 
-              {!search && (
+              {search.trim() ? (
+                <div className="node-group">
+                  <div className="antd-tree-wrapper">
+                    {/* Filtered Common Nodes */}
+                    {[
+                      { component: <StartNodeItem />, name: 'Start' },
+                      { component: <SubFlowNodeItem />, name: 'SubFlow' },
+                      { component: <DecisionNodeItem />, name: 'Decision' },
+                      { component: <QueueNodeItem />, name: 'Queue' },
+                      { component: <SplitNodeItem />, name: 'Split' },
+                      { component: <MergeNodeItem />, name: 'Merge' },
+                      { component: <EndNodeItem />, name: 'End' },
+                      { component: <ErrorNodeItem />, name: 'Error' },
+                    ]
+                      .filter(n => n.name.toLowerCase().includes(search.toLowerCase()))
+                      .map((n, idx) => <div key={idx} className="np-leaf">{n.component}</div>)
+                    }
+
+                    {/* Filtered Actions */}
+                    {actionEntries.map(([subCat, items]) => (
+                      <div key={subCat}>
+                        {items
+                          .filter((item: any) => item.name.toLowerCase().includes(search.toLowerCase()))
+                          .map((item: any) => (
+                            <TreeTitle
+                              key={item.id}
+                              node={{ ...item, type: 'action', category: 'cat-actions', subCategory: subCat, icon: item.icon ?? 'Zap' }}
+                            />
+                          ))
+                        }
+                      </div>
+                    ))}
+
+                    {/* Filtered Connectors */}
+                    {connectorEntries.map(([subCat, items]) => (
+                      <div key={subCat}>
+                        {items
+                          .filter((item: any) => item.name.toLowerCase().includes(search.toLowerCase()))
+                          .map((item: any) => (
+                            <TreeTitle
+                              key={item.id}
+                              node={{ ...item, type: 'data', category: 'cat-connectors', subCategory: subCat, icon: item.icon ?? 'Database' }}
+                            />
+                          ))
+                        }
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
                 <div className="node-group node-group--first">
                   <div className="antd-tree-wrapper">
 
@@ -217,12 +266,6 @@ export default function NodePalette() {
                     )}
 
                   </div>
-                </div>
-              )}
-
-              {search && (
-                <div className="sidebar-empty">
-                  Search results rendered via custom list if needed...
                 </div>
               )}
             </div>

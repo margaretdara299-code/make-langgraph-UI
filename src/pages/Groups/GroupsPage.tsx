@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { Typography, Button, Modal, message, Empty, Space, Skeleton } from 'antd';
-import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-
+import { PlusOutlined, ExclamationCircleOutlined, ControlOutlined } from '@ant-design/icons';
 // Services & Types
 import { fetchGroups, deleteGroup } from '@/services/groups.service';
 import { fetchVariables, deleteVariable } from '@/services/variables.service';
@@ -103,12 +102,32 @@ export default function GroupsPage() {
             <div className="groups-body">
                 {loading ? <GroupsSkeleton /> : filteredGroups.length === 0 && !isAddingGroup ? (
                     <div className="groups-empty reveal-up">
-                        <Empty
-                            description={searchValue ? "No groups match your search" : "No groups configured yet"}
-                            image={Empty.PRESENTED_IMAGE_SIMPLE}
-                        >
-                            <Button type="primary" onClick={() => setIsAddingGroup(true)}>Create First Group</Button>
-                        </Empty>
+                        <div className="groups-empty-inner">
+                            <div className="groups-empty-icon-shell">
+                                <ControlOutlined style={{ fontSize: '48px', color: 'var(--accent)' }} />
+                            </div>
+                            <Title level={4} className="groups-empty-title">
+                                {searchValue ? "No matching groups found" : "Your variable groups are empty"}
+                            </Title>
+                            <Text type="secondary" className="groups-empty-desc">
+                                {searchValue 
+                                    ? "Try adjusting your search to find the configuration group you're looking for." 
+                                    : "Start by creating your first group to manage your environment variables."}
+                            </Text>
+                            <div className="groups-empty-actions">
+                                {searchValue ? (
+                                    <Button onClick={() => setSearchValue('')}>Clear search</Button>
+                                ) : (
+                                    <Button 
+                                        type="primary" 
+                                        icon={<PlusOutlined />} 
+                                        onClick={() => setIsAddingGroup(true)}
+                                    >
+                                        Create First Group
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 ) : (
                     <div className="groups-cards-container reveal-up">

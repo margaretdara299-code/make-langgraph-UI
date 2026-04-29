@@ -78,8 +78,8 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                 onValuesChange={handleValuesChange}
                 requiredMark={true}
             >
-                <div className="create-action-overview__header-row">
-                    <div className="cao-flex-1">
+                <div className="cao-main-section">
+                    <div className="cao-grid-fields">
                         <Form.Item
                             name="name"
                             label="Action Name"
@@ -87,9 +87,7 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                         >
                             <Input placeholder="e.g., Verify Eligibility" />
                         </Form.Item>
-                    </div>
 
-                    <div className="cao-flex-1">
                         <Form.Item
                             name="action_key"
                             label="Action Key"
@@ -100,24 +98,14 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                         >
                             <Input placeholder="e.g., verify_eligibility" />
                         </Form.Item>
-                    </div>
 
-                    <div style={{ width: '120px' }}>
-                        <Form.Item
-                            name="icon"
-                            label="Icon"
-                            rules={[{ required: true, message: 'Required' }]}
-                        >
-                            <LucideIconPicker />
-                        </Form.Item>
-                    </div>
-                </div>
-
-
-                <div className="create-action-overview__row">
-                    <div className="cao-flex-1">
                         <Form.Item name="category_id" label="Category" rules={[{ required: true, message: 'Required' }]}>
-                            <Select placeholder="Select a category" loading={isCategoriesLoading}>
+                            <Select 
+                                placeholder="Select a category" 
+                                loading={isCategoriesLoading}
+                                showSearch
+                                optionFilterProp="children"
+                            >
                                 {categories.map(cat => (
                                     <Select.Option key={cat.categoryId ?? cat.id} value={cat.categoryId ?? cat.id}>
                                         {cat.name}
@@ -125,17 +113,31 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                                 ))}
                             </Select>
                         </Form.Item>
-                    </div>
 
-                    <div className="cao-flex-1">
                         <Form.Item name="capability_id" label="Capability" rules={[{ required: true, message: 'Required' }]}>
-                            <Select placeholder="Select a capability" loading={isCapabilitiesLoading}>
+                            <Select 
+                                placeholder="Select a capability" 
+                                loading={isCapabilitiesLoading}
+                                showSearch
+                                optionFilterProp="children"
+                            >
                                 {capabilities.map(cap => (
                                     <Select.Option key={cap.capabilityId} value={cap.capabilityId}>
                                         {cap.name}
                                     </Select.Option>
                                 ))}
                             </Select>
+                        </Form.Item>
+                    </div>
+
+                    <div className="cao-icon-column">
+                        <Form.Item
+                            name="icon"
+                            label="Action Icon"
+                            rules={[{ required: true, message: 'Required' }]}
+                            className="cao-icon-form-item"
+                        >
+                            <LucideIconPicker iconOnly={true} />
                         </Form.Item>
                     </div>
                 </div>

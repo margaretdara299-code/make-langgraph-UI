@@ -6,7 +6,7 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useDebounce } from '@/hooks';
 import { Button, Typography, message, Modal, Empty, Input, Spin } from 'antd';
-import { PlusOutlined, SearchOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { PlusOutlined, SearchOutlined, ExclamationCircleOutlined, AppstoreOutlined } from '@ant-design/icons';
 import { fetchCategories, deleteCategory } from '@/services/category.service';
 import type { Category } from '@/interfaces';
 import { PAGE_HEADER_CONTENT } from '@/constants/ui.constants';
@@ -135,14 +135,32 @@ export default function CategoriesPage() {
                     </div>
                 ) : filteredCategories.length === 0 ? (
                     <div className="categories-empty reveal-up">
-                        <Empty 
-                            description={searchValue ? 'No matches found' : 'No categories yet. Click "+" to add one.'} 
-                        />
-                        {searchValue && (
-                            <Button type="link" onClick={() => setSearchValue('')}>
-                                Clear search
-                            </Button>
-                        )}
+                        <div className="categories-empty-inner">
+                            <div className="categories-empty-icon-shell">
+                                <AppstoreOutlined style={{ fontSize: '48px', color: 'var(--accent)' }} />
+                            </div>
+                            <Title level={4} className="categories-empty-title">
+                                {searchValue ? "No matching categories found" : "Your category list is empty"}
+                            </Title>
+                            <Text type="secondary" className="categories-empty-desc">
+                                {searchValue 
+                                    ? "Try adjusting your search to find the category you're looking for." 
+                                    : "Start by creating your first category to organize your skills."}
+                            </Text>
+                            <div className="categories-empty-actions">
+                                {searchValue ? (
+                                    <Button onClick={() => setSearchValue('')}>Clear search</Button>
+                                ) : (
+                                    <Button 
+                                        type="primary" 
+                                        icon={<PlusOutlined />} 
+                                        onClick={handleOpenCreate}
+                                    >
+                                        Create New Category
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 ) : (
                     <div className="categories-grid reveal-up">

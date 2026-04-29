@@ -87,13 +87,50 @@
 
 .skills-empty {
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 300px;
-    background-color: var(--bg-card);
-    border-radius: var(--radius-lg);
-    border: 1px dashed var(--border-strong);
+    min-height: 400px;
+    background: #ffffff;
+    border: 1px dashed var(--border-medium);
+    border-radius: 20px;
+    padding: 40px;
+}
+
+.skills-empty-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 400px;
+}
+
+.skills-empty-icon-shell {
+    width: 80px;
+    height: 80px;
+    background: var(--accent-light);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.skills-empty-title {
+    margin-bottom: 8px !important;
+    color: var(--text-main) !important;
+}
+
+.skills-empty-desc {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    margin-bottom: 32px;
+}
+
+.skills-empty-actions .ant-btn {
+    height: 40px;
+    padding: 0 24px;
+    border-radius: 8px;
+    font-weight: 600;
 }
 
 @keyframes fadeIn {

@@ -6,7 +6,7 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useDebounce } from '@/hooks';
 import { Button, Typography, message, Modal, Empty } from 'antd';
-import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { PlusOutlined, ExclamationCircleOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { fetchCapabilities, deleteCapability } from '@/services';
 import type { Capability } from '@/interfaces';
 import { 
@@ -112,18 +112,43 @@ export default function CapabilitiesPage() {
             </header>
 
             <div className="capabilities-body">
-                {filteredCapabilities.length === 0 && !isLoading ? (
+                {isLoading ? (
+                    <Grid 
+                        data={Array(6).fill({})}
+                        isLoading={true}
+                        SkeletonComponent={CapabilityCardSkeleton}
+                        gutter={[16, 16]}
+                        autoFitMinWidth={260}
+                        renderItem={(cap: Capability) => <CapabilityCard capability={cap} onAction={() => {}} />}
+                    />
+                ) : filteredCapabilities.length === 0 ? (
                     <div className="capabilities-empty reveal-up">
-                        <Empty 
-                            image={Empty.PRESENTED_IMAGE_SIMPLE} 
-                            description={searchValue ? "No matches found" : "No capabilities yet"}
-                        >
-                            {searchValue && (
-                                <Button type="link" onClick={() => setSearchValue('')}>
-                                    Clear search
-                                </Button>
-                            )}
-                        </Empty>
+                        <div className="capabilities-empty-inner">
+                            <div className="capabilities-empty-icon-shell">
+                                <ThunderboltOutlined style={{ fontSize: '48px', color: 'var(--accent)' }} />
+                            </div>
+                            <Title level={4} className="capabilities-empty-title">
+                                {searchValue ? "No matching capabilities found" : "Your capability list is empty"}
+                            </Title>
+                            <Text type="secondary" className="capabilities-empty-desc">
+                                {searchValue 
+                                    ? "Try adjusting your search to find the capability you're looking for." 
+                                    : "Start by adding your first capability to extend your skill potential."}
+                            </Text>
+                            <div className="capabilities-empty-actions">
+                                {searchValue ? (
+                                    <Button onClick={() => setSearchValue('')}>Clear search</Button>
+                                ) : (
+                                    <Button 
+                                        type="primary" 
+                                        icon={<PlusOutlined />} 
+                                        onClick={() => { setCapabilityToEdit(null); setIsModalOpen(true); }}
+                                    >
+                                        Create New Capability
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 ) : (
                     <Grid 
