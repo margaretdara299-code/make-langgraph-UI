@@ -25,7 +25,6 @@ export default function DeletableEdge(props: EdgeProps) {
     const [hovered, setHovered] = useState(false);
 
     const fromDecision = Boolean((data as any)?.fromDecision);
-    const isErrorPath = Boolean((data as any)?.isErrorPath);
     const edgeColor = getNodeStrokeColor(sourceNodeData);
 
     // Compute dynamic label for Decision edges
@@ -90,7 +89,7 @@ export default function DeletableEdge(props: EdgeProps) {
             />
 
             {/* ── Animated Ball Overlay ── */}
-            {props.animated && !isErrorPath && (
+            {props.animated && (
                 <circle r="6" fill="var(--color-bg-white)" stroke={style?.stroke || 'var(--color-primary)'} strokeWidth="3" style={{ filter: `drop-shadow(0 0 6px ${style?.stroke || 'var(--color-primary)'})` }}>
                     <animateMotion dur="1.2s" repeatCount="indefinite" path={edgePath} />
                 </circle>
