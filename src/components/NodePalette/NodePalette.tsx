@@ -1,10 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Loader2, Plus, Minus, Zap, Database, Layout } from 'lucide-react';
+import { ChevronDown, Loader2, Plus } from 'lucide-react';
 
-import { useDesignerActions, useDesignerConnectors } from '@/hooks';
+import { useDesignerActions, useDesignerConnectors, useDesignerSkills } from '@/hooks';
 import { SearchInput } from '@/components';
-import { ICON_MAP, SUB_CAT_COLORS } from './nodePalette.constants';
+import { ICON_MAP, NODE_PALETTE_SECTIONS, SUB_CAT_COLORS } from './nodePalette.constants';
 import type { CatHeaderProps, DragNodePayload, PaletteLeafNode } from '@/interfaces/node-palette.interface';
 
 import StartNodeItem from './StartNodeItem';
@@ -27,9 +27,14 @@ const TreeTitle: React.FC<{ node: PaletteLeafNode & { type: string; category: st
   const onDragStart = (e: React.DragEvent) => {
     const payload: DragNodePayload = {
       type: node.type,
+      nodeType: ['subflow', 'connector'].includes(node.type) ? node.type : undefined,
       label: node.name,
       icon: node.icon ?? 'Package',
-      actionId: node.id,
+      actionId: node.actionId ?? node.id,
+      description: node.description,
+      connector_id: node.connector_id,
+      connector_type: node.connector_type,
+      config_json: node.config_json,
       category: node.category,
     };
     e.dataTransfer.setData('application/reactflow', JSON.stringify(payload));
@@ -89,10 +94,51 @@ export default function NodePalette() {
   const [openSubs, setOpenSubs] = useState<Record<string, string | null>>({});
 
   const { actionsByCategory, isLoading: actionsLoading } = useDesignerActions();
-  const { connectorGroups, isLoading: connectorsLoading } = useDesignerConnectors() as any;
+  const { skillsByCategory, isLoading: skillsLoading } = useDesignerSkills();
+  const { connectorsByType, isLoading: connectorsLoading } = useDesignerConnectors();
 
   const actionEntries = useMemo(() => Object.entries(actionsByCategory), [actionsByCategory]);
-  const connectorEntries = useMemo(() => Object.entries(connectorGroups ?? {}), [connectorGroups]);
+  const skillEntries = useMemo(() => {
+    const normalizedGroups = Object.entries(skillsByCategory ?? {}).reduce<Record<string, PaletteLeafNode[]>>(
+      (groups, [category, skills]) => {
+        groups[category] = (skills as any[]).map((skill) => ({
+          id: String(skill.id),
+          name: skill.name,
+          icon: skill.icon || 'Box',
+          description: skill.description,
+        }));
+        return groups;
+      },
+      {}
+    );
+
+    return Object.entries(normalizedGroups);
+  }, [skillsByCategory]);
+  const connectorEntries = useMemo(() => {
+    const normalizedGroups = Object.entries(connectorsByType ?? {}).reduce<Record<string, PaletteLeafNode[]>>(
+      (groups, [connectorType, connectors]) => {
+        groups[connectorType] = (connectors as any[]).map((connector) => ({
+          id: String(connector.connector_id || connector.connectorId || connector.id),
+          name: connector.name,
+          icon: connector.icon || 'Database',
+          description: connector.description,
+          connector_id: connector.connector_id || connector.connectorId || connector.id,
+          connector_type: connector.connector_type || connector.connectorType || connectorType,
+          config_json: connector.config_json || connector.configJson || {},
+        }));
+        return groups;
+      },
+      {}
+    );
+
+    return Object.entries(normalizedGroups);
+  }, [connectorsByType]);
+
+  const dynamicSectionEntries = useMemo<Record<string, [string, PaletteLeafNode[]][]>>(() => ({
+    'cat-skills': skillEntries,
+    'cat-actions': actionEntries as [string, PaletteLeafNode[]][],
+    'cat-connectors': connectorEntries as [string, PaletteLeafNode[]][],
+  }), [actionEntries, connectorEntries, skillEntries]);
 
   /* Toggle top-level category — collapse all sub-categories on change */
   const toggleCat = (key: string) => {
@@ -107,12 +153,18 @@ export default function NodePalette() {
   /* Render a sub-level accordion (Actions or Connectors) generically */
   const renderSubAccordion = (
     catKey: string,
-    entries: [string, any][],
-    type: 'action' | 'data',
+    entries: [string, PaletteLeafNode[]][],
+    type: string,
     defaultIcon: string,
+    emptyLabel?: string,
   ) => (
     <div className={`acc-panel ${openCat === catKey ? 'open' : ''}`}>
       <div className="np-depth1-group">
+        {entries.length === 0 && emptyLabel && (
+          <div className="sidebar-empty">
+            {emptyLabel}
+          </div>
+        )}
         {entries.map(([subCat, items]: [string, PaletteLeafNode[]]) => (
           <div key={subCat}>
             {/* Sub-category header */}
@@ -147,6 +199,40 @@ export default function NodePalette() {
     </div>
   );
 
+  const renderCommonAccordion = (catKey: string) => (
+    <div className={`acc-panel ${openCat === catKey ? 'open' : ''}`}>
+      <div className="np-depth1 np-leaf">
+        <StartNodeItem /><SubFlowNodeItem /><DecisionNodeItem />
+        <QueueNodeItem /><SplitNodeItem /><MergeNodeItem />
+        <EndNodeItem /><ErrorNodeItem />
+      </div>
+    </div>
+  );
+
+  const renderPaletteSection = (section: typeof NODE_PALETTE_SECTIONS[number]) => {
+    const Icon = ICON_MAP[section.icon] ?? ICON_MAP.Layout;
+    const entries = section.kind === 'dynamic' ? dynamicSectionEntries[section.key] ?? [] : [];
+
+    if (section.kind === 'dynamic' && entries.length === 0 && !section.showWhenEmpty) {
+      return null;
+    }
+
+    return (
+      <React.Fragment key={section.key}>
+        <CategoryHeader
+          catKey={section.key}
+          icon={<Icon size={16} />}
+          label={section.label}
+          openCat={openCat}
+          onToggle={toggleCat}
+        />
+        {section.kind === 'static'
+          ? renderCommonAccordion(section.key)
+          : renderSubAccordion(section.key, entries, section.itemType, section.defaultIcon, section.emptyLabel)}
+      </React.Fragment>
+    );
+  };
+
   return (
     <>
       {/* ── Toggle button ── */}
@@ -176,7 +262,7 @@ export default function NodePalette() {
 
             {/* Scrollable tree */}
             <div className="sidebar-scroll antd-tree-container">
-              {(actionsLoading || connectorsLoading) && (
+              {(actionsLoading || connectorsLoading || skillsLoading) && (
                 <div className="sidebar-loading">
                   <Loader2 size={16} className="animate-spin" />
                   <span>Loading library...</span>
@@ -236,34 +322,7 @@ export default function NodePalette() {
                 <div className="node-group node-group--first">
                   <div className="antd-tree-wrapper">
 
-                    {/* ════ COMMON ════ */}
-                    <CategoryHeader catKey="cat-common" icon={<Layout size={16} />} label="Common"
-                      openCat={openCat} onToggle={toggleCat} />
-                    <div className={`acc-panel ${openCat === 'cat-common' ? 'open' : ''}`}>
-                      <div className="np-depth1 np-leaf">
-                        <StartNodeItem /><SubFlowNodeItem /><DecisionNodeItem />
-                        <QueueNodeItem /><SplitNodeItem /><MergeNodeItem />
-                        <EndNodeItem /><ErrorNodeItem />
-                      </div>
-                    </div>
-
-                    {/* ════ ACTIONS (dynamic) ════ */}
-                    {actionEntries.length > 0 && (
-                      <>
-                        <CategoryHeader catKey="cat-actions" icon={<Zap size={16} />} label="Actions"
-                          openCat={openCat} onToggle={toggleCat} />
-                        {renderSubAccordion('cat-actions', actionEntries, 'action', 'Zap')}
-                      </>
-                    )}
-
-                    {/* ════ CONNECTORS (dynamic) ════ */}
-                    {connectorEntries.length > 0 && (
-                      <>
-                        <CategoryHeader catKey="cat-connectors" icon={<Database size={16} />} label="Connectors"
-                          openCat={openCat} onToggle={toggleCat} />
-                        {renderSubAccordion('cat-connectors', connectorEntries, 'data', 'Database')}
-                      </>
-                    )}
+                    {NODE_PALETTE_SECTIONS.map(renderPaletteSection)}
 
                   </div>
                 </div>
