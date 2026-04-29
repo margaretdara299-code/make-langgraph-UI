@@ -90,8 +90,8 @@ export default function CreateCapabilityModal({
             footer={null}
             className="create-capability-modal-v2"
         >
-            <div className="modal-header-neat ccm-header">
-                <div className="ccm-header-inner">
+            <div className="modal-header-neat ccm2-header">
+                <div className="ccm2-header-inner">
                     <span className="modal-header-title">
                         {isEditMode ? "Edit Capability" : "Create New Capability"}
                     </span>
@@ -101,7 +101,7 @@ export default function CreateCapabilityModal({
                 </div>
             </div>
 
-            <div className="ccm-form-body">
+            <div className="ccm2-form-body">
                 <Form form={form} layout="vertical" requiredMark>
                     <Form.Item
                         label="Capability Name"
@@ -111,26 +111,27 @@ export default function CreateCapabilityModal({
                             { min: 3, message: 'Name must be at least 3 characters long' }
                         ]}
                     >
-                        <Input size="large" placeholder="e.g. RPA, API Integration, AI Triage" className="ccm-input" />
+                        <Input placeholder="e.g. RPA, API Integration, AI Triage" />
                     </Form.Item>
 
-                    <div className="ccm-icon-row">
-                        <span className="ccm-icon-label">Capability Icon</span>
-                        <Form.Item 
-                            name="icon" 
+                    <div className="ccm2-icon-row">
+                        <span className="ccm2-icon-label">Capability Icon</span>
+                        <Form.Item
+                            name="icon"
                             rules={[{ required: true, message: 'Icon is required' }]}
-                            className="ccm-icon-form-item"
                         >
-                            <LucideIconPicker placeholder="Select Icon" />
+
+
+
+                            <LucideIconPicker />
+
                         </Form.Item>
                     </div>
 
                     <Form.Item label="Description" name="description">
-                        <TextArea 
-                            size="large"
-                            placeholder="What is this capability for?" 
-                            rows={4} 
-                            className="ccm-textarea"
+                        <TextArea
+                            placeholder="What is this capability for?"
+                            rows={8}
                             showCount
                             maxLength={200}
                         />
@@ -138,17 +139,17 @@ export default function CreateCapabilityModal({
                 </Form>
             </div>
 
-            <div className="ccm-footer">
+            <div className="ccm2-footer">
                 <Space size={12}>
-                    <Button onClick={handleCancel} className="ccm-btn">
+                    <Button onClick={handleCancel} className="ccm2-btn">
                         Cancel
                     </Button>
-                    <Button 
-                        type="primary" 
-                        onClick={handleSubmit} 
+                    <Button
+                        type="primary"
+                        onClick={handleSubmit}
                         loading={isSubmitting}
                         disabled={!nameValue || nameValue.trim().length < 3}
-                        className="ccm-btn ccm-btn--primary"
+                        className="ccm2-btn ccm2-btn--primary"
                     >
                         {isEditMode ? "Save Changes" : "Create Capability"}
                     </Button>

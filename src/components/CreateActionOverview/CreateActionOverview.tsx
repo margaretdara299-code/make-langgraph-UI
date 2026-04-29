@@ -83,66 +83,67 @@ export default function CreateActionOverview({ draft, setDraft, form: externalFo
                         <Form.Item
                             name="name"
                             label="Action Name"
-                            rules={[{ required: true, message: 'Name is required' }]}
+                            rules={[{ required: true, message: 'Required' }]}
                         >
                             <Input placeholder="e.g., Verify Eligibility" />
                         </Form.Item>
                     </div>
 
-                    <Form.Item
-                        name="action_key"
-                        label="Action Key"
-                        rules={[
-                            { required: true, message: 'Key is required' },
-                            { pattern: ACTION_KEY_PATTERN, message: 'Only letters, numbers, and underscores. No spaces. (e.g. verify_eligibility)' }
-                        ]}
-                        className="create-action-overview__flex-1"
-                    >
-                        <Input placeholder="e.g., verify_eligibility" />
-                    </Form.Item>
+                    <div className="cao-flex-1">
+                        <Form.Item
+                            name="action_key"
+                            label="Action Key"
+                            rules={[
+                                { required: true, message: 'Required' },
+                                { pattern: ACTION_KEY_PATTERN, message: 'Only letters, numbers, and underscores. No spaces.' }
+                            ]}
+                        >
+                            <Input placeholder="e.g., verify_eligibility" />
+                        </Form.Item>
+                    </div>
 
-                    <Form.Item
-                        name="icon"
-                        label="Icon"
-                        rules={[{ required: true, message: 'Icon is required' }]}
-                        className="icon-field"
-                    >
-                        <LucideIconPicker 
-                            value={draft.icon} 
-                            onChange={(icon) => {
-                                form.setFieldsValue({ icon });
-                                handleValuesChange({ icon });
-                            }} 
-                        />
-                    </Form.Item>
+                    <div style={{ width: '120px' }}>
+                        <Form.Item
+                            name="icon"
+                            label="Icon"
+                            rules={[{ required: true, message: 'Required' }]}
+                        >
+                            <LucideIconPicker />
+                        </Form.Item>
+                    </div>
                 </div>
 
-                <div className="create-action-overview__row">
-                    <Form.Item name="category_id" label="Category" rules={[{ required: true, message: 'Category is required' }]} className="create-action-overview__flex-1">
-                        <Select placeholder="Select a category" loading={isCategoriesLoading}>
-                            {categories.map(cat => (
-                                <Select.Option key={cat.categoryId ?? cat.id} value={cat.categoryId ?? cat.id}>
-                                    {cat.name}
-                                </Select.Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
 
-                    <Form.Item name="capability_id" label="Capability" rules={[{ required: true, message: 'Capability is required' }]} className="create-action-overview__flex-1">
-                        <Select placeholder="Select a capability" loading={isCapabilitiesLoading}>
-                            {capabilities.map(cap => (
-                                <Select.Option key={cap.capabilityId} value={cap.capabilityId}>
-                                    {cap.name}
-                                </Select.Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
+                <div className="create-action-overview__row">
+                    <div className="cao-flex-1">
+                        <Form.Item name="category_id" label="Category" rules={[{ required: true, message: 'Required' }]}>
+                            <Select placeholder="Select a category" loading={isCategoriesLoading}>
+                                {categories.map(cat => (
+                                    <Select.Option key={cat.categoryId ?? cat.id} value={cat.categoryId ?? cat.id}>
+                                        {cat.name}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </div>
+
+                    <div className="cao-flex-1">
+                        <Form.Item name="capability_id" label="Capability" rules={[{ required: true, message: 'Required' }]}>
+                            <Select placeholder="Select a capability" loading={isCapabilitiesLoading}>
+                                {capabilities.map(cap => (
+                                    <Select.Option key={cap.capabilityId} value={cap.capabilityId}>
+                                        {cap.name}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </div>
                 </div>
 
                 <Form.Item
                     name="description"
                     label="Description"
-                    rules={[{ required: true, message: 'Description is required' }]}
+                    rules={[{ required: false }]}
                 >
                     <TextArea
                         placeholder="Describe what this action does..."

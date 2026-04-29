@@ -26,6 +26,21 @@ export function useApiTest(actionDraft: Partial<ActionDefinition>, configForm?: 
             // Aggressively merge the current raw form values to ensure 
             // any un-synced visual states are included.
             const formValues = configForm.getFieldsValue(true);
+            
+            // We need to convert list-based parameters (arrays) into objects
+            // because the request logic expects key-value objects.
+            const paramTypes = ['query_params', 'header_params', 'body_params', 'path_params'];
+            paramTypes.forEach(type => {
+                const listName = `${type}_list`;
+                if (formValues[listName] && Array.isArray(formValues[listName])) {
+                    const obj: Record<string, string> = {};
+                    formValues[listName].forEach((item: any) => {
+                        if (item?.key?.trim()) obj[item.key] = item.value || '';
+                    });
+                    formValues[type] = obj;
+                }
+            });
+
             rawConfig = { ...rawConfig, ...formValues };
         }
             
@@ -58,16 +73,23 @@ export function useApiTest(actionDraft: Partial<ActionDefinition>, configForm?: 
             let resolvedUrl = String(rawConfig.url);
             let pathParams = rawConfig.path_params || {};
             
-            // Normalize pathParams to entries
+            // Normalize pathParams to entries and strip prefixes from keys if user included them
             const pathEntries = Array.isArray(pathParams) 
                 ? pathParams 
-                : Object.entries(pathParams).map(([key, value]) => ({ key, value: String(value) }));
+                : Object.entries(pathParams).map(([key, value]) => ({ 
+                    key: key.replace(/^[:{]+|[:}]+$/g, ''), // Strip :, {, } from start/end
+                    value: String(value) 
+                }));
             
             pathEntries.forEach((param: any) => {
                 if (param?.key && param?.value) {
-                    const escapedKey = param.key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                    // Support both :key and {key}
-                    const regex = new RegExp(`(:${escapedKey}|\\{${escapedKey}\\})(?=/|\\?|$)`, 'g');
+                    const cleanKey = param.key.replace(/^[:{]+|[:}]+$/g, '');
+                    const escapedKey = cleanKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    
+                    // Support :key, {key}, and {{key}}
+                    // We remove the trailing lookahead to be more permissive with partial matches 
+                    // (e.g. if the user has /user_:id_profile)
+                    const regex = new RegExp(`(:${escapedKey}|\\{${escapedKey}\\}|\\{\\{${escapedKey}\\}\\})`, 'g');
                     resolvedUrl = resolvedUrl.replace(regex, param.value);
                 }
             });

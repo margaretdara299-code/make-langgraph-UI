@@ -56,7 +56,7 @@
 }
 
 .title-placeholder { margin-bottom: 4px; }
-.key-placeholder { margin-bottom: 12px; }
+.key-placeholder { margin-bottom: var(--space-1-5); }
 
 .skeleton-meta-divider {
     display: flex;
@@ -64,7 +64,7 @@
     padding-top: 16px;
     margin-top: auto;
     border-top: 1px solid var(--border-light);
-    margin-bottom: 12px;
+    margin-bottom: var(--space-1-5);
 }
 
 .skeleton-footer-section {
@@ -132,7 +132,7 @@
 
 .sk-skeleton-date {
     width: 90px !important;
-    height: 12px !important;
+    height: var(--space-1-5) !important;
 }
 
 .sk-skeleton-tag {

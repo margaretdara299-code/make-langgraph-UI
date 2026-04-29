@@ -17,6 +17,7 @@ export default function EditSkillModal({ isOpen, onClose, onUpdated, skill }: Ed
                 skillKey: skill.skillKey,
                 description: skill.description,
                 categoryId: skill.categoryId,
+                icon: skill.icon || 'Box',
                 tags: skill.tags,
             });
         }

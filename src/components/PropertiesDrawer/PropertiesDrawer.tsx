@@ -3,7 +3,7 @@
  * Slides out to show the properties of the currently selected React Flow node.
  */
 
-import { Drawer, Input, Form, Typography, Select, Spin, theme, Button, Tabs, Collapse, AutoComplete, Divider, Tag } from 'antd';
+import { Drawer, Input, Form, Typography, Select, Spin, theme, Button, Tabs, Collapse, AutoComplete } from 'antd';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReactFlow, useNodes, useEdges } from '@xyflow/react';
 import { useEffect, useState, useMemo } from 'react';
@@ -39,7 +39,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     const selectedNode = selectedNodeId ? nodes.find(node => node.id === selectedNodeId) || null : null;
     const selectedEdge = selectedEdgeId ? edges.find(edge => edge.id === selectedEdgeId) || null : null;
     const [form] = Form.useForm();
-    
+
     // Check if the current node has been executed in the active stepper session
     const { steps } = useExecution();
     const executionStep = selectedNodeId ? steps.find(s => s.node.id === selectedNodeId) : null;
@@ -52,7 +52,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                 data.initial_state.forEach((st: any) => { if (st?.key) keys.add(st.key); });
             } else if (n.type === 'action') {
                 if (data.action_key) keys.add(data.action_key);
-                
+
                 // Gather existing mapped state keys so they auto-suggest cleanly
                 const mappings = data.configurations_json?.response_to_state_mapping;
                 if (Array.isArray(mappings)) {
@@ -169,39 +169,13 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             const stored = versionId ? loadGraphFromStorage(versionId) : null;
             const qd = (stored?.nodes?.[selectedNode.id]?.data || selectedNode.data) as any;
             form.setFieldsValue({
-                label:            qd.label || 'Queue',
-                description:      qd.description || '',
-                queue_name:       qd.queue_name || '',
-                queue_type:       qd.queue_type || 'human',
-                priority:         qd.priority || 'normal',
-                ttl_seconds:      qd.ttl_seconds ?? 0,
-                auto_closeout:    qd.auto_closeout !== false,
+                label: qd.label || 'Queue',
+                queue_name: qd.queue_name || '',
+                queue_type: qd.queue_type || 'human',
+                priority: qd.priority || 'normal',
+                ttl_seconds: qd.ttl_seconds ?? 0,
+                auto_closeout: qd.auto_closeout !== false,
                 payload_mappings: Array.isArray(qd.payload_mappings) ? qd.payload_mappings : [],
-            });
-            return;
-        }
-
-        // For parallel split
-        if (selectedNode.type === 'parallel_split') {
-            const stored = versionId ? loadGraphFromStorage(versionId) : null;
-            const pd = (stored?.nodes?.[selectedNode.id]?.data || selectedNode.data) as any;
-            form.setFieldsValue({
-                label: pd.label || 'Parallel Split',
-                description: pd.description || '',
-                branches: pd.branches || 3,
-            });
-            return;
-        }
-
-        // For parallel join
-        if (selectedNode.type === 'parallel_join') {
-            const stored = versionId ? loadGraphFromStorage(versionId) : null;
-            const pj = (stored?.nodes?.[selectedNode.id]?.data || selectedNode.data) as any;
-            form.setFieldsValue({
-                label: pj.label || 'Parallel Join',
-                description: pj.description || '',
-                join_strategy: pj.join_strategy || 'all',
-                inputs: pj.inputs || 3,
             });
             return;
         }
@@ -373,7 +347,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                         ...currentNode.data,
                         label: newValues.label || 'Error Handler',
                         configurations: {
-                            error_api_url:    newValues.error_api_url || '',
+                            error_api_url: newValues.error_api_url || '',
                             error_api_method: 'POST',
                         },
                     },
@@ -383,13 +357,12 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                     ...currentNode,
                     data: {
                         ...currentNode.data,
-                        label:            newValues.label || 'Queue',
-                        description:      newValues.description || '',
-                        queue_name:       newValues.queue_name || '',
-                        queue_type:       newValues.queue_type || 'human',
-                        priority:         newValues.priority || 'normal',
-                        ttl_seconds:      newValues.ttl_seconds ?? 0,
-                        auto_closeout:    newValues.auto_closeout !== false,
+                        label: newValues.label || 'Queue',
+                        queue_name: newValues.queue_name || '',
+                        queue_type: newValues.queue_type || 'human',
+                        priority: newValues.priority || 'normal',
+                        ttl_seconds: newValues.ttl_seconds ?? 0,
+                        auto_closeout: newValues.auto_closeout !== false,
                         payload_mappings: newValues.payload_mappings || [],
                     },
                 };
@@ -400,6 +373,18 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                         ...currentNode.data,
                         label: newValues.label,
                         description: newValues.description,
+                    },
+                };
+            } else if (selectedNode.type === 'queue') {
+                updatedNode = {
+                    ...currentNode,
+                    data: {
+                        ...currentNode.data,
+                        label: newValues.label,
+                        description: newValues.description,
+                        queue_name: newValues.queue_name,
+                        priority: newValues.priority,
+                        wait_for_completion: newValues.wait_for_completion,
                     },
                 };
             } else if (selectedNode.type === 'parallel_split') {
@@ -569,9 +554,9 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                 <span className="pd-accordion-title">{title}</span>
                 <AnimatePresence>
                     {count > 0 && (
-                        <motion.div 
-                            initial={{ scale: 0, opacity: 0 }} 
-                            animate={{ scale: 1, opacity: 1 }} 
+                        <motion.div
+                            initial={{ scale: 0, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0, opacity: 0 }}
                             transition={{ type: "spring", stiffness: 300, damping: 20 }}
                             className="pd-count-badge"
@@ -636,7 +621,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                         {fields.map(({ key, name: fieldName, ...restField }) => (
                             <div key={key} className="pd-mapping-row">
                                 <div className="pd-mapping-fields">
-                                    
+
                                     <div className="pd-mapping-top-row">
                                         <Form.Item
                                             {...restField}
@@ -679,7 +664,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                     >
                                         <Input placeholder="Source Path (e.g. data.id or $)" />
                                     </Form.Item>
-                                    
+
                                 </div>
                                 <DeleteOutlined
                                     className="pd-mapping-delete-btn"
@@ -710,24 +695,24 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
     // Render forms based on what is selected
     const renderContent = () => {
         if (selectedNode) {
-            const isSubFlow   = selectedNode.type === 'subflow';
+            const isSubFlow = selectedNode.type === 'subflow';
             const isConnector = selectedNode.type === 'connector';
-            const isStart     = selectedNode.type === 'start';
-            const isDecision  = selectedNode.type === 'decision';
-            const isEnd       = selectedNode.type === 'end';
-            const isAction    = selectedNode.type === 'action';
-            const isError     = selectedNode.type === 'error';
-            const isQueue     = selectedNode.type === 'queue';
+            const isStart = selectedNode.type === 'start';
+            const isDecision = selectedNode.type === 'decision';
+            const isEnd = selectedNode.type === 'end';
+            const isAction = selectedNode.type === 'action';
+            const isError = selectedNode.type === 'error';
+            const isQueue = selectedNode.type === 'queue';
             const isParallelSplit = selectedNode.type === 'parallel_split';
-            const isParallelJoin  = selectedNode.type === 'parallel_join';
+            const isParallelJoin = selectedNode.type === 'parallel_join';
 
             const isStructural = isDecision || isQueue || isParallelSplit || isParallelJoin;
-            const activeColor = 
-                (isDecision || isQueue) ? 'var(--color-warning)' : 
-                isParallelSplit ? 'var(--color-node-split)' : 
-                isParallelJoin ? 'var(--color-node-join)' : 
-                isError ? 'var(--color-error)' : 
-                ((isStart || isEnd) ? 'var(--color-success)' : 'var(--accent)');
+            const activeColor =
+                (isDecision || isQueue) ? 'var(--color-warning)' :
+                    isParallelSplit ? 'var(--color-node-split)' :
+                        isParallelJoin ? 'var(--color-node-join)' :
+                            isError ? 'var(--color-error)' :
+                                ((isStart || isEnd) ? 'var(--color-success)' : 'var(--accent)');
 
             if (isLoadingAction) {
                 return (
@@ -738,7 +723,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             }
 
             return (
-                <motion.div 
+                <motion.div
                     className="properties-drawer__content"
                     key={selectedNode.id}
                     initial="hidden"
@@ -747,9 +732,9 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                         hidden: { opacity: 0 },
                         visible: {
                             opacity: 1,
-                            transition: { 
+                            transition: {
                                 staggerChildren: 0.12,
-                                delayChildren: 0.35 
+                                delayChildren: 0.35
                             }
                         }
                     }}
@@ -774,37 +759,40 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                             <div className="properties-drawer__meta-item">
                                                 <span className="properties-drawer__meta-label">Type</span>
                                                 <span className="properties-drawer__meta-value pd-meta-value-bold">
-                                                    {isStart     ? 'Workflow Entry'
-                                                    : isEnd      ? 'Workflow Exit'
-                                                    : isError    ? 'Error Handler'
-                                                    : isDecision ? 'Router'
-                                                    : isSubFlow  ? 'Group'
-                                                    : isParallelSplit ? 'Split'
-                                                    : isParallelJoin  ? 'Merge'
-                                                    : isQueue    ? 'Async Queue'
-                                                    : (nodeData?.category || 'Action')}
-                                                </span>                                                
+                                                    {isStart ? 'Workflow Entry'
+                                                        : isEnd ? 'Workflow Exit'
+                                                            : isError ? 'Error Handler'
+                                                                : isQueue ? 'Queue Hand-off'
+                                                                    : isAction ? 'Action'
+                                                                        : isDecision ? 'Router'
+                                                                            : isSubFlow ? 'Group'
+                                                                                : isQueue ? 'Async Queue'
+                                                                                    : isParallelSplit ? 'Split'
+                                                                                        : isParallelJoin ? 'Merge'
+                                                                                            : (nodeData?.category || 'Action')}
+                                                </span>
                                             </div>
                                             {isAction && (
                                                 <div className="properties-drawer__meta-item">
                                                     <span className="properties-drawer__meta-label">Key</span>
                                                     <span className="properties-drawer__meta-value pd-meta-value-mono">
-                                                        {nodeData?.action_key}                                                     
-                                                    </span>                                                 
+                                                        {nodeData?.action_key}
+                                                    </span>
                                                 </div>
                                             )}
                                             <div className="properties-drawer__meta-item">
                                                 <span className="properties-drawer__meta-label">Capability</span>
                                                 <div className={`properties-drawer__capability-badge badge-${isDecision ? 'decision' : (isQueue ? 'queue' : nodeData?.capability)}`}>
-                                                    {isStart    ? 'START'
-                                                    : isDecision ? 'DECISION'
-                                                    : isEnd      ? 'END'
-                                                    : isError    ? 'ERR'
-                                                    : isQueue    ? 'QUEUE'
-                                                    : isSubFlow  ? 'STRUCTURE'
-                                                    : isParallelSplit ? 'SPLIT'
-                                                    : isParallelJoin  ? 'MERGE'
-                                                    : (nodeData?.capability || 'API').toUpperCase()}
+                                                    {isStart ? 'START'
+                                                        : isDecision ? 'DECISION'
+                                                            : isEnd ? 'END'
+                                                                : isError ? 'ERR'
+                                                                    : isQueue ? 'QUEUE'
+                                                                        : isSubFlow ? 'STRUCTURE'
+                                                                            : isQueue ? 'QUEUE'
+                                                                                : isParallelSplit ? 'SPLIT'
+                                                                                    : isParallelJoin ? 'MERGE'
+                                                                                        : (nodeData?.capability || 'API').toUpperCase()}
                                                 </div>
                                             </div>
                                         </div>
@@ -860,7 +848,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                     <div className="properties-drawer__divider" />
                                                     <div className="properties-drawer__section-title">Initial State Variables</div>
                                                     <Text type="secondary" className="pd-state-description">
-                                                        State is used to store and pass data between all nodes in a workflow so 
+                                                        State is used to store and pass data between all nodes in a workflow so
                                                         they can share and update information.
                                                     </Text>
                                                     <Form.List name="initial_state">
@@ -948,14 +936,14 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                             ) : isQueue ? (
                                                 <>
                                                     {/* ── Queue Identity ── */}
-                                                    <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Queue Identity</div>
+                                                    <div className="properties-drawer__section-title pds-section-title-top">Queue Identity</div>
                                                     <Form.Item
                                                         label="Queue Name"
                                                         name="queue_name"
                                                         rules={[{ required: true, message: 'Queue name is required' }]}
                                                         extra="e.g. coder_review_queue, human_approval_queue"
                                                     >
-                                                        <Input placeholder="coder_review_queue" style={{ fontFamily: 'monospace' }} />
+                                                        <Input placeholder="coder_review_queue" className="pds-input-mono" />
                                                     </Form.Item>
                                                     <Form.Item label="Queue Type" name="queue_type">
                                                         <Select
@@ -971,41 +959,41 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                     {/* ── Payload Mapping ── */}
                                                     <div className="properties-drawer__divider" />
                                                     <div className="properties-drawer__section-title">Payload Mapping</div>
-                                                    <Text type="secondary" style={{ fontSize: 'var(--text-sm)', display: 'block', marginBottom: 12, lineHeight: 1.5 }}>
+                                                    <Text type="secondary" className="pds-hint">
                                                         Choose which state variables to send with this queue item.
                                                         The next LangGraph will receive these as its input.
                                                     </Text>
                                                     <Form.List name="payload_mappings">
                                                         {(fields, { add, remove }) => (
-                                                            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                                                            <div className="pds-env-list">
                                                                 {fields.map(({ key, name: fieldName, ...restField }) => (
-                                                                    <div key={key} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                                                                    <div key={key} className="pds-env-row">
                                                                         <Form.Item
                                                                             {...restField}
                                                                             name={[fieldName, 'state_key']}
-                                                                            style={{ margin: 0, flex: 1 }}
+                                                                            className="pds-form-item-flat"
                                                                             rules={[{ required: true, message: 'Required' }]}
                                                                         >
                                                                             <AutoComplete
                                                                                 options={availableStateKeys}
                                                                                 placeholder="state.claim_id"
-                                                                                style={{ fontFamily: 'monospace', fontSize: 12 }}
+                                                                                className="pds-input-mono-sm"
                                                                                 filterOption={(input, option) =>
                                                                                     (option?.value ?? '').toLowerCase().includes(input.toLowerCase())
                                                                                 }
                                                                             />
                                                                         </Form.Item>
-                                                                        <span style={{ color: 'var(--text-muted)', fontSize: 12, flexShrink: 0 }}>→</span>
+                                                                        <span className="pds-arrow">→</span>
                                                                         <Form.Item
                                                                             {...restField}
                                                                             name={[fieldName, 'payload_key']}
-                                                                            style={{ margin: 0, flex: 1 }}
+                                                                            className="pds-form-item-flat"
                                                                             rules={[{ required: true, message: 'Required' }]}
                                                                         >
-                                                                            <Input placeholder="payload.claim_id" style={{ fontFamily: 'monospace', fontSize: 12 }} />
+                                                                            <Input placeholder="payload.claim_id" className="pds-input-mono-sm" />
                                                                         </Form.Item>
                                                                         <DeleteOutlined
-                                                                            style={{ color: 'var(--color-error)', cursor: 'pointer', padding: 4, flexShrink: 0 }}
+                                                                            className="pds-delete"
                                                                             onClick={() => remove(fieldName)}
                                                                         />
                                                                     </div>
@@ -1062,50 +1050,80 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                             className="pd-error-url-item"
                                                             rules={[{ type: 'url', message: 'Enter a valid URL' }]}
                                                         >
-                                                    <Input placeholder="https://api.example.com/error-logs" />
-                                                </Form.Item>
-                                            </div>
-                                        </>
-                                    ) : isParallelSplit ? (
-                                        <>
-                                            <div className="properties-drawer__section-title pd-section-title-no-margin">Split Configuration</div>
-                                            <Form.Item label="Number of Branches" name="branches" tooltip="Number of concurrent execution paths to create.">
-                                                <Select options={[
-                                                    { label: '2 Branches', value: 2 },
-                                                    { label: '3 Branches', value: 3 },
-                                                    { label: '4 Branches', value: 4 },
-                                                    { label: '5 Branches', value: 5 },
-                                                ]} />
-                                            </Form.Item>
-                                            <Text type="secondary" className="pd-state-description">
-                                                The workflow state will be cloned across all branches. Use a Join node later to synchronize results.
-                                            </Text>
-                                        </>
-                                    ) : isParallelJoin ? (
-                                        <>
-                                            <div className="properties-drawer__section-title pd-section-title-no-margin">Merge Strategy</div>
-                                            <Form.Item label="Incoming Inputs" name="inputs" tooltip="Number of parallel paths to wait for.">
-                                                <Select options={[
-                                                    { label: '2 Paths', value: 2 },
-                                                    { label: '3 Paths', value: 3 },
-                                                    { label: '4 Paths', value: 4 },
-                                                    { label: '5 Paths', value: 5 },
-                                                ]} />
-                                            </Form.Item>
-                                            <Form.Item label="Synchronization Logic" name="join_strategy">
-                                                <Select options={[
-                                                    { label: 'Wait for All (Consensus)', value: 'all' },
-                                                    { label: 'Wait for Any (First Responder)', value: 'any' },
-                                                    { label: 'Race (First Success)', value: 'race' },
-                                                ]} />
-                                            </Form.Item>
-                                            <Text type="secondary" className="pd-state-description">
-                                                Defines how the graph state is consolidated once parallel branches meet this node.
-                                            </Text>
-                                        </>
-                                    ) : (
-                                        renderNodeConfig(nodeData as CanvasNodeData)
-                                    )}
+                                                            <Input placeholder="https://api.example.com/error-logs" />
+                                                        </Form.Item>
+                                                    </div>
+                                                </>
+                                            ) : isQueue ? (
+                                                <>
+                                                    <div className="properties-drawer__section-title pd-section-title-no-margin">Queue Settings</div>
+                                                    <Form.Item label="Target Queue" name="queue_name" rules={[{ required: true }]}>
+                                                        <Select options={[
+                                                            { label: 'Manual Review (Human)', value: 'manual_review' },
+                                                            { label: 'Claims Audit (Financial)', value: 'claims_audit' },
+                                                            { label: 'Provider Verification', value: 'provider_verify' },
+                                                            { label: 'General Exception', value: 'exception' },
+                                                        ]} placeholder="Select a destination queue..." />
+                                                    </Form.Item>
+
+                                                    <div className="properties-drawer__flex-row">
+                                                        <Form.Item label="Priority" name="priority" className="properties-drawer__flex-item">
+                                                            <Select options={[
+                                                                { label: 'Critical', value: 'critical' },
+                                                                { label: 'High', value: 'high' },
+                                                                { label: 'Normal', value: 'normal' },
+                                                                { label: 'Low', value: 'low' },
+                                                            ]} />
+                                                        </Form.Item>
+                                                    </div>
+
+                                                    <Form.Item label="Execution Mode" name="wait_for_completion">
+                                                        <Select options={[
+                                                            { label: 'Asynchronous (Fire and Forget)', value: false },
+                                                            { label: 'Synchronous (Wait for Pickup)', value: true },
+                                                        ]} />
+                                                    </Form.Item>
+                                                </>
+                                            ) : isParallelSplit ? (
+                                                <>
+                                                    <div className="properties-drawer__section-title pd-section-title-no-margin">Split Configuration</div>
+                                                    <Form.Item label="Number of Branches" name="branches" tooltip="Number of concurrent execution paths to create.">
+                                                        <Select options={[
+                                                            { label: '2 Branches', value: 2 },
+                                                            { label: '3 Branches', value: 3 },
+                                                            { label: '4 Branches', value: 4 },
+                                                            { label: '5 Branches', value: 5 },
+                                                        ]} />
+                                                    </Form.Item>
+                                                    <Text type="secondary" className="pd-state-description">
+                                                        The workflow state will be cloned across all branches. Use a Join node later to synchronize results.
+                                                    </Text>
+                                                </>
+                                            ) : isParallelJoin ? (
+                                                <>
+                                                    <div className="properties-drawer__section-title pd-section-title-no-margin">Merge Strategy</div>
+                                                    <Form.Item label="Incoming Inputs" name="inputs" tooltip="Number of parallel paths to wait for.">
+                                                        <Select options={[
+                                                            { label: '2 Paths', value: 2 },
+                                                            { label: '3 Paths', value: 3 },
+                                                            { label: '4 Paths', value: 4 },
+                                                            { label: '5 Paths', value: 5 },
+                                                        ]} />
+                                                    </Form.Item>
+                                                    <Form.Item label="Synchronization Logic" name="join_strategy">
+                                                        <Select options={[
+                                                            { label: 'Wait for All (Consensus)', value: 'all' },
+                                                            { label: 'Wait for Any (First Responder)', value: 'any' },
+                                                            { label: 'Race (First Success)', value: 'race' },
+                                                        ]} />
+                                                    </Form.Item>
+                                                    <Text type="secondary" className="pd-state-description">
+                                                        Defines how the graph state is consolidated once parallel branches meet this node.
+                                                    </Text>
+                                                </>
+                                            ) : (
+                                                renderNodeConfig(nodeData as CanvasNodeData)
+                                            )}
                                         </Form>
                                     </motion.div>
                                 )
@@ -1129,14 +1147,14 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                         >
                                             {isQueue ? (
                                                 <>
-                                                    <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Queue Settings</div>
+                                                    <div className="properties-drawer__section-title pds-section-title-top">Queue Settings</div>
                                                     <div className="properties-drawer__flex-row">
                                                         <Form.Item label="Priority" name="priority" className="properties-drawer__flex-item">
                                                             <Select
                                                                 options={[
-                                                                    { label: '🔽  Low',    value: 'low' },
+                                                                    { label: '🔽  Low', value: 'low' },
                                                                     { label: '➡️  Normal', value: 'normal' },
-                                                                    { label: '🔼  High',   value: 'high' },
+                                                                    { label: '🔼  High', value: 'high' },
                                                                     { label: '🚨  Urgent', value: 'urgent' },
                                                                 ]}
                                                             />
@@ -1152,11 +1170,11 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                     </div>
                                                     <div className="properties-drawer__divider" />
                                                     <div className="properties-drawer__section-title">Workflow Integration</div>
-                                                    <Text type="secondary" style={{ fontSize: 'var(--text-sm)', display: 'block', marginBottom: 12, lineHeight: 1.5 }}>
+                                                    <Text type="secondary" className="pds-hint">
                                                         When enabled, a close_out signal is sent to Temporal after enqueuing so the current workflow task completes cleanly.
                                                     </Text>
                                                     <Form.Item name="auto_closeout" valuePropName="checked">
-                                                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                                        <div className="pds-setting-row">
                                                             <input
                                                                 type="checkbox"
                                                                 id="auto_closeout"
@@ -1165,9 +1183,9 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                                     form.setFieldValue('auto_closeout', e.target.checked);
                                                                     handleValuesChange({ auto_closeout: e.target.checked }, form.getFieldsValue());
                                                                 }}
-                                                                style={{ width: 16, height: 16, accentColor: 'var(--color-node-queue)', cursor: 'pointer' }}
+                                                                className="pds-checkbox"
                                                             />
-                                                            <label htmlFor="auto_closeout" style={{ fontSize: 'var(--text-sm)', color: 'var(--text-main)', cursor: 'pointer' }}>
+                                                            <label htmlFor="auto_closeout" className="pds-label">
                                                                 Auto close_out after enqueue
                                                             </label>
                                                         </div>
@@ -1246,7 +1264,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
 
         if (selectedEdge) {
             return (
-                <motion.div 
+                <motion.div
                     className="properties-drawer__content"
                     key={selectedEdge.id}
                     initial="hidden"
@@ -1255,15 +1273,15 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                         hidden: { opacity: 0 },
                         visible: {
                             opacity: 1,
-                            transition: { 
+                            transition: {
                                 staggerChildren: 0.08,
-                                delayChildren: 0.25 
+                                delayChildren: 0.25
                             }
                         }
                     }}
                 >
-                    <motion.div 
-                        className="properties-drawer__meta" 
+                    <motion.div
+                        className="properties-drawer__meta"
                         variants={{
                             hidden: { opacity: 0, x: 16 },
                             visible: { opacity: 1, x: 0, transition: { duration: 0.15, ease: 'linear' } }
@@ -1283,7 +1301,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                         </div>
                     </motion.div>
 
-                    <motion.div 
+                    <motion.div
                         variants={{
                             hidden: { opacity: 0, x: 12 },
                             visible: { opacity: 1, x: 0, transition: { duration: 0.12, ease: 'linear' } }
@@ -1355,7 +1373,7 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                             <X size={16} strokeWidth={2.5} />
                         </button>
                     </div>
-                    
+
                     <div className="properties-drawer__drawer-body">
                         {renderContent()}
                     </div>

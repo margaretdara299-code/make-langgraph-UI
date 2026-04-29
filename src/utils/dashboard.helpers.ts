@@ -1,10 +1,9 @@
-import { useMemo } from 'react';
 import { 
-    BulbOutlined, 
-    ThunderboltOutlined, 
-    SettingOutlined, 
-    AppstoreOutlined 
-} from '@ant-design/icons';
+    Layers,
+    PenLine,
+    LayoutGrid,
+    ShieldCheck
+} from 'lucide-react';
 import type { DashboardCounts, Skill } from '@/interfaces';
 
 /**
@@ -19,26 +18,26 @@ export const formatDashboardMetrics = (counts: DashboardCounts | null) => {
         {
             label: 'Total Skills',
             value: skills.total,
-            color: '#6366f1',
-            icon: BulbOutlined
+            color: '#3b82f6',
+            icon: Layers
         },
         {
             label: 'Draft Skills',
             value: skills.draftVersions,
-            color: '#10b981',
-            icon: BulbOutlined
+            color: '#8b5cf6',
+            icon: PenLine
         },
         {
             label: 'Total Actions',
             value: actions.total,
-            color: '#f59e0b',
-            icon: SettingOutlined
+            color: '#10b981',
+            icon: LayoutGrid
         },
         {
             label: 'Published Actions',
             value: actions.published,
-            color: '#ec4899',
-            icon: AppstoreOutlined
+            color: '#f59e0b',
+            icon: ShieldCheck
         },
     ];
 };

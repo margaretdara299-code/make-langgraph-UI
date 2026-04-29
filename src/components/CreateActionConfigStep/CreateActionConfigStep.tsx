@@ -1,96 +1,23 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Form, Input, Select, Row, Col, Typography, Space, Button, Tabs, Radio, message, Divider, Collapse } from 'antd';
+import React from 'react';
+import { Form, Input, Select, Button, Space, Tabs, Row, Col, Typography, Collapse, Radio } from 'antd';
 import { PlusOutlined, DeleteOutlined, SendOutlined } from '@ant-design/icons';
-import { ACTION_HTTP_METHODS } from '@/constants/action.constants';
 import type { CreateActionStepProps } from '@/interfaces';
+import { ACTION_HTTP_METHODS, UrlUtils, CONFIG_TABS } from './CreateActionConfigStep.constants';
+import { useCreateActionConfig } from './useCreateActionConfig.hook';
+import type { ParameterSectionProps } from './CreateActionConfigStep.types';
 import './CreateActionConfigStep.css';
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 
-// --- Utilities ---
-const UrlUtils = {
-    parse: (url: string) => {
-        const hashIndex = url.indexOf('#');
-        const hash = hashIndex >= 0 ? url.slice(hashIndex) : '';
-        const withoutHash = hashIndex >= 0 ? url.slice(0, hashIndex) : url;
-        const queryIndex = withoutHash.indexOf('?');
-        const base = queryIndex >= 0 ? withoutHash.slice(0, queryIndex) : withoutHash;
-        const query = queryIndex >= 0 ? withoutHash.slice(queryIndex + 1) : '';
-        return { base, query, hash };
-    },
-
-    extractQueryRows: (url: string) => {
-        const { query } = UrlUtils.parse(url);
-        if (!query) return [{ key: '', value: '' }];
-
-        const rows = query.split('&').filter(Boolean).map((entry) => {
-            const [rawKey, ...rawValueParts] = entry.split('=');
-            return {
-                key: decodeURIComponent(rawKey || ''),
-                value: decodeURIComponent(rawValueParts.join('=') || '')
-            };
-        });
-        return rows.length > 0 ? rows : [{ key: '', value: '' }];
-    },
-
-    buildUrlFromRows: (currentUrl: string, rows: Array<{ key?: string; value?: string }>) => {
-        const { base, hash } = UrlUtils.parse(currentUrl || '');
-        const queryString = rows
-            .filter((item) => item?.key?.trim())
-            .map((item) => `${encodeURIComponent(item.key as string)}=${encodeURIComponent(item.value || '')}`)
-            .join('&');
-
-        return `${base}${queryString ? `?${queryString}` : ''}${hash}`;
-    },
-
-    extractPathRows: (url: string, existingPathParams: Record<string, string> = {}) => {
-        // Support both :param and {param} styles
-        const regex = /:([a-zA-Z0-9_]+)|\{([a-zA-Z0-9_]+)\}/g;
-        const matches = Array.from(url.matchAll(regex));
-        const pathParams = matches.map(match => match[1] || match[2]);
-        
-        // Filter unique params to avoid duplicates in the UI
-        const uniqueParams = Array.from(new Set(pathParams));
-        
-        const rows = uniqueParams.map((param) => ({
-            key: param,
-            value: existingPathParams[param] || ''
-        }));
-        return rows.length > 0 ? rows : [{ key: '', value: '' }];
-    },
-
-    toObject: (rows: Array<{ key?: string; value?: string }>) => {
-        const obj: Record<string, string> = {};
-        rows.forEach((item) => {
-            if (item?.key?.trim()) obj[item.key] = item.value || '';
-        });
-        return obj;
-    }
-};
-
-interface ParameterSectionProps {
-    name: string;
-    form: any;
-    config: any;
-}
-
-const ParameterSection: React.FC<ParameterSectionProps> = ({ name, form, config }) => {
-    const bodyType = Form.useWatch(`${name}_type`, form) || 'form-data';
+const ParameterSection: React.FC<ParameterSectionProps> = ({ name, form }) => {
+    const listName = `${name}_list`;
     const isBody = name === 'body_params';
-
-    const initialValue = React.useMemo(() => {
-        const list = Object.entries((config as any)[name] || {}).map(([k, v]) => ({ key: k, value: v }));
-        return list.length > 0 ? list : [{ key: '', value: '' }];
-    }, [name, config]);
+    const bodyType = Form.useWatch(`${name}_type`, form) || 'form-data';
 
     const handleBeautify = () => {
-        const rawValue = form.getFieldValue(`${name}_raw`);
-        if (!rawValue) return;
-        try {
-            const obj = JSON.parse(rawValue);
-            form.setFieldsValue({ [`${name}_raw`]: JSON.stringify(obj, null, 2) });
-        } catch (e) {
-            message.error('Invalid JSON');
+        const current = form.getFieldValue(`${name}_raw`);
+        if (current) {
+            form.setFieldsValue({ [`${name}_raw`]: UrlUtils.beautifyJson(current) });
         }
     };
 
@@ -123,55 +50,54 @@ const ParameterSection: React.FC<ParameterSectionProps> = ({ name, form, config 
             )}
 
             {isBody && bodyType === 'raw' && (
-                <Form.Item name={`${name}_raw`} className="request-form-item-no-margin">
-                    <Input.TextArea
-                        placeholder='{"key": "value"}'
-                        rows={8}
-                        className="request-raw-body-input custom-scrollbar"
-                    />
-                </Form.Item>
+                <div className="request-body-raw">
+                    <Form.Item name={`${name}_raw`} className="request-form-item-no-margin">
+                        <Input.TextArea
+                            placeholder='{"key": "value"}'
+                            autoSize={{ minRows: 8, maxRows: 12 }}
+                            className="request-raw-textarea custom-scrollbar"
+                        />
+                    </Form.Item>
+                </div>
             )}
 
             {(!isBody || bodyType === 'form-data') && (
                 <div className="request-params-container">
-                    <Row gutter={8} className="request-params-head">
-                        <Col flex="0.42"><Text>Key</Text></Col>
-                        <Col flex="0.58"><Text>Value</Text></Col>
-                        <Col flex="26px" />
+                    <Row gutter={16} className="request-params-head">
+                        <Col span={10}><Text className="var-column-header">Key</Text></Col>
+                        <Col span={12}><Text className="var-column-header">Value</Text></Col>
+                        <Col span={2} />
                     </Row>
 
-                    <Form.List name={`${name}_list`} initialValue={initialValue}>
+                    <Form.List name={listName}>
                         {(fields, { add, remove }) => (
-                            <div className="request-params-body">
-                                <div className="request-params-rows">
+                            <>
+                                <div className="request-params-rows custom-scrollbar">
                                     {fields.map(({ key, name: fieldName, ...restField }) => (
-                                        <Row key={key} gutter={6} wrap={false} align="middle" className="request-params-row">
-                                            <Col flex="0.42">
+                                        <Row key={key} gutter={16} align="middle" className="request-param-row">
+                                            <Col span={10}>
                                                 <Form.Item {...restField} name={[fieldName, 'key']} className="request-compact-item">
                                                     <Input placeholder="Key" size="small" className="request-compact-input" />
                                                 </Form.Item>
                                             </Col>
-                                            <Col flex="0.58">
+                                            <Col span={12}>
                                                 <Form.Item {...restField} name={[fieldName, 'value']} className="request-compact-item">
                                                     <Input placeholder="Value" size="small" className="request-compact-input" />
                                                 </Form.Item>
                                             </Col>
-                                            <Col flex="26px" className="request-row-action">
-                                                {fields.length > 1 && (
-                                                    <Button
-                                                        type="text"
-                                                        danger
-                                                        size="small"
-                                                        icon={<DeleteOutlined className="request-icon-sm" />}
-                                                        onClick={() => remove(fieldName)}
-                                                        className="request-delete-btn"
-                                                    />
-                                                )}
+                                            <Col span={2} className="request-row-action">
+                                                <Button
+                                                    type="text"
+                                                    danger
+                                                    size="small"
+                                                    icon={<DeleteOutlined className="request-icon-sm" />}
+                                                    onClick={() => remove(fieldName)}
+                                                    className="request-delete-btn"
+                                                />
                                             </Col>
                                         </Row>
                                     ))}
                                 </div>
-
                                 <Button
                                     type="link"
                                     onClick={() => add({ key: '', value: '' })}
@@ -181,7 +107,7 @@ const ParameterSection: React.FC<ParameterSectionProps> = ({ name, form, config 
                                 >
                                     Add Row
                                 </Button>
-                            </div>
+                            </>
                         )}
                     </Form.List>
                 </div>
@@ -190,145 +116,106 @@ const ParameterSection: React.FC<ParameterSectionProps> = ({ name, form, config 
     );
 };
 
+const InputVariablesSection: React.FC<ParameterSectionProps> = ({ form }) => {
+    return (
+        <div className="request-params-container">
+            <div className="request-params-body">
+                <div className="group-variables-card">
+                    <div className="group-variables-header">
+                        <div className="group-header-left">
+                            <div className="group-icon-shell">
+                                <SendOutlined />
+                            </div>
+                            <div className="group-title-info">
+                                <Text className="group-title">Action Inputs</Text>
+                                <Text className="group-subtitle">INPUT_VARIABLES</Text>
+                                <Text className="group-desc">Parameters that users will provide when executing this action.</Text>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="group-variables-list">
+                        <Row gutter={16} className="request-params-head var-column-header-row">
+                            <Col span={10}><Text className="var-column-header">NAME / KEY</Text></Col>
+                            <Col span={6}><Text className="var-column-header">TYPE</Text></Col>
+                            <Col span={6}><Text className="var-column-header">VALUE</Text></Col>
+                            <Col span={2} />
+                        </Row>
+                        
+                        <Form.List name="input_keys" initialValue={[{ label: '', key: '', type: 'string', value: '' }]}>
+                            {(fields, { add, remove }) => (
+                                <>
+                                    <div className="request-params-rows custom-scrollbar">
+                                        {fields.map(({ key, name: fieldName, ...restField }) => (
+                                            <div key={key} className="variable-list-item">
+                                                <Row gutter={16} align="middle" style={{ width: '100%' }}>
+                                                    <Col span={10}>
+                                                        <div className="var-info-cell">
+                                                            <Form.Item {...restField} name={[fieldName, 'label']} className="request-compact-item">
+                                                                <Input placeholder="Friendly Name" size="small" className="request-compact-input var-name-input" />
+                                                            </Form.Item>
+                                                            <Form.Item {...restField} name={[fieldName, 'key']} className="request-compact-item">
+                                                                <Input placeholder="technical_key" size="small" className="request-compact-input var-key-code" />
+                                                            </Form.Item>
+                                                        </div>
+                                                    </Col>
+                                                    <Col span={6}>
+                                                        <Form.Item {...restField} name={[fieldName, 'type']} initialValue="string" className="request-compact-item">
+                                                            <Select size="small" className="request-compact-select var-type-select">
+                                                                <Select.Option value="string">STRING</Select.Option>
+                                                                <Select.Option value="number">NUMBER</Select.Option>
+                                                                <Select.Option value="boolean">BOOLEAN</Select.Option>
+                                                                <Select.Option value="json">JSON</Select.Option>
+                                                            </Select>
+                                                        </Form.Item>
+                                                    </Col>
+                                                    <Col span={6}>
+                                                        <Form.Item {...restField} name={[fieldName, 'value']} className="request-compact-item">
+                                                            <Input placeholder="Default Value" size="small" className="request-compact-input var-value-input" />
+                                                        </Form.Item>
+                                                    </Col>
+                                                    <Col span={2} className="request-row-action">
+                                                        <Button
+                                                            type="text"
+                                                            danger
+                                                            size="small"
+                                                            icon={<DeleteOutlined className="request-icon-sm" />}
+                                                            onClick={() => remove(fieldName)}
+                                                            className="request-delete-btn"
+                                                        />
+                                                    </Col>
+                                                </Row>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <Button
+                                        type="link"
+                                        onClick={() => add({ label: '', key: '', type: 'string', value: '' })}
+                                        size="small"
+                                        icon={<PlusOutlined className="request-icon-sm" />}
+                                        className="request-add-btn"
+                                    >
+                                        Add Variable
+                                    </Button>
+                                </>
+                            )}
+                        </Form.List>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 export default function CreateActionConfigStep({ draft, setDraft, form: externalForm, onTestClick, isTesting }: CreateActionStepProps) {
-    const [internalForm] = Form.useForm();
-    const form = externalForm || internalForm;
-    const [urlError, setUrlError] = useState<string>('');
+    const { 
+        form, 
+        config, 
+        watchedUrl, 
+        handleValuesChange, 
+        hasItems 
+    } = useCreateActionConfig(draft, setDraft, externalForm);
 
-    // Reactive tab indicators using Form.useWatch
-    const watchedUrl = Form.useWatch('url', form);
-    const queryList = Form.useWatch('query_params_list', form);
-    const headerList = Form.useWatch('header_params_list', form);
-    const pathList = Form.useWatch('path_params_list', form);
-    const bodyList = Form.useWatch('body_params_list', form);
-    const bodyRaw = Form.useWatch('body_params_raw', form);
-
-    const config = draft.configurations_json || {};
-    const isInitialized = useRef(false);
-    const debounceTimeout = useRef<any>(null);
-
-    // Initial Hydration
-    useEffect(() => {
-        const currentConfig = draft.configurations_json || {};
-        const formValues: any = { ...currentConfig };
-        const paramTypes = ['query_params', 'header_params', 'body_params', 'path_params'];
-
-        paramTypes.forEach((key) => {
-            const listName = `${key}_list`;
-            const obj = (currentConfig as any)[key] || {};
-            formValues[listName] = Object.entries(obj).map(([k, v]) => ({ key: k, value: v }));
-            if (formValues[listName].length === 0) formValues[listName] = [{ key: '', value: '' }];
-        });
-
-        if (currentConfig.input_keys && Array.isArray(currentConfig.input_keys)) {
-            formValues.input_keys = currentConfig.input_keys.map((k: any) => typeof k === 'string' ? { key: k } : k);
-        } else if (currentConfig.input_keys && typeof currentConfig.input_keys === 'string') {
-            formValues.input_keys = currentConfig.input_keys.split(',').filter((k: string) => k.trim()).map((k: string) => ({ key: k.trim() }));
-        }
-
-        form.setFieldsValue(formValues);
-    }, [draft.id, form]); // Hydrate when the identity of the action changes
-
-    const handleValuesChange = (changed: any, allValues: any) => {
-        const updatedConfig = { ...config, ...allValues };
-        const changedKey = Object.keys(changed)[0];
-
-        // URL <-> Query/Path Sync Logic
-        if (changedKey === 'url') {
-            const newUrl = changed.url || '';
-            const queryRows = UrlUtils.extractQueryRows(newUrl);
-            const currentQueryStr = UrlUtils.buildUrlFromRows('', allValues.query_params_list || []).split('?')[1] || '';
-            const newQueryStr = UrlUtils.parse(newUrl).query;
-
-            if (newQueryStr !== currentQueryStr) {
-                updatedConfig.query_params_list = queryRows;
-                form.setFieldsValue({ query_params_list: queryRows });
-            }
-
-            const pathRows = UrlUtils.extractPathRows(newUrl, updatedConfig.path_params || {});
-            form.setFieldsValue({ path_params_list: pathRows });
-        }
-
-        if (changedKey === 'query_params_list') {
-            const newUrl = UrlUtils.buildUrlFromRows(allValues.url || '', allValues.query_params_list);
-            if (newUrl !== (allValues.url || '')) {
-                form.setFieldsValue({ url: newUrl });
-                updatedConfig.url = newUrl;
-            }
-        }
-
-        // Data Serialization
-        ['query_params', 'header_params', 'body_params', 'path_params'].forEach((key) => {
-            const listName = `${key}_list`;
-            if (allValues[listName]) {
-                (updatedConfig as any)[key] = UrlUtils.toObject(allValues[listName]);
-            }
-        });
-
-        // Debounced Parent Update
-        if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
-        const isTypingField = changedKey === 'body_params_raw' || changedKey === 'url' || changedKey === 'fallback_message' || (changedKey?.endsWith('_list'));
-
-        const updateParent = () => setDraft(prev => ({ ...prev, configurations_json: updatedConfig }));
-
-        if (isTypingField) {
-            debounceTimeout.current = setTimeout(updateParent, 300);
-        } else {
-            updateParent();
-        }
-    };
-
-    // Flush any pending updates when the component unmounts (e.g. switching steps)
-    useEffect(() => {
-        return () => {
-            if (debounceTimeout.current) {
-                clearTimeout(debounceTimeout.current);
-                // We pull the latest values directly from the form instance
-                const currentValues = form.getFieldsValue();
-                const latestConfig = { ...currentValues }; // Sync form values
-                
-                // Manually serialize param lists to objects for the final draft
-                ['query_params', 'header_params', 'body_params', 'path_params'].forEach((key) => {
-                    const listName = `${key}_list`;
-                    if (currentValues[listName]) {
-                        (latestConfig as any)[key] = UrlUtils.toObject(currentValues[listName]);
-                    }
-                });
-                
-                setDraft(prev => ({ 
-                    ...prev, 
-                    configurations_json: { ...(prev.configurations_json || {}), ...latestConfig } 
-                }));
-            }
-        };
-    }, [form, setDraft]); // Removed 'config' dependency to break the loop
-
-    const hasItems = (key: string) => {
-        // Fallback check against the saved configuration object
-        const savedObj = (config as any)[key] || {};
-        const hasSavedData = Object.keys(savedObj).length > 0 && Object.keys(savedObj).some(k => k.trim().length > 0);
-
-        if (key === 'body_params') {
-            const hasListItems = bodyList?.some((p: any) => p?.key?.trim() || p?.value?.trim());
-            const hasRawContent = bodyRaw && bodyRaw.trim().length > 0;
-            return !!(hasListItems || hasRawContent || hasSavedData);
-        }
-
-        let list: any[] = [];
-        if (key === 'query_params') list = queryList;
-        if (key === 'header_params') list = headerList;
-        if (key === 'path_params') list = pathList;
-
-        const hasLiveItems = !!(list?.some((p: any) => p?.key?.trim() || p?.value?.trim()));
-        return hasLiveItems || hasSavedData;
-    };
-
-    const tabConfigs = [
-        { key: 'query_params', label: 'Query' },
-        { key: 'header_params', label: 'Headers' },
-        { key: 'body_params', label: 'Body' },
-        { key: 'path_params', label: 'Path' }
-    ];
 
     return (
         <Form
@@ -355,7 +242,6 @@ export default function CreateActionConfigStep({ draft, setDraft, form: external
                                 </Form.Item>
 
                                 <div className="request-url-slot">
-                                    <span className={`request-url-required-star ${watchedUrl ? 'is-hidden' : ''}`}>*</span>
                                     <Form.Item
                                         name="url"
                                         rules={[{ required: true, message: 'URL is required.' }]}
@@ -390,7 +276,7 @@ export default function CreateActionConfigStep({ draft, setDraft, form: external
                                 defaultActiveKey="query_params"
                                 size="small"
                                 className="request-tabs"
-                                items={tabConfigs.map(tc => ({
+                                items={CONFIG_TABS.map(tc => ({
                                     key: tc.key,
                                     label: (
                                         <Space size={6}>
@@ -400,12 +286,14 @@ export default function CreateActionConfigStep({ draft, setDraft, form: external
                                             {hasItems(tc.key) && <span className="request-tab-dot" />}
                                         </Space>
                                     ),
-                                    children: <ParameterSection name={tc.key} form={form} config={config} />
+                                    children: tc.key === 'input_variables' ? 
+                                        <InputVariablesSection name={tc.key} form={form} config={config} /> : 
+                                        <ParameterSection name={tc.key} form={form} config={config} />
                                 }))}
                             />
                         </div>
 
-                        {/* Fallback Message moved here */}
+                        {/* Fallback Message */}
                         <div className="request-accordion-shell">
                             <Collapse
                                 ghost

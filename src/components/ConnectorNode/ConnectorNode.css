@@ -68,7 +68,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 12px;
+    padding: 10px var(--space-1-5);
     border-bottom: 1px solid var(--color-surface-border);
     background: var(--color-surface-white-glass);
 }
@@ -102,7 +102,7 @@
 }
 
 .connector-node__badge {
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 800;
     color: var(--color-node-connector);
     background: color-mix(in srgb, var(--color-node-connector), transparent 90%);

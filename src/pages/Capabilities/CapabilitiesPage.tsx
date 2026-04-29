@@ -144,7 +144,6 @@ export default function CapabilitiesPage() {
 
             <CreateCapabilityModal
                 isOpen={isModalOpen}
-                isEditMode={!!capabilityToEdit}
                 capabilityToEdit={capabilityToEdit}
                 onClose={() => setIsModalOpen(false)}
                 onCreated={() => { 

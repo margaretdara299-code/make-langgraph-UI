@@ -41,7 +41,7 @@
 /* Subtitle — queue name in muted amber */
 .queue-node-sub {
     color: #92400e !important;
-    font-size: 10px !important;
+    font-size: var(--text-2xs) !important;
     font-weight: 500 !important;
     letter-spacing: 0.02em;
 }
@@ -64,7 +64,7 @@
 }
 
 .queue-node-name-text {
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 600;
     color: #92400e;
     font-family: monospace;

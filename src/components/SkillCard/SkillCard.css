@@ -1,7 +1,7 @@
 .skill-card-premium {
     background: var(--bg-card);
     border: 1px solid var(--border-light);
-    border-radius: 12px;
+    border-radius: var(--space-1-5);
     padding: 18px;
     height: 190px;
     /* Tighter layout since rows merged */
@@ -16,7 +16,7 @@
 .skill-card-premium:hover {
     border-color: var(--accent);
     transform: translateY(-2px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 var(--space-1-5) 24px rgba(0, 0, 0, 0.08);
 }
 
 /* ── Row 1: Name ── */
@@ -50,7 +50,7 @@
 
 .sc-name {
     font-size: var(--text-sm) !important;
-    font-weight: 750 !important;
+    font-weight: 600 !important;
     color: var(--text-main) !important;
     letter-spacing: -0.015em;
     white-space: nowrap;
@@ -80,11 +80,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: var(--space-1-5);
 }
 
 .sc-key-value {
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 700;
     color: var(--accent);
     font-family: var(--font-mono);
@@ -98,7 +98,7 @@
 }
 
 .sc-description {
-    font-size: 12px !important;
+    font-size: var(--text-xs) !important;
     color: var(--text-muted) !important;
     line-height: 1.5 !important;
     margin: 0 !important;
@@ -127,8 +127,8 @@
 }
 
 .sc-cap-label {
-    font-size: 12px;
-    font-weight: 700;
+    font-size: var(--text-xs);
+    font-weight: 600;
     color: var(--text-main);
     letter-spacing: -0.01em;
 }
@@ -143,13 +143,22 @@
     font-weight: 700;
     text-transform: uppercase;
     padding: 2px 8px;
-    border-radius: 4px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
-    gap: 4px;
-    background: var(--tag-bg);
-    color: var(--tag-color);
+    gap: 6px;
+    background: var(--tag-bg, var(--surface-1));
+    color: var(--tag-color, var(--text-subtle));
+    border: 1px solid var(--border-light);
+    letter-spacing: 0.04em;
+    transition: all 0.2s ease;
 }
+
+.sc-mini-tag:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
 
 .sc-tag-count {
     background: var(--surface-1);

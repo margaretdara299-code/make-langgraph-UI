@@ -5,7 +5,7 @@
 }
 
 .gs-title-stack {
-    margin-left: 12px !important;
+    margin-left: var(--space-1-5) !important;
 }
 
 .gs-title-bar {
@@ -15,7 +15,7 @@
 
 .gs-subtitle-bar {
     width: 80px !important;
-    height: 12px !important;
+    height: var(--space-1-5) !important;
     margin-top: 4px !important;
 }
 
@@ -24,7 +24,7 @@
 }
 
 .gs-var-item {
-    padding: 8px 12px !important;
+    padding: 8px var(--space-1-5) !important;
     display: flex !important;
     align-items: center !important;
 }

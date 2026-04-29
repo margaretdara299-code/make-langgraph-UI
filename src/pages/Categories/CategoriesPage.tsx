@@ -102,14 +102,16 @@ export default function CategoriesPage() {
                 <div className="title-section">
                     <div className="title-row">
                         <Title level={2} className="header-title-premium">{CATEGORIES_UI.title}</Title>
-                        <Button 
-                            type="primary"
-                            shape="circle"
-                            className="global-header-add-btn" 
-                            onClick={handleOpenCreate}
-                            title="Create New Category"
-                            icon={<PlusOutlined />}
-                        />
+                        <div className="header-button-wrap">
+                            <Button 
+                                type="primary"
+                                shape="circle"
+                                className="global-header-add-btn" 
+                                onClick={handleOpenCreate}
+                                title="Create New Category"
+                                icon={<PlusOutlined />}
+                            />
+                        </div>
                     </div>
                     <Text type="secondary" className="header-subtitle-premium">
                         {CATEGORIES_UI.description}

@@ -1,106 +1,222 @@
-.dashboard-skeleton {
-    opacity: 0.8;
+/* ═══════════════════════════════════════════════════════════════
+   DashboardSkeleton — Pixel-accurate loading state
+   ═══════════════════════════════════════════════════════════════ */
+
+.dsk-root {
+    opacity: 0.85;
 }
 
-.skeleton-metrics {
-    margin-top: 24px;
-    margin-bottom: 16px;
-}
-
-.skeleton-metric-card {
-    background: #fff;
-    padding: 24px;
-    border-radius: 12px;
-    border: 1px solid #f1f5f9;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-    height: 120px;
+/* ── Header ── */
+.dsk-header {
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-light);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    gap: 8px;
 }
 
-.skeleton-card-header {
+.dsk-title {
+    width: 180px !important;
+    height: 28px !important;
+    border-radius: 6px !important;
+}
+
+.dsk-subtitle {
+    width: 320px !important;
+    height: 14px !important;
+    border-radius: 4px !important;
+}
+
+/* ── Metric Cards ── */
+.dsk-metrics-row {
+    margin-bottom: 24px;
+}
+
+.dsk-metric-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--space-1-5);
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    height: 100%;
+}
+
+.dsk-metric-top-bar {
+    height: 4px;
+    width: 100%;
+    background: linear-gradient(90deg, #e2e8f0 0%, #cbd5e1 100%);
+}
+
+.dsk-metric-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.dsk-metric-icon {
+    border-radius: 8px !important;
+}
+
+.dsk-metric-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.dsk-metric-label {
+    width: 80px !important;
+    height: var(--space-1-5) !important;
+    border-radius: 4px !important;
+}
+
+.dsk-metric-value {
+    width: 60px !important;
+    height: 32px !important;
+    border-radius: 6px !important;
+}
+
+/* ── Activity Container ── */
+.dsk-activity-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--space-1-5);
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    margin-top: 24px;
+}
+
+.dsk-activity-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-light);
 }
 
-.skeleton-activity-box {
-    background: #fff;
-    border-radius: 16px;
-    border: 1px solid #f1f5f9;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-    overflow: hidden;
-}
-
-.skeleton-box-header {
-    padding: 24px;
-    border-bottom: 1px solid #f1f5f9;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-}
-
-/* Extracted from inline styles */
-.skeleton-header-stack {
+.dsk-activity-header-left {
     display: flex;
     flex-direction: column;
+    gap: 8px;
 }
 
-.skeleton-title-bar {
-    width: 220px !important;
+.dsk-activity-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dsk-activity-icon-skel {
+    border-radius: 4px !important;
+}
+
+.dsk-activity-title {
+    width: 120px !important;
+    height: 18px !important;
+    border-radius: 4px !important;
+}
+
+.dsk-activity-subtitle {
+    width: 240px !important;
+    height: var(--space-1-5) !important;
+    border-radius: 4px !important;
+}
+
+.dsk-activity-header-right {
+    display: flex;
+    gap: var(--space-1-5);
+}
+
+.dsk-activity-btn {
+    width: 110px !important;
     height: 32px !important;
-    margin-bottom: 8px !important;
+    border-radius: 6px !important;
 }
 
-.skeleton-subtitle-bar {
-    width: 380px !important;
-    height: 16px !important;
+/* ── Table Head ── */
+.dsk-table-head {
+    display: flex;
+    gap: 16px;
+    padding: var(--space-1-5) 24px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
 }
 
-.skeleton-metric-badge {
-    width: 40px !important;
-    height: 20px !important;
+.dsk-th-cell {
+    height: var(--space-1-5) !important;
+    border-radius: 4px !important;
 }
 
-.skeleton-metric-title {
-    width: 100% !important;
-    height: 28px !important;
-    margin-bottom: 8px !important;
+/* ── Table Body ── */
+.dsk-table-body {
+    padding: 0;
 }
 
-.skeleton-metric-subtitle {
-    width: 60% !important;
-    height: 14px !important;
+.dsk-table-row {
+    display: grid;
+    grid-template-columns: 40% 20% 15% 15% 10%;
+    gap: 16px;
+    padding: 14px 24px;
+    border-bottom: 1px solid #f1f5f9;
+    align-items: center;
 }
 
-.skeleton-activity-box {
-    margin-top: 16px !important;
+.dsk-table-row:last-child {
+    border-bottom: none;
 }
 
-.skeleton-box-header-stack {
+.dsk-td-name {
     display: flex;
     flex-direction: column;
+    gap: 6px;
 }
 
-.skeleton-box-title {
-    width: 180px !important;
-    height: 24px !important;
-    margin-bottom: 8px !important;
+.dsk-td-name-main {
+    width: 70% !important;
+    height: 16px !important;
+    border-radius: 4px !important;
 }
 
-.skeleton-box-subtitle {
-    width: 260px !important;
+.dsk-td-name-sub {
+    width: 50% !important;
+    height: var(--space-1-5) !important;
+    border-radius: 4px !important;
+}
+
+.dsk-td-desc {
+    width: 90% !important;
     height: 14px !important;
+    border-radius: 4px !important;
 }
 
-.skeleton-box-search {
-    width: 320px !important;
-    height: 40px !important;
-    border-radius: 10px !important;
+.dsk-td-status {
+    width: 70px !important;
+    height: 20px !important;
+    border-radius: 6px !important;
 }
 
-.skeleton-table-body {
-    padding: 24px;
-    min-height: 400px;
+.dsk-td-date {
+    width: 80px !important;
+    height: 14px !important;
+    border-radius: 4px !important;
+}
+
+.dsk-td-action {
+    width: 50px !important;
+    height: 14px !important;
+    border-radius: 4px !important;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .dsk-table-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .dsk-table-head {
+        display: none;
+    }
 }

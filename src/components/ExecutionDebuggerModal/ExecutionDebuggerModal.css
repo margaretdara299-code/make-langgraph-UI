@@ -151,7 +151,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 12px;
+    padding: 4px var(--space-1-5);
     border-radius: 20px;
     font-size: var(--text-xs);
     font-weight: var(--weight-semibold);
@@ -231,7 +231,7 @@
 
 /* ── Middle Resizer Handle ── */
 .exec-debugger-resizer {
-    width: 12px;
+    width: var(--space-1-5);
     margin-left: -6px;
     margin-right: -6px;
     z-index: 10;
@@ -326,7 +326,7 @@
     background: var(--surface-0);
     padding: var(--space-2);
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--text-main);
 }
 
@@ -415,7 +415,7 @@
 }
 
 @keyframes stepCardReveal {
-    from { opacity: 0; transform: translateY(12px); }
+    from { opacity: 0; transform: translateY(var(--space-1-5)); }
     to { opacity: 1; transform: translateY(0); }
 }
 
@@ -440,7 +440,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-1);
-    padding: 8px 12px;
+    padding: 8px var(--space-1-5);
     background: var(--surface-1);
     border-bottom: 1px solid var(--border-light);
     cursor: pointer;
@@ -493,7 +493,7 @@
 }
 
 .exec-step-card__body {
-    padding: 8px 12px;
+    padding: 8px var(--space-1-5);
     flex: 1;
     overflow: hidden;
 }

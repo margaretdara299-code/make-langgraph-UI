@@ -1,9 +1,8 @@
-import { useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Typography, Badge, Table, Tooltip, Button, Row, Col } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
-import { ArrowRight } from 'lucide-react';
-import { MetricCard, DashboardSkeleton, SearchInput } from '@/components';
+import { Typography, Table, Button, Row, Col, Space, Dropdown } from 'antd';
+import { ArrowRight, PenLine, Filter } from 'lucide-react';
+import { MetricCard, DashboardSkeleton } from '@/components';
 import { useDashboard } from '@/hooks/useDashboard';
 import { PAGE_HEADER_CONTENT } from '@/constants/ui.constants';
 import { ROUTES } from '@/routes';
@@ -17,15 +16,60 @@ const { DASHBOARD } = PAGE_HEADER_CONTENT;
 export default function DashboardPage() {
     const navigate = useNavigate();
     const {
-        totalActivities,
-        searchQuery,
-        setSearchQuery,
         isLoading,
         filteredSkills,
         metricsData
     } = useDashboard(50);
 
+    const [sortOrder, setSortOrder] = useState<{ columnKey: string, order: 'ascend' | 'descend' | null }>({
+        columnKey: 'updatedAt',
+        order: 'descend'
+    });
+
+    const sortMenuItems = [
+        {
+            key: 'name-ascend',
+            label: 'Sort by Name (Asc)',
+        },
+        {
+            key: 'name-descend',
+            label: 'Sort by Name (Desc)',
+        },
+        {
+            type: 'divider' as const,
+        },
+        {
+            key: 'updatedAt-ascend',
+            label: 'Sort by Date (Oldest First)',
+        },
+        {
+            key: 'updatedAt-descend',
+            label: 'Sort by Date (Newest First)',
+        },
+    ];
+
     const columns = useMemo(() => getDashboardColumns(navigate), [navigate]);
+
+    const sortedSkills = useMemo(() => {
+        const data = [...filteredSkills];
+        const { columnKey, order } = sortOrder;
+        if (!order) return data;
+
+        data.sort((a, b) => {
+            if (columnKey === 'name') {
+                const valA = a.name || '';
+                const valB = b.name || '';
+                return order === 'ascend' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+            }
+            if (columnKey === 'updatedAt') {
+                const dateA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+                const dateB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+                return order === 'ascend' ? dateA - dateB : dateB - dateA;
+            }
+            return 0;
+        });
+        return data;
+    }, [filteredSkills, sortOrder]);
 
     if (isLoading) {
         return <DashboardSkeleton />;
@@ -59,30 +103,45 @@ export default function DashboardPage() {
                 <div className="activity-header-modern">
                     <div className="header-content-left">
                         <div className="title-row">
-                            <Title level={4} className="updates-title">{DASHBOARD.updatesTitle}</Title>
-                            <span className="title-separator">—</span>
-                            <Button
-                                type="link"
-                                icon={<ArrowRight size={14} />}
-                                className="view-all-link"
-                                onClick={() => navigate(ROUTES.SKILLS_LIBRARY)}
-                            >
-                                View all
-                            </Button>
+                            <PenLine size={18} className="activity-icon" />
+                            <Title level={4} className="updates-title">Skill Activity</Title>
                         </div>
-                        <Text className="header-description">{DASHBOARD.updatesDescription}</Text>
+                        <Text className="header-description">Live activity log of deployments and studio events.</Text>
                     </div>
                     <div className="header-actions-group">
-                        <SearchInput
-                            placeholder="Search skills..."
-                            value={searchQuery}
-                            onChange={setSearchQuery}
-                        />
+                        <Space size="middle">
+                            <Dropdown 
+                                menu={{ 
+                                    items: sortMenuItems,
+                                    onClick: ({ key }) => {
+                                        const [columnKey, order] = key.split('-');
+                                        setSortOrder({ columnKey, order: order as 'ascend' | 'descend' });
+                                    }
+                                }} 
+                                trigger={['click']} 
+                                placement="bottomRight"
+                            >
+                                <Button 
+                                    icon={<Filter size={14} />} 
+                                    className="activity-filter-btn"
+                                >
+                                    Sort & Filter
+                                </Button>
+                            </Dropdown>
+                            <Button
+                                type="default"
+                                icon={<ArrowRight size={14} />}
+                                className="activity-view-all-btn"
+                                onClick={() => navigate(ROUTES.SKILLS_LIBRARY)}
+                            >
+                                View All
+                            </Button>
+                        </Space>
                     </div>
                 </div>
 
                 <Table<Skill>
-                    dataSource={filteredSkills}
+                    dataSource={sortedSkills}
                     columns={columns}
                     rowKey="id"
                     size="small"
@@ -106,4 +165,3 @@ export default function DashboardPage() {
         </div>
     );
 }
-

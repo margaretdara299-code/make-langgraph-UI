@@ -5,8 +5,9 @@
 .create-action-modal .ant-modal-content {
     padding: 0 !important;
     overflow: hidden !important;
-    border-radius: 12px !important;
-    background: linear-gradient(90deg, #F0F8FF 280px, #FFFFFF 280px) !important;
+    border-radius: var(--space-1-5) !important;
+    / */
+    /* Base background */
     height: 700px !important;
     min-height: 700px !important;
     max-height: 700px !important;
@@ -16,13 +17,12 @@
 
 .create-action-modal .ant-modal-container {
     position: relative !important;
-    background-color: #d8d8d8 !important;
+    /* background-color: #d8d8d8 !important; */
     background-clip: padding-box !important;
     border: 0 !important;
     border-radius: 8px !important;
     box-shadow: none !important;
     padding: 0 !important;
-    /* Forces edge-to-edge child positioning */
 }
 
 .create-action-modal .ant-modal-header {
@@ -38,65 +38,71 @@
     flex: 1 !important;
 }
 
-.create-action-modal__stepper-col {
-    width: 280px;
+.create-action-modal .create-action-modal__stepper-col {
+    width: 212px;
     padding: 40px 32px;
-    background-color: transparent;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     flex-shrink: 0;
     height: 100% !important;
+    border-right: 1px solid #E2E8F0;
+    position: relative;
+    /* overflow: hidden; */
+    /* Removed to prevent clipping of icons at specific offsets */
 }
 
-.create-action-modal__logo {
+
+
+.create-action-modal .cam-stepper-heading-wrap,
+.create-action-modal .create-action-modal__stepper {
+    position: relative;
+    z-index: 1;
+}
+
+.create-action-modal .create-action-modal__logo {
     margin-bottom: 48px;
     padding-left: 4px;
 }
 
-.create-action-modal__stepper {
+.create-action-modal .create-action-modal__stepper {
     display: flex;
     align-items: flex-start;
     width: 100%;
 }
 
 /* ── Custom Stepper Styles (Neat & Modern) ── */
-.create-action-stepper {
+.create-action-modal .create-action-stepper {
     margin-top: 16px;
 }
 
-/* Ensure Icons are Round and Correct Size */
-.create-action-stepper .ant-steps-item-icon {
+.create-action-modal .create-action-stepper .ant-steps-item-icon {
     width: 32px !important;
     height: 32px !important;
     line-height: 30px !important;
-    /* Center the number/icon */
     margin-right: 16px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     border-radius: 50% !important;
-    /* Force round shape */
     flex-shrink: 0 !important;
     background: transparent !important;
     border: 1px solid #e2e8f0 !important;
 }
 
-/* Fix Distorted Rectangular Shape */
-.create-action-stepper .ant-steps-item-container {
+.create-action-modal .create-action-stepper .ant-steps-item-container {
     display: flex !important;
     align-items: flex-start !important;
     padding-bottom: 24px !important;
 }
 
-/* Vertical Line (Tail) Styling - Force Visibility */
-.create-action-stepper .ant-steps-item-tail {
+.create-action-modal .create-action-stepper .ant-steps-item-tail {
     display: block !important;
     inset-inline-start: 16px !important;
     padding: 34px 0 6px !important;
 }
 
-.create-action-stepper .ant-steps-item-tail::after {
+.create-action-modal .create-action-stepper .ant-steps-item-tail::after {
     content: '' !important;
     display: block !important;
     background-color: #E2E8F0 !important;
@@ -104,52 +110,48 @@
     height: 100% !important;
 }
 
-/* Finished Step Colors */
-.create-action-stepper .ant-steps-item-finish .ant-steps-item-icon {
+.create-action-modal .create-action-stepper .ant-steps-item-finish .ant-steps-item-icon {
     border-color: var(--accent) !important;
     color: var(--accent) !important;
 }
 
-.create-action-stepper .ant-steps-item-finish .ant-steps-item-tail::after {
+.create-action-modal .create-action-stepper .ant-steps-item-finish .ant-steps-item-tail::after {
     background-color: var(--accent) !important;
 }
 
-/* Active/Process Step Colors */
-.create-action-stepper .ant-steps-item-process .ant-steps-item-icon {
+.create-action-modal .create-action-stepper .ant-steps-item-process .ant-steps-item-icon {
     background-color: var(--accent) !important;
     border-color: var(--accent) !important;
 }
 
-.create-action-stepper .ant-steps-item-process .ant-steps-item-icon .ant-steps-icon {
+.create-action-modal .create-action-stepper .ant-steps-item-process .ant-steps-item-icon .ant-steps-icon {
     color: #fff !important;
     font-weight: 700;
 }
 
-.create-action-stepper .ant-steps-item-content {
-    font-size: 12px !important;
+.create-action-modal .create-action-stepper .ant-steps-item-content {
+    font-size: var(--text-xs) !important;
 }
 
-/* Typography Refresh */
-.create-action-stepper .ant-steps-item-title {
+.create-action-modal .create-action-stepper .ant-steps-item-title {
     font-weight: 700 !important;
-    font-size: 15px !important;
+    font-size: var(--text-base) !important;
     color: #0f172a !important;
     line-height: 32px !important;
-
 }
 
-.create-action-stepper .ant-steps-item-description {
-    font-size: 12px !important;
+.create-action-modal .create-action-stepper .ant-steps-item-description {
+    font-size: var(--text-xs) !important;
     color: #64748b !important;
     line-height: 1.5 !important;
     margin-top: -4px !important;
 }
 
-.create-action-stepper .ant-steps-item-process .ant-steps-item-title {
+.create-action-modal .create-action-stepper .ant-steps-item-process .ant-steps-item-title {
     color: var(--accent) !important;
 }
 
-.create-action-stepper .ant-steps-item:hover {
+.create-action-modal .create-action-stepper .ant-steps-item:hover {
     opacity: 0.9;
 }
 
@@ -159,29 +161,28 @@
     display: flex;
     flex-direction: column;
     padding: 32px 40px;
-    border-radius: 0 12px 12px 0;
+    border-radius: 0 var(--space-1-5) var(--space-1-5) 0;
     background-color: #FFFFFF;
     height: 100%;
     overflow: hidden;
 }
 
-.create-action-modal__header {
+.create-action-modal .create-action-modal__header {
     margin-bottom: 24px;
     flex-shrink: 0;
 }
 
-.create-action-modal__step-badge {
+.create-action-modal .create-action-modal__step-badge {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-1-5);
     margin-bottom: 20px;
 }
 
-.create-action-modal__icon-shell {
+.create-action-modal .create-action-modal__icon-shell {
     width: 32px;
     height: 32px;
     background: #FEF3C7;
-
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -189,23 +190,22 @@
     font-size: var(--text-lg);
 }
 
-.create-action-modal__step-count {
+.create-action-modal .create-action-modal__step-count {
     font-size: 13px;
     font-weight: 700;
     color: #64748B;
     text-transform: capitalize;
 }
 
-.create-action-modal__step-content {
+.create-action-modal .create-action-modal__step-content {
     flex: 1;
     overflow-y: auto;
-    padding-right: 12px;
+    padding-right: var(--space-1-5);
     margin-bottom: 8px;
 }
 
 /* ── Footer / Actions ── */
-
-.create-action-modal__footer {
+.create-action-modal .create-action-modal__footer {
     flex-shrink: 0;
     display: flex;
     justify-content: space-between;
@@ -214,14 +214,13 @@
     border-top: none !important;
 }
 
-.create-action-modal__footer .ant-btn-primary {
-
+.create-action-modal .create-action-modal__footer .ant-btn-primary {
     height: 38px;
     padding: 0 24px;
     font-weight: 600;
 }
 
-.create-action-modal__footer .ant-btn-default {
+.create-action-modal .create-action-modal__footer .ant-btn-default {
     height: 38px;
     padding: 0 24px;
     font-weight: 600;
@@ -229,14 +228,12 @@
     border-color: #E2E8F0;
 }
 
-.create-action-modal__footer .ant-btn-default:hover {
+.create-action-modal .create-action-modal__footer .ant-btn-default:hover {
     color: #0F172A !important;
     border-color: #0F172A !important;
 }
 
-
-
-.create-action-modal__preview-col {
+.create-action-modal .create-action-modal__preview-col {
     width: 440px;
     background-color: var(--color-sidebar-bg);
     border-left: 0.5px solid #827373;
@@ -263,150 +260,145 @@
 .create-action-modal .ant-select-selection-item {
     line-height: 34px !important;
 }
+
 /* =====================================================
-   Extracted from CreateActionModal inline styles
+   Scoped to CreateActionModal
    ===================================================== */
 
 /* Stepper heading */
-.cam-stepper-heading-wrap {
+.create-action-modal .cam-stepper-heading-wrap {
     margin-bottom: 32px;
     padding-left: 4px;
 }
 
-.cam-stepper-heading {
+.create-action-modal .cam-stepper-heading {
     font-size: 17px;
-    font-weight: 700;
+    font-weight: 600;
     color: #0F172A;
     display: block;
 }
 
 /* Steps list */
-.cam-steps-list {
+.create-action-modal .cam-steps-list {
     display: flex;
     flex-direction: column;
     width: 100%;
+    padding-left: 10px;
 }
 
 /* Individual step row */
-.cam-step-row {
+.create-action-modal .cam-step-row {
     display: flex;
-    gap: 16px;
+    gap: 20px;
     cursor: pointer;
+    position: relative;
+    min-height: 80px;
 }
 
 /* Icon column (icon + connector) */
-.cam-step-icon-col {
+.create-action-modal .cam-step-icon-col {
     display: flex;
     flex-direction: column;
     align-items: center;
     flex-shrink: 0;
+    position: absolute;
+    right: -48px;
+    /* Bridging the boundary as requested */
+    align-self: stretch;
+    height: 100%;
+    z-index: 10;
 }
 
 /* Step circle icon */
-.cam-step-icon {
-    width: 32px;
-    height: 32px;
+.create-action-modal .cam-step-icon {
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    background-color: transparent;
-    border: 1.5px solid #e2e8f0;
-    color: #94a3b8;
-    font-size: 13px;
+    background-color: #FFFFFF;
+    border: 1.5px solid #CBD5E1;
+    color: #64748B;
+    font-size: var(--text-xs);
     font-weight: 700;
-    transition: background-color 0.4s ease, border-color 0.4s ease, color 0.3s ease;
+    transition: all 0.3s ease;
+    position: relative;
+    /* Keep it relative to stay above connector if needed, but no z-index */
 }
 
-.cam-step-icon.is-active,
-.cam-step-icon.is-finished {
+.create-action-modal .cam-step-icon.is-active,
+.create-action-modal .cam-step-icon.is-finished {
     background-color: var(--accent);
     border-color: var(--accent);
-    color: #fff;
-}
-
-.cam-step-icon.is-active {
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
-}
-
-.cam-step-icon-inner {
-    transition: transform 0.3s ease;
-    transform: scale(1);
-}
-
-.cam-step-icon-inner.is-finished {
-    transform: scale(1.1);
+    color: #FFFFFF;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
 }
 
 /* Connector line */
-.cam-step-connector {
+.create-action-modal .cam-step-connector {
     width: 2px;
     flex: 1;
-    min-height: 40px;
-    background: linear-gradient(to bottom, #e2e8f0, #e2e8f0);
-    margin: 4px 0;
-    border-radius: 2px;
-    transition: background 0.5s ease;
+    background-color: #E2E8F0;
+    margin-top: 4px;
+    /* Ensure clean start below icon */
+    margin-bottom: 4px;
+    /* Ensure clean end above next icon */
+    transition: all 0.3s ease;
 }
 
-.cam-step-connector.is-finished {
-    background: var(--accent);
+.create-action-modal .cam-step-connector.is-finished {
+    background-color: var(--accent);
 }
 
 /* Text content */
-.cam-step-text {
-    padding-bottom: 28px;
-    padding-top: 4px;
+.create-action-modal .cam-step-text {
+    flex: 1;
+    padding-bottom: 15px;
+    padding-right: -1px;
+    /* Setting to -1px as requested (effective 0) */
 }
 
-.cam-step-text.is-last {
-    padding-bottom: 0;
-}
-
-.cam-step-title {
+.create-action-modal .cam-step-title {
     font-size: var(--text-sm);
-    font-weight: 700;
-    color: #94a3b8;
-    line-height: 24px;
-    transition: color 0.3s ease;
+    font-weight: 600;
+    color: #64748B;
+    margin-bottom: 4px;
+    transition: all 0.3s ease;
+    text-align: end;
+    /* Align to the icons on the right */
 }
 
-.cam-step-title.is-active {
-    color: var(--accent);
+.create-action-modal .cam-step-title.is-active {
+    color: #0F172A;
 }
 
-.cam-step-title.is-finished {
-    color: #1E293B;
+.create-action-modal .cam-step-title.is-finished {
+    color: #64748B;
 }
 
-.cam-step-desc {
-    font-size: 12px;
-    color: #94a3b8;
-    line-height: 1.5;
-    transition: color 0.3s ease;
-}
-
-.cam-step-desc.is-active {
-    color: #334155;
-}
-
-.cam-step-desc.is-finished {
-    color: #64748b;
+.create-action-modal .cam-step-desc {
+    font-size: var(--text-xs);
+    color: #94A3B8;
+    line-height: 1.4;
+    margin-top: 6px;
+    text-align: end;
+    /* Align to the icons on the right */
 }
 
 /* Form panel header */
-.cam-header-step-label {
+.create-action-modal .cam-header-step-label {
     font-size: 13px;
     font-weight: 600;
     color: #64748B;
     display: block;
-    text-transform: uppercase;
+    text-transform: capitalize;
     letter-spacing: 0.05em;
     margin-bottom: 6px;
 }
 
-.cam-header-title {
+.create-action-modal .cam-header-title {
     font-size: 26px !important;
     font-weight: 700 !important;
     display: block;
@@ -415,9 +407,32 @@
     letter-spacing: -0.02em;
 }
 
-.cam-header-desc {
+.create-action-modal .cam-header-desc {
     font-size: var(--text-sm);
     color: #64748B;
     display: block;
     line-height: 1.5;
+}
+
+.var-column-header {
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    opacity: 0.6;
+}
+
+.modal-header-title {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.var-name {
+    font-weight: 600;
+    font-size: var(--text-sm);
+    color: var(--text-main);
+    /* letter-spacing: -0.01em; */
+    line-height: 1.4;
+    word-break: break-word;
 }

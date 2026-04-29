@@ -114,18 +114,21 @@ export default function CreateCategoryModal({
 
                     <div className="ccm2-icon-row">
                         <span className="ccm2-icon-label">Category Icon</span>
-                        <Form.Item 
-                            name="icon" 
+                        <Form.Item
+                            name="icon"
                             rules={[{ required: true, message: 'Icon is required' }]}
                         >
-                            <LucideIconPicker />
+                            <div className='flex' style={{ marginTop: '15px' }}>
+                                <LucideIconPicker />
+                            </div>
+
                         </Form.Item>
                     </div>
 
                     <Form.Item label="Description" name="description">
-                        <TextArea 
-                            placeholder="What is this category for?" 
-                            rows={8} 
+                        <TextArea
+                            placeholder="What is this category for?"
+                            rows={8}
                             showCount
                             maxLength={200}
                         />
@@ -138,9 +141,9 @@ export default function CreateCategoryModal({
                     <Button onClick={handleCancel} className="ccm2-btn">
                         Cancel
                     </Button>
-                    <Button 
-                        type="primary" 
-                        onClick={handleSubmit} 
+                    <Button
+                        type="primary"
+                        onClick={handleSubmit}
                         loading={isSubmitting}
                         disabled={!nameValue || nameValue.trim().length < 3}
                         className="ccm2-btn ccm2-btn--primary"

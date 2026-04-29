@@ -73,7 +73,7 @@
 }
 
 .main-layout__breadcrumb .anticon {
-  font-size: 15px;
+  font-size: var(--text-base);
   color: var(--text-main);
   opacity: 0.7;
   position: relative;
@@ -108,7 +108,7 @@
 
 .main-sidebar.collapsed {
   width: 72px;
-  padding: 22px 12px;
+  padding: 22px var(--space-1-5);
 }
 
 /* --- Brand Section --- */
@@ -226,7 +226,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 12px;
+  padding: 9px var(--space-1-5);
   border-radius: 8px;
   color: var(--text-muted);
   font-size: var(--text-sm);
@@ -307,9 +307,9 @@
 .user-info-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
-  border-radius: 12px;
+  gap: var(--space-1-5);
+  padding: 8px var(--space-1-5);
+  border-radius: var(--space-1-5);
   transition: all 0.2s ease;
   cursor: pointer;
 }
@@ -320,7 +320,7 @@
 
 .main-sidebar.collapsed .user-info-row {
   justify-content: center;
-  padding: 12px 0;
+  padding: var(--space-1-5) 0;
 }
 
 .main-sidebar.collapsed .user-avatar-small {
@@ -442,7 +442,7 @@
 
 .user-info-row--collapsed {
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-1-5);
 }
 
 .sf-logout-collapsed {
