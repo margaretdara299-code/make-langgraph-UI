@@ -11,8 +11,15 @@
 }
 
 @keyframes queue-pulse {
-    0%,  100% { box-shadow: 0 0 0 0 rgba(var(--color-node-queue-rgb), 0); }
-    50%        { box-shadow: 0 0 10px 3px rgba(var(--color-node-queue-rgb), 0.22); }
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(var(--color-node-queue-rgb), 0);
+    }
+
+    50% {
+        box-shadow: 0 0 10px 3px rgba(var(--color-node-queue-rgb), 0.22);
+    }
 }
 
 /* Suppress idle pulse during execution status */

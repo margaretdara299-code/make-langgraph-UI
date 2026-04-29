@@ -210,31 +210,6 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             return;
         }
 
-        // For parallel split
-        if (selectedNode.type === 'parallel_split') {
-            const stored = versionId ? loadGraphFromStorage(versionId) : null;
-            const pd = (stored?.nodes?.[selectedNode.id]?.data || selectedNode.data) as any;
-            form.setFieldsValue({
-                label: pd.label || 'Parallel Split',
-                description: pd.description || '',
-                branches: pd.branches || 3,
-            });
-            return;
-        }
-
-        // For parallel join
-        if (selectedNode.type === 'parallel_join') {
-            const stored = versionId ? loadGraphFromStorage(versionId) : null;
-            const pj = (stored?.nodes?.[selectedNode.id]?.data || selectedNode.data) as any;
-            form.setFieldsValue({
-                label: pj.label || 'Parallel Join',
-                description: pj.description || '',
-                join_strategy: pj.join_strategy || 'all',
-                inputs: pj.inputs || 3,
-            });
-            return;
-        }
-
         // For decision nodes: read from localStorage first, fallback to node.data
         if (selectedNode.type === 'decision') {
             const stored = versionId ? loadGraphFromStorage(versionId) : null;
@@ -439,6 +414,18 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                         ...currentNode.data,
                         label: newValues.label,
                         description: newValues.description,
+                    },
+                };
+            } else if (selectedNode.type === 'queue') {
+                updatedNode = {
+                    ...currentNode,
+                    data: {
+                        ...currentNode.data,
+                        label: newValues.label,
+                        description: newValues.description,
+                        queue_name: newValues.queue_name,
+                        priority: newValues.priority,
+                        wait_for_completion: newValues.wait_for_completion,
                     },
                 };
             } else if (selectedNode.type === 'parallel_split') {
@@ -830,6 +817,14 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
             const isQueue = selectedNode.type === 'queue';
             const isParallelSplit = selectedNode.type === 'parallel_split';
             const isParallelJoin = selectedNode.type === 'parallel_join';
+
+            const isStructural = isDecision || isQueue || isParallelSplit || isParallelJoin;
+            const activeColor =
+                (isDecision || isQueue) ? 'var(--color-warning)' :
+                    isParallelSplit ? 'var(--color-node-split)' :
+                        isParallelJoin ? 'var(--color-node-join)' :
+                            isError ? 'var(--color-error)' :
+                                ((isStart || isEnd) ? 'var(--color-success)' : 'var(--accent)');
 
 
 

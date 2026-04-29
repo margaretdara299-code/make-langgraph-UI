@@ -15,6 +15,7 @@ export interface Skill {
     clientId: string;
     payerId?: string;
     owner?: string;
+    icon?: string;
     tags: string[];
     status: SkillStatus;
     environment: Environment;

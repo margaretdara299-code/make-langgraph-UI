@@ -48,7 +48,7 @@
 }
 
 .skills-library-tabs .ant-tabs-tab {
-    padding: 12px 27px !important;
+    padding: var(--space-1-5) 27px !important;
     /* font-weight: 600 !important; */
     font-size: var(--text-sm) !important;
     color: var(--text-subtle) !important;

@@ -2,10 +2,10 @@
     cursor: default !important;
     pointer-events: none;
     background-color: var(--bg-card);
-    padding: 16px;
-    border-radius: 16px;
+    padding: 20px;
+    border-radius: var(--space-1-5);
     border: 1px solid var(--border-light);
-    height: 140px;
+    height: 100%;
     position: relative;
     overflow: hidden;
     display: flex;

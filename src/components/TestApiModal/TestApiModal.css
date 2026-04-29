@@ -1,4 +1,4 @@
-﻿.custom-scrollbar::-webkit-scrollbar {
+.custom-scrollbar::-webkit-scrollbar {
     width: 6px;
     height: 6px;
 }
@@ -50,7 +50,7 @@
     font-size: var(--text-sm);
     line-height: 1.6;
     background: transparent;
-    border-radius: 12px;
+    border-radius: var(--space-1-5);
     overflow: auto;
     height: 100%;
     font-family: var(--ant-font-family-mono, monospace);
@@ -100,7 +100,7 @@
 
 .tam-divider-vertical {
     width: 1px;
-    height: 12px;
+    height: var(--space-1-5);
     background: #e2e8f0;
 }
 
@@ -128,7 +128,7 @@
     height: 450px;
     overflow: hidden;
     border: 1px solid #1e293b;
-    border-radius: 12px;
+    border-radius: var(--space-1-5);
     background: #0f172a;
 }
 

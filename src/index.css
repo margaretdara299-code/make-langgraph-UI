@@ -18,7 +18,7 @@
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.5;
 
-  --text-xs: 11px;
+  --text-xs: 12px;
   --text-sm: 14px;
   --text-base: 14px;
   --text-lg: 16px;
@@ -103,9 +103,12 @@
   --color-node-common-text: #531dab;
 
   /* --- Structural Node Colors --- */
-  --color-node-split:   #DB2777;   /* ParallelSplitNode — pink */
-  --color-node-join:    #4F46E5;   /* ParallelJoinNode — indigo */
-  --color-node-queue:   #786913;   /* QueueNode */
+  --color-node-split: #DB2777;
+  /* ParallelSplitNode — pink */
+  --color-node-join: #4F46E5;
+  /* ParallelJoinNode — indigo */
+  --color-node-queue: #786913;
+  /* QueueNode */
   --color-node-queue-rgb: 120, 105, 19;
   --color-node-queue-bg: #F8F5DD;
   --color-node-queue-text: #786913;
@@ -113,16 +116,26 @@
   --color-node-queue-on-solid: #FFFFFF;
 
   /* --- Tag Palette (SkillCard tags) --- */
-  --tag-blue-bg:    #EFF6FF; --tag-blue-color:    #2563EB;
-  --tag-green-bg:   #F0FDF4; --tag-green-color:   #16A34A;
-  --tag-purple-bg:  #FAF5FF; --tag-purple-color:  #9333EA;
-  --tag-orange-bg:  #FFF7ED; --tag-orange-color:  #EA580C;
-  --tag-rose-bg:    #FFF1F2; --tag-rose-color:    #E11D48;
-  --tag-indigo-bg:  #F5F3FF; --tag-indigo-color:  #7C3AED;
-  --tag-emerald-bg: #ECFDF5; --tag-emerald-color: #059669;
-  --tag-amber-bg:   #FEF3C7; --tag-amber-color:   #D97706;
-  --tag-pink-bg:    #FDF2F8; --tag-pink-color:    #DB2777;
-  --tag-cyan-bg:    #ECFEFF; --tag-cyan-color:    #0891B2;
+  --tag-blue-bg: #EFF6FF;
+  --tag-blue-color: #2563EB;
+  --tag-green-bg: #F0FDF4;
+  --tag-green-color: #16A34A;
+  --tag-purple-bg: #FAF5FF;
+  --tag-purple-color: #9333EA;
+  --tag-orange-bg: #FFF7ED;
+  --tag-orange-color: #EA580C;
+  --tag-rose-bg: #FFF1F2;
+  --tag-rose-color: #E11D48;
+  --tag-indigo-bg: #F5F3FF;
+  --tag-indigo-color: #7C3AED;
+  --tag-emerald-bg: #ECFDF5;
+  --tag-emerald-color: #059669;
+  --tag-amber-bg: #FEF3C7;
+  --tag-amber-color: #D97706;
+  --tag-pink-bg: #FDF2F8;
+  --tag-pink-color: #DB2777;
+  --tag-cyan-bg: #ECFEFF;
+  --tag-cyan-color: #0891B2;
 
 
   /* --- Elevation & Radius --- */
@@ -149,8 +162,10 @@
 
 [data-theme='dark'] {
   /* --- Core Palette (Muted Pastels Dark Mode) --- */
-  --bg-page: #2C2C2C;       /* slate gray base */
-  --bg-card: #363636;       /* slightly elevated */
+  --bg-page: #2C2C2C;
+  /* slate gray base */
+  --bg-card: #363636;
+  /* slightly elevated */
   --bg-sidebar: #2C2C2C;
   --bg-header: rgba(44, 44, 44, 0.85);
 
@@ -170,7 +185,8 @@
   --accent-contrast: #1A1A1A;
 
   /* Text mapped to Light Gray */
-  --text-main: #E4E4E4;     /* light gray */
+  --text-main: #E4E4E4;
+  /* light gray */
   --text-muted: #A3A3A3;
   --text-subtle: #7A7A7A;
   --text-inverse: #1A1A1A;
@@ -277,17 +293,17 @@ body {
 }
 
 .ts-icon-container {
-    width: 32px;
-    height: 32px;
-    background: var(--surface-soft, var(--accent-soft));
-    border-radius: 9px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    color: var(--accent);
-    border: 1px solid var(--border-medium);
-    transition: all 0.2s ease;
+  width: 32px;
+  height: 32px;
+  background: var(--surface-soft, var(--accent-soft));
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--accent);
+  border: 1px solid var(--border-medium);
+  transition: all 0.2s ease;
 }
 
 .card-elevated {
@@ -376,29 +392,30 @@ textarea.ant-input {
 
 /* --- Status Tag Styling (Global 8px Standard) --- */
 .ant-tag:not(.ant-tag-disabled) {
-    font-size: 10px !important;
-    font-weight: 700 !important;
-    padding: 0 8px !important;
-    border-radius: 4px !important;
-    line-height: 16px !important;
-    border: none !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  padding: 0 8px !important;
+  border-radius: 4px !important;
+  line-height: 16px !important;
+  border: none !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  border: none !important;
 }
 
 .ant-tag.ant-tag-warning.ant-tag-filled {
-    background-color: var(--ant-color-warning-bg) !important;
-    color: var(--ant-color-warning) !important;
+  background-color: var(--ant-color-warning-bg) !important;
+  color: var(--ant-color-warning) !important;
 }
 
 .ant-tag.ant-tag-success.ant-tag-filled {
-    background-color: var(--ant-color-success-bg) !important;
-    color: var(--ant-color-success) !important;
+  background-color: var(--ant-color-success-bg) !important;
+  color: var(--ant-color-success) !important;
 }
 
 .ant-tag.ant-tag-error.ant-tag-filled {
-    background-color: var(--ant-color-error-bg) !important;
-    color: var(--ant-color-error) !important;
+  background-color: var(--ant-color-error-bg) !important;
+  color: var(--ant-color-error) !important;
 }
 
 .ant-dropdown .ant-dropdown-menu-item:last-child {
@@ -451,7 +468,7 @@ textarea.ant-input {
 
 /* --- Global TextArea Styling (Neat Standard) --- */
 textarea.ant-input,
-.ant-modal .ant-input-textarea-show-count > .ant-input {
+.ant-modal .ant-input-textarea-show-count>.ant-input {
   height: auto !important;
   min-height: 120px !important;
   border-radius: 4px !important;
@@ -486,27 +503,28 @@ textarea.ant-input,
 
 /* --- Global Header Add Button --- */
 .global-header-add-btn {
-    width: 24px !important;
-    height: 24px !important;
-    min-width: 24px !important;
-    padding: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background-color: var(--accent, #6366f1) !important;
-    border: none !important;
-    color: #fff !important;
-    box-shadow: 0 4px 10px var(--accent-soft, rgba(99, 102, 241, 0.2)) !important;
-    transition: all .2s ease !important;
-    border-radius: 50% !important;
-    margin-top: 4px;
-    cursor: pointer;
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: var(--accent, #6366f1) !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: 0 4px 10px var(--accent-soft, rgba(99, 102, 241, 0.2)) !important;
+  transition: all .2s ease !important;
+  border-radius: 50% !important;
+  margin-top: 4px;
+  cursor: pointer;
 }
 
 .global-header-add-btn:hover {
-    box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3) !important;
-    transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3) !important;
+  transform: translateY(-1px);
 }
+
 /* --- Premium Page Headers --- */
 .header-title-premium {
   margin: 0 !important;
@@ -522,4 +540,46 @@ textarea.ant-input,
   color: var(--text-muted) !important;
   display: block !important;
   margin-top: 4px !important;
+}
+
+.tam-modal-title {
+  font-weight: 600;
+  font-size: var(--text-base);
+  color: #1e293b;
+}
+
+.title-row .ant-typography {
+  color: var(--text-main) !important;
+  margin: 0 !important;
+  font-size: var(--text-xl) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.02em;
+}
+
+.add-variable-trigger-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px var(--space-1-5);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: var(--text-subtle, var(--text-subtle));
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 4px 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.var-key-code {
+  font-size: 10px;
+  color: #9ca3af !important;
+  font-family: var(--font-mono, monospace);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  line-height: 1.4;
+  margin-top: 2px;
 }

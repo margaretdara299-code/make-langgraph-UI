@@ -15,6 +15,20 @@ import CreateActionOverview from '../CreateActionOverview/CreateActionOverview';
 import CreateActionConfigStep from '../CreateActionConfigStep/CreateActionConfigStep';
 import CreateActionReviewStep from '../CreateActionReviewStep/CreateActionReviewStep';
 
+const DEFAULT_ACTION_DRAFT: Partial<ActionDefinition> = {
+    name: '',
+    action_key: '',
+    description: '',
+    category: 'Uncategorized',
+    category_id: 1,
+    capability: 'api',
+    capability_id: 1,
+    scope: 'global',
+    status: 'draft',
+    icon: '',
+    configurations_json: {}
+};
+
 
 
 export default function CreateActionModal({ isOpen, initialStep = 0, onClose, onCreated, actionToEdit }: CreateActionModalProps) {
@@ -22,40 +36,30 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // The single source of truth for the Action being built
-    const [actionDraft, setActionDraft] = useState<Partial<ActionDefinition>>({
-        category: 'Uncategorized',
-        category_id: 1,
-        capability: 'api',
-        capability_id: 1,
-        scope: 'global' as const,
-        status: 'draft' as const,
-        configurations_json: {}
-    });
+    const [actionDraft, setActionDraft] = useState<Partial<ActionDefinition>>(DEFAULT_ACTION_DRAFT);
 
     // Form instances for steps
     const [overviewForm] = Form.useForm();
     const [configForm] = Form.useForm();
+    const [isMounted, setIsMounted] = useState(false);
 
     // Populate draft when opening in Edit mode
     useEffect(() => {
         if (isOpen) {
+            setIsMounted(true);
             if (actionToEdit) {
                 // Pre-fill existing action for editing
                 setActionDraft(actionToEdit);
                 overviewForm.setFieldsValue(actionToEdit);
+                // Also need to set configForm values if they exist in configurations_json
+                if (actionToEdit.configurations_json) {
+                    configForm.setFieldsValue(actionToEdit.configurations_json);
+                }
             } else {
                 // Reset for creating a new action
-                setActionDraft({
-                    category: 'Uncategorized',
-                    category_id: 1,
-                    capability: 'api',
-                    capability_id: 1,
-                    scope: 'global' as const,
-                    status: 'draft' as const,
-                    configurations_json: {}
-                });
-                // Clear all form fields so no stale data remains
-                overviewForm.resetFields();
+                setActionDraft(DEFAULT_ACTION_DRAFT);
+                // Force clear all form fields explicitly to bypass initialValues caching
+                overviewForm.setFieldsValue(DEFAULT_ACTION_DRAFT);
                 configForm.resetFields();
             }
             setCurrentStep(initialStep);
@@ -335,6 +339,8 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
 
     const currentStepObj = steps[currentStep];
 
+    const fillPercent = isMounted ? ((currentStep + 1) / steps.length) * 100 : 0;
+
     return (
         <Modal
             title={null}
@@ -349,7 +355,22 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
             styles={{ body: { padding: 0, height: 800, display: 'flex', flexDirection: 'row' } }}
         >
             {/* -- Left Side: Pure Vertical Navigator -- */}
-            <div className="create-action-modal__stepper-col">
+            <div 
+                className="create-action-modal__stepper-col"
+                style={{ '--cam-fill-percent': `${fillPercent}%` } as any}
+            >
+                {/* <svg className="cam-orbit-bg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 280 800" preserveAspectRatio="xMidYMid slice">
+                    <defs>
+                        <clipPath id="orbitClip">
+                            <rect x="0" y="0" width="280" height="800" />
+                        </clipPath>
+                    </defs>
+                    <g clipPath="url(#orbitClip)">
+                        {[100, 180, 260, 340, 420, 500, 580, 660, 740].map((r) => (
+                            <circle key={r} cx="280" cy="400" r={r} fill="none" stroke="#000000ff" strokeWidth="1" strokeDasharray="6 12" opacity="0.6" />
+                        ))}
+                    </g>
+                </svg> */}
                 <div className="cam-stepper-heading-wrap">
                     <span className="cam-stepper-heading">
                         {actionToEdit ? 'Edit Action' : 'Create New Action'}
@@ -398,9 +419,11 @@ export default function CreateActionModal({ isOpen, initialStep = 0, onClose, on
                     <span className="cam-header-step-label">
                         Step {currentStep + 1} / {steps.length}
                     </span>
-                    <Text strong className="cam-header-title">
-                        {currentStepObj.title}
-                    </Text>
+                    <div className="title-row">
+                        <Text strong className="modal-header-title">
+                            {currentStepObj.title}
+                        </Text>
+                    </div>
                     <Text className="cam-header-desc">
                         {currentStepObj.description}
                     </Text>

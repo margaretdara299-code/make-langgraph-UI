@@ -97,6 +97,7 @@ export interface CreateSkillFormData {
     skillKey: string;
     description: string;
     categoryId: number;
+    icon?: string;
     tags: string[];
     creationMethod: string;
 }

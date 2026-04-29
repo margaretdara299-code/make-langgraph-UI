@@ -45,6 +45,7 @@ export { default as PublishStepperModal } from "./PublishStepperModal/PublishSte
 export { default as TestApiModal } from "./TestApiModal/TestApiModal";
 export { default as AnimatedNodesBackground } from "./AnimatedNodesBackground/AnimatedNodesBackground";
 export { default as LoginCard } from "./LoginCard/LoginCard";
+export { LucideIconPicker, DynamicLucideIcon } from "./LucideIconPicker/LucideIconPicker";
 export { default as PrivateRoute } from "./PrivateRoute/PrivateRoute";
 export { default as PublicRoute } from "./PublicRoute/PublicRoute";
 export { default as DashboardMetricsCard } from "./DashboardMetricsCard/DashboardMetricsCard";

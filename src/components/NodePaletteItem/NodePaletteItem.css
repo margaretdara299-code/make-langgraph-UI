@@ -6,7 +6,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 8px 12px;
+    padding: 8px var(--space-1-5);
     margin: 2px 0;
     border-radius: 6px;
     cursor: grab;
@@ -24,7 +24,7 @@
 }
 
 .node-palette-item__icon {
-    font-size: 15px;
+    font-size: var(--text-base);
     line-height: 1;
     flex-shrink: 0;
     color: var(--item-color);
@@ -69,4 +69,4 @@
 
 .node-palette-item__name--decision {
     color: color-mix(in srgb, #f59e0b, var(--color-nav-input-text) 60%);
-}
+}

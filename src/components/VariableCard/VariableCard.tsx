@@ -45,7 +45,7 @@ export default function VariableCard({ variable, onAction }: Props) {
 
             <div className="variable-card-content">
                 <div className="variable-header-row-enhanced">
-                    <Text className="variable-display-name">
+                    <Text className="var-name-premium">
                         {variable.variableName}
                     </Text>
                 </div>

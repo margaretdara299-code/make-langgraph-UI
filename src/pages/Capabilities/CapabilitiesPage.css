@@ -22,7 +22,7 @@
 .title-row {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-1-5);
 }
 
 
@@ -43,7 +43,7 @@
     align-items: center;
     height: 300px;
     background-color: var(--surface-1);
-    border-radius: 12px;
+    border-radius: var(--space-1-5);
     border: 1px dashed var(--border-medium);
 }
 

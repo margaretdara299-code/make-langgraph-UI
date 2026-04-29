@@ -32,6 +32,7 @@ export default function CreateSkillModal({ isOpen, onClose, onCreated }: CreateS
                 name: formData.name || '',
                 skillKey: formData.skillKey || '',
                 description: formData.description || '',
+                icon: formData.icon || 'Box',
                 categoryId: formData.categoryId || 1, // default internal fallback
                 tags: formData.tags || [],
                 clientId: '1',
@@ -61,7 +62,7 @@ export default function CreateSkillModal({ isOpen, onClose, onCreated }: CreateS
             open={isOpen}
             onCancel={handleClose}
             title={null}
-            width={520}
+            width={680}
             zIndex={1300}
             destroyOnHidden
             centered
