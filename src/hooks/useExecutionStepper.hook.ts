@@ -7,62 +7,8 @@ import { useState, useCallback, useRef } from 'react';
 import type { Node, Edge } from '@xyflow/react';
 import { engineService } from '@/services';
 import { message } from 'antd';
-import type { ExecutedNodeStep, NodeExecutionTrace } from '@/interfaces';
-
-type TracedExecutionNode = { node: Node; trace?: NodeExecutionTrace };
-
-function ensureErrorHandlerStep(
-    sequence: TracedExecutionNode[],
-    nodes: Node[],
-    edges: Edge[],
-    nodeResponsesData: Record<string, any>
-) {
-    if (sequence.some((item) => item.node.type === 'error')) {
-        return sequence;
-    }
-
-    const failedIndex = sequence.findIndex((item) => {
-        if (item.trace?.status === 'error') return true;
-        return nodeResponsesData?.[item.node.id]?.status === 'error';
-    });
-
-    if (failedIndex === -1) {
-        return sequence;
-    }
-
-    const failedNode = sequence[failedIndex].node;
-    const errorEdge = edges.find((edge) =>
-        edge.source === failedNode.id &&
-        nodes.some((node) => node.id === edge.target && node.type === 'error')
-    );
-
-    if (!errorEdge) {
-        return sequence;
-    }
-
-    const errorNode = nodes.find((node) => node.id === errorEdge.target && node.type === 'error');
-    if (!errorNode) {
-        return sequence;
-    }
-
-    const errorResponse = nodeResponsesData?.[errorNode.id];
-    const failedResponse = nodeResponsesData?.[failedNode.id];
-    const syntheticTrace: NodeExecutionTrace = {
-        nodeId: errorNode.id,
-        label: String(errorNode.data?.label || errorNode.id),
-        type: String(errorNode.type || 'error'),
-        status: 'error',
-        message: errorResponse?.message || failedResponse?.message || 'Error handler triggered',
-        input: errorResponse?.input,
-        data: errorResponse?.data ?? errorResponse ?? failedResponse?.data ?? failedResponse,
-    };
-
-    return [
-        ...sequence.slice(0, failedIndex + 1),
-        { node: errorNode, trace: syntheticTrace },
-        ...sequence.slice(failedIndex + 1),
-    ];
-}
+import type { ExecutedNodeStep, NodeExecutionTrace, TracedExecutionNode } from '@/interfaces';
+import { ensureErrorHandlerStep, reconstructSequenceFromLogs } from '@/utils/execution-stepper.utils';
 
 export function useExecutionStepper() {
     const [isExecuting, setIsExecuting] = useState(false);
@@ -109,7 +55,12 @@ export function useExecutionStepper() {
             // The interceptor transforms snake_case to camelCase: node_traces -> nodeTraces
             const logs = payload?.logs || payload?.data?.logs || [];
             const nodeTraces = (payload?.nodeTraces || payload?.data?.nodeTraces || []) as NodeExecutionTrace[];
-            const nodeResponsesData = payload?.nodeResponses || payload?.node_responses || payload?.data?.node_responses || {};
+            const nodeResponsesData =
+                payload?.nodeResponses ||
+                payload?.node_responses ||
+                payload?.data?.nodeResponses ||
+                payload?.data?.node_responses ||
+                {};
 
             if (logs.length > 0) setGlobalLogs(logs);
 
@@ -123,7 +74,7 @@ export function useExecutionStepper() {
                 return;
             }
 
-            let tracedSequence: Array<{ node: Node; trace?: NodeExecutionTrace }> = [];
+            let tracedSequence: TracedExecutionNode[] = [];
 
             if (nodeTraces.length > 0) {
                 tracedSequence = nodeTraces
@@ -137,51 +88,7 @@ export function useExecutionStepper() {
 
             // Fallback: If traces are unavailable, reconstruct from logs / graph structure.
             if (tracedSequence.length === 0 && logs && logs.length > 0) {
-                const reconstructed: Node[] = [];
-                for (const log of logs) {
-                    const match = log.match(/^▶ \[(.*?)\] \(/);
-                    if (!match) continue;
-
-                    const labelHit = match[1];
-                    const candidateNodes = nodes.filter(
-                        (node) => String(node.data?.label || '').trim() === labelHit.trim() || node.id === labelHit.trim()
-                    );
-
-                    if (reconstructed.length === 0) {
-                        const firstMatch = candidateNodes.find((candidate) => candidate.type === 'start') || candidateNodes[0];
-                        if (firstMatch) reconstructed.push(firstMatch);
-                        continue;
-                    }
-
-                    const lastNode = reconstructed[reconstructed.length - 1];
-                    const connectedCandidate = candidateNodes.find((candidate) => {
-                        const isDirectChild = edges.some((edge) => edge.source === lastNode.id && edge.target === candidate.id);
-                        if (isDirectChild) return true;
-
-                        const childrenEdges = edges.filter((edge) => edge.source === lastNode.id);
-                        return childrenEdges.some((childEdge) =>
-                            edges.some((nestedEdge) => nestedEdge.source === childEdge.target && nestedEdge.target === candidate.id)
-                        );
-                    });
-
-                    const nextNode = connectedCandidate || candidateNodes[0];
-                    if (nextNode) reconstructed.push(nextNode);
-                }
-
-                tracedSequence = reconstructed.map((node) => ({
-                    node,
-                    trace: nodeResponsesData?.[node.id]
-                        ? {
-                            nodeId: node.id,
-                            label: String(node.data?.label || node.id),
-                            type: String(node.type || 'action'),
-                            status: nodeResponsesData[node.id]?.status === 'error' ? 'error' : 'success',
-                            message: nodeResponsesData[node.id]?.message || 'Node executed successfully',
-                            input: nodeResponsesData[node.id]?.input,
-                            data: nodeResponsesData[node.id]?.data ?? nodeResponsesData[node.id],
-                        }
-                        : undefined,
-                }));
+                tracedSequence = reconstructSequenceFromLogs(logs, nodes, edges, nodeResponsesData);
             }
 
             if (tracedSequence.length === 0) {

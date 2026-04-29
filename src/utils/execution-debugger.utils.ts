@@ -13,6 +13,16 @@ function appendClassName(currentClassName: string | undefined, nextClassName: st
     return [currentClassName, nextClassName].filter(Boolean).join(' ');
 }
 
+export function isErrorConnectorEdge(edge: Edge, nodes: Node[]) {
+    const edgeData = edge.data as { isErrorPath?: boolean } | undefined;
+    if (edgeData?.isErrorPath) return true;
+
+    const sourceNode = nodes.find((node) => node.id === edge.source);
+    const targetNode = nodes.find((node) => node.id === edge.target);
+
+    return sourceNode?.type === 'error' || targetNode?.type === 'error';
+}
+
 export function hasRenderablePayload(payload: unknown) {
     if (payload === null || payload === undefined) return false;
     if (typeof payload === 'string') return payload.trim().length > 0;
@@ -114,6 +124,7 @@ export function buildExecutionDebuggerNodes(
 
 export function buildExecutionDebuggerEdges(
     edges: Edge[],
+    nodes: Node[],
     steps: ExecutedNodeStep[],
     isExecuting: boolean,
     isSimulationDone: boolean
@@ -129,7 +140,8 @@ export function buildExecutionDebuggerEdges(
     return edges.map((edge) => {
         let isPathActive = false;
         let status: NodeExecutionStatus = 'idle';
-        let isErrorPath = Boolean((edge.data as { isErrorPath?: boolean } | undefined)?.isErrorPath);
+        const isErrorPath = isErrorConnectorEdge(edge, nodes);
+        const strokeDasharray = isErrorPath ? '6 3' : edge.style?.strokeDasharray;
 
         for (let index = 0; index < revealedSteps.length - 1; index += 1) {
             if (revealedSteps[index].node.id === edge.source && revealedSteps[index + 1].node.id === edge.target) {
@@ -137,7 +149,6 @@ export function buildExecutionDebuggerEdges(
                 status = revealedSteps[index + 1].node.type === 'error'
                     ? 'error'
                     : revealedSteps[index + 1].status;
-                isErrorPath = isErrorPath || revealedSteps[index + 1].node.type === 'error';
                 break;
             }
         }
@@ -148,6 +159,7 @@ export function buildExecutionDebuggerEdges(
                 animated: false,
                 style: {
                     ...edge.style,
+                    strokeDasharray,
                     opacity: 0.25,
                     filter: 'none',
                 },
@@ -162,6 +174,7 @@ export function buildExecutionDebuggerEdges(
                     ...edge.style,
                     stroke: 'var(--color-primary)',
                     strokeWidth: 3,
+                    strokeDasharray,
                     opacity: 1,
                     filter: 'drop-shadow(0 0 4px var(--color-primary))',
                 },
@@ -176,6 +189,7 @@ export function buildExecutionDebuggerEdges(
                     ...edge.style,
                     stroke: 'var(--color-success)',
                     strokeWidth: 3,
+                    strokeDasharray,
                     opacity: 1,
                 },
             };
@@ -189,7 +203,7 @@ export function buildExecutionDebuggerEdges(
                     ...edge.style,
                     stroke: 'var(--color-error)',
                     strokeWidth: 3,
-                    strokeDasharray: isErrorPath ? '6 3' : edge.style?.strokeDasharray,
+                    strokeDasharray,
                     opacity: 1,
                 },
             };

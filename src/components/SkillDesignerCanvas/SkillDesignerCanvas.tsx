@@ -35,7 +35,7 @@ import {
     upsertViewportInStorage,
 } from '@/services/skillGraphStorage.service';
 import type { CanvasNode } from '@/interfaces';
-import { getNodeStrokeColor } from '@/utils';
+import { getNodeStrokeColor, isErrorConnectorEdge } from '@/utils';
 import './SkillDesignerCanvas.css';
 
 export default function SkillDesignerCanvas() {
@@ -96,6 +96,7 @@ export default function SkillDesignerCanvas() {
     const onConnect: OnConnect = useCallback(
         (params) => {
             const sourceNode = reactFlowInstance?.getNode(params.source);
+            const targetNode = reactFlowInstance?.getNode(params.target);
             const edgeColor = getNodeStrokeColor(sourceNode);
             const edgeId = [
                 'edge',
@@ -123,7 +124,7 @@ export default function SkillDesignerCanvas() {
             // Edges from the action node's `error` handle route to the Error Node.
             // Edges originating from the Error Node route to the End Node.
             // Both should use the dotted red error path styling.
-            const isErrorPath = params.sourceHandle === 'error' || sourceNode?.type === 'error';
+            const isErrorPath = params.sourceHandle === 'error' || sourceNode?.type === 'error' || targetNode?.type === 'error';
 
             // Parallel branch edges use the split node's theme colour (pink/magenta)
             const parallelBranchColor = 'var(--color-node-split, #ec4899)';
@@ -328,6 +329,8 @@ export default function SkillDesignerCanvas() {
         return edges.map(edge => {
             let isPathActive = false;
             let status = 'idle';
+            const isErrorPath = isErrorConnectorEdge(edge, nodes);
+            const strokeDasharray = isErrorPath ? '6 3' : edge.style?.strokeDasharray;
 
             for (let i = 0; i < steps.length - 1; i++) {
                 // If this edge connects an executed sequence step to the exact next executed sequence step
@@ -347,7 +350,7 @@ export default function SkillDesignerCanvas() {
                 return {
                     ...edge,
                     animated: false,
-                    style: { ...edge.style, stroke: 'var(--color-border)', opacity: 0.3 }
+                    style: { ...edge.style, stroke: 'var(--color-border)', strokeDasharray, opacity: 0.3 }
                 };
             }
 
@@ -355,25 +358,25 @@ export default function SkillDesignerCanvas() {
                 return {
                     ...edge,
                     animated: true,
-                    style: { ...edge.style, stroke: 'var(--color-primary)', strokeWidth: 3, opacity: 1, filter: 'drop-shadow(0 0 4px var(--color-primary))' }
+                    style: { ...edge.style, stroke: 'var(--color-primary)', strokeWidth: 3, strokeDasharray, opacity: 1, filter: 'drop-shadow(0 0 4px var(--color-primary))' }
                 };
             } else if (status === 'success') {
                 return {
                     ...edge,
                     animated: false,
-                    style: { ...edge.style, stroke: 'var(--color-success)', strokeWidth: 3, opacity: 1 }
+                    style: { ...edge.style, stroke: 'var(--color-success)', strokeWidth: 3, strokeDasharray, opacity: 1 }
                 };
             } else if (status === 'error') {
                 return {
                     ...edge,
                     animated: false,
-                    style: { ...edge.style, stroke: 'var(--color-error)', strokeWidth: 3, opacity: 1 }
+                    style: { ...edge.style, stroke: 'var(--color-error)', strokeWidth: 3, strokeDasharray, opacity: 1 }
                 };
             }
 
             return edge;
         });
-    }, [edges, steps, isExecuting, isSimulationDone]);
+    }, [edges, nodes, steps, isExecuting, isSimulationDone]);
 
     return (
         <div className="skill-designer" ref={reactFlowWrapper}>

@@ -29,8 +29,8 @@ export function DebuggerCanvasInner({ nodes, edges, panelWidthToggle }: Props) {
     );
 
     const displayEdges = useMemo(
-        () => buildExecutionDebuggerEdges(edges, steps, isExecuting, isSimulationDone),
-        [edges, steps, isExecuting, isSimulationDone]
+        () => buildExecutionDebuggerEdges(edges, nodes, steps, isExecuting, isSimulationDone),
+        [edges, nodes, steps, isExecuting, isSimulationDone]
     );
 
     // Refit smoothly when panels are fully resized or initialized

@@ -1,5 +1,6 @@
 import { apiClient } from './http.service';
 import { API_ENDPOINTS } from './api.endpoints';
+import { fetchCategories } from './category.service';
 import type { Skill, PaginatedResponse, ApiResponse, UseSkillsFilters, CreateSkillFormData } from '@/interfaces';
 
 // Cache for mock fallback functions
@@ -51,6 +52,60 @@ export async function fetchSkills(
     } catch (error) {
         console.error('fetchSkills API error:', error);
         return { data: [], total: 0, page: 1, pageSize: 12, totalPages: 0 };
+    }
+}
+
+/**
+ * Fetches skills grouped by category for the Skill Designer Node Library.
+ * This mirrors the designer action palette shape so accordions can render both
+ * from the same loop.
+ */
+export async function fetchGroupedSkillsForDesigner(): Promise<Record<string, Skill[]>> {
+    try {
+        const params = new URLSearchParams();
+        params.set('page_size', '200');
+
+        const [result, categoryList] = await Promise.all([
+            apiClient.get<any>(`${API_ENDPOINTS.SKILLS.BASE}?${params.toString()}`),
+            fetchCategories().catch(() => []),
+        ]);
+
+        const payload = result.data;
+        const items: Skill[] = Array.isArray(payload)
+            ? payload
+            : payload?.items || payload?.data || [];
+
+        localSkills = items;
+
+        const categoryMap: Record<number, string> = Object.fromEntries(
+            categoryList.map((category: any) => [
+                category.categoryId ?? category.id ?? category.category_id,
+                category.name || '',
+            ])
+        );
+
+        const grouped = items.reduce<Record<string, Skill[]>>((groups, skill) => {
+            const categoryId = (skill as any).categoryId ?? (skill as any).category_id;
+            const categoryName = skill.category || categoryMap[categoryId] || 'General';
+            const normalizedSkill = {
+                ...skill,
+                categoryId,
+                category: categoryName,
+            };
+
+            groups[categoryName] ??= [];
+            groups[categoryName].push(normalizedSkill);
+            return groups;
+        }, {});
+
+        for (const skills of Object.values(grouped)) {
+            skills.sort((left, right) => left.name.localeCompare(right.name));
+        }
+
+        return grouped;
+    } catch (error) {
+        console.error('fetchGroupedSkillsForDesigner API error:', error);
+        return {};
     }
 }
 
