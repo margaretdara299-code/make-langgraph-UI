@@ -1,0 +1,109 @@
+/**
+ * SplitNode (parallel_split) — Bottom handles distributed horizontally,
+ * matching the DecisionNode pattern but for parallel execution.
+ */
+
+/* ── Bottom source handles for SplitNode ──
+ *
+ * IMPORTANT: handles are ALWAYS VISIBLE (opacity: 1).
+ * Only VISUAL properties are set here (size, color, shape).
+ * NEVER override: position, bottom, top, right, pointer-events.
+ * When overriding transform on :hover you MUST include translateX(-50%) to preserve
+ * React Flow's centering — otherwise the handle jumps away from the cursor.
+ */
+.split-node__source-handle {
+    width: 10px !important;
+    height: 10px !important;
+    border-radius: 50% !important;
+    background: var(--bg-card, #fff) !important;
+    border: 2px solid var(--color-node-split, #ec4899) !important;
+    box-shadow: 0 0 4px rgba(236, 72, 153, 0.25) !important;
+    opacity: 1 !important;
+    transition: background 0.15s !important;
+    cursor: crosshair;
+    /* left is set as an inline style per-handle so React Flow registers the correct position */
+}
+
+.split-node__source-handle:hover {
+    background: var(--color-node-split, #ec4899) !important;
+    /* Preserve React Flow's translateX(-50%) centering — adding scale on top only */
+    transform: translateX(-50%) scale(1.3) !important;
+}
+
+/* ── Empty state helper text shown on the node card ── */
+.split-node__empty-state {
+    padding: 6px 10px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    text-align: center;
+}
+
+.split-node__empty-label {
+    font-size: 10px;
+    color: var(--text-subtle, #9ca3af);
+    font-style: italic;
+    line-height: 1.4;
+}
+
+/* ── Branch list rows shown on the node card ── */
+/* Minimum width ensures handles are spread at least 40px apart even with many branches */
+.split-node__branches {
+    padding: 4px 0 2px;
+    min-width: 180px;
+}
+
+.split-node__branch-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-bottom: 1px solid rgba(236, 72, 153, 0.06);
+    position: relative;
+}
+
+.split-node__branch-row:last-child {
+    border-bottom: none;
+}
+
+.split-node__branch-badge {
+    min-width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(236, 72, 153, 0.12);
+    color: var(--color-node-split, #ec4899);
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.split-node__branch-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-main, #111827);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.split-node__branch-required {
+    font-size: 8px;
+    color: var(--text-subtle, #6b7280);
+    flex-shrink: 0;
+}
+
+/* ── Subtitle badge for conditional mode ── */
+.split-node__mode-badge {
+    font-size: 9px;
+    font-weight: 600;
+    background: rgba(236, 72, 153, 0.12);
+    color: var(--color-node-split, #ec4899);
+    border-radius: 3px;
+    padding: 1px 5px;
+    letter-spacing: 0.4px;
+}

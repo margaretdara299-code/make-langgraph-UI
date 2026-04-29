@@ -72,13 +72,23 @@ export function useSkillGraph() {
                         targetHandle: conn.targetHandle,
                     };
 
+                    // Parallel split branches carry a sourceHandle (branch ID) —
+                    // must be excluded from decision-edge detection.
+                    const isFromSplitNode = sourceNode?.type === 'parallel_split';
+                    const isParallelBranch = isFromSplitNode && Boolean(conn.sourceHandle);
+
                     // A decision-branch edge originates from a named rule handle.
-                    // Must explicitly exclude "default" — Boolean("default") === true,
-                    // which would incorrectly style the fallback path as a branch edge.
-                    const fromDecision = Boolean(conn.sourceHandle)
+                    // Must explicitly exclude "default", "error", and split branches.
+                    const fromDecision = !isFromSplitNode
+                        && Boolean(conn.sourceHandle)
                         && conn.sourceHandle !== 'default'
                         && conn.sourceHandle !== 'error';
-                    const isErrorPath = conn.sourceHandle === 'error' || targetNode?.type === 'error' || sourceNode?.type === 'error';
+
+                    const isErrorPath = conn.sourceHandle === 'error'
+                        || targetNode?.type === 'error'
+                        || sourceNode?.type === 'error';
+
+                    const parallelBranchColor = 'var(--color-node-split, #ec4899)';
 
                     return {
                         id: edgeId,
@@ -86,19 +96,21 @@ export function useSkillGraph() {
                         sourceHandle: conn.sourceHandle,
                         target: conn.target,
                         targetHandle: conn.targetHandle,
-                        type: 'smoothstep', // Ensure loaded edges use smoothstep (runs through DeletableEdge)
+                        type: 'smoothstep',
                         animated: false,
-                        data: { fromDecision, isErrorPath },
+                        data: { fromDecision, isErrorPath, isParallelBranch, branchId: conn.sourceHandle },
                         markerEnd: fromDecision
                             ? undefined
                             : isErrorPath
                                 ? { type: MarkerType.ArrowClosed, color: 'var(--color-error)' }
-                                : { type: MarkerType.ArrowClosed, color: edgeColor },
-                        style: {
-                            stroke: isErrorPath ? 'var(--color-error)' : edgeColor,
-                            strokeWidth: fromDecision ? 2 : 1.5,
-                            ...(isErrorPath ? { strokeDasharray: '6 3' } : {}),
-                        },
+                                : isParallelBranch
+                                    ? { type: MarkerType.ArrowClosed, color: parallelBranchColor }
+                                    : { type: MarkerType.ArrowClosed, color: edgeColor },
+                        style: isErrorPath
+                            ? { stroke: 'var(--color-error)', strokeWidth: 1.5, strokeDasharray: '6 3' }
+                            : isParallelBranch
+                                ? { stroke: parallelBranchColor, strokeWidth: 1.5, strokeDasharray: '4 3' }
+                                : { stroke: edgeColor, strokeWidth: fromDecision ? 2 : 1.5 },
                     };
                 });
 
