@@ -13,6 +13,16 @@ function appendClassName(currentClassName: string | undefined, nextClassName: st
     return [currentClassName, nextClassName].filter(Boolean).join(' ');
 }
 
+export function isErrorConnectorEdge(edge: Edge, nodes: Node[]) {
+    const edgeData = edge.data as { isErrorPath?: boolean } | undefined;
+    if (edgeData?.isErrorPath) return true;
+
+    const sourceNode = nodes.find((node) => node.id === edge.source);
+    const targetNode = nodes.find((node) => node.id === edge.target);
+
+    return sourceNode?.type === 'error' || targetNode?.type === 'error';
+}
+
 export function hasRenderablePayload(payload: unknown) {
     if (payload === null || payload === undefined) return false;
     if (typeof payload === 'string') return payload.trim().length > 0;
@@ -131,6 +141,7 @@ export function buildExecutionDebuggerNodes(
 
 export function buildExecutionDebuggerEdges(
     edges: Edge[],
+    nodes: Node[],
     steps: ExecutedNodeStep[],
     isExecuting: boolean,
     isSimulationDone: boolean
@@ -167,14 +178,15 @@ export function buildExecutionDebuggerEdges(
         const targetRevealed = revealedNodeIds.has(edge.target);
         const isPathActive = sourceRevealed && targetRevealed;
 
-        let isErrorPath = Boolean((edge.data as { isErrorPath?: boolean } | undefined)?.isErrorPath);
+        const isEdgeErrorPath = Boolean((edge.data as { isErrorPath?: boolean } | undefined)?.isErrorPath);
+        const strokeDasharray = isEdgeErrorPath ? '6 3' : edge.style?.strokeDasharray;
 
-        // Number of parallel branches from this source (>1 means it's a fan-out edge)
+        // Number of parallel branches fanning out from this source
         const srcFanOut = fanOutCount.get(edge.source) ?? 1;
         const parallelBalls = srcFanOut > 1 ? srcFanOut : 1;
 
         if (!isPathActive) {
-            // Source revealed but target not yet reached → branch is in-flight
+            // Source revealed but target not yet reached → parallel branch in-flight
             if (sourceRevealed && isExecuting) {
                 const sourceStep = revealedStepMap.get(edge.source);
                 if (sourceStep && (sourceStep.status === 'running' || sourceStep.status === 'success')) {
@@ -183,7 +195,6 @@ export function buildExecutionDebuggerEdges(
                         animated: true,
                         data: {
                             ...(edge.data ?? {}),
-                            // Tag with ball count so DeletableEdge renders N staggered balls
                             _execBalls: parallelBalls,
                         },
                         style: {
@@ -210,14 +221,15 @@ export function buildExecutionDebuggerEdges(
             };
         }
 
-        // Both endpoints revealed — determine status from target
+        // Both endpoints revealed — determine status from target node
         const targetStep = revealedStepMap.get(edge.target);
-        const status: NodeExecutionStatus = targetStep
+        const edgeStatus: NodeExecutionStatus = targetStep
             ? (targetStep.node.type === 'error' ? 'error' : targetStep.status)
             : 'idle';
-        isErrorPath = isErrorPath || targetStep?.node.type === 'error';
+        const isErrorPath = isEdgeErrorPath || targetStep?.node.type === 'error';
+        const finalDash = isErrorPath ? '6 3' : edge.style?.strokeDasharray;
 
-        if (status === 'running') {
+        if (edgeStatus === 'running') {
             return {
                 ...edge,
                 animated: true,
@@ -226,13 +238,14 @@ export function buildExecutionDebuggerEdges(
                     ...edge.style,
                     stroke: 'var(--color-primary)',
                     strokeWidth: 3,
+                    strokeDasharray: finalDash,
                     opacity: 1,
                     filter: 'drop-shadow(0 0 5px var(--color-primary))',
                 },
             };
         }
 
-        if (status === 'success') {
+        if (edgeStatus === 'success') {
             return {
                 ...edge,
                 animated: false,
@@ -241,13 +254,14 @@ export function buildExecutionDebuggerEdges(
                     ...edge.style,
                     stroke: 'var(--color-success)',
                     strokeWidth: 2.5,
+                    strokeDasharray: finalDash,
                     opacity: 0.9,
                     filter: 'none',
                 },
             };
         }
 
-        if (status === 'error') {
+        if (edgeStatus === 'error') {
             return {
                 ...edge,
                 animated: false,
@@ -256,7 +270,7 @@ export function buildExecutionDebuggerEdges(
                     ...edge.style,
                     stroke: 'var(--color-error)',
                     strokeWidth: 3,
-                    strokeDasharray: isErrorPath ? '6 3' : edge.style?.strokeDasharray,
+                    strokeDasharray: finalDash,
                     opacity: 1,
                     filter: 'none',
                 },
@@ -266,3 +280,4 @@ export function buildExecutionDebuggerEdges(
         return edge;
     });
 }
+

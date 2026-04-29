@@ -16,4 +16,5 @@ export * from './connector.interface';
 export * from './auth.interface';
 export * from './engine.interface';
 export * from './execution-debugger.interface';
+export * from './execution-stepper.interface';
 export * from './node-palette.interface';
