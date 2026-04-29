@@ -10,8 +10,7 @@ export function getNodeTheme(type: string, capability?: string, category?: strin
     }
 
     if (type === 'queue') {
-        // Amber — durable hand-off / workflow boundary
-        return { bg: 'var(--tag-orange-bg)', stroke: 'var(--color-node-queue)', badgeBg: 'var(--color-node-queue)', iconBg: 'var(--accent-soft)' };
+        return { bg: 'var(--color-node-queue-bg)', stroke: 'var(--color-node-queue)', badgeBg: 'var(--color-node-queue)', iconBg: 'var(--color-node-queue-bg)' };
     }
     
     if (type === 'start') {

@@ -42,7 +42,8 @@
 .decision-node__icon-diamond {
     transform: rotate(45deg);
     border-radius: 3px !important;
-    border: 1.5px solid currentColor !important;
+    border: 1.5px solid #ffffff !important;
+    background-color: currentColor !important;
     width: 22px !important;
     height: 22px !important;
     margin-left: 5px;
@@ -51,7 +52,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .decision-node__icon-inner {
@@ -107,7 +108,7 @@
 
 .decision-node__empty {
     display: block;
-    padding: 8px 12px;
+    padding: 8px var(--space-1-5);
     font-size: var(--text-xs);
     color: var(--text-subtle);
     font-style: italic;

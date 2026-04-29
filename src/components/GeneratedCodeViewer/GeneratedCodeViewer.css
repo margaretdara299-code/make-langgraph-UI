@@ -16,7 +16,7 @@
 .generated-code-viewer .ant-modal-header {
   background-color: #1e1e1e;
   border-bottom: 1px solid #3e3e42;
-  padding: 12px 16px;
+  padding: var(--space-1-5) 16px;
 }
 
 .generated-code-viewer .ant-modal-title {
@@ -64,10 +64,10 @@
 }
 
 .generated-code-viewer__sidebar-header {
-  padding: 12px 16px;
+  padding: var(--space-1-5) 16px;
   border-bottom: 1px solid #3e3e42;
   color: #cccccc;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -118,7 +118,7 @@
 }
 
 .generated-code-viewer__file-icon {
-  font-size: 12px;
+  font-size: var(--text-xs);
   flex-shrink: 0;
   color: #ccb300;
 }
@@ -149,7 +149,7 @@
 
 .generated-code-viewer__file-path {
   color: #cccccc;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -162,7 +162,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  padding: 12px 16px;
+  padding: var(--space-1-5) 16px;
   border-top: 1px solid #3e3e42;
   background-color: #1e1e1e;
 }
@@ -201,8 +201,8 @@
   }
 
   .generated-code-viewer__file-item {
-    padding: 6px 12px;
-    font-size: 12px;
+    padding: 6px var(--space-1-5);
+    font-size: var(--text-xs);
   }
 }
 

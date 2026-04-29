@@ -10,7 +10,7 @@
   backdrop-filter: blur(8px);
   border: 1px solid var(--border-medium) !important;
   border-radius: 10px !important;
-  padding: 4px 12px !important; /* Reduced vertical padding */
+  padding: 4px var(--space-1-5) !important; /* Reduced vertical padding */
   box-shadow: var(--shadow-xs);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   height: 38px !important; /* Fixed height for precision */

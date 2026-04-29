@@ -1,7 +1,7 @@
 .action-card-premium {
     background: var(--bg-card);
     border: 1px solid var(--border-light);
-    border-radius: 12px;
+    border-radius: var(--space-1-5);
     padding: 18px;
     height: 195px;
     /* Slightly taller to accommodate multi-pill footer */
@@ -16,7 +16,7 @@
 .action-card-premium:hover {
     border-color: var(--accent);
     transform: translateY(-2px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 var(--space-1-5) 24px rgba(0, 0, 0, 0.08);
 }
 
 /* ── Row 1: Name ── */
@@ -46,7 +46,7 @@
 
 .ac-name {
     font-size: var(--text-sm) !important;
-    font-weight: 750 !important;
+    font-weight: 600 !important;
     color: var(--text-main) !important;
     letter-spacing: -0.015em;
     white-space: nowrap;
@@ -76,11 +76,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: var(--space-1-5);
 }
 
 .ac-key-value {
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 700;
     color: var(--accent);
     font-family: var(--font-mono);
@@ -94,7 +94,7 @@
 }
 
 .ac-description {
-    font-size: 12px !important;
+    font-size: var(--text-xs) !important;
     color: var(--text-muted) !important;
     line-height: 1.5 !important;
     margin: 0 !important;
@@ -129,24 +129,32 @@
 .ac-meta-pill {
     display: flex;
     align-items: center;
-    gap: 4px;
-    font-size: 10px !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    color: #000000 !important;
-    background: transparent !important;
-    padding: 2px 6px !important;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-main);
+    padding: 2px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.04em;
+    transition: all 0.2s ease;
+}
+
+.ac-meta-pill:hover {
+    transform: translateY(-1px);
+    opacity: 0.8;
 }
 
 .ac-meta-pill svg {
-    color: var(--accent);
+    flex-shrink: 0;
 }
 
-.ac-meta-pill--cap {
-    background: transparent;
-    border-color: var(--accent-soft);
-    color: #000000;
+.ac-meta-pill--cap,
+.ac-meta-pill--cat {
+    /* Transparent modifiers */
 }
+
+
 
 .ac-tags-section {
     display: flex;
@@ -158,14 +166,23 @@
     font-weight: 700;
     text-transform: uppercase;
     padding: 2px 8px;
-    border-radius: 4px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     background: var(--surface-1);
     border: 1px solid var(--border-light);
     color: var(--text-subtle);
+    letter-spacing: 0.04em;
+    transition: all 0.2s ease;
 }
+
+.ac-mini-tag:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    background: var(--bg-card);
+}
+
 
 .ac-tag-count {
     background: var(--surface-1);

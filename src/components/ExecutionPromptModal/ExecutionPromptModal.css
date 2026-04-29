@@ -19,7 +19,7 @@
     font-family: monospace !important;
     margin-bottom: 1.5rem !important;
     font-size: var(--text-sm) !important;
-    padding: 12px !important;
+    padding: var(--space-1-5) !important;
     border-radius: 8px !important;
 }
 

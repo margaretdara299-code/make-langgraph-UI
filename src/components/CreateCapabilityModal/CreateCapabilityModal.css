@@ -1,10 +1,4 @@
-.create-capability-modal-v2 .ant-modal-content {
-    padding: 24px 32px !important;
-    border-radius: 12px !important;
-}
-
-/* Header styling is usually global if imported in high-level components, 
-   but we'll ensure it's available or themed correctly here if needed */
+/* CreateCapabilityModal.css */
 
 .modal-header-neat {
     margin-bottom: 28px;
@@ -13,8 +7,8 @@
 }
 
 .modal-header-title {
-    font-size: 20px;
-    font-weight: 700;
+    font-size: var(--text-xl);
+    font-weight: 600;
     color: var(--text-main);
 }
 
@@ -24,64 +18,55 @@
     margin-top: 4px;
 }
 
-/* =====================================================
-   Extracted from CreateCapabilityModal inline styles
-   ===================================================== */
-
-.ccm-header {
+.ccm2-header {
     margin-bottom: 28px !important;
 }
 
-.ccm-header-inner {
+.ccm2-header-inner {
     display: flex;
     flex-direction: column;
 }
 
-.ccm-form-body {
+.ccm2-form-body {
     min-height: 440px;
 }
 
-.ccm-input {
-    border-radius: 4px !important;
-}
-
-.ccm-icon-row {
+.ccm2-icon-row {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     gap: 24px;
-    padding: 12px 0;
+    padding: var(--space-1-5) 0;
     border-bottom: 1px dotted var(--border-light);
     margin-bottom: 16px;
 }
 
-.ccm-icon-label {
+.ccm2-icon-label {
     font-size: var(--text-sm);
     color: var(--text-main);
-    font-weight: 500;
 }
 
-.ccm-icon-form-item {
-    margin-bottom: 0 !important;
-}
-
-.ccm-textarea {
-    border-radius: 4px !important;
-    min-height: 100px !important;
-}
-
-.ccm-footer {
+.ccm2-footer {
     display: flex;
     justify-content: flex-end;
     margin-top: 32px;
 }
 
-.ccm-btn {
+.ccm2-btn {
     border-radius: 4px !important;
     height: 36px !important;
     font-weight: 600 !important;
 }
 
-.ccm-btn--primary {
+.ccm2-btn--primary {
     padding: 0 24px !important;
+}
+
+/* ── Layout ── */
+.ccm2-form-col {
+    flex: 1;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
 }

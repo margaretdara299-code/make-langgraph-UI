@@ -23,14 +23,14 @@
 
 .var-page-title {
     margin: 0 !important;
-    font-size: 24px !important;
+    font-size: var(--text-2xl) !important;
     font-weight: 700 !important;
     letter-spacing: -0.02em;
     color: var(--text-main);
 }
 
 .var-page-subtitle {
-    font-size: 14px !important;
+    font-size: var(--text-sm) !important;
     color: var(--text-muted) !important;
 }
 
@@ -79,7 +79,7 @@
 .variables-main-accordion .ant-collapse-item {
     background: var(--bg-card, #ffffff);
     border: 1px solid var(--border-light);
-    border-radius: 12px !important;
+    border-radius: var(--space-1-5) !important;
     margin-bottom: 16px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0,0,0,0.02);
@@ -101,7 +101,7 @@
 .accordion-group-left {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-1-5);
 }
 
 .accordion-group-icon {
@@ -117,17 +117,17 @@
 
 .accordion-group-title {
     font-weight: 600;
-    font-size: 15px;
+    font-size: var(--text-base);
     color: var(--text-main);
 }
 
 .neat-count-badge {
     background: var(--border-light);
     color: var(--text-muted);
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 600;
     padding: 4px 10px;
-    border-radius: 12px;
+    border-radius: var(--space-1-5);
 }
 
 .accordion-table-wrapper {
@@ -144,7 +144,7 @@
 
 .minimal-nested-table.ant-table-wrapper .ant-table-thead > tr > th {
     background: var(--bg-card, #ffffff);
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 600;
     text-transform: uppercase;
     color: var(--text-muted);
@@ -184,7 +184,7 @@
 .var-name-text {
     font-weight: 600;
     color: var(--text-main);
-    font-size: 14px;
+    font-size: var(--text-sm);
     line-height: 1.4;
     word-break: break-word;
 }
@@ -192,7 +192,7 @@
 .var-key-text {
     font-family: var(--font-mono, monospace);
     color: var(--text-muted);
-    font-size: 12px;
+    font-size: var(--text-xs);
     display: flex;
     align-items: center;
     gap: 6px;
@@ -222,7 +222,7 @@
     border: 1px solid var(--border-light);
     color: var(--text-muted);
     text-transform: capitalize;
-    padding: 6px 12px;
+    padding: 6px var(--space-1-5);
     border-radius: 8px;
 }
 
@@ -303,7 +303,7 @@
 }
 
 .modal-header-subtitle {
-    font-size: 14px;
+    font-size: var(--text-sm);
     color: var(--text-muted);
 }
 
@@ -337,7 +337,7 @@
 .vm-footer-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 12px;
+    gap: var(--space-1-5);
     margin-top: 32px;
     padding-top: 16px;
     border-top: 1px solid var(--border-light);

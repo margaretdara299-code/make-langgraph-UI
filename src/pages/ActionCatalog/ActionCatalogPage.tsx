@@ -14,6 +14,7 @@ import {
     CreateActionModal, 
     SearchInput 
 } from '@/components';
+import { Plus, PackageSearch } from 'lucide-react';
 import { fetchActionById, deleteAction } from '@/services';
 import { PAGE_HEADER_CONTENT } from '@/constants/ui.constants';
 import './ActionCatalogPage.css';
@@ -107,7 +108,7 @@ export default function ActionCatalogPage() {
                             <Button 
                                 type="primary" 
                                 shape="circle"
-                                icon={<PlusOutlined />} 
+                                icon={<Plus size={20} />} 
                                 onClick={() => {
                                     setActionToEdit(null);
                                     setInitialStep(0);
@@ -178,12 +179,32 @@ export default function ActionCatalogPage() {
             <div className="catalog-body">
                 {actions.length === 0 && !isLoading ? (
                     <div className="catalog-empty reveal-up">
-                        <Empty 
-                            image={Empty.PRESENTED_IMAGE_SIMPLE} 
-                            description={searchValue ? "No matching actions found" : "No actions available in the catalog"}
-                        >
-                            {searchValue && <Button type="link" onClick={() => handleSearch('')}>Clear filters</Button>}
-                        </Empty>
+                        <div className="catalog-empty-inner">
+                            <div className="catalog-empty-icon-shell">
+                                <PackageSearch size={48} strokeWidth={1.5} color="var(--accent)" />
+                            </div>
+                            <Title level={4} className="catalog-empty-title">
+                                {searchValue ? "No matching actions found" : "Your action catalog is empty"}
+                            </Title>
+                            <Text type="secondary" className="catalog-empty-desc">
+                                {searchValue 
+                                    ? "Try adjusting your search or filters to find what you're looking for." 
+                                    : "Start by creating your first action to automate your workflow."}
+                            </Text>
+                            <div className="catalog-empty-actions">
+                                {searchValue ? (
+                                    <Button onClick={() => handleSearch('')}>Clear all filters</Button>
+                                ) : (
+                                    <Button 
+                                        type="primary" 
+                                        icon={<Plus size={16} />} 
+                                        onClick={() => setModalOpen(true)}
+                                    >
+                                        Create New Action
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 ) : (
                     <>

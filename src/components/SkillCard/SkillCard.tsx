@@ -7,10 +7,10 @@ import { Typography, Tooltip, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import {
     MoreOutlined,
-    PartitionOutlined,
 } from '@ant-design/icons';
 import { Tag as LucideTag, Layers } from 'lucide-react';
 import StatusPill from '@/components/StatusPill/StatusPill';
+import { DynamicLucideIcon } from '@/components';
 import { getMenuItems, getTagStyle } from '@/utils';
 import { getCategoryColor } from '@/utils/colorHelper';
 import type { SkillCardProps } from '@/interfaces';
@@ -33,7 +33,7 @@ export default function SkillCard({ skill, onClick, onAction }: SkillCardProps) 
             <div className="sc-header">
                 <div className="sc-title-group">
                     <div className="ts-icon-container">
-                        <PartitionOutlined className="sc-partition-icon" />
+                        <DynamicLucideIcon name={skill.icon || 'Box'} size={20} />
                     </div>
                     <div className="sc-name">{skill.name}</div>
                 </div>

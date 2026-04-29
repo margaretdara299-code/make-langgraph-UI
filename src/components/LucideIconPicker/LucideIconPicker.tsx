@@ -100,14 +100,15 @@ export interface LucideIconPickerProps {
     value?: string;
     onChange?: (iconName: string) => void;
     placeholder?: string;
+    iconOnly?: boolean;
 }
 
-export const DynamicLucideIcon = ({ name, size = 18, color = 'currentColor', ...props }: { name?: string; size?: number; color?: string; [key: string]: any }) => {
+export const DynamicLucideIcon = ({ name, size = 18, color = 'currentColor', strokeWidth = 2, ...props }: { name?: string; size?: number; color?: string; strokeWidth?: number; [key: string]: any }) => {
     const IconComponent = (LucideIcons as any)[name || 'HelpCircle'] || LucideIcons.HelpCircle;
-    return <IconComponent size={size} color={color} {...props} />;
+    return <IconComponent size={size} color={color} strokeWidth={strokeWidth} {...props} />;
 };
 
-export const LucideIconPicker: React.FC<LucideIconPickerProps> = ({ value, onChange, placeholder = 'Select Icon' }) => {
+export const LucideIconPicker: React.FC<LucideIconPickerProps> = ({ value, onChange, placeholder = 'Select Icon', iconOnly = true }) => {
 
     // Initialize metadata lazily on first use
     initializeIconMetadata();
@@ -191,16 +192,32 @@ export const LucideIconPicker: React.FC<LucideIconPickerProps> = ({ value, onCha
                     </div>
                     <div className="picker-control-group picker-search-control">
                         <span className="picker-control-label">Search</span>
-                        <Input
-                            prefix={<LucideIcons.Search size={12} className="lip-search-icon" />}
-                            placeholder={`Find ${category}...`}
-                            variant="filled"
-                            size="small"
-                            value={searchValue}
-                            onChange={e => setSearchValue(e.target.value)}
-                            autoFocus
-                            className="picker-search-input"
-                        />
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            <Input
+                                prefix={<LucideIcons.Search size={12} className="lip-search-icon" />}
+                                placeholder={`Find ${category}...`}
+                                variant="filled"
+                                size="small"
+                                value={searchValue}
+                                onChange={e => setSearchValue(e.target.value)}
+                                autoFocus
+                                className="picker-search-input"
+                            />
+                            {value && (
+                                <Tooltip title="Clear selection">
+                                    <Button 
+                                        size="small" 
+                                        type="text" 
+                                        icon={<LucideIcons.X size={14} />} 
+                                        onClick={() => {
+                                            onChange?.('');
+                                            setIsOpen(false);
+                                        }}
+                                        className="picker-clear-btn"
+                                    />
+                                </Tooltip>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -247,15 +264,23 @@ export const LucideIconPicker: React.FC<LucideIconPickerProps> = ({ value, onCha
             placement="bottomLeft"
             overlayClassName="premium-icon-picker-overlay"
         >
-            <Button className={`lucide-picker-trigger icon-only ${isOpen ? 'is-open' : ''}`} variant="filled">
+            <Button 
+                className={`lucide-picker-trigger ${iconOnly ? 'icon-only' : ''} ${isOpen ? 'is-open' : ''}`} 
+                variant="filled"
+            >
                 <div className="picker-trigger-inner">
                     <div className="selected-icon-preview">
                         {value ? (
-                            <DynamicLucideIcon name={value} size={24} color="var(--accent)" />
+                            <DynamicLucideIcon name={value} size={iconOnly ? 28 : 20} color="var(--accent)" strokeWidth={2.5} />
                         ) : (
-                            <LucideIcons.Plus size={24} color="var(--color-error)" />
+                            <LucideIcons.Plus size={iconOnly ? 28 : 20} color="var(--accent)" strokeWidth={2.5} />
                         )}
                     </div>
+                    {!iconOnly && (
+                        <span style={{ marginLeft: '8px', fontSize: 'var(--text-sm)', fontWeight: 500, color: 'var(--text-main)' }}>
+                            {value || placeholder}
+                        </span>
+                    )}
                 </div>
             </Button>
         </Popover>

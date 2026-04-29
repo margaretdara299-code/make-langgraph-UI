@@ -1,4 +1,62 @@
 /* SkillDetailsForm.css */
+.create-skill__form {
+    margin-top: 16px;
+}
+
+.sdf-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 4px;
+}
+
+.sdf-flex-1 {
+    flex: 1;
+}
+
+.sdf-flex-2 {
+    flex: 1; /* Changed to 1 for 50/50 split */
+}
+
+.sdf-col-icon {
+    width: 60px;
+    flex-shrink: 0;
+}
+
 .sdf-textarea {
     min-height: 100px !important;
+    border-radius: 8px !important;
+}
+
+.sdf-tags-select .ant-select-selector {
+    min-height: 100px !important; /* Slightly taller for a better 'area' feel */
+    padding: 10px var(--space-1-5) !important;
+    border-radius: 10px !important;
+    background-color: #F8FAFC !important; /* Soft technical background */
+    border: 1.2px solid #E2E8F0 !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    overflow-y: auto !important;
+    transition: all 0.2s ease !important;
+}
+
+.sdf-tags-select.ant-select-focused .ant-select-selector {
+    background-color: #ffffff !important;
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 4px var(--accent-light) !important;
+}
+
+.sdf-tags-select .ant-select-selection-overflow {
+    padding: 0;
+    gap: 6px; /* Neat spacing between pills */
+}
+
+.sdf-tags-select .ant-select-selection-item {
+    background: #ffffff !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+    height: 24px !important;
+    line-height: 22px !important;
+    margin: 0 !important;
+    color: var(--text-main) !important;
 }

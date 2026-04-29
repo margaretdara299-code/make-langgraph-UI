@@ -26,14 +26,14 @@
 .title-row {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-1-5);
 }
 
 
 .catalog-filters-row {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-1-5);
     flex-shrink: 0;
 }
 
@@ -89,7 +89,7 @@
 }
 
 .status-tabs .ant-tabs-tab {
-    padding: 12px 27px !important;
+    padding: var(--space-1-5) 27px !important;
     margin: 0 !important;
     font-size: var(--text-sm);
     color: var(--text-subtle) !important;
@@ -115,10 +115,48 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 300px;
-    background: var(--bg-card);
+    min-height: 400px;
+    background: #ffffff;
     border: 1px dashed var(--border-medium);
-    border-radius: 16px;
+    border-radius: 20px;
+    padding: 40px;
+}
+
+.catalog-empty-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 400px;
+}
+
+.catalog-empty-icon-shell {
+    width: 80px;
+    height: 80px;
+    background: var(--accent-light);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.catalog-empty-title {
+    margin-bottom: 8px !important;
+    color: var(--text-main) !important;
+}
+
+.catalog-empty-desc {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    margin-bottom: 32px;
+}
+
+.catalog-empty-actions .ant-btn {
+    height: 40px;
+    padding: 0 24px;
+    border-radius: 8px;
+    font-weight: 600;
 }
 
 @media (max-width: 1024px) {
@@ -174,18 +212,4 @@
 
 .premium-pagination .ant-select-selector {
     border-radius: 8px !important;
-}
-.ac-header-title {
-    margin: 0 !important;
-    font-size: 28px !important;
-    font-weight: 700 !important;
-    letter-spacing: -0.022em !important;
-}
-
-.ac-header-subtitle {
-    font-size: 13px !important;
-    font-weight: 400 !important;
-    color: var(--text-muted) !important;
-    display: block !important;
-    margin-top: 4px !important;
 }

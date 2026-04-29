@@ -68,7 +68,7 @@
 }
 
 .sidebar-search-wrap {
-  margin-top: 12px;
+  margin-top: var(--space-1-5);
 }
 
 .sidebar-scroll {
@@ -267,7 +267,7 @@
   display: flex;
   align-items: center;
   gap: 8px; /* Adjusted gap for a cleaner look */
-  /* padding: 8px 12px; Better vertical padding for evenness */
+  /* padding: 8px var(--space-1-5); Better vertical padding for evenness */
   padding: 5px 2px;
   border-radius: 8px; /* Slightly tighter radius for rows */
   cursor: grab;
@@ -366,7 +366,7 @@
   min-height: 0; /* required for Firefox */
 }/* ── NodePalette design tokens ─────────────────────────────── */
 .antd-tree-container {
-  --np-indent:   12px;           /* half of switcher width → aligns line with arrow center */
+  --np-indent:   var(--space-1-5);           /* half of switcher width → aligns line with arrow center */
   --np-switcher: 25px;           /* AntD switcher column width                              */
   --np-line-d1:  1.2px solid #94a3b8;  /* depth-1 line (sub-categories) */
   --np-line-d2:  1px   solid #dde3eb;  /* depth-2 line (leaf items)     */

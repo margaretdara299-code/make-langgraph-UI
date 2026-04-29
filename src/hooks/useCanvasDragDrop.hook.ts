@@ -178,11 +178,17 @@ export default function useCanvasDragDrop(
                         category:    'structure',
                         icon:        'Layers',
                         queue_name:  '',
-                        queue_type:  'human',
-                        priority:    'normal',
-                        ttl_seconds: 0,
-                        auto_closeout: true,
-                        payload_mappings: [],
+                        configurations_json: {
+                            method: 'POST',
+                            url: '',
+                            path_params: [],
+                            query_params: [],
+                            header_params: [],
+                            inherit_previous_response: true,
+                            body_params_type: 'form-data',
+                            body_params: [],
+                            response_to_state_mapping: [],
+                        },
                     } as any,
                 };
                 setNodes((nds) => [...nds, newNode]);

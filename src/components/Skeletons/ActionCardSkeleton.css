@@ -17,7 +17,7 @@
 }
 
 .action-card-skeleton .ac-desc-placeholder {
-    margin-top: 12px;
+    margin-top: var(--space-1-5);
 }
 
 /* Industry-Level Shimmer Animation */
@@ -69,7 +69,7 @@
 
 .ac-skeleton-date {
     width: 50px !important;
-    height: 12px !important;
+    height: var(--space-1-5) !important;
 }
 
 .ac-skeleton-action-btn {

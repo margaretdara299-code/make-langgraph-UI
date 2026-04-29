@@ -4,7 +4,7 @@
  */
 
 .connector-card {
-    border-radius: 12px;
+    border-radius: var(--space-1-5);
     overflow: hidden;
     height: 100%;
     display: flex;
@@ -29,7 +29,7 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 12px;
+    margin-bottom: var(--space-1-5);
 }
 
 .connector-card__icon {
@@ -94,7 +94,7 @@
 }
 
 .connector-card__config-item {
-    font-size: 12px !important;
+    font-size: var(--text-xs) !important;
     max-width: 100%;
     white-space: nowrap;
     overflow: hidden;
@@ -113,7 +113,7 @@
 }
 
 .connector-card__host {
-    font-size: 12px;
+    font-size: var(--text-xs);
 }
 
 /* ── Footer ── */
@@ -121,7 +121,7 @@
 .connector-card__footer {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-1-5);
     padding-top: 16px;
     border-top: 1px solid var(--color-border);
     margin-top: auto;
@@ -135,13 +135,13 @@
 
 .connector-card__type-tag {
     margin: 0;
-    border-radius: 12px;
+    border-radius: var(--space-1-5);
     background-color: var(--color-surface-element);
     border-color: var(--color-surface-border-strong);
     color: inherit;
 }
 
 .connector-card__date {
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: GrayText;
 }

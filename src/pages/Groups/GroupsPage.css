@@ -23,7 +23,7 @@
 .title-row {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-1-5);
 }
 
 .page-main-title {
@@ -75,16 +75,17 @@
     grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
     gap: 20px;
     padding-bottom: 40px;
-    align-items: start; /* Ensures cards only take up needed vertical space */
+    align-items: start;
+    /* Ensures cards only take up needed vertical space */
 }
 
 .group-card {
     background: var(--bg-card);
     border: 1px solid var(--border-light);
-    border-radius: 12px;
+    border-radius: var(--space-1-5);
     display: flex;
     flex-direction: column;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.03);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 12px rgba(0, 0, 0, 0.03);
     transition: box-shadow 0.2s ease;
     height: auto;
 }
@@ -123,21 +124,24 @@
 }
 
 .group-card-title {
-    font-weight: 800;
+    font-weight: 600;
     font-size: var(--text-lg);
     color: var(--text-main, var(--text-main));
     letter-spacing: -0.02em;
 }
 
 .group-card-subtitle {
-    font-size: 12px;
-    color: var(--accent);
+    /* Reference: subtle pill — light border, muted text, no accent background */
+    font-size: 11px;
+    color: var(--text-muted);
     font-family: var(--font-mono);
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
-    background: var(--accent-soft, rgba(99, 102, 241, 0.08));
-    padding: 2px 6px;
+    background: transparent;
+    border: 1px solid var(--border-light);
+    padding: 2px 7px;
     border-radius: 4px;
+    letter-spacing: 0.04em;
 }
 
 
@@ -146,11 +150,9 @@
     align-items: center;
 }
 
-.group-card-body {
-    padding: 0 18px 18px;
-}
 
-.group-variables-list {
+
+.group-variables-list-table {
     display: flex;
     flex-direction: column;
     gap: 0;
@@ -163,7 +165,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
+    padding: var(--space-1-5) 16px;
     background: var(--bg-card);
     border-bottom: 1px solid var(--bg-page);
     transition: all 0.2s ease;
@@ -211,10 +213,10 @@
 }
 
 .var-column-header {
-    font-size: 10px;
-    font-weight: 700;
+    font-size: 12px;
+    font-weight: 600;
     color: var(--text-muted);
-    letter-spacing: 0.08em;
+
     opacity: 0.6;
 }
 
@@ -228,17 +230,14 @@
 }
 
 .var-key-code {
-    font-size: 12px;
+    /* Reference: plain grey monospace key, no icon */
+    font-size: 10px;
     color: #9ca3af !important;
     font-family: var(--font-mono, monospace);
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    width: fit-content;
+    font-weight: 500;
+    letter-spacing: 0.03em;
     line-height: 1.4;
-    margin-top: 4px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    margin-top: 2px;
 }
 
 .var-key-icon {
@@ -246,13 +245,17 @@
 }
 
 .variable-type-tag-neat {
-    font-size: 10px !important;
-    font-weight: 600 !important;
-    background: var(--border-light) !important;
-    border: none !important;
-    color: var(--text-muted) !important;
-    padding: 0 6px !important;
+    /* Reference: orange/amber border with orange text, transparent background */
+    font-size: var(--text-2xs) !important;
+    font-weight: 700 !important;
+    background: transparent !important;
+    border: 1.5px solid #f59e0b !important;
+    color: #d97706 !important;
+    padding: 0 7px !important;
     margin: 0 !important;
+    border-radius: 4px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
 .var-value-text {
@@ -271,8 +274,9 @@
     display: grid;
     grid-template-columns: 200px 80px 1fr;
     gap: 16px;
-    padding: 12px 16px;
-    background: var(--bg-page);
+    padding: 10px 16px;
+    /* Reference: slightly more visible grey background */
+    background: #f8fafc;
     border-bottom: 1px solid var(--border-light);
 }
 
@@ -303,9 +307,10 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 12px;
+    padding: 10px var(--space-1-5);
     background: transparent;
-    border: 1px solid transparent; /* Keep invisible border for sizing */
+    border: 1px solid transparent;
+    /* Keep invisible border for sizing */
     border-radius: 10px;
     color: var(--text-subtle, var(--text-subtle));
     font-size: 13px;
@@ -329,7 +334,7 @@
     border: 1px solid var(--border-light) !important;
     margin-top: 8px;
     animation: revealUp 0.3s ease-out;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .postman-add-row.editing-row {
@@ -362,12 +367,12 @@
 
 .modal-header-title {
     font-size: var(--text-xl);
-    font-weight: 700;
+    font-weight: 600;
     color: var(--text-main);
 }
 
 .modal-header-subtitle {
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--text-subtle);
 }
 
@@ -379,7 +384,7 @@
 
 .group-description-text {
     margin: 2px 0 0;
-    font-size: 12.5px;
+    font-size: var(--text-xs);
     color: var(--text-muted, var(--text-muted));
     font-family: var(--font-sans);
     line-height: 1.4;
@@ -390,7 +395,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
+    padding: var(--space-1-5) 16px;
     background: var(--surface-1);
     border-bottom: 1px solid var(--border-light);
     animation: revealUp 0.3s ease-out;
@@ -412,7 +417,7 @@
 }
 
 .inline-input-key {
-    font-size: 12px !important;
+    font-size: var(--text-xs) !important;
     color: var(--accent) !important;
     font-family: var(--font-mono) !important;
     padding: 0 !important;
@@ -422,7 +427,7 @@
 
 .inline-select-type {
     width: 100% !important;
-    font-size: 10px !important;
+    font-size: var(--text-2xs) !important;
     font-weight: 700 !important;
     color: var(--text-muted) !important;
     height: 24px !important;
@@ -456,7 +461,7 @@
 
 .validation-msg-tiny {
     color: var(--color-error);
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 500;
     margin-top: 4px;
     margin-left: 2px;
@@ -464,8 +469,15 @@
 }
 
 @keyframes revealDown {
-    from { opacity: 0; transform: translateY(-4px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 
@@ -483,7 +495,7 @@
 }
 
 .ngc-header {
-    padding: 12px 16px;
+    padding: var(--space-1-5) 16px;
     background: var(--bg-main);
     border-bottom: 1px solid var(--border-light);
     display: flex;
@@ -568,7 +580,7 @@
     width: 100% !important;
     text-transform: uppercase !important;
     font-family: var(--font-mono) !important;
-    font-size: 12px !important;
+    font-size: var(--text-xs) !important;
     height: 32px !important;
 }
 
@@ -581,7 +593,7 @@
     font-size: 13px !important;
     font-family: var(--font-sans) !important;
     color: var(--text-main) !important;
-    padding: 8px 12px !important;
+    padding: 8px var(--space-1-5) !important;
 }
 
 /* InlineGroupEditor */
@@ -592,7 +604,7 @@
 }
 
 .ige-header {
-    padding: 8px 12px;
+    padding: 8px var(--space-1-5);
     background: var(--bg-main);
     border-bottom: 1px solid var(--border-light);
     display: flex;
@@ -690,7 +702,7 @@
     font-size: 13px !important;
     font-family: var(--font-sans) !important;
     color: var(--text-main) !important;
-    padding: 8px 12px !important;
+    padding: 8px var(--space-1-5) !important;
 }
 
 /* GroupCard helpers */
@@ -733,7 +745,7 @@
 }
 
 .gph-variable-key {
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--accent);
     font-family: var(--font-mono);
     font-weight: 700;
@@ -792,13 +804,13 @@
 
 .gm-textarea {
     border-radius: 6px !important;
-    padding: 12px !important;
+    padding: var(--space-1-5) !important;
 }
 
 .gm-footer-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 12px;
+    gap: var(--space-1-5);
     margin-top: 32px;
 }
 
@@ -816,7 +828,7 @@
 }
 
 .add-var-icon {
-    font-size: 12px;
+    font-size: var(--text-xs);
 }
 
 /* =====================================================
@@ -846,7 +858,7 @@
 
 .iva-type-select {
     width: 100% !important;
-    font-size: 10px !important;
+    font-size: var(--text-2xs) !important;
 }
 
 .iva-input-value {
@@ -856,10 +868,10 @@
 }
 
 .iva-actions {
-    margin-left: 12px;
+    margin-left: var(--space-1-5);
     opacity: 1 !important;
 }
 
 .iva-icon-sm {
-    font-size: 12px !important;
+    font-size: var(--text-xs) !important;
 }

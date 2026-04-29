@@ -20,13 +20,13 @@ interface GroupCardProps {
 /**
  * Main Group Card component that manages its own variable list and inline states.
  */
-export const GroupCard = ({ 
-    group, 
-    variables, 
-    onEditGroup, 
-    onDeleteGroup, 
+export const GroupCard = ({
+    group,
+    variables,
+    onEditGroup,
+    onDeleteGroup,
     onDeleteVariable,
-    refreshData 
+    refreshData
 }: GroupCardProps) => {
     const [addingVariable, setAddingVariable] = useState(false);
     const [editingVariableKey, setEditingVariableKey] = useState<string | null>(null);
@@ -77,8 +77,8 @@ export const GroupCard = ({
                         <Empty description="No variables yet" image={Empty.PRESENTED_IMAGE_SIMPLE} />
                     </div>
                 )}
-                
-                <div className="group-variables-list">
+
+                <div className="group-variables-list-table">
                     <div className="variable-table-header">
                         <span className="var-column-header">Name / Key</span>
                         <span className="var-column-header">Type</span>
@@ -86,17 +86,17 @@ export const GroupCard = ({
                     </div>
                     {variables.map(variable => (
                         editingVariableKey === variable.variableKey ? (
-                            <InlineVariableEditor 
-                                key={variable.variableKey} 
-                                variable={variable} 
-                                onUpdated={() => { 
-                                    setEditingVariableKey(null); 
-                                    refreshData(); 
-                                }} 
-                                onCancel={() => setEditingVariableKey(null)} 
+                            <InlineVariableEditor
+                                key={variable.variableKey}
+                                variable={variable}
+                                onUpdated={() => {
+                                    setEditingVariableKey(null);
+                                    refreshData();
+                                }}
+                                onCancel={() => setEditingVariableKey(null)}
                             />
                         ) : (
-                            <VariableListItem 
+                            <VariableListItem
                                 key={variable.variableKey}
                                 variable={variable}
                                 onEdit={(v) => setEditingVariableKey(v.variableKey)}
@@ -107,18 +107,18 @@ export const GroupCard = ({
 
                     {addingVariable ? (
                         <div className="reveal-up">
-                            <InlineVariableAdder 
-                                groupName={group.groupName} 
-                                groupKey={group.groupKey} 
-                                onAdded={() => { 
-                                    setAddingVariable(false); 
-                                    refreshData(); 
-                                }} 
+                            <InlineVariableAdder
+                                groupName={group.groupName}
+                                groupKey={group.groupKey}
+                                onAdded={() => {
+                                    setAddingVariable(false);
+                                    refreshData();
+                                }}
                                 onCancel={() => setAddingVariable(false)}
                             />
                         </div>
                     ) : (
-                        <button 
+                        <button
                             className="add-variable-trigger-row"
                             onClick={() => setAddingVariable(true)}
                         >

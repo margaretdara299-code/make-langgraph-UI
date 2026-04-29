@@ -5,7 +5,7 @@
 }
 
 .var-item-actions-gap {
-    margin-left: 12px !important;
+    margin-left: var(--space-1-5) !important;
 }
 
 .validation-msg-ive {
