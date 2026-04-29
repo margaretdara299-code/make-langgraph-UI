@@ -111,11 +111,17 @@ export function buildExecutionDebuggerNodes(
         const latestStep = matchingSteps[matchingSteps.length - 1];
 
         if (!latestStep) {
-            // Parallel join that is waiting: execution is running but this merge hasn't been reached yet
+            // Show the "waiting" state on a merge node ONLY when:
+            //   1. It's a parallel_join node
+            //   2. Execution is still running
+            //   3. This node hasn't been reached yet
+            //   4. At least one other node IS revealed (branches are actively running)
+            //      → prevents showing "waiting" at t=0 before anything has started
             const isWaitingMerge =
                 node.type === 'parallel_join' &&
                 isExecuting &&
-                !revealedNodeIds.has(node.id);
+                !revealedNodeIds.has(node.id) &&
+                revealedNodeIds.size > 0;
 
             return {
                 ...node,
@@ -163,13 +169,18 @@ export function buildExecutionDebuggerEdges(
     // Build a set of revealed node IDs
     const revealedNodeIds = new Set(revealedStepMap.keys());
 
-    // ── Fan-out count: for each active source, count total outgoing edges ──
-    // When a Split has 3 branches, each branch edge gets ballCount=3
-    // so the viewer sees 3 balls diverging from the split point simultaneously.
-    const fanOutCount = new Map<string, number>();
-    for (const edge of edges) {
-        if (revealedNodeIds.has(edge.source)) {
-            fanOutCount.set(edge.source, (fanOutCount.get(edge.source) ?? 0) + 1);
+    // ── Ball count per edge ──────────────────────────────────────────────────
+    // RULE: only parallel_split nodes emit multiple balls.
+    // Action nodes have error-handle edges that would give fanCount=2 with a
+    // generic edge-count approach — that's wrong. We use node type as the gate.
+    //
+    // For a parallel_split with N configured branches, each branch edge gets N
+    // balls so the viewer sees N threads launching simultaneously.
+    const splitBranchCount = new Map<string, number>();
+    for (const node of nodes) {
+        if (node.type === 'parallel_split') {
+            const outCount = edges.filter(e => e.source === node.id).length;
+            if (outCount > 1) splitBranchCount.set(node.id, outCount);
         }
     }
 
@@ -181,9 +192,8 @@ export function buildExecutionDebuggerEdges(
         const isEdgeErrorPath = Boolean((edge.data as { isErrorPath?: boolean } | undefined)?.isErrorPath);
         const strokeDasharray = isEdgeErrorPath ? '6 3' : edge.style?.strokeDasharray;
 
-        // Number of parallel branches fanning out from this source
-        const srcFanOut = fanOutCount.get(edge.source) ?? 1;
-        const parallelBalls = srcFanOut > 1 ? srcFanOut : 1;
+        // Number of balls: >1 only for parallel_split source nodes
+        const parallelBalls = splitBranchCount.get(edge.source) ?? 1;
 
         if (!isPathActive) {
             // Source revealed but target not yet reached → parallel branch in-flight
