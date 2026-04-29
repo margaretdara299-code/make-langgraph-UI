@@ -25,6 +25,7 @@ export default function DeletableEdge(props: EdgeProps) {
     const [hovered, setHovered] = useState(false);
 
     const fromDecision = Boolean((data as any)?.fromDecision);
+    const isErrorPath = Boolean((data as any)?.isErrorPath);
     const edgeColor = getNodeStrokeColor(sourceNodeData);
 
     // Compute dynamic label for Decision edges
@@ -89,12 +90,106 @@ export default function DeletableEdge(props: EdgeProps) {
                 }}
             />
 
-            {/* ── Animated Ball Overlay ── */}
-            {props.animated && (
-                <circle r="6" fill="var(--color-bg-white)" stroke={style?.stroke || 'var(--color-primary)'} strokeWidth="3" style={{ filter: `drop-shadow(0 0 6px ${style?.stroke || 'var(--color-primary)'})` }}>
-                    <animateMotion dur="1.2s" repeatCount="indefinite" path={edgePath} />
-                </circle>
-            )}
+            {/* ── Animated Comet(s) Overlay ── */}
+            {props.animated && !isErrorPath && (() => {
+                /**
+                 * Comet animation design:
+                 *
+                 * Each "ball" is actually 3 circles:
+                 *   [tail ghost] → [mid ghost] → [HEAD] (z-order: back to front)
+                 *
+                 * The ghosts trail 0.09s and 0.18s behind the head.
+                 * Because a less-negative `begin` means the animation started more
+                 * recently → the ghost is at an earlier position on the path →
+                 * it appears BEHIND the head. This makes direction obvious at a glance.
+                 *
+                 * For parallel-split edges, N comets are evenly pre-positioned across
+                 * the full path length so all N are visible simultaneously.
+                 *
+                 * calcMode="paced" = constant visual speed on curves/corners.
+                 */
+                const ballCount = Math.min((data as any)?._execBalls ?? 1, 5);
+                const ballColor = (style?.stroke as string) || 'var(--color-primary)';
+
+                // Timing: 1.6s single (relaxed, readable), 1.1s parallel (urgent/fast)
+                const dur = ballCount > 1 ? 1.1 : 1.6;
+
+                // Comet tail gap in seconds — how far behind each ghost is
+                const GAP = 0.09;
+
+                // Head radius: larger for single path (clear focus), smaller for parallel
+                const headR = ballCount > 1 ? 5.5 : 7;
+
+                const fmtBegin = (sec: number): string => `${sec.toFixed(3)}s`;
+
+                return Array.from({ length: ballCount }).flatMap((_, ballIdx) => {
+                    // Pre-position each ball: negative begin = "already N seconds into the loop"
+                    // Ball 0: -0.000s (at 0%), Ball 1: -0.55s (at 50%), Ball 2: -1.10s (at 100% = 0%)
+                    const headSec = -((ballIdx * dur) / ballCount);
+
+                    // Trail ghosts: LESS negative = started more recently = earlier on path = BEHIND head
+                    const midSec  = headSec + GAP;       // 0.09s behind head
+                    const tailSec = headSec + GAP * 2;   // 0.18s behind head
+
+                    return [
+                        // ── Tail ghost (farthest behind, barely visible) ──
+                        <circle
+                            key={`tail-${ballIdx}`}
+                            r={headR * 0.38}
+                            fill={ballColor}
+                            stroke="none"
+                            opacity={0.2}
+                        >
+                            <animateMotion
+                                dur={`${dur}s`}
+                                repeatCount="indefinite"
+                                path={edgePath}
+                                begin={fmtBegin(tailSec)}
+                                calcMode="paced"
+                            />
+                        </circle>,
+
+                        // ── Mid ghost (semi-transparent, blends into head) ──
+                        <circle
+                            key={`mid-${ballIdx}`}
+                            r={headR * 0.6}
+                            fill="#222222"
+                            stroke={ballColor}
+                            strokeWidth={1}
+                            opacity={0.45}
+                        >
+                            <animateMotion
+                                dur={`${dur}s`}
+                                repeatCount="indefinite"
+                                path={edgePath}
+                                begin={fmtBegin(midSec)}
+                                calcMode="paced"
+                            />
+                        </circle>,
+
+                        // ── Head (frontmost — full glow) ──
+                        <circle
+                            key={`head-${ballIdx}`}
+                            r={headR}
+                            fill="#222222"
+                            stroke={ballColor}
+                            strokeWidth={ballCount > 1 ? 2.2 : 2.8}
+                            style={{
+                                filter: `drop-shadow(0 0 ${ballCount > 1 ? 5 : 8}px ${ballColor})`,
+                            }}
+                        >
+                            <animateMotion
+                                dur={`${dur}s`}
+                                repeatCount="indefinite"
+                                path={edgePath}
+                                begin={fmtBegin(headSec)}
+                                calcMode="paced"
+                            />
+                        </circle>,
+                    ];
+                });
+            })()}
+
 
             {/*
              * ── Invisible wide interaction path ──
