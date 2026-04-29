@@ -53,3 +53,48 @@
     font-style: italic;
     line-height: 1.4;
 }
+
+/* ── Waiting overlay (shown during parallel execution) ── */
+.merge-node__wait-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(245, 158, 11, 0.08);
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.merge-node__wait-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    background: rgba(245, 158, 11, 0.18);
+    border: 1px solid rgba(245, 158, 11, 0.45);
+    border-radius: 20px;
+    color: #d97706;
+    backdrop-filter: blur(4px);
+}
+
+.merge-node__wait-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.merge-node__hourglass {
+    animation: hourglassFlip 2s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+@keyframes hourglassFlip {
+    0%   { transform: rotate(0deg);   }
+    45%  { transform: rotate(0deg);   }
+    55%  { transform: rotate(180deg); }
+    100% { transform: rotate(180deg); }
+}
+

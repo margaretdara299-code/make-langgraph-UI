@@ -57,8 +57,11 @@ export default function ParallelSplitNode({ id, data }: NodeProps<CanvasNode>) {
      * Distribute handles evenly across the node width.
      * Mirrors the DecisionNode distribution formula.
      */
-    const leftPercent = (slotIndex: number, total: number) =>
-        `${(slotIndex * 100) / (total + 1)}%`;
+    // Mirror the DecisionNode formula exactly:
+    // total = branches.length, we space handles at slots 1..N out of (N+1) equal divisions
+    const totalHandles = branches.length;
+    const leftPercent = (slotIndex: number) =>
+        `${(slotIndex * 100) / (totalHandles + 1)}%`;
 
     const badge = isConditional ? 'COND. PARALLEL' : 'PARALLEL';
 
@@ -104,18 +107,30 @@ export default function ParallelSplitNode({ id, data }: NodeProps<CanvasNode>) {
                 </div>
             )}
 
-            {/* ── Dynamic bottom source handles — one per branch ── */}
-            {isConfigured && branches.map((branch, idx) => (
-                <Handle
-                    key={branch.id || `branch_${idx}`}
-                    type="source"
-                    position={Position.Bottom}
-                    id={branch.id || `branch_${idx}`}
-                    isConnectable
-                    className="split-node__source-handle modern-node-handle"
-                    style={{ left: leftPercent(idx + 1, branches.length) }}
-                />
-            ))}
+            {/* ── Dynamic bottom source handles — one per branch ──
+             *
+             * INVARIANT: handle `id` must exactly match `branch.id` saved by the form.
+             * The form's "Add Branch" button pre-generates id = `branch_<Date.now()>`.
+             * Never overwrite branch.id from the label field — that breaks existing edges.
+             * The fallback here is defensive-only; a correctly configured node always has id.
+             */}
+            {isConfigured && branches.map((branch, idx) => {
+                // Use branch.id if it's a non-empty string, otherwise use index fallback
+                const handleId = branch.id && String(branch.id).trim() ? String(branch.id) : `branch_${idx}`;
+                return (
+                    <Handle
+                        key={handleId}
+                        type="source"
+                        position={Position.Bottom}
+                        id={handleId}
+                        isConnectable
+                        className="split-node__source-handle modern-node-handle"
+                        style={{
+                            '--handle-left': leftPercent(idx + 1),
+                        } as React.CSSProperties}
+                    />
+                );
+            })}
         </ModernNode>
     );
 }

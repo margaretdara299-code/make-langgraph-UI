@@ -30,6 +30,16 @@
     transform: translateX(-50%) scale(1.3) !important;
 }
 
+/* ── Dynamic left position via CSS custom property ─────────────────────────
+   --handle-left is injected at runtime: style={{ '--handle-left': '...' }}
+   React Flow positions handles internally; we override left here with
+   !important so our even distribution wins — same pattern as DecisionNode.
+   NEVER set left directly as an inline style — React Flow overrides it.
+──────────────────────────────────────────────────────────────────────────── */
+.split-node__source-handle {
+    left: var(--handle-left, 50%) !important;
+}
+
 /* ── Empty state helper text shown on the node card ── */
 .split-node__empty-state {
     padding: 6px 10px 8px;

@@ -57,7 +57,8 @@ export default function MergePropertiesPanel({
     const incomingBranches = useMemo(() =>
         incomingEdges.map(e => {
             const sourceNode = nodes.find(n => n.id === e.source);
-            const sourceLabel = (sourceNode?.data as any)?.label || e.source;
+            const sourceNodeData = sourceNode?.data as any;
+            const sourceLabel = sourceNodeData?.label || sourceNodeData?.name || e.source;
             const branchId = e.sourceHandle || null;
             return { edge: e, sourceNode, sourceLabel, branchId };
         }),
@@ -175,6 +176,19 @@ export default function MergePropertiesPanel({
                         { label: 'Fail the entire merge', value: 'fail_merge' },
                         { label: 'Continue with partial results', value: 'continue_partial' },
                     ]}
+                />
+            </Form.Item>
+
+            <Form.Item
+                label="Wait Timeout (seconds)"
+                name="timeout_seconds"
+                extra="Max seconds to wait for all branches before timing out. Leave empty for no timeout."
+            >
+                <Input
+                    type="number"
+                    min={0}
+                    placeholder="e.g. 60"
+                    style={{ fontFamily: 'monospace' }}
                 />
             </Form.Item>
 

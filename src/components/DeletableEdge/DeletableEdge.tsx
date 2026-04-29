@@ -83,18 +83,44 @@ export default function DeletableEdge(props: EdgeProps) {
                 markerEnd={markerEnd}
                 style={{
                     ...style,
-                    strokeDasharray: style?.strokeDasharray ?? (props.animated ? '8,4' : 'none'),
+                    // No dash pattern on animated edges — the moving balls convey data-flow
+                    strokeDasharray: style?.strokeDasharray ?? 'none',
                     stroke: style?.stroke ?? edgeColor,
                     strokeWidth: style?.strokeWidth ?? 2,
                 }}
             />
 
-            {/* ── Animated Ball Overlay ── */}
-            {props.animated && !isErrorPath && (
-                <circle r="6" fill="var(--color-bg-white)" stroke={style?.stroke || 'var(--color-primary)'} strokeWidth="3" style={{ filter: `drop-shadow(0 0 6px ${style?.stroke || 'var(--color-primary)'})` }}>
-                    <animateMotion dur="1.2s" repeatCount="indefinite" path={edgePath} />
-                </circle>
-            )}
+            {/* ── Animated Ball(s) Overlay ── */}
+            {props.animated && !isErrorPath && (() => {
+                // Number of balls on this edge (>1 on parallel branch edges)
+                const ballCount: number = (data as any)?._execBalls ?? 1;
+                const ballColor: string = (style?.stroke as string) || 'var(--color-primary)';
+                const dur = 1.4; // seconds per ball trip
+
+                return Array.from({ length: ballCount }).map((_, idx) => {
+                    // Stagger: each ball starts at an even interval within the duration
+                    const beginDelay = `${(idx * dur) / ballCount}s`;
+                    // Leading ball is slightly larger
+                    const r = idx === 0 ? 6.5 : 5;
+                    return (
+                        <circle
+                            key={idx}
+                            r={r}
+                            fill="var(--exec-ball-fill, #fff)"
+                            stroke={ballColor}
+                            strokeWidth={idx === 0 ? 3 : 2.5}
+                            style={{ filter: `drop-shadow(0 0 ${idx === 0 ? 7 : 5}px ${ballColor})` }}
+                        >
+                            <animateMotion
+                                dur={`${dur}s`}
+                                repeatCount="indefinite"
+                                path={edgePath}
+                                begin={beginDelay}
+                            />
+                        </circle>
+                    );
+                });
+            })()}
 
             {/*
              * ── Invisible wide interaction path ──

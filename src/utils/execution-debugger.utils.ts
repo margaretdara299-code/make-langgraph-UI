@@ -91,15 +91,32 @@ export function buildExecutionDebuggerNodes(
 ): Node[] {
     if (!isExecuting && !isSimulationDone) return nodes;
 
+    // Build a set of node IDs that have been revealed (non-idle)
+    const revealedNodeIds = new Set(
+        steps.filter(s => s.status !== 'idle').map(s => s.node.id)
+    );
+
     return nodes.map((node) => {
         const matchingSteps = steps.filter((step) => step.node.id === node.id && step.status !== 'idle');
         const latestStep = matchingSteps[matchingSteps.length - 1];
 
         if (!latestStep) {
+            // Parallel join that is waiting: execution is running but this merge hasn't been reached yet
+            const isWaitingMerge =
+                node.type === 'parallel_join' &&
+                isExecuting &&
+                !revealedNodeIds.has(node.id);
+
             return {
                 ...node,
-                className: appendClassName(node.className, 'exec-debugger-node--dimmed'),
-            };
+                className: appendClassName(
+                    node.className,
+                    isWaitingMerge ? 'exec-debugger-node--waiting' : 'exec-debugger-node--dimmed'
+                ),
+                ...(isWaitingMerge
+                    ? { data: { ...(node.data ?? {}), executionStatus: 'waiting' } }
+                    : {}),
+            } as CanvasNode;
         }
 
         return {
@@ -126,44 +143,91 @@ export function buildExecutionDebuggerEdges(
         return edges;
     }
 
+    // Build a map: nodeId -> latest revealed step (for O(1) lookups)
+    const revealedStepMap = new Map<string, ExecutedNodeStep>();
+    for (const step of revealedSteps) {
+        revealedStepMap.set(step.node.id, step);
+    }
+
+    // Build a set of revealed node IDs
+    const revealedNodeIds = new Set(revealedStepMap.keys());
+
+    // ── Fan-out count: for each active source, count total outgoing edges ──
+    // When a Split has 3 branches, each branch edge gets ballCount=3
+    // so the viewer sees 3 balls diverging from the split point simultaneously.
+    const fanOutCount = new Map<string, number>();
+    for (const edge of edges) {
+        if (revealedNodeIds.has(edge.source)) {
+            fanOutCount.set(edge.source, (fanOutCount.get(edge.source) ?? 0) + 1);
+        }
+    }
+
     return edges.map((edge) => {
-        let isPathActive = false;
-        let status: NodeExecutionStatus = 'idle';
+        const sourceRevealed = revealedNodeIds.has(edge.source);
+        const targetRevealed = revealedNodeIds.has(edge.target);
+        const isPathActive = sourceRevealed && targetRevealed;
+
         let isErrorPath = Boolean((edge.data as { isErrorPath?: boolean } | undefined)?.isErrorPath);
 
-        for (let index = 0; index < revealedSteps.length - 1; index += 1) {
-            if (revealedSteps[index].node.id === edge.source && revealedSteps[index + 1].node.id === edge.target) {
-                isPathActive = true;
-                status = revealedSteps[index + 1].node.type === 'error'
-                    ? 'error'
-                    : revealedSteps[index + 1].status;
-                isErrorPath = isErrorPath || revealedSteps[index + 1].node.type === 'error';
-                break;
-            }
-        }
+        // Number of parallel branches from this source (>1 means it's a fan-out edge)
+        const srcFanOut = fanOutCount.get(edge.source) ?? 1;
+        const parallelBalls = srcFanOut > 1 ? srcFanOut : 1;
 
         if (!isPathActive) {
+            // Source revealed but target not yet reached → branch is in-flight
+            if (sourceRevealed && isExecuting) {
+                const sourceStep = revealedStepMap.get(edge.source);
+                if (sourceStep && (sourceStep.status === 'running' || sourceStep.status === 'success')) {
+                    return {
+                        ...edge,
+                        animated: true,
+                        data: {
+                            ...(edge.data ?? {}),
+                            // Tag with ball count so DeletableEdge renders N staggered balls
+                            _execBalls: parallelBalls,
+                        },
+                        style: {
+                            ...edge.style,
+                            stroke: 'var(--color-primary)',
+                            strokeWidth: 3,
+                            opacity: 0.9,
+                            filter: 'drop-shadow(0 0 5px var(--color-primary))',
+                        },
+                    };
+                }
+            }
+
+            // Fully dimmed — not part of active execution path
             return {
                 ...edge,
                 animated: false,
+                data: { ...(edge.data ?? {}), _execBalls: 1 },
                 style: {
                     ...edge.style,
-                    opacity: 0.25,
+                    opacity: 0.15,
                     filter: 'none',
                 },
             };
         }
 
+        // Both endpoints revealed — determine status from target
+        const targetStep = revealedStepMap.get(edge.target);
+        const status: NodeExecutionStatus = targetStep
+            ? (targetStep.node.type === 'error' ? 'error' : targetStep.status)
+            : 'idle';
+        isErrorPath = isErrorPath || targetStep?.node.type === 'error';
+
         if (status === 'running') {
             return {
                 ...edge,
                 animated: true,
+                data: { ...(edge.data ?? {}), _execBalls: parallelBalls },
                 style: {
                     ...edge.style,
                     stroke: 'var(--color-primary)',
                     strokeWidth: 3,
                     opacity: 1,
-                    filter: 'drop-shadow(0 0 4px var(--color-primary))',
+                    filter: 'drop-shadow(0 0 5px var(--color-primary))',
                 },
             };
         }
@@ -172,11 +236,13 @@ export function buildExecutionDebuggerEdges(
             return {
                 ...edge,
                 animated: false,
+                data: { ...(edge.data ?? {}), _execBalls: 1 },
                 style: {
                     ...edge.style,
                     stroke: 'var(--color-success)',
-                    strokeWidth: 3,
-                    opacity: 1,
+                    strokeWidth: 2.5,
+                    opacity: 0.9,
+                    filter: 'none',
                 },
             };
         }
@@ -185,12 +251,14 @@ export function buildExecutionDebuggerEdges(
             return {
                 ...edge,
                 animated: false,
+                data: { ...(edge.data ?? {}), _execBalls: 1 },
                 style: {
                     ...edge.style,
                     stroke: 'var(--color-error)',
                     strokeWidth: 3,
                     strokeDasharray: isErrorPath ? '6 3' : edge.style?.strokeDasharray,
                     opacity: 1,
+                    filter: 'none',
                 },
             };
         }
