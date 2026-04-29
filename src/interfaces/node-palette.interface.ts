@@ -3,10 +3,15 @@ import React from 'react';
 /** Payload attached to a drag event when a node is dragged from the library */
 export interface DragNodePayload {
   type:        string;
+  nodeType?:   string;
   label:       string;
   subtitle?:   string;
   icon:        string;
   actionId:    string;
+  description?: string;
+  connector_id?: number | string;
+  connector_type?: string;
+  config_json?: Record<string, any>;
   category:    string;
   capability?: string;
 }
@@ -22,7 +27,12 @@ export interface CatHeaderProps {
 
 /** Generic leaf node shape coming from useDesignerActions / useDesignerConnectors */
 export interface PaletteLeafNode {
-  id:    string;
-  name:  string;
-  icon?: string;
+  id:          string;
+  actionId?:   string;
+  name:        string;
+  icon?:       string;
+  description?: string;
+  connector_id?: number | string;
+  connector_type?: string;
+  config_json?: Record<string, any>;
 }

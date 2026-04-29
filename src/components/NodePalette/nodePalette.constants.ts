@@ -1,15 +1,57 @@
 import {
   CreditCard, Webhook, Clock, Mail, MessageSquare, Table2, Bot, Globe, Zap, Terminal, Play,
-  Map, Lightbulb, Activity, Database, Shield, Layout, Settings, Cpu
+  Map, Lightbulb, Activity, Database, Shield, Layout, Settings, Cpu, Layers, Box
 } from 'lucide-react';
 
 export const ICON_MAP: Record<string, any> = {
   CreditCard, Webhook, Clock, Mail, MessageSquare, Table2, Bot, Globe, Zap, Terminal, Play,
   Map, Lightbulb, Activity, Database, Shield, Layout, Settings, Cpu,
+  Layers, Box,
   'Api': Terminal,
   'Ai': Bot,
   'Data': Database
 };
+
+export const NODE_PALETTE_SECTIONS = [
+  {
+    key: 'cat-common',
+    label: 'Common',
+    icon: 'Layout',
+    kind: 'static',
+    showWhenEmpty: true,
+    emptyLabel: '',
+  },
+  {
+    key: 'cat-actions',
+    label: 'Actions',
+    icon: 'Settings',
+    kind: 'dynamic',
+    itemType: 'action',
+    defaultIcon: 'Zap',
+    showWhenEmpty: false,
+    emptyLabel: '',
+  },
+  {
+    key: 'cat-skills',
+    label: 'Skills',
+    icon: 'Lightbulb',
+    kind: 'dynamic',
+    itemType: 'subflow',
+    defaultIcon: 'Box',
+    showWhenEmpty: true,
+    emptyLabel: 'No published skills available',
+  },
+  {
+    key: 'cat-connectors',
+    label: 'Connectors',
+    icon: 'Database',
+    kind: 'dynamic',
+    itemType: 'connector',
+    defaultIcon: 'Database',
+    showWhenEmpty: false,
+    emptyLabel: '',
+  },
+] as const;
 
 export const SUB_CAT_COLORS: Record<string, { bg: string; color: string }> = {
   'TRIGGERS': { bg: '#ecfdf5', color: '#059669' },
