@@ -1,0 +1,55 @@
+/**
+ * MergeNode (parallel_join) — Visual styles for the fan-in Join node.
+ */
+
+/* ── Incoming branch preview list ── */
+.merge-node__incoming {
+    padding: 4px 0 2px;
+}
+
+.merge-node__branch-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-bottom: 1px solid rgba(99, 102, 241, 0.06);
+}
+
+.merge-node__branch-row:last-child {
+    border-bottom: none;
+}
+
+.merge-node__branch-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-node-join, #6366f1);
+    flex-shrink: 0;
+}
+
+.merge-node__branch-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-main, #111827);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ── Empty state ── */
+.merge-node__empty-state {
+    padding: 6px 10px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    text-align: center;
+}
+
+.merge-node__empty-label {
+    font-size: 10px;
+    color: var(--text-subtle, #9ca3af);
+    font-style: italic;
+    line-height: 1.4;
+}

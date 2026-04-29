@@ -13,8 +13,8 @@ import DecisionNode from '@/components/DecisionNode/DecisionNode';
 import ErrorNode from '@/components/ErrorNode/ErrorNode';
 import QueueNode from '@/components/QueueNode/QueueNode';
 import DeletableEdge from '@/components/DeletableEdge/DeletableEdge';
-import ParallelSplitNode from '@/components/ParallelSplitNode/ParallelSplitNode';
-import ParallelJoinNode from '@/components/ParallelJoinNode/ParallelJoinNode';
+import ParallelSplitNode from '@/components/NodePalette/ParallelSplitNode';
+import ParallelJoinNode from '@/components/NodePalette/ParallelJoinNode';
 
 export const NODE_TYPES = {
     action:   ActionNode,

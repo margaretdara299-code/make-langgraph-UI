@@ -1,0 +1,36 @@
+{
+  "react_quality_standards": {
+    "architecture": [
+      "Components must be strictly separated into stateless (pure UI) and stateful (container/hook) logical segments.",
+      "Custom hooks must be extracted for any component logic exceeding 30 lines or handling side effects.",
+      "Global state should be avoided unless absolutely necessary; prefer Context API or component composition."
+    ],
+    "performance": [
+      "Use React.memo ONLY if a component renders often with the exact same props and computing the render is expensive.",
+      "Memoize expensive derived state using useMemo.",
+      "Wrap stable callback functions passed as props to child components in useCallback.",
+      "Never define inline arrow functions inside JSX iterators (e.g., .map) or deeply nested child components."
+    ],
+    "typescript": [
+      "Implicit 'any' is strictly forbidden. Interfaces or Types must be explicitly defined for all API responses, component props, and state.",
+      "Props interfaces must be named identically to the component suffixed with 'Props' (e.g., ButtonProps).",
+      "Avoid type assertions (e.g., 'as User') unless absolutely necessary; prefer type guards."
+    ],
+    "styling": [
+      "Inline styles (e.g., style={{ color: 'red' }}) are strictly forbidden.",
+      "All dynamic UI manipulation must be handled via toggling CSS classes.",
+      "CSS Variable injection is acceptable for dynamic user-driven coordinates or colors but should be typed as React.CSSProperties."
+    ],
+    "clean_code": [
+      "Magic numbers and strings must be extracted into a separate constants file.",
+      "Avoid deeply nested ternary operators in JSX. If a condition requires more than one logical branch, extract it to a helper function.",
+      "Dependency arrays in useEffect must be exhaustively declared. Do not disable exhaustive-deps lint rules."
+    ],
+    "eslint_enforcement": [
+      "Code must be written as if strictly validating against 'eslint-plugin-react-hooks' (exhaustive-deps).",
+      "Code must pass 'eslint-plugin-jsx-a11y' for accessibility (e.g., passing alt tags to images, aria-labels to buttons).",
+      "Do NOT use 'eslint-disable-next-line' or '@ts-ignore' anywhere to bypass quality checks unless explicitly approved by the user.",
+      "Ensure all React imports (like memo, useState) are explicitly used; no unused imports or variables permitted ('no-unused-vars')."
+    ]
+  }
+}

@@ -17,6 +17,8 @@ import { useCapabilities } from '@/hooks';
 import { useExecution } from '@/contexts';
 import { loadGraphFromStorage, upsertNodeInStorage, upsertConnectionInStorage } from '@/services/skillGraphStorage.service';
 import DecisionPropertiesPanel from './DecisionPropertiesPanel';
+import SplitPropertiesPanel from './SplitPropertiesPanel';
+import MergePropertiesPanel from './MergePropertiesPanel';
 import './PropertiesDrawer.css';
 
 const { Text } = Typography;
@@ -198,6 +200,54 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                 ? []
                 : (Array.isArray(configs.body_params) ? configs.body_params : []);
             form.setFieldsValue({
+                label:            qd.label || 'Queue',
+                description:      qd.description || '',
+                queue_name:       qd.queue_name || '',
+                queue_type:       qd.queue_type || 'human',
+                priority:         qd.priority || 'normal',
+                ttl_seconds:      qd.ttl_seconds ?? 0,
+                auto_closeout:    qd.auto_closeout !== false,
+                payload_mappings: Array.isArray(qd.payload_mappings) ? qd.payload_mappings : [],
+            });
+            return;
+        }
+
+        // For parallel split (new branch-array model)
+        if (selectedNode.type === 'parallel_split') {
+            const stored = versionId ? loadGraphFromStorage(versionId) : null;
+            const pd = (stored?.nodes?.[selectedNode.id]?.data || selectedNode.data) as any;
+            form.setFieldsValue({
+                label:                   pd.label || 'Split',
+                description:             pd.description || '',
+                split_mode:              pd.split_mode || 'parallel_all',
+                source_scope:            pd.source_scope || 'state',
+                source_node_id:          pd.source_node_id || '',
+                source_output_key:       pd.source_output_key || '',
+                source_path:             pd.source_path || '',
+                branches:                Array.isArray(pd.branches) ? pd.branches : [],
+                timeout_seconds:         pd.timeout_seconds ?? 60,
+                on_required_error:       pd.on_required_error || 'route_to_error',
+                on_optional_error:       pd.on_optional_error || 'continue_with_error',
+                output_key:              pd.output_key || 'parallel_results',
+                error_output_key:        pd.error_output_key || 'parallel_errors',
+                include_branch_metadata: pd.include_branch_metadata !== false,
+            });
+            return;
+        }
+
+        // For parallel join (new merge data model)
+        if (selectedNode.type === 'parallel_join') {
+            const stored = versionId ? loadGraphFromStorage(versionId) : null;
+            const pj = (stored?.nodes?.[selectedNode.id]?.data || selectedNode.data) as any;
+            form.setFieldsValue({
+                label:           pj.label || 'Merge',
+                description:     pj.description || '',
+                merge_strategy:  pj.merge_strategy || 'wait_selected',
+                timeout_seconds: pj.timeout_seconds ?? null,
+                on_branch_error: pj.on_branch_error || 'fail_merge',
+                output_key:      pj.output_key || 'merged_parallel_results',
+                output_format:   pj.output_format || 'object_by_branch',
+                include_errors:  pj.include_errors !== false,
                 label: qd.label || 'Queue',
                 description: qd.description || '',
                 queue_name: qd.queue_name || '',
@@ -433,9 +483,20 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                     ...currentNode,
                     data: {
                         ...currentNode.data,
-                        label: newValues.label,
-                        description: newValues.description,
-                        branches: newValues.branches,
+                        label:                   newValues.label || 'Split',
+                        description:             newValues.description || '',
+                        split_mode:              newValues.split_mode || 'parallel_all',
+                        source_scope:            newValues.source_scope || 'state',
+                        source_node_id:          newValues.source_node_id || '',
+                        source_output_key:       newValues.source_output_key || '',
+                        source_path:             newValues.source_path || '',
+                        branches:                Array.isArray(newValues.branches) ? newValues.branches : [],
+                        timeout_seconds:         newValues.timeout_seconds ?? 60,
+                        on_required_error:       newValues.on_required_error || 'route_to_error',
+                        on_optional_error:       newValues.on_optional_error || 'continue_with_error',
+                        output_key:              newValues.output_key || 'parallel_results',
+                        error_output_key:        newValues.error_output_key || 'parallel_errors',
+                        include_branch_metadata: newValues.include_branch_metadata !== false,
                     },
                 };
             } else if (selectedNode.type === 'parallel_join') {
@@ -443,10 +504,14 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                     ...currentNode,
                     data: {
                         ...currentNode.data,
-                        label: newValues.label,
-                        description: newValues.description,
-                        join_strategy: newValues.join_strategy,
-                        inputs: newValues.inputs,
+                        label:           newValues.label || 'Merge',
+                        description:     newValues.description || '',
+                        merge_strategy:  newValues.merge_strategy || 'wait_selected',
+                        timeout_seconds: newValues.timeout_seconds ?? null,
+                        on_branch_error: newValues.on_branch_error || 'fail_merge',
+                        output_key:      newValues.output_key || 'merged_parallel_results',
+                        output_format:   newValues.output_format || 'object_by_branch',
+                        include_errors:  newValues.include_errors !== false,
                     },
                 };
             } else if (selectedNode.type === 'decision') {
@@ -1102,55 +1167,33 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                             className="pd-error-url-item"
                                                             rules={[{ type: 'url', message: 'Enter a valid URL' }]}
                                                         >
-                                                            <Input placeholder="https://api.example.com/error-logs" />
-                                                        </Form.Item>
-                                                    </div>
-                                                </>
-                                            ) : isParallelSplit ? (
-                                                <>
-                                                    <div className="properties-drawer__section-title pd-section-title-no-margin">Split Configuration</div>
-                                                    <Form.Item label="Number of Branches" name="branches" tooltip="Number of concurrent execution paths to create.">
-                                                        <Select options={[
-                                                            { label: '2 Branches', value: 2 },
-                                                            { label: '3 Branches', value: 3 },
-                                                            { label: '4 Branches', value: 4 },
-                                                            { label: '5 Branches', value: 5 },
-                                                        ]} />
-                                                    </Form.Item>
-                                                    <Text type="secondary" className="pd-state-description">
-                                                        The workflow state will be cloned across all branches. Use a Join node later to synchronize results.
-                                                    </Text>
-                                                </>
-                                            ) : isParallelJoin ? (
-                                                <>
-                                                    <div className="properties-drawer__section-title pd-section-title-no-margin">Merge Strategy</div>
-                                                    <Form.Item label="Incoming Inputs" name="inputs" tooltip="Number of parallel paths to wait for.">
-                                                        <Select options={[
-                                                            { label: '2 Paths', value: 2 },
-                                                            { label: '3 Paths', value: 3 },
-                                                            { label: '4 Paths', value: 4 },
-                                                            { label: '5 Paths', value: 5 },
-                                                        ]} />
-                                                    </Form.Item>
-                                                    <Form.Item label="Synchronization Logic" name="join_strategy">
-                                                        <Select options={[
-                                                            { label: 'Wait for All (Consensus)', value: 'all' },
-                                                            { label: 'Wait for Any (First Responder)', value: 'any' },
-                                                            { label: 'Race (First Success)', value: 'race' },
-                                                        ]} />
-                                                    </Form.Item>
-                                                    <Text type="secondary" className="pd-state-description">
-                                                        Defines how the graph state is consolidated once parallel branches meet this node.
-                                                    </Text>
-                                                </>
-                                            ) : (
-                                                renderNodeConfig(nodeData as CanvasNodeData)
-                                            )}
+                                                    <Input placeholder="https://api.example.com/error-logs" />
+                                                </Form.Item>
+                                            </div>
+                                        </>
+                                    ) : isParallelSplit ? (
+                                        <SplitPropertiesPanel
+                                            form={form}
+                                            nodes={nodes}
+                                            edges={edges}
+                                            selectedNodeId={selectedNode.id}
+                                            availableStateKeys={availableStateKeys}
+                                        />
+                                    ) : isParallelJoin ? (
+                                        <MergePropertiesPanel
+                                            form={form}
+                                            nodes={nodes}
+                                            edges={edges}
+                                            selectedNodeId={selectedNode.id}
+                                        />
+                                    ) : (
+                                        renderNodeConfig(nodeData as CanvasNodeData)
+                                    )}
                                         </Form>
                                     </motion.div>
                                 )
                             }] : []),
-                            ...((!isSubFlow && !isStart && !isDecision && !isConnector && !isError) ? [{
+                            ...((!isSubFlow && !isStart && !isDecision && !isConnector && !isError && !isParallelSplit && !isParallelJoin) ? [{
                                 key: '3',
                                 label: 'Settings',
                                 children: (

@@ -109,34 +109,54 @@ export default function SkillDesignerCanvas() {
             // Edges that come from a named rule handle originate from a DecisionNode.
             // Must explicitly exclude "default" — Boolean("default") === true would
             // incorrectly tag the fallback path as a branch edge (amber vs grey).
-            const fromDecision = Boolean(params.sourceHandle) && params.sourceHandle !== 'default' && params.sourceHandle !== 'src' && params.sourceHandle !== 'error';
+            // Also exclude Split node handles — those are parallel (not conditional exclusive).
+            const isFromSplitNode = sourceNode?.type === 'parallel_split';
+            const fromDecision = !isFromSplitNode
+                && Boolean(params.sourceHandle)
+                && params.sourceHandle !== 'default'
+                && params.sourceHandle !== 'src'
+                && params.sourceHandle !== 'error';
+
+            // Parallel branch edges originate from a Split node's named handles
+            const isParallelBranch = isFromSplitNode && Boolean(params.sourceHandle);
 
             // Edges from the action node's `error` handle route to the Error Node.
             // Edges originating from the Error Node route to the End Node.
             // Both should use the dotted red error path styling.
             const isErrorPath = params.sourceHandle === 'error' || sourceNode?.type === 'error';
 
+            // Parallel branch edges use the split node's theme colour (pink/magenta)
+            const parallelBranchColor = 'var(--color-node-split, #ec4899)';
+
             setEdges((eds) => addEdge({
                 ...params,
                 id: edgeId,
                 type: 'smoothstep',
                 animated: false,
-                data: { fromDecision, isErrorPath },
+                data: { fromDecision, isErrorPath, isParallelBranch, branchId: params.sourceHandle },
                 markerEnd: fromDecision
                     ? undefined
                     : isErrorPath
                         ? { type: MarkerType.ArrowClosed, color: 'var(--color-error)' }
-                        : { type: MarkerType.ArrowClosed, color: edgeColor },
+                        : isParallelBranch
+                            ? { type: MarkerType.ArrowClosed, color: parallelBranchColor }
+                            : { type: MarkerType.ArrowClosed, color: edgeColor },
                 style: isErrorPath
                     ? {
                         stroke: 'var(--color-error)',
                         strokeWidth: 1.5,
                         strokeDasharray: '6 3',
                     }
-                    : {
-                        stroke: edgeColor,
-                        strokeWidth: fromDecision ? 2 : 1.5,
-                    },
+                    : isParallelBranch
+                        ? {
+                            stroke: parallelBranchColor,
+                            strokeWidth: 1.5,
+                            strokeDasharray: '4 3',
+                        }
+                        : {
+                            stroke: edgeColor,
+                            strokeWidth: fromDecision ? 2 : 1.5,
+                        },
             }, eds));
 
             if (versionId) {

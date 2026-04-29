@@ -13,7 +13,8 @@ import DecisionNodeItem from './DecisionNodeItem';
 import EndNodeItem from './EndNodeItem';
 import ErrorNodeItem from './ErrorNodeItem';
 import QueueNodeItem from './QueueNodeItem';
-import { ParallelSplitItem, ParallelJoinItem } from './ParallelNodeItems';
+import { SplitNodeItem } from './ParallelSplitNode';
+import { MergeNodeItem } from './ParallelJoinNode';
 import IconRenderer from '../IconRenderer/IconRenderer';
 import './NodePalette.css';
 
@@ -192,7 +193,7 @@ export default function NodePalette() {
                     <div className={`acc-panel ${openCat === 'cat-common' ? 'open' : ''}`}>
                       <div className="np-depth1 np-leaf">
                         <StartNodeItem /><SubFlowNodeItem /><DecisionNodeItem />
-                        <QueueNodeItem /><ParallelSplitItem /><ParallelJoinItem />
+                        <QueueNodeItem /><SplitNodeItem /><MergeNodeItem />
                         <EndNodeItem /><ErrorNodeItem />
                       </div>
                     </div>

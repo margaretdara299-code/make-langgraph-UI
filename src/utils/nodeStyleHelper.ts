@@ -83,8 +83,8 @@ export function getNodeStrokeColor(node: NodeColorSource): string {
         return getNodeTheme('queue').stroke;
     }
 
-    if (nodeType === 'parallel_split' || nodeType === 'parallel_join') {
-        return getNodeTheme(nodeType).stroke;
+    if (nodeType === 'parallel_split' || nodeType === 'parallel_join' || nodeType === 'split' || nodeType === 'merge') {
+        return getNodeTheme(nodeType === 'split' ? 'parallel_split' : nodeType === 'merge' ? 'parallel_join' : nodeType).stroke;
     }
 
     return getNodeTheme(nodeType, capability, category).stroke;
