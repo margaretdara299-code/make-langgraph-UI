@@ -46,6 +46,12 @@
     color: var(--text-main);
 }
 
+.ccm2-icon-picker-wrap {
+    display: flex;
+    margin-top: 15px;
+}
+
+
 .ccm2-footer {
     display: flex;
     justify-content: flex-end;

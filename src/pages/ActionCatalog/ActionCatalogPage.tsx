@@ -5,16 +5,16 @@
 
 import { useState } from 'react';
 import { Typography, message, Modal, Empty, Tabs, Space, Badge, Select, Button } from 'antd';
-import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { PlusOutlined, ExclamationCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { useActions, useCategories, useCapabilities } from '@/hooks';
-import { 
-    ActionCard, 
-    ActionCardSkeleton, 
-    Grid, 
-    CreateActionModal, 
-    SearchInput 
+import {
+    ActionCard,
+    ActionCardSkeleton,
+    Grid,
+    CreateActionModal,
+    SearchInput
 } from '@/components';
-import { Plus, PackageSearch } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { fetchActionById, deleteAction } from '@/services';
 import { PAGE_HEADER_CONTENT } from '@/constants/ui.constants';
 import './ActionCatalogPage.css';
@@ -33,7 +33,6 @@ export default function ActionCatalogPage() {
         refetch,
         totalActions
     } = useActions();
-    
     const { categories } = useCategories();
     const { capabilities } = useCapabilities();
 
@@ -105,10 +104,10 @@ export default function ActionCatalogPage() {
                     <div className="title-section">
                         <div className="title-row">
                             <Title level={2} className="header-title-premium">{ACTION_CATALOG.title}</Title>
-                            <Button 
-                                type="primary" 
+                            <Button
+                                type="primary"
                                 shape="circle"
-                                icon={<Plus size={20} />} 
+                                icon={<Plus size={20} />}
                                 onClick={() => {
                                     setActionToEdit(null);
                                     setInitialStep(0);
@@ -135,6 +134,8 @@ export default function ActionCatalogPage() {
                                 placeholder="All Categories"
                                 defaultValue="all"
                                 onChange={handleCategoryFilter}
+                                showSearch
+                                optionFilterProp="label"
                                 options={[
                                     { value: 'all', label: 'All Categories' },
                                     ...categories.map((c: any) => ({ value: c.categoryId?.toString() || '', label: c.name }))
@@ -144,6 +145,8 @@ export default function ActionCatalogPage() {
                                 placeholder="All Capabilities"
                                 defaultValue="all"
                                 onChange={handleCapabilityFilter}
+                                showSearch
+                                optionFilterProp="label"
                                 options={[
                                     { value: 'all', label: 'All Capabilities' },
                                     ...capabilities.map((c: any) => ({ value: c.capabilityId?.toString() || '', label: c.name }))
@@ -154,21 +157,21 @@ export default function ActionCatalogPage() {
                 </div>
 
                 <div className="catalog-toolbar">
-                   <Tabs
+                    <Tabs
                         activeKey={filters.status || 'all'}
                         onChange={handleStatusFilter}
                         className="status-tabs"
                         items={[
-                            { 
-                                key: 'all', 
+                            {
+                                key: 'all',
                                 label: 'All'
                             },
-                            { 
-                                key: 'published', 
+                            {
+                                key: 'published',
                                 label: 'Published'
                             },
-                            { 
-                                key: 'draft', 
+                            {
+                                key: 'draft',
                                 label: 'Draft'
                             },
                         ]}
@@ -181,23 +184,23 @@ export default function ActionCatalogPage() {
                     <div className="catalog-empty reveal-up">
                         <div className="catalog-empty-inner">
                             <div className="catalog-empty-icon-shell">
-                                <PackageSearch size={48} strokeWidth={1.5} color="var(--accent)" />
+                                <SettingOutlined style={{ fontSize: '48px', color: 'var(--accent)' }} />
                             </div>
                             <Title level={4} className="catalog-empty-title">
                                 {searchValue ? "No matching actions found" : "Your action catalog is empty"}
                             </Title>
                             <Text type="secondary" className="catalog-empty-desc">
-                                {searchValue 
-                                    ? "Try adjusting your search or filters to find what you're looking for." 
+                                {searchValue
+                                    ? "Try adjusting your search or filters to find what you're looking for."
                                     : "Start by creating your first action to automate your workflow."}
                             </Text>
                             <div className="catalog-empty-actions">
                                 {searchValue ? (
                                     <Button onClick={() => handleSearch('')}>Clear all filters</Button>
                                 ) : (
-                                    <Button 
-                                        type="primary" 
-                                        icon={<Plus size={16} />} 
+                                    <Button
+                                        type="primary"
+                                        icon={<Plus size={16} />}
                                         onClick={() => setModalOpen(true)}
                                     >
                                         Create New Action
@@ -208,16 +211,16 @@ export default function ActionCatalogPage() {
                     </div>
                 ) : (
                     <>
-                        <Grid 
+                        <Grid
                             isLoading={isLoading}
                             SkeletonComponent={ActionCardSkeleton}
                             data={actions}
                             gutter={[20, 20]}
                             autoFitMinWidth={280}
                             renderItem={(action) => (
-                                <ActionCard 
-                                    action={action} 
-                                    onAction={handleAction} 
+                                <ActionCard
+                                    action={action}
+                                    onAction={handleAction}
                                 />
                             )}
                         />
@@ -225,7 +228,7 @@ export default function ActionCatalogPage() {
                 )}
             </div>
 
-            <CreateActionModal 
+            <CreateActionModal
                 isOpen={modalOpen}
                 onClose={() => setModalOpen(false)}
                 onCreated={async () => {

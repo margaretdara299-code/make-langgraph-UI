@@ -52,6 +52,8 @@ export default function SkillDetailsForm({ form }: SkillDetailsFormProps) {
                             placeholder="Select a category"
                             loading={isLoading}
                             disabled={isLoading}
+                            showSearch
+                            optionFilterProp="label"
                             options={categories.map((category) => ({ value: category.categoryId, label: category.name }))}
                         />
                     </Form.Item>

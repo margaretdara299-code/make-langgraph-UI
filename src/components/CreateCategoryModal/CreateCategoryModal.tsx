@@ -113,16 +113,17 @@ export default function CreateCategoryModal({
                     </Form.Item>
 
                     <div className="ccm2-icon-row">
-                        <span className="ccm2-icon-label">Category Icon</span>
-                        <Form.Item
-                            name="icon"
-                            rules={[{ required: true, message: 'Icon is required' }]}
-                        >
-                            <div className='flex' style={{ marginTop: '15px' }}>
-                                <LucideIconPicker />
-                            </div>
+                        <span className="ccm2-icon-label"><span style={{ color: '#ff4d4f', marginRight: '4px' }}>*</span>Category Icon</span>
+                        <div className="ccm2-icon-picker-wrap">
+                            <Form.Item
+                                name="icon"
+                                rules={[{ required: true, message: 'Icon is required' }]}
 
-                        </Form.Item>
+                            >
+                                <LucideIconPicker />
+                            </Form.Item>
+                        </div>
+
                     </div>
 
                     <Form.Item label="Description" name="description">

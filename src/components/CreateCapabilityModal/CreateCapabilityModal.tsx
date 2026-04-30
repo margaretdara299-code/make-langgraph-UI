@@ -115,17 +115,17 @@ export default function CreateCapabilityModal({
                     </Form.Item>
 
                     <div className="ccm2-icon-row">
-                        <span className="ccm2-icon-label">Capability Icon</span>
-                        <Form.Item
-                            name="icon"
-                            rules={[{ required: true, message: 'Icon is required' }]}
-                        >
+                        <span className="ccm2-icon-label"><span style={{ color: '#ff4d4f', marginRight: '4px' }}>*</span>Capability Icon</span>
+                        <div className="ccm2-icon-picker-wrap">
+                            <Form.Item
+                                name="icon"
+                                rules={[{ required: true, message: 'Icon is required' }]}
 
+                            >
+                                <LucideIconPicker />
+                            </Form.Item>
+                        </div>
 
-
-                            <LucideIconPicker />
-
-                        </Form.Item>
                     </div>
 
                     <Form.Item label="Description" name="description">

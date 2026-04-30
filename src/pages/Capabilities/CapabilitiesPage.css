@@ -38,13 +38,50 @@
 
 .capabilities-empty {
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 300px;
-    background-color: var(--surface-1);
-    border-radius: var(--space-1-5);
+    min-height: 400px;
+    background: #ffffff;
     border: 1px dashed var(--border-medium);
+    border-radius: 20px;
+    padding: 40px;
+}
+
+.capabilities-empty-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 400px;
+}
+
+.capabilities-empty-icon-shell {
+    width: 80px;
+    height: 80px;
+    background: var(--accent-light);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.capabilities-empty-title {
+    margin-bottom: 8px !important;
+    color: var(--text-main) !important;
+}
+
+.capabilities-empty-desc {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    margin-bottom: 32px;
+}
+
+.capabilities-empty-actions .ant-btn {
+    height: 40px;
+    padding: 0 24px;
+    border-radius: 8px;
+    font-weight: 600;
 }
 
 @keyframes fadeIn {

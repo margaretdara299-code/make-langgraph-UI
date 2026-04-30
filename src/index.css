@@ -393,12 +393,12 @@ textarea.ant-input {
 /* --- Status Tag Styling (Global 8px Standard) --- */
 .ant-tag:not(.ant-tag-disabled) {
   font-size: 10px !important;
-  font-weight: 700 !important;
+  font-weight: 600 !important;
   padding: 0 8px !important;
   border-radius: 4px !important;
   line-height: 16px !important;
   border: none !important;
-  text-transform: uppercase !important;
+  text-transform: capitalize;
   letter-spacing: 0.05em !important;
   border: none !important;
 }

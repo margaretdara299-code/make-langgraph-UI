@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Input, Typography, Modal, message, Tabs, Badge, Space, Empty, Button } from 'antd';
-import { PlusOutlined, ExclamationCircleOutlined, SearchOutlined } from '@ant-design/icons';
+import { PlusOutlined, ExclamationCircleOutlined, SearchOutlined, BulbOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useSkills, useCategories } from '@/hooks';
 import { SkillCard, CreateSkillModal, EditSkillModal, SearchInput } from '@/components';
@@ -168,8 +168,33 @@ export default function SkillsLibraryPage() {
                         ))}
                     </div>
                 ) : skills.length === 0 ? (
-                    <div className="skills-empty">
-                        <Empty description="No skills found" />
+                    <div className="skills-empty reveal-up">
+                        <div className="skills-empty-inner">
+                            <div className="skills-empty-icon-shell">
+                                <BulbOutlined style={{ fontSize: '48px', color: 'var(--accent)' }} />
+                            </div>
+                            <Title level={4} className="skills-empty-title">
+                                {searchValue ? "No matching skills found" : "Your skill library is empty"}
+                            </Title>
+                            <Text type="secondary" className="skills-empty-desc">
+                                {searchValue 
+                                    ? "Try adjusting your search or category filters to find the skill you're looking for." 
+                                    : "Start by creating your first skill to begin automating your workflows."}
+                            </Text>
+                            <div className="skills-empty-actions">
+                                {searchValue ? (
+                                    <Button onClick={() => handleSearch('')}>Clear search</Button>
+                                ) : (
+                                    <Button 
+                                        type="primary" 
+                                        icon={<PlusOutlined />} 
+                                        onClick={() => setIsCreateModalOpen(true)}
+                                    >
+                                        Create First Skill
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 ) : (
                     <div className="skills-library-grid">
