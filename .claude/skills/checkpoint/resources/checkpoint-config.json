@@ -1,0 +1,47 @@
+{
+  "description": "Code checkpoint system for Tensaw Skills Studio",
+
+  "commands": {
+    "save": {
+      "triggers": ["checkpoint", "save state", "save checkpoint", "/checkpoint save"],
+      "description": "Create a git stash checkpoint before making changes",
+      "example": "checkpoint save before inline style removal"
+    },
+    "list": {
+      "triggers": ["list checkpoints", "show checkpoints", "/checkpoint list"],
+      "description": "List all saved checkpoints",
+      "example": "checkpoint list"
+    },
+    "diff": {
+      "triggers": ["show changes", "checkpoint diff", "/checkpoint diff"],
+      "description": "Show what changed in a checkpoint",
+      "example": "checkpoint diff 0"
+    },
+    "revert": {
+      "triggers": ["revert", "undo", "/checkpoint revert"],
+      "description": "Revert to a saved checkpoint",
+      "example": "checkpoint revert 0"
+    },
+    "drop": {
+      "triggers": ["delete checkpoint", "remove checkpoint"],
+      "description": "Delete a checkpoint",
+      "example": "checkpoint drop 0"
+    }
+  },
+
+  "naming_convention": {
+    "format": "checkpoint: <description>",
+    "examples": [
+      "checkpoint: before inline style removal",
+      "checkpoint: refactoring PropertiesDrawer",
+      "checkpoint: bug fix attempt",
+      "checkpoint: testing new approach"
+    ]
+  },
+
+  "rules": {
+    "create_before": ["bulk changes", "refactors", "inline style fixes", "component rewrites"],
+    "confirm_before": ["revert", "drop", "reset --hard"],
+    "never_revert": ["after changes are committed", "without user confirmation"]
+  }
+}
