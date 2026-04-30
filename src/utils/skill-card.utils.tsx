@@ -2,7 +2,6 @@
  * Utilities for the SkillCard component.
  */
 
-import { Link } from 'react-router-dom';
 import type { MenuProps } from 'antd';
 import {
     SettingOutlined,
@@ -19,11 +18,7 @@ export function getMenuItems(status: string, skillId: string, versionId?: string
         {
             key: CARD_ACTION_KEYS.BUILD_SKILL,
             icon: <PartitionOutlined />,
-            label: versionId ? (
-                <Link to={`/skills/${skillId}/versions/${versionId}/design`} className="skill-card-menu-link">
-                    Build Skill
-                </Link>
-            ) : 'Build Skill',
+            label: 'Build Skill',
             className: 'skill-card__menu-item-build skill-card-menu-item-primary'
         },
         {

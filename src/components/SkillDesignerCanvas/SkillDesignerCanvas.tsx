@@ -79,7 +79,7 @@ export default function SkillDesignerCanvas() {
     const { getIntersectingNodes } = useReactFlow();
 
     // Call our extracted drag & drop hook
-    const { onDragOver, onDrop } = useCanvasDragDrop(reactFlowInstance, setNodes, nodes);
+    const { onDragOver, onDrop } = useCanvasDragDrop(reactFlowInstance, setNodes, nodes, setEdges);
 
     /** Connect two nodes — follows the official @xyflow/react pattern exactly.
      *

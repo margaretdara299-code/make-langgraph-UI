@@ -14,6 +14,7 @@ export interface DragNodePayload {
   config_json?: Record<string, any>;
   category:    string;
   capability?: string;
+  latestVersionId?: string;
 }
 
 /** Props for the top-level and sub-level category header row */
@@ -35,4 +36,5 @@ export interface PaletteLeafNode {
   connector_id?: number | string;
   connector_type?: string;
   config_json?: Record<string, any>;
+  latestVersionId?: string;
 }

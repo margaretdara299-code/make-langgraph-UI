@@ -34,10 +34,6 @@ export { default as CreateConnectorModal } from "./CreateConnectorModal/CreateCo
 export { default as ConnectorCard } from "./ConnectorCard/ConnectorCard";
 export { default as CategoryCard } from "./CategoryCard/CategoryCard";
 export { default as CapabilityCard } from "./CapabilityCard/CapabilityCard";
-export { default as GroupCard } from "./GroupCard/GroupCard";
-export { default as GroupCardSkeleton } from "./GroupCard/GroupCardSkeleton";
-export { default as VariableCard } from "./VariableCard/VariableCard";
-export { default as VariableCardSkeleton } from "./VariableCard/VariableCardSkeleton";
 export { default as CreateCategoryModal } from "./CreateCategoryModal/CreateCategoryModal";
 export { default as CreateCapabilityModal } from "./CreateCapabilityModal/CreateCapabilityModal";
 export { default as CodeViewerModal } from "./CodeViewerModal/CodeViewerModal";

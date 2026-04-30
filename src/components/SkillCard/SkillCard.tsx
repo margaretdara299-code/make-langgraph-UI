@@ -9,18 +9,26 @@ import {
     MoreOutlined,
 } from '@ant-design/icons';
 import { Tag as LucideTag, Layers } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import StatusPill from '@/components/StatusPill/StatusPill';
 import { DynamicLucideIcon } from '@/components';
 import { getMenuItems, getTagStyle } from '@/utils';
 import { getCategoryColor } from '@/utils/colorHelper';
+import { CARD_ACTION_KEYS } from '@/constants';
 import type { SkillCardProps } from '@/interfaces';
 import './SkillCard.css';
 
 const { Text, Paragraph } = Typography;
 
 export default function SkillCard({ skill, onClick, onAction }: SkillCardProps) {
+    const navigate = useNavigate();
+
     const handleMenuClick: MenuProps['onClick'] = (e) => {
         e.domEvent.stopPropagation();
+        if (e.key === CARD_ACTION_KEYS.BUILD_SKILL) {
+            navigate(`/skills/${skill.id}/versions/${skill.latestVersionId}/design`);
+            return;
+        }
         onAction?.(e.key, skill.id);
     };
 

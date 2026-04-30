@@ -23,8 +23,16 @@ export async function fetchSkills(
         const queryString = params.toString();
         const url = `${API_ENDPOINTS.SKILLS.BASE}${queryString ? `?${queryString}` : ''}`;
 
-        const result = await apiClient.get<{ items: Skill[]; total: number }>(url);
-        const items = result.data.items || [];
+        const result = await apiClient.get<{ items: any[]; total: number }>(url);
+        const rawItems: any[] = result.data.items || [];
+        const items: Skill[] = rawItems.map((item) => ({
+            ...item,
+            latestVersionId: item.latestVersionId ?? item.latest_version_id,
+            skillKey: item.skillKey ?? item.skill_key,
+            updatedAt: item.updatedAt ?? item.updated_at,
+            createdAt: item.createdAt ?? item.created_at,
+            categoryId: item.categoryId ?? item.category_id,
+        }));
         localSkills = items;
 
         const page = filters?.page ?? 1;
@@ -71,9 +79,13 @@ export async function fetchGroupedSkillsForDesigner(): Promise<Record<string, Sk
         ]);
 
         const payload = result.data;
-        const items: Skill[] = Array.isArray(payload)
+        const rawItems: any[] = Array.isArray(payload)
             ? payload
             : payload?.items || payload?.data || [];
+        const items: Skill[] = rawItems.map((item: any) => ({
+            ...item,
+            latestVersionId: item.latestVersionId ?? item.latest_version_id ?? item.versionId ?? item.version_id,
+        }));
 
         localSkills = items;
 

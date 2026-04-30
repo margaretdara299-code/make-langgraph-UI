@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
+import { useParams } from 'react-router-dom';
 import {
     Handle,
     Position,
@@ -6,18 +7,23 @@ import {
     useReactFlow,
     type NodeProps,
 } from '@xyflow/react';
+import { ChevronDown } from 'lucide-react';
 import type { CanvasNode } from '@/interfaces';
+import { upsertNodeInStorage } from '@/services/skillGraphStorage.service';
 import './SubFlowNode.css';
 
-// Colour palette for group accent — cycles by node id to give each group a unique tint
+const COLLAPSED_HEIGHT = 44;
+const MIN_W = 250;
+const MIN_H = 180;
+
 const GROUP_ACCENTS = [
-    '#6366f1', // indigo
-    '#8b5cf6', // violet
-    '#06b6d4', // cyan
-    '#10b981', // emerald
-    '#f59e0b', // amber
-    '#ef4444', // red
-    '#ec4899', // pink
+    '#6366f1',
+    '#8b5cf6',
+    '#06b6d4',
+    '#10b981',
+    '#f59e0b',
+    '#ef4444',
+    '#ec4899',
 ];
 
 function pickAccent(id: string): string {
@@ -28,27 +34,75 @@ function pickAccent(id: string): string {
     return GROUP_ACCENTS[hash % GROUP_ACCENTS.length];
 }
 
-export default function SubFlowNode({ id, data, selected }: NodeProps<CanvasNode>) {
-    const { deleteElements } = useReactFlow();
+export default function SubFlowNode({ id, data, selected, height }: NodeProps<CanvasNode>) {
+    const { versionId } = useParams<{ versionId: string }>();
+    const { deleteElements, setNodes } = useReactFlow();
     const accent = (data as any).color || pickAccent(id);
+
+    // Restore collapsed state from node.data so it survives save/reload
+    const [isCollapsed, setIsCollapsed] = useState<boolean>(
+        Boolean((data as any)._collapsed)
+    );
+    const storedHeightRef = useRef<number>(
+        (data as any)._expandedHeight ?? (typeof height === 'number' ? height : 300)
+    );
 
     const handleDelete = (e: React.MouseEvent) => {
         e.stopPropagation();
         deleteElements({ nodes: [{ id }] });
     };
 
+    const toggleCollapse = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        const nextCollapsed = !isCollapsed;
+
+        setNodes((nds: any[]) => nds.map((n: any) => {
+            if (n.id === id) {
+                if (nextCollapsed) {
+                    // Capture current expanded height before collapsing
+                    storedHeightRef.current =
+                        (n.style?.height as number) ??
+                        (typeof height === 'number' ? height : 300);
+                }
+                const newHeight = nextCollapsed ? COLLAPSED_HEIGHT : storedHeightRef.current;
+                const updated = {
+                    ...n,
+                    style: { ...n.style, height: newHeight },
+                    // Persist collapsed state + expanded height inside node.data
+                    // so the canvas restores correctly after save/reload
+                    data: {
+                        ...n.data,
+                        _collapsed: nextCollapsed,
+                        _expandedHeight: nextCollapsed ? storedHeightRef.current : undefined,
+                    },
+                };
+                // Sync to localStorage immediately so a subsequent save picks it up
+                if (versionId) upsertNodeInStorage(versionId, id, updated);
+                return updated;
+            }
+            if (n.parentId === id) {
+                const updated = { ...n, hidden: nextCollapsed };
+                if (versionId) upsertNodeInStorage(versionId, n.id, updated);
+                return updated;
+            }
+            return n;
+        }));
+
+        setIsCollapsed(nextCollapsed);
+    };
+
     return (
         <>
-            {/* ── Resize handles — shown on selection ── */}
+            {/* Resize drag handles — only when expanded + selected */}
             <NodeResizer
-                isVisible={selected}
-                minWidth={250}
-                minHeight={180}
+                isVisible={selected && !isCollapsed}
+                minWidth={MIN_W}
+                minHeight={MIN_H}
                 handleClassName="subflow-node__resize-handle"
                 lineClassName="subflow-node__resize-line"
             />
 
-            {/* ── Connection handles ── */}
+            {/* Connection handles */}
             <Handle
                 type="target"
                 position={Position.Top}
@@ -63,11 +117,16 @@ export default function SubFlowNode({ id, data, selected }: NodeProps<CanvasNode
                 style={{ '--node-accent-glow': accent } as React.CSSProperties}
             />
 
-            {/* ── Main container ── */}
+            {/* Main container */}
             <div
-                className={`subflow-node ${selected ? 'subflow-node--selected' : ''}`}
+                className={`subflow-node ${selected ? 'subflow-node--selected' : ''} ${isCollapsed ? 'subflow-node--collapsed' : ''}`}
                 style={{ '--node-accent-glow': accent } as React.CSSProperties}
             >
+                {/* Delete button */}
+                <div className="subflow-node__delete" onClick={handleDelete} title="Delete group">
+                    ×
+                </div>
+
                 <div className="subflow-node__border-wrapper">
                     <div className="subflow-node__content">
 
@@ -78,35 +137,32 @@ export default function SubFlowNode({ id, data, selected }: NodeProps<CanvasNode
                                 {(data as any).label || 'Group'}
                             </span>
 
-                            {/* Expand / collapse hint badge */}
-                            <span
-                                className="subflow-node__resize-hint"
-                                title="Drag the corner handles to resize this group"
-                            >
-                                ⤡
-                            </span>
-
-                            {/* Delete */}
+                            {/* Collapse / Expand */}
                             <button
-                                className="subflow-node__delete"
-                                onClick={handleDelete}
-                                title="Delete group"
+                                className="subflow-node__toggle"
+                                onClick={toggleCollapse}
+                                title={isCollapsed ? 'Expand group' : 'Collapse group'}
                             >
-                                ×
+                                <ChevronDown
+                                    size={13}
+                                    className={`subflow-node__toggle-icon ${isCollapsed ? 'subflow-node__toggle-icon--up' : ''}`}
+                                />
                             </button>
+
+                            {!isCollapsed && (
+                                <span className="subflow-node__resize-hint" title="Drag corner handles to resize">⤡</span>
+                            )}
                         </div>
 
-                        {/* Body — child nodes render here via React Flow */}
-                        <div className="subflow-node__body">
-                            {(data as any).description && (
-                                <p className="subflow-node__description">
-                                    {(data as any).description}
-                                </p>
-                            )}
-                            <span className="subflow-node__drop-hint">
-                                Drop nodes here to group them
-                            </span>
-                        </div>
+                        {/* Body */}
+                        {!isCollapsed && (
+                            <div className="subflow-node__body">
+                                {(data as any).description && (
+                                    <p className="subflow-node__description">{(data as any).description}</p>
+                                )}
+                                <span className="subflow-node__drop-hint">Drop nodes here to group them</span>
+                            </div>
+                        )}
 
                     </div>
                 </div>

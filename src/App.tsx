@@ -16,7 +16,6 @@ import ActionCatalogPage from '@/pages/ActionCatalog/ActionCatalogPage';
 import ConnectorsPage from '@/pages/Connectors/ConnectorsPage';
 import CapabilitiesPage from '@/pages/Capabilities/CapabilitiesPage';
 import CategoriesPage from '@/pages/Categories/CategoriesPage';
-import GroupsPage from '@/pages/Groups/GroupsPage';
 import LoginPage from '@/pages/Login/LoginPage';
 import PrivateRoute from '@/components/PrivateRoute/PrivateRoute';
 import PublicRoute from '@/components/PublicRoute/PublicRoute';
@@ -58,7 +57,6 @@ function AppContent() {
                       <Route path={ROUTES.CATEGORIES} element={<CategoriesPage />} />
                       <Route path={ROUTES.CONNECTORS} element={<ConnectorsPage />} />
                       <Route path={ROUTES.CAPABILITIES} element={<CapabilitiesPage />} />
-                      <Route path={ROUTES.GROUPS} element={<GroupsPage />} />
                       <Route path={ROUTES.TOOLS} element={<div>Tools Placeholder</div>} />
                       <Route path={ROUTES.WORKFLOW} element={<div>Workflow Placeholder</div>} />
                       {/* Catch-all: redirect unknown routes to dashboard */}

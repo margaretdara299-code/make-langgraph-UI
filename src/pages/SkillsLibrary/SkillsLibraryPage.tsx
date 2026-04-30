@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { Input, Typography, Modal, message, Tabs, Badge, Space, Empty, Button } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined, SearchOutlined, BulbOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
 import { useSkills, useCategories } from '@/hooks';
 import { SkillCard, CreateSkillModal, EditSkillModal, SearchInput } from '@/components';
 import { PAGE_HEADER_CONTENT } from '@/constants/ui.constants';
@@ -26,7 +25,6 @@ export default function SkillsLibraryPage() {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingSkill, setEditingSkill] = useState<any>(null);
-    const navigate = useNavigate();
 
     const { skills, isLoading, statusCounts, setFilters, refetch } = useSkills();
     const { categories } = useCategories();
@@ -92,14 +90,6 @@ export default function SkillsLibraryPage() {
                     } else {
                         message.error(result.error || 'Failed to update version status');
                     }
-                }
-                break;
-            }
-
-            case CARD_ACTION_KEYS.BUILD_SKILL: {
-                const pubSkill = skills.find((s) => s.id === skillId);
-                if (pubSkill?.latestVersionId) {
-                    navigate(`/skills/${skillId}/versions/${pubSkill.latestVersionId}/design`);
                 }
                 break;
             }

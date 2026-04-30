@@ -179,13 +179,18 @@ export function useSkillGraph() {
 
         // Convert nodes map to array, strip internal-only fields
         const cleanNodes = Object.values(stored.nodes).map((node: any) => {
+            // Strip React Flow internal runtime fields that must never be persisted:
+            //   measured  — RF sets this after DOM layout; conflicts with style.width/height on reload
+            //   selected / dragging / resizing — transient interaction state
+            const { measured: _m, selected: _s, dragging: _d, resizing: _r, ...nodeRest } = node;
+
             const {
                 inputsSchemaJson, inputs_schema_json,
                 outputsSchemaJson, outputs_schema_json,
                 executionJson, execution_json,
                 ...cleanData
             } = node.data || {};
-            return { ...node, data: cleanData };
+            return { ...nodeRest, data: cleanData };
         });
 
         const viewportToSave = stored.viewport || { x: 0, y: 0, zoom: 1 };

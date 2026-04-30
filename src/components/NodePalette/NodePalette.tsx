@@ -25,9 +25,10 @@ const TreeTitle: React.FC<{ node: PaletteLeafNode & { type: string; category: st
   const colors = SUB_CAT_COLORS[node.subCategory] ?? SUB_CAT_COLORS['Common'];
 
   const onDragStart = (e: React.DragEvent) => {
+    const isSkill = node.type === 'subflow' && Boolean(node.latestVersionId);
     const payload: DragNodePayload = {
       type: node.type,
-      nodeType: ['subflow', 'connector'].includes(node.type) ? node.type : undefined,
+      nodeType: isSkill ? 'skill' : ['subflow', 'connector'].includes(node.type) ? node.type : undefined,
       label: node.name,
       icon: node.icon ?? 'Package',
       actionId: node.actionId ?? node.id,
@@ -36,6 +37,7 @@ const TreeTitle: React.FC<{ node: PaletteLeafNode & { type: string; category: st
       connector_type: node.connector_type,
       config_json: node.config_json,
       category: node.category,
+      latestVersionId: node.latestVersionId,
     };
     e.dataTransfer.setData('application/reactflow', JSON.stringify(payload));
     e.dataTransfer.effectAllowed = 'move';
@@ -106,6 +108,7 @@ export default function NodePalette() {
           name: skill.name,
           icon: skill.icon || 'Box',
           description: skill.description,
+          latestVersionId: skill.latestVersionId ?? skill.latest_version_id,
         }));
         return groups;
       },
