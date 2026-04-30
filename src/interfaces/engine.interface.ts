@@ -19,7 +19,7 @@ export interface DashboardCounts {
     };
 }
 
-export type NodeExecutionStatus = 'idle' | 'running' | 'success' | 'error';
+export type NodeExecutionStatus = 'idle' | 'running' | 'success' | 'error' | 'waiting';
 
 export interface NodeExecutionTrace {
     nodeId: string;

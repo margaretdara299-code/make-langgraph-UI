@@ -101,15 +101,38 @@ export function buildExecutionDebuggerNodes(
 ): Node[] {
     if (!isExecuting && !isSimulationDone) return nodes;
 
+    // Build a set of node IDs that have been revealed (non-idle)
+    const revealedNodeIds = new Set(
+        steps.filter(s => s.status !== 'idle').map(s => s.node.id)
+    );
+
     return nodes.map((node) => {
         const matchingSteps = steps.filter((step) => step.node.id === node.id && step.status !== 'idle');
         const latestStep = matchingSteps[matchingSteps.length - 1];
 
         if (!latestStep) {
+            // Show the "waiting" state on a merge node ONLY when:
+            //   1. It's a parallel_join node
+            //   2. Execution is still running
+            //   3. This node hasn't been reached yet
+            //   4. At least one other node IS revealed (branches are actively running)
+            //      → prevents showing "waiting" at t=0 before anything has started
+            const isWaitingMerge =
+                node.type === 'parallel_join' &&
+                isExecuting &&
+                !revealedNodeIds.has(node.id) &&
+                revealedNodeIds.size > 0;
+
             return {
                 ...node,
-                className: appendClassName(node.className, 'exec-debugger-node--dimmed'),
-            };
+                className: appendClassName(
+                    node.className,
+                    isWaitingMerge ? 'exec-debugger-node--waiting' : 'exec-debugger-node--dimmed'
+                ),
+                ...(isWaitingMerge
+                    ? { data: { ...(node.data ?? {}), executionStatus: 'waiting' } }
+                    : {}),
+            } as CanvasNode;
         }
 
         return {
@@ -137,74 +160,129 @@ export function buildExecutionDebuggerEdges(
         return edges;
     }
 
-    return edges.map((edge) => {
-        let isPathActive = false;
-        let status: NodeExecutionStatus = 'idle';
-        const isErrorPath = isErrorConnectorEdge(edge, nodes);
-        const strokeDasharray = isErrorPath ? '6 3' : edge.style?.strokeDasharray;
+    // Build a map: nodeId -> latest revealed step (for O(1) lookups)
+    const revealedStepMap = new Map<string, ExecutedNodeStep>();
+    for (const step of revealedSteps) {
+        revealedStepMap.set(step.node.id, step);
+    }
 
-        for (let index = 0; index < revealedSteps.length - 1; index += 1) {
-            if (revealedSteps[index].node.id === edge.source && revealedSteps[index + 1].node.id === edge.target) {
-                isPathActive = true;
-                status = revealedSteps[index + 1].node.type === 'error'
-                    ? 'error'
-                    : revealedSteps[index + 1].status;
-                break;
-            }
+    // Build a set of revealed node IDs
+    const revealedNodeIds = new Set(revealedStepMap.keys());
+
+    // ── Ball count per edge ──────────────────────────────────────────────────
+    // RULE: only parallel_split nodes emit multiple balls.
+    // Action nodes have error-handle edges that would give fanCount=2 with a
+    // generic edge-count approach — that's wrong. We use node type as the gate.
+    //
+    // For a parallel_split with N configured branches, each branch edge gets N
+    // balls so the viewer sees N threads launching simultaneously.
+    const splitBranchCount = new Map<string, number>();
+    for (const node of nodes) {
+        if (node.type === 'parallel_split') {
+            const outCount = edges.filter(e => e.source === node.id).length;
+            if (outCount > 1) splitBranchCount.set(node.id, outCount);
         }
+    }
+
+    return edges.map((edge) => {
+        const sourceRevealed = revealedNodeIds.has(edge.source);
+        const targetRevealed = revealedNodeIds.has(edge.target);
+        const isPathActive = sourceRevealed && targetRevealed;
+
+        const isEdgeErrorPath = Boolean((edge.data as { isErrorPath?: boolean } | undefined)?.isErrorPath);
+        const strokeDasharray = isEdgeErrorPath ? '6 3' : edge.style?.strokeDasharray;
+
+        // Number of balls: >1 only for parallel_split source nodes
+        const parallelBalls = splitBranchCount.get(edge.source) ?? 1;
 
         if (!isPathActive) {
+            // Source revealed but target not yet reached → parallel branch in-flight
+            if (sourceRevealed && isExecuting) {
+                const sourceStep = revealedStepMap.get(edge.source);
+                if (sourceStep && (sourceStep.status === 'running' || sourceStep.status === 'success')) {
+                    return {
+                        ...edge,
+                        animated: true,
+                        data: {
+                            ...(edge.data ?? {}),
+                            _execBalls: parallelBalls,
+                        },
+                        style: {
+                            ...edge.style,
+                            stroke: 'var(--color-primary)',
+                            strokeWidth: 3,
+                            opacity: 0.9,
+                            filter: 'drop-shadow(0 0 5px var(--color-primary))',
+                        },
+                    };
+                }
+            }
+
+            // Fully dimmed — not part of active execution path
             return {
                 ...edge,
                 animated: false,
+                data: { ...(edge.data ?? {}), _execBalls: 1 },
                 style: {
                     ...edge.style,
-                    strokeDasharray,
-                    opacity: 0.25,
+                    opacity: 0.15,
                     filter: 'none',
                 },
             };
         }
 
-        if (status === 'running') {
+        // Both endpoints revealed — determine status from target node
+        const targetStep = revealedStepMap.get(edge.target);
+        const edgeStatus: NodeExecutionStatus = targetStep
+            ? (targetStep.node.type === 'error' ? 'error' : targetStep.status)
+            : 'idle';
+        const isErrorPath = isEdgeErrorPath || targetStep?.node.type === 'error';
+        const finalDash = isErrorPath ? '6 3' : edge.style?.strokeDasharray;
+
+        if (edgeStatus === 'running') {
             return {
                 ...edge,
                 animated: true,
+                data: { ...(edge.data ?? {}), _execBalls: parallelBalls },
                 style: {
                     ...edge.style,
                     stroke: 'var(--color-primary)',
                     strokeWidth: 3,
-                    strokeDasharray,
+                    strokeDasharray: finalDash,
                     opacity: 1,
-                    filter: 'drop-shadow(0 0 4px var(--color-primary))',
+                    filter: 'drop-shadow(0 0 5px var(--color-primary))',
                 },
             };
         }
 
-        if (status === 'success') {
+        if (edgeStatus === 'success') {
             return {
                 ...edge,
                 animated: false,
+                data: { ...(edge.data ?? {}), _execBalls: 1 },
                 style: {
                     ...edge.style,
                     stroke: 'var(--color-success)',
-                    strokeWidth: 3,
-                    strokeDasharray,
-                    opacity: 1,
+                    strokeWidth: 2.5,
+                    strokeDasharray: finalDash,
+                    opacity: 0.9,
+                    filter: 'none',
                 },
             };
         }
 
-        if (status === 'error') {
+        if (edgeStatus === 'error') {
             return {
                 ...edge,
                 animated: false,
+                data: { ...(edge.data ?? {}), _execBalls: 1 },
                 style: {
                     ...edge.style,
                     stroke: 'var(--color-error)',
                     strokeWidth: 3,
-                    strokeDasharray,
+                    strokeDasharray: finalDash,
                     opacity: 1,
+                    filter: 'none',
                 },
             };
         }
@@ -212,3 +290,4 @@ export function buildExecutionDebuggerEdges(
         return edge;
     });
 }
+

@@ -215,10 +215,17 @@
     position: relative;
     overflow: hidden;
     background: var(--bg-page);
+    /* White fill for animated SVG balls traveling the edges */
+    --exec-ball-fill: var(--bg-card, #fff);
 }
 
 .exec-debugger-canvas .exec-debugger-node--dimmed {
-    opacity: 0.25;
+    opacity: 0.2;
+}
+
+/* Waiting merge node stays visible (not dimmed) — the amber glow tells the story */
+.exec-debugger-canvas .exec-debugger-node--waiting {
+    opacity: 1;
 }
 
 .exec-debugger-canvas .react-flow__controls {

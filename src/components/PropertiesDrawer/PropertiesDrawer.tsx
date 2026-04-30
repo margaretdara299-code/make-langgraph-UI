@@ -248,14 +248,6 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                 output_key:      pj.output_key || 'merged_parallel_results',
                 output_format:   pj.output_format || 'object_by_branch',
                 include_errors:  pj.include_errors !== false,
-                label: qd.label || 'Queue',
-                description: qd.description || '',
-                queue_name: qd.queue_name || '',
-                ...configs,
-                method: configs.method || 'POST',
-                inherit_previous_response: configs.inherit_previous_response !== false,
-                body_params_type: 'form-data',
-                body_params: queueBodyParams,
             });
             return;
         }

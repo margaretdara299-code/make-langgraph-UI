@@ -352,7 +352,6 @@ export default function SplitPropertiesPanel({
                                     >
                                         <Input
                                             placeholder="e.g. Eligibility Check"
-                                            onChange={e => handleBranchLabelChange(fieldName, e.target.value)}
                                         />
                                     </Form.Item>
 
