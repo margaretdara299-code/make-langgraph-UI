@@ -97,13 +97,8 @@ const axiosInstance: AxiosInstance = axios.create({
 axiosInstance.interceptors.response.use(
   (response) => {
     const envelope = response.data;
-    // Backend always sends { status, message, data }
-    if (envelope && typeof envelope.status === "boolean") {
-      if (!envelope.status) {
-        return Promise.reject(
-          new Error(envelope.message || "API request failed"),
-        );
-      }
+    // Since we use HTTP status codes, reaching here means 2xx success.
+    if (envelope && (envelope.status === "success" || envelope.status === true)) {
       // Unwrap and transform the data payload
       const transformedData = snakeToCamel(envelope.data);
       response.data = {
@@ -115,11 +110,13 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     // Extract error message from backend envelope if available
-    const detail = error.response?.data?.detail;
-    if (detail) {
-      const message =
-        typeof detail === "string" ? detail : detail.message || "API error";
-      return Promise.reject(new Error(message));
+    const payload = error.response?.data;
+    if (payload) {
+      if (payload.status === "error" || payload.status === false) {
+        error.message = payload.message || "API error";
+      } else if (payload.detail) {
+        error.message = typeof payload.detail === "string" ? payload.detail : payload.detail.message || "API error";
+      }
     }
     return Promise.reject(error);
   },

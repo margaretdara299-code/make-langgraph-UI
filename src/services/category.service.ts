@@ -26,8 +26,11 @@ export async function createCategory(payload: { name: string; description?: stri
     try {
         const result = await apiClient.post(API_ENDPOINTS.CATEGORIES.BASE, payload);
         return { success: true, data: result.data, message: result.message };
-    } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : 'Failed to create category' };
+    } catch (error: any) {
+        let msg = error instanceof Error ? error.message : 'Failed to create category';
+        if (error.response?.status === 409) msg = 'Category already exists';
+        else if (error.response?.status === 400) msg = 'Validation error: ' + msg;
+        return { success: false, error: msg };
     }
 }
 
@@ -41,8 +44,11 @@ export async function updateCategory(
     try {
         const result = await apiClient.patch(API_ENDPOINTS.CATEGORIES.BY_ID(categoryId), payload);
         return { success: true, data: result.data, message: result.message };
-    } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : 'Failed to update category' };
+    } catch (error: any) {
+        let msg = error instanceof Error ? error.message : 'Failed to update category';
+        if (error.response?.status === 404) msg = 'Category not found';
+        else if (error.response?.status === 409) msg = 'Conflict: ' + msg;
+        return { success: false, error: msg };
     }
 }
 
@@ -53,7 +59,9 @@ export async function deleteCategory(categoryId: number): Promise<ApiResponse<an
     try {
         const result = await apiClient.delete(API_ENDPOINTS.CATEGORIES.BY_ID(categoryId));
         return { success: true, data: result.data, message: result.message };
-    } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : 'Failed to delete category' };
+    } catch (error: any) {
+        let msg = error instanceof Error ? error.message : 'Failed to delete category';
+        if (error.response?.status === 404) msg = 'Category not found';
+        return { success: false, error: msg };
     }
 }

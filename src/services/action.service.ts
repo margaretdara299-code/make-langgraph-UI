@@ -50,8 +50,12 @@ export async function createAction(
             updated_at: new Date().toISOString(),
         };
         return { success: true, data: newAction as any, message: res.message };
-    } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : 'Failed to create action' };
+    } catch (error: any) {
+        let msg = error instanceof Error ? error.message : 'Failed to create action';
+        if (error.response?.status === 409) msg = 'Action already exists';
+        else if (error.response?.status === 400) msg = 'Validation error: ' + msg;
+        else if (error.response?.status === 404) msg = 'Not found';
+        return { success: false, error: msg };
     }
 }
 
@@ -309,13 +313,16 @@ export async function fetchActionById(id: string): Promise<ApiResponse<ActionDef
         (action as any).action_version_id = data.action_version_id || data.actionVersionId || '';
 
         return { success: true, data: action };
-    } catch (error) {
+    } catch (error: any) {
         console.error('fetchActionById API error:', error);
         // Fallback to cache
         const cached = cachedActions ?? [];
         const action = cached.find((a) => a.id === id);
         if (action) return { success: true, data: action };
-        return { success: false, error: error instanceof Error ? error.message : 'Action not found.' };
+        
+        let msg = error instanceof Error ? error.message : 'Action not found.';
+        if (error.response?.status === 404) msg = 'Action not found';
+        return { success: false, error: msg };
     }
 }
 
@@ -347,8 +354,12 @@ export async function updateActionDefinition(
 
         const result = await apiClient.patch<ActionDefinition>(API_ENDPOINTS.ACTIONS.UPDATE(actionDefinitionId), sanitized);
         return { success: true, data: result.data, message: result.message };
-    } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : 'Failed to update action definition' };
+    } catch (error: any) {
+        let msg = error instanceof Error ? error.message : 'Failed to update action definition';
+        if (error.response?.status === 409) msg = 'Conflict: ' + msg;
+        else if (error.response?.status === 400) msg = 'Validation error: ' + msg;
+        else if (error.response?.status === 404) msg = 'Action not found';
+        return { success: false, error: msg };
     }
 }
 
@@ -360,7 +371,11 @@ export async function deleteAction(id: string): Promise<ApiResponse<void>> {
     try {
         await apiClient.delete(API_ENDPOINTS.ACTIONS.DELETE(id));
         return { success: true, message: 'Action deleted successfully' };
-    } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : 'Failed to delete action' };
+    } catch (error: any) {
+        let msg = error instanceof Error ? error.message : 'Failed to delete action';
+        if (error.response?.status === 409) msg = 'Conflict: ' + msg;
+        else if (error.response?.status === 400) msg = 'Validation error: ' + msg;
+        else if (error.response?.status === 404) msg = 'Action not found';
+        return { success: false, error: msg };
     }
 }

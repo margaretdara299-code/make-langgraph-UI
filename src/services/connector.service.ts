@@ -22,8 +22,11 @@ export async function createConnector(payload: CreateConnectorPayload): Promise<
     try {
         const result = await apiClient.post(API_ENDPOINTS.CONNECTORS.BASE, payload);
         return { success: true, data: result.data, message: result.message };
-    } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : 'Failed to create connector' };
+    } catch (error: any) {
+        let msg = error instanceof Error ? error.message : 'Failed to create connector';
+        if (error.response?.status === 409) msg = 'Connector already exists';
+        else if (error.response?.status === 400) msg = 'Validation error: ' + msg;
+        return { success: false, error: msg };
     }
 }
 
@@ -37,8 +40,11 @@ export async function updateConnector(
     try {
         const result = await apiClient.patch(API_ENDPOINTS.CONNECTORS.BY_ID(connectorId), payload);
         return { success: true, data: result.data, message: result.message };
-    } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : 'Failed to update connector' };
+    } catch (error: any) {
+        let msg = error instanceof Error ? error.message : 'Failed to update connector';
+        if (error.response?.status === 404) msg = 'Connector not found';
+        else if (error.response?.status === 409) msg = 'Conflict: ' + msg;
+        return { success: false, error: msg };
     }
 }
 
@@ -49,8 +55,10 @@ export async function deleteConnector(connectorId: number): Promise<ApiResponse<
     try {
         const result = await apiClient.delete(API_ENDPOINTS.CONNECTORS.BY_ID(connectorId));
         return { success: true, data: result.data, message: result.message };
-    } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : 'Failed to delete connector' };
+    } catch (error: any) {
+        let msg = error instanceof Error ? error.message : 'Failed to delete connector';
+        if (error.response?.status === 404) msg = 'Connector not found';
+        return { success: false, error: msg };
     }
 }
 

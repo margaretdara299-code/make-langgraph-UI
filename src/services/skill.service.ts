@@ -166,8 +166,12 @@ export async function createSkill(
         };
 
         return { success: true, data: newSkill, message: result.message };
-    } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : 'Failed to create skill' };
+    } catch (error: any) {
+        let msg = error instanceof Error ? error.message : 'Failed to create skill';
+        if (error.response?.status === 409) msg = 'Skill already exists';
+        else if (error.response?.status === 400) msg = 'Validation error: ' + msg;
+        else if (error.response?.status === 404) msg = 'Not found';
+        return { success: false, error: msg };
     }
 }
 
@@ -206,7 +210,9 @@ export async function fetchSkillById(id: string): Promise<ApiResponse<Skill>> {
         return { success: true, data: result.data, message: result.message };
     } catch (error: any) {
         console.error('fetchSkillById API error:', error);
-        return { success: false, error: error.message || 'Skill not found.' };
+        let msg = error.message || 'Skill not found.';
+        if (error.response?.status === 404) msg = 'Skill not found';
+        return { success: false, error: msg };
     }
 }
 
@@ -225,8 +231,11 @@ export async function deleteSkill(id: string): Promise<ApiResponse<null>> {
         }
 
         return { success: true, data: null, message: result.message };
-    } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : 'Failed to delete skill.' };
+    } catch (error: any) {
+        let msg = error instanceof Error ? error.message : 'Failed to delete skill.';
+        if (error.response?.status === 409) msg = 'Conflict: ' + msg;
+        else if (error.response?.status === 404) msg = 'Skill not found';
+        return { success: false, error: msg };
     }
 }
 
@@ -270,8 +279,12 @@ export async function updateSkill(
         }
 
         return { success: true, data: updatedSkill as Skill, message: result.message };
-    } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : 'Failed to update skill.' };
+    } catch (error: any) {
+        let msg = error instanceof Error ? error.message : 'Failed to update skill.';
+        if (error.response?.status === 409) msg = 'Conflict: ' + msg;
+        else if (error.response?.status === 400) msg = 'Validation error: ' + msg;
+        else if (error.response?.status === 404) msg = 'Skill not found';
+        return { success: false, error: msg };
     }
 }
 
@@ -326,7 +339,10 @@ export async function updateSkillVersionStatus(
         }
 
         return { success: true, data: null, message: result.message };
-    } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : 'Failed to update version status.' };
+    } catch (error: any) {
+        let msg = error instanceof Error ? error.message : 'Failed to update version status.';
+        if (error.response?.status === 404) msg = 'Version not found';
+        else if (error.response?.status === 400) msg = 'Validation error: ' + msg;
+        return { success: false, error: msg };
     }
 }

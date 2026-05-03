@@ -31,8 +31,11 @@ export async function createCapability(payload: { name: string; description?: st
     try {
         const result = await apiClient.post(API_ENDPOINTS.CAPABILITIES.BASE, payload);
         return { success: true, data: result.data, message: result.message };
-    } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : 'Failed to create capability' };
+    } catch (error: any) {
+        let msg = error instanceof Error ? error.message : 'Failed to create capability';
+        if (error.response?.status === 409) msg = 'Capability already exists';
+        else if (error.response?.status === 400) msg = 'Validation error: ' + msg;
+        return { success: false, error: msg };
     }
 }
 
@@ -47,8 +50,11 @@ export async function updateCapability(
     try {
         const result = await apiClient.patch(API_ENDPOINTS.CAPABILITIES.BY_ID(capabilityId), payload);
         return { success: true, data: result.data, message: result.message };
-    } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : 'Failed to update capability' };
+    } catch (error: any) {
+        let msg = error instanceof Error ? error.message : 'Failed to update capability';
+        if (error.response?.status === 404) msg = 'Capability not found';
+        else if (error.response?.status === 409) msg = 'Conflict: ' + msg;
+        return { success: false, error: msg };
     }
 }
 
@@ -59,7 +65,9 @@ export async function deleteCapability(capabilityId: number): Promise<ApiRespons
     try {
         const result = await apiClient.delete(API_ENDPOINTS.CAPABILITIES.BY_ID(capabilityId));
         return { success: true, data: result.data, message: result.message };
-    } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : 'Failed to delete capability' };
+    } catch (error: any) {
+        let msg = error instanceof Error ? error.message : 'Failed to delete capability';
+        if (error.response?.status === 404) msg = 'Capability not found';
+        return { success: false, error: msg };
     }
 }
