@@ -128,7 +128,7 @@ const ConditionRow = ({ cField, cIndex, field, removeCond, stateKeyOptions }: an
                                         filterOption={(input, option) =>
                                             String(option?.value ?? '').toLowerCase().includes(input.toLowerCase())
                                         }
-                                        style={{ width: '100%', fontSize: 12 }}
+                                        className="pd-autocomplete-compact"
                                         allowClear
                                     />
                                 </Form.Item>
@@ -139,7 +139,7 @@ const ConditionRow = ({ cField, cIndex, field, removeCond, stateKeyOptions }: an
                         <div className="senior-cond-field-group">
                             <span className="senior-cond-label">
                                 Field Path
-                                <span style={{ fontSize: 10, color: '#94a3b8', marginLeft: 4 }}>
+                                <span className="senior-cond-hint senior-cond-hint--with-offset">
                                     (nested: data.items.code)
                                 </span>
                             </span>
@@ -149,8 +149,7 @@ const ConditionRow = ({ cField, cIndex, field, removeCond, stateKeyOptions }: an
                                         placeholder="e.g. status or data.result"
                                         size="small"
                                         variant="borderless"
-                                        className="senior-inner-input"
-                                        style={{ fontFamily: 'monospace', fontSize: 12 }}
+                                        className="senior-inner-input pd-input-mono-sm"
                                     />
                                 </Form.Item>
                             </div>
@@ -192,7 +191,7 @@ const ConditionRow = ({ cField, cIndex, field, removeCond, stateKeyOptions }: an
                                         <span className="senior-cond-label">
                                             Compare With
                                             {isListOp && (
-                                                <span style={{ fontSize: 10, color: '#94a3b8', marginLeft: 4 }}>
+                                                <span className="senior-cond-hint senior-cond-hint--with-offset">
                                                     (comma separated)
                                                 </span>
                                             )}
@@ -275,11 +274,7 @@ const BranchItem = ({ field, index, remove, stateKeyOptions, form }: any) => {
                         {(condFields, { add: addCond, remove: removeCond }) => (
                             <div className="senior-conditions-wrapper">
                                 {condFields.length === 0 && (
-                                    <div style={{
-                                        padding: '10px 14px',
-                                        fontSize: 12, color: '#94a3b8',
-                                        fontStyle: 'italic',
-                                    }}>
+                                    <div className="senior-conditions-empty">
                                         No conditions yet — click "Add condition" below.
                                     </div>
                                 )}
@@ -313,26 +308,11 @@ const BranchItem = ({ field, index, remove, stateKeyOptions, form }: any) => {
 
  
                 {preview && (
-                    <div style={{
-                        padding: '8px 14px 10px',
-                        borderTop: `1px solid ${color.bg}`,
-                        background: color.bg,
-                    }}>
-                        <div style={{
-                            fontSize: 10, fontWeight: 600, color: '#64748b',
-                            marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.06em',
-                        }}>
+                    <div className="decision-props__preview" style={{ '--decision-preview-bg': color.bg } as React.CSSProperties}>
+                        <div className="decision-props__preview-title">
                             Expression Preview
                         </div>
-                        <div style={{
-                            fontFamily: 'monospace', fontSize: 11,
-                            color: color.stroke, lineHeight: 1.6,
-                            wordBreak: 'break-all',
-                            padding: '4px 8px',
-                            background: 'rgba(255,255,255,0.7)',
-                            borderRadius: 6,
-                            border: `1px solid ${color.bg}`,
-                        }}>
+                        <div className="decision-props__preview-body" style={{ '--decision-preview-text': color.stroke } as React.CSSProperties}>
                             {preview}
                         </div>
                     </div>
@@ -374,15 +354,11 @@ export default function DecisionPropertiesPanel({
                             <div className="decision-props__icon-wrap">
                                 <Split size={14} color="var(--accent)" />
                             </div>
-                            <span style={{ fontWeight: 700, fontSize: 14, color: '#1e293b' }}>
+                            <span className="decision-props__title">
                                 Decision Rules
                             </span>
                             {rules.length > 0 && (
-                                <span style={{
-                                    fontSize: 11, fontWeight: 700, color: '#EA580C',
-                                    background: 'rgba(234,88,12,0.08)', borderRadius: 5,
-                                    padding: '1px 8px',
-                                }}>
+                                <span className="decision-props__badge">
                                     {rules.length} branch{rules.length !== 1 ? 'es' : ''} + fallback
                                 </span>
                             )}
@@ -390,9 +366,9 @@ export default function DecisionPropertiesPanel({
                     </div>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
+                <div className="decision-props__description-flex">
                     <Info size={12} color="#94a3b8" />
-                    <Text style={{ fontSize: 11, color: '#64748b', lineHeight: 1.5 }}>
+                    <Text className="decision-props__description">
                         Each branch gets its own handle on the node. If no branch matches, the <strong>Fallback</strong> handle is taken.
                     </Text>
                 </div>
@@ -400,18 +376,12 @@ export default function DecisionPropertiesPanel({
 
             {/* Empty state */}
             {rules.length === 0 && (
-                <div style={{
-                    padding: '20px 16px',
-                    textAlign: 'center',
-                    border: '1.5px dashed #e2e8f0',
-                    borderRadius: 10,
-                    background: '#fafbff',
-                }}>
-                    <GitBranch size={22} color="#cbd5e1" style={{ marginBottom: 8 }} />
-                    <div style={{ fontSize: 13, fontWeight: 600, color: '#94a3b8', marginBottom: 4 }}>
+                <div className="decision-props__empty-state">
+                    <GitBranch size={22} color="#cbd5e1" className="decision-props__empty-icon" />
+                    <div className="decision-props__empty-title">
                         No branches yet
                     </div>
-                    <div style={{ fontSize: 11, color: '#b0bac9' }}>
+                    <div className="decision-props__empty-description">
                         Click "Add Branch" to define a routing condition.
                     </div>
                 </div>
@@ -455,13 +425,9 @@ export default function DecisionPropertiesPanel({
             {/* Default fallback */}
             <div className="decision-props__fallback-section">
                 <div className="fallback-header">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div className="fallback-header__group">
                         {/* Grey diamond handle indicator */}
-                        <div style={{
-                            width: 10, height: 10, borderRadius: 2,
-                            background: '#94a3b8', transform: 'rotate(45deg)',
-                            flexShrink: 0,
-                        }} />
+                        <div className="fallback-header__diamond" />
                         <span className="fallback-label">Fallback Path</span>
                     </div>
                     <Tag className="fallback-tag">DEFAULT</Tag>

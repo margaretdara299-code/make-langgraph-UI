@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Typography, Table, Button, Row, Col, Space, Dropdown } from 'antd';
+import { Table, Button, Row, Col, Space, Dropdown } from 'antd';
 import { ArrowRight, PenLine, Filter } from 'lucide-react';
-import { MetricCard, DashboardSkeleton } from '@/components';
+import { MetricCard, DashboardSkeleton, CollectionPageHeader } from '@/components';
 import { useDashboard } from '@/hooks/useDashboard';
 import { PAGE_HEADER_CONTENT } from '@/constants/ui.constants';
 import { ROUTES } from '@/routes';
@@ -10,7 +10,6 @@ import { getDashboardColumns } from './dashboard.columns';
 import type { Skill } from '@/interfaces';
 import './DashboardPage.css';
 
-const { Title, Text } = Typography;
 const { DASHBOARD } = PAGE_HEADER_CONTENT;
 
 export default function DashboardPage() {
@@ -77,17 +76,11 @@ export default function DashboardPage() {
 
     return (
         <div className="dashboard-content">
-            {/* Header */}
-            <div className="industry-header-modern reveal-up">
-                <div className="header-title-row">
-                    <div className="db-title-column">
-                        <Title level={2} className="db-page-title">{DASHBOARD.title}</Title>
-                        <Text type="secondary" className="db-page-subtitle">
-                            {DASHBOARD.description}
-                        </Text>
-                    </div>
-                </div>
-            </div>
+            <CollectionPageHeader
+                title={DASHBOARD.title}
+                description={DASHBOARD.description}
+                className="reveal-up"
+            />
 
             {/* Metric Cards */}
             <Row gutter={[16, 16]} className="metrics-section reveal-up db-metrics-reveal">
@@ -102,11 +95,11 @@ export default function DashboardPage() {
             <div className="activity-container card-elevated reveal-up db-activity-reveal">
                 <div className="activity-header-modern">
                     <div className="header-content-left">
-                        <div className="title-row">
+                        <div className="dashboard__activity-title-row">
                             <PenLine size={18} className="activity-icon" />
-                            <Title level={4} className="updates-title">Skill Activity</Title>
+                            <h2 className="updates-title">Skill Activity</h2>
                         </div>
-                        <Text className="header-description">Live activity log of deployments and studio events.</Text>
+                        <p className="header-description">Live activity log of deployments and studio events.</p>
                     </div>
                     <div className="header-actions-group">
                         <Space size="middle">
@@ -148,7 +141,7 @@ export default function DashboardPage() {
                     className="dashboard-skills-table"
                     pagination={false}
                     tableLayout="fixed"
-                    scroll={{ y: 320 }}
+                    scroll={{ y: 'clamp(320px, 48vh, 520px)' }}
                     onRow={(record) => ({
                         className: 'db-row-clickable',
                         onClick: () => {

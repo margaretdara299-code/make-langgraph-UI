@@ -1,195 +1,81 @@
 .action-catalog-page {
-    min-height: calc(100vh - 80px);
+    min-height: 0;
 }
 
-.catalog-header {
-    margin-bottom: 32px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.catalog-header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 40px;
-}
-
-.title-section {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    flex-shrink: 0;
-}
-
-.title-row {
-    display: flex;
-    align-items: center;
-    gap: var(--space-1-5);
-}
-
-
+/* ── Filter toolbar ── */
 .catalog-filters-row {
     display: flex;
     align-items: center;
     gap: var(--space-1-5);
-    flex-shrink: 0;
+    flex-wrap: wrap;
 }
 
 .catalog-search-wrap {
-    width: 320px;
+    flex: 0 0 auto;
+    width: min(100%, 280px);
 }
 
 .catalog-options-row {
     display: flex;
-    gap: 8px;
+    align-items: center;
+    gap: var(--space-1-5);
+    flex-wrap: wrap;
 }
 
-.catalog-options-row .ant-select {
+/* ── Filter selects ── */
+.catalog-filter-select {
     min-width: 160px;
-    min-height: 36px;
+    flex: 1 1 160px;
 }
 
-.catalog-options-row .ant-select-selector {
-    border-radius: 4px !important;
-    border-color: var(--border-light) !important;
-    background-color: #ffffff !important;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
-    height: 36px !important;
-    padding: 0 8px !important;
+/* Override AntD select to match the 40px control grid */
+.catalog-filter-select.ant-select,
+.catalog-filter-select.ant-select .ant-select-selector {
+    height: var(--control-md-height) !important;
+    min-height: var(--control-md-height) !important;
+    border-radius: var(--control-radius) !important;
+}
+
+.catalog-filter-select .ant-select-selector {
+    border-color: var(--border-medium) !important;
+    background-color: var(--bg-card) !important;
+    box-shadow: var(--shadow-xs) !important;
+    padding: 0 var(--control-padding-x-md) !important;
     display: flex !important;
     align-items: center !important;
 }
 
-.catalog-options-row .ant-select-selection-item,
-.catalog-options-row .ant-select-selection-placeholder {
+.catalog-filter-select .ant-select-selection-item,
+.catalog-filter-select .ant-select-selection-placeholder,
+.catalog-filter-select .ant-select-selection-search {
     display: flex !important;
     align-items: center !important;
     line-height: normal !important;
-    height: 34px !important;
+    height: 100% !important;
 }
 
-.catalog-options-row .ant-select-focused .ant-select-selector {
+.catalog-filter-select.ant-select-focused .ant-select-selector {
     border-color: var(--accent) !important;
-    background-color: #ffffff !important;
-    box-shadow: 0 0 0 4px var(--accent-light) !important;
-}
-
-.status-tabs .ant-tabs-nav {
-    margin-bottom: 0 !important;
-}
-
-.status-tabs .ant-tabs-nav::before {
-    border-bottom: 1px solid var(--border-light) !important;
-}
-
-.status-tabs.ant-tabs {
-    margin-bottom: -1px;
-}
-
-.status-tabs .ant-tabs-tab {
-    padding: var(--space-1-5) 27px !important;
-    margin: 0 !important;
-    font-size: var(--text-sm);
-    color: var(--text-subtle) !important;
-    transition: all 0.3s ease !important;
-}
-
-.status-tabs .ant-tabs-ink-bar {
-    height: 3px !important;
-    background: var(--accent) !important;
-    border-radius: 3px 3px 0 0;
-}
-
-.status-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
-    color: var(--accent) !important;
+    box-shadow: 0 0 0 4px var(--accent-soft), var(--shadow-xs) !important;
 }
 
 .catalog-body {
     position: relative;
-
-}
-
-.catalog-empty {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 400px;
-    background: #ffffff;
-    border: 1px dashed var(--border-medium);
-    border-radius: 20px;
-    padding: 40px;
-}
-
-.catalog-empty-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    max-width: 400px;
-}
-
-.catalog-empty-icon-shell {
-    width: 80px;
-    height: 80px;
-    background: var(--accent-light);
-    border-radius: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 24px;
-}
-
-.catalog-empty-title {
-    margin-bottom: 8px !important;
-    color: var(--text-main) !important;
-}
-
-.catalog-empty-desc {
-    font-size: var(--text-sm);
-    color: var(--text-muted);
-    margin-bottom: 32px;
-}
-
-.catalog-empty-actions .ant-btn {
-    height: 40px;
-    padding: 0 24px;
-    border-radius: 8px;
-    font-weight: 600;
-}
-
-@media (max-width: 1024px) {
-    .catalog-header-top {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 24px;
-    }
-
-    .catalog-filters-row {
-        width: 100%;
-        flex-wrap: wrap;
-    }
-
-    .catalog-search-wrap {
-        width: 100%;
-        max-width: 100%;
-    }
 }
 
 .catalog-pagination-wrap {
-    margin-top: 48px;
-    padding: 24px 0;
+    margin-top: var(--space-6);
+    padding: var(--space-3) 0;
     display: flex;
     justify-content: center;
     border-top: 1px solid var(--border-light);
 }
 
 .premium-pagination .ant-pagination-item {
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     border: 1px solid var(--border-light);
-    transition: all 0.2s ease;
-    font-weight: 500;
+    transition: border-color var(--motion-base) var(--ease-out), background-color var(--motion-base) var(--ease-out), transform var(--motion-base) var(--ease-out);
+    font-weight: var(--weight-medium);
 }
 
 .premium-pagination .ant-pagination-item-active {
@@ -198,12 +84,12 @@
 }
 
 .premium-pagination .ant-pagination-item-active a {
-    color: #ffffff !important;
+    color: var(--accent-contrast) !important;
 }
 
 .premium-pagination .ant-pagination-prev .ant-pagination-item-link,
 .premium-pagination .ant-pagination-next .ant-pagination-item-link {
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     border: 1px solid var(--border-light);
     display: flex;
     align-items: center;
@@ -211,5 +97,27 @@
 }
 
 .premium-pagination .ant-select-selector {
-    border-radius: 8px !important;
+    border-radius: var(--radius-sm) !important;
+}
+
+@media (max-width: 1024px) {
+    .catalog-filters-row {
+        width: 100%;
+    }
+
+    .catalog-search-wrap {
+        width: 100%;
+        flex: 1 1 100%;
+    }
+
+    .catalog-options-row {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .catalog-filter-select {
+        flex: 1 1 100%;
+        width: 100%;
+    }
 }

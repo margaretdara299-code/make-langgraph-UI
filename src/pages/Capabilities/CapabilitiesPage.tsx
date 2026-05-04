@@ -5,7 +5,7 @@
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useDebounce } from '@/hooks';
-import { Button, Typography, message, Modal, Empty } from 'antd';
+import { Button, message, Modal } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { fetchCapabilities, deleteCapability } from '@/services';
 import type { Capability } from '@/interfaces';
@@ -14,12 +14,13 @@ import {
     CapabilityCardSkeleton, 
     CreateCapabilityModal, 
     Grid, 
-    SearchInput 
+    SearchInput,
+    CollectionPageHeader,
+    CollectionEmptyState,
 } from '@/components';
 import { PAGE_HEADER_CONTENT } from '@/constants/ui.constants';
 import './CapabilitiesPage.css';
 
-const { Title, Text } = Typography;
 const { CAPABILITIES } = PAGE_HEADER_CONTENT;
 
 export default function CapabilitiesPage() {
@@ -86,30 +87,28 @@ export default function CapabilitiesPage() {
 
     return (
         <div className="capabilities-page">
-            <header className="capabilities-header">
-                <div className="title-section">
-                    <div className="title-row">
-                        <Title level={2} className="header-title-premium">{CAPABILITIES.title}</Title>
-                        <Button 
-                            type="primary" 
-                            shape="circle"
-                            icon={<PlusOutlined />} 
-                            onClick={() => { setCapabilityToEdit(null); setIsModalOpen(true); }}
-                            className="global-header-add-btn"
+            <CollectionPageHeader
+                title={CAPABILITIES.title}
+                description={CAPABILITIES.description}
+                action={(
+                    <Button
+                        type="primary"
+                        shape="circle"
+                        icon={<PlusOutlined />}
+                        onClick={() => { setCapabilityToEdit(null); setIsModalOpen(true); }}
+                        className="global-header-add-btn"
+                    />
+                )}
+                aside={(
+                    <div className="capabilities-toolbar">
+                        <SearchInput
+                            placeholder="Search capabilities..."
+                            value={searchValue}
+                            onChange={setSearchValue}
                         />
                     </div>
-                    <Text type="secondary" className="header-subtitle-premium">
-                        {CAPABILITIES.description}
-                    </Text>
-                </div>
-                <div className="capabilities-toolbar">
-                    <SearchInput
-                        placeholder="Search capabilities..."
-                        value={searchValue}
-                        onChange={setSearchValue}
-                    />
-                </div>
-            </header>
+                )}
+            />
 
             <div className="capabilities-body">
                 {isLoading ? (
@@ -122,34 +121,27 @@ export default function CapabilitiesPage() {
                         renderItem={(cap: Capability) => <CapabilityCard capability={cap} onAction={() => {}} />}
                     />
                 ) : filteredCapabilities.length === 0 ? (
-                    <div className="capabilities-empty reveal-up">
-                        <div className="capabilities-empty-inner">
-                            <div className="capabilities-empty-icon-shell">
-                                <ThunderboltOutlined style={{ fontSize: '48px', color: 'var(--accent)' }} />
-                            </div>
-                            <Title level={4} className="capabilities-empty-title">
-                                {searchValue ? "No matching capabilities found" : "Your capability list is empty"}
-                            </Title>
-                            <Text type="secondary" className="capabilities-empty-desc">
-                                {searchValue 
-                                    ? "Try adjusting your search to find the capability you're looking for." 
-                                    : "Start by adding your first capability to extend your skill potential."}
-                            </Text>
-                            <div className="capabilities-empty-actions">
-                                {searchValue ? (
-                                    <Button onClick={() => setSearchValue('')}>Clear search</Button>
-                                ) : (
-                                    <Button 
-                                        type="primary" 
-                                        icon={<PlusOutlined />} 
-                                        onClick={() => { setCapabilityToEdit(null); setIsModalOpen(true); }}
-                                    >
-                                        Create New Capability
-                                    </Button>
-                                )}
-                            </div>
-                        </div>
-                    </div>
+                    <CollectionEmptyState
+                        className="reveal-up"
+                        icon={<ThunderboltOutlined />}
+                        title={searchValue ? 'No matching capabilities found' : 'Your capability list is empty'}
+                        description={
+                            searchValue
+                                ? "Try adjusting your search to find the capability you're looking for."
+                                : 'Start by adding your first capability to extend your skill potential.'
+                        }
+                        action={searchValue ? (
+                            <Button onClick={() => setSearchValue('')}>Clear search</Button>
+                        ) : (
+                            <Button
+                                type="primary"
+                                icon={<PlusOutlined />}
+                                onClick={() => { setCapabilityToEdit(null); setIsModalOpen(true); }}
+                            >
+                                Create New Capability
+                            </Button>
+                        )}
+                    />
                 ) : (
                     <Grid 
                         data={filteredCapabilities}

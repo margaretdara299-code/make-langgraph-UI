@@ -1,16 +1,15 @@
 .skill-card-premium {
     background: var(--bg-card);
     border: 1px solid var(--border-light);
-    border-radius: var(--space-1-5);
-    padding: 18px;
-    height: 190px;
-    /* Tighter layout since rows merged */
+    border-radius: var(--radius-lg);
+    padding: var(--card-padding);
+    min-height: var(--card-min-height);
     display: flex;
     flex-direction: column;
     cursor: pointer;
     position: relative;
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: transform var(--motion-base) var(--ease-out), box-shadow var(--motion-base) var(--ease-out), border-color var(--motion-base) var(--ease-out);
+    box-shadow: var(--shadow-xs);
 }
 
 .skill-card-premium:hover {
@@ -30,7 +29,7 @@
 .sc-title-group {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-1-5);
     flex: 1;
     min-width: 0;
 }
@@ -59,15 +58,15 @@
 }
 
 .sc-more-btn {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 8px;
     color: var(--text-subtle);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background-color var(--motion-base) var(--ease-out), color var(--motion-base) var(--ease-out);
 }
 
 .sc-more-btn:hover {
@@ -114,8 +113,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 14px;
+    padding-top: var(--space-1-5);
     border-top: 1px solid var(--border-light);
+    gap: var(--space-1);
 }
 
 .sc-cap-section {
@@ -126,7 +126,7 @@
 }
 
 .sc-cap-label {
-    font-size: 11px;
+    font-size: var(--text-xs);
     font-weight: 600;
     color: var(--text-main);
     letter-spacing: -0.01em;
@@ -138,7 +138,7 @@
 }
 
 .sc-mini-tag {
-    font-size: 11px;
+    font-size: var(--text-xs);
     font-weight: 600;
     text-transform: capitalize;
     padding: 2px 8px;
@@ -150,7 +150,7 @@
     color: var(--tag-color, var(--text-subtle));
     border: 1px solid var(--border-light);
     letter-spacing: 0.04em;
-    transition: all 0.2s ease;
+    transition: transform var(--motion-base) var(--ease-out), box-shadow var(--motion-base) var(--ease-out);
 }
 
 .sc-mini-tag:hover {

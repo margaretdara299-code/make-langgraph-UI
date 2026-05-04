@@ -1103,18 +1103,18 @@ export default function PropertiesDrawer({ selectedNodeId, selectedEdgeId, onClo
                                                 <DecisionPropertiesPanel form={form} nodes={nodes} availableStateKeys={availableStateKeys} />
                                             ) : isQueue ? (
                                                 <>
-                                                    <div className="properties-drawer__section-title" style={{ marginTop: 0 }}>Queue Target</div>
+                                                    <div className="properties-drawer__section-title pd-section-title-first">Queue Target</div>
                                                     <Form.Item
                                                         label="Target Name"
                                                         name="queue_name"
                                                         extra="e.g. rcm_task_update, denial_task_queue"
                                                     >
-                                                        <Input placeholder="rcm_task_update" style={{ fontFamily: 'monospace' }} />
+                                                        <Input placeholder="rcm_task_update" className="pd-input-mono" />
                                                     </Form.Item>
 
                                                     <div className="properties-drawer__divider" />
                                                     <div className="properties-drawer__section-title">Queue API</div>
-                                                    <Text type="secondary" style={{ fontSize: 'var(--text-sm)', display: 'block', marginBottom: 12, lineHeight: 1.5 }}>
+                                                    <Text type="secondary" className="pd-state-description pd-state-description--compact">
                                                         Configure the external workflow API that updates the current task payload and can mock creation of the next task.
                                                     </Text>
                                                     {renderNodeConfig(nodeData as CanvasNodeData)}

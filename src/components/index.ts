@@ -47,4 +47,7 @@ export { default as PublicRoute } from "./PublicRoute/PublicRoute";
 export { default as DashboardMetricsCard } from "./DashboardMetricsCard/DashboardMetricsCard";
 export { MetricCard } from "./MetricCard/MetricCard";
 export { Grid } from "./Grid/Grid";
+export { default as CollectionPageHeader } from "./CollectionPageHeader/CollectionPageHeader";
+export { default as CollectionEmptyState } from "./CollectionEmptyState/CollectionEmptyState";
+export { default as CollectionPageTabs } from "./CollectionPageTabs/CollectionPageTabs";
 export * from "./Skeletons";

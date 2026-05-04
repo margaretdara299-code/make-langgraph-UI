@@ -25,6 +25,8 @@
   --text-xl: 18px;
   --text-2xl: 24px;
   --text-3xl: 32px;
+  --text-4xl: 40px;
+  --text-2xs: 10px;
 
   --weight-regular: 400;
   --weight-medium: 500;
@@ -42,6 +44,21 @@
   --space-5: 40px;
   --space-6: 48px;
   --space-8: 64px;
+
+  /* --- Shared Radius --- */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* --- Shared Control & Card Sizing --- */
+  --control-sm-height: 32px;
+  --control-md-height: 40px;
+  --control-radius: 8px;
+  --control-padding-x-sm: 12px;
+  --control-padding-x-md: 16px;
+  --card-padding: 16px;
+  --card-min-height: 192px;
 
   /* --- Core Palette --- */
   --bg-page: #f9fafb;
@@ -150,12 +167,50 @@
   --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
   --shadow-float: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-xs: var(--shadow-subtle);
+  --shadow-sm: var(--shadow-card);
+  --shadow-md: var(--shadow-float);
+  --shadow-lg: 0 24px 40px -12px rgba(0, 0, 0, 0.18);
 
   --motion-fast: 120ms;
   --motion-base: 220ms;
   --motion-slow: 350ms;
   --ease-elastic: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: var(--ease-in-out);
+
+  /* --- Alias Tokens For Shared Components --- */
+  --accent-light: var(--accent-soft);
+  --color-primary: var(--accent);
+  --color-primary-hover: var(--accent-hover);
+  --color-primary-rgb: 92, 103, 242;
+  --color-text: var(--text-main);
+  --color-text-primary: var(--text-main);
+  --color-text-white: var(--text-inverse);
+  --color-border: var(--border-light);
+  --border-main: var(--border-medium);
+  --bg-hover: var(--surface-1);
+  --color-bg-container: var(--bg-card);
+  --color-bg-white: var(--bg-card);
+  --color-bg-hover: var(--surface-1);
+  --color-bg-active: var(--surface-2);
+  --color-surface-element: var(--surface-1);
+  --color-surface-element-hover: var(--surface-2);
+  --color-surface-border: var(--border-light);
+  --color-surface-border-strong: var(--border-medium);
+  --color-surface-white-glass: rgba(255, 255, 255, 0.75);
+  --color-sidebar-bg: var(--bg-card);
+  --color-nav-bg: var(--bg-deep-1);
+  --color-nav-accent: var(--accent);
+  --color-nav-text-bold: var(--text-inverse);
+  --color-nav-input-text: var(--text-inverse);
+  --color-nav-input-placeholder: rgba(255, 255, 255, 0.58);
+  --color-base-black: #000000;
+  --color-base-white-rgb: 255, 255, 255;
+  --color-info-soft: var(--color-info-bg);
+  --color-success-soft: rgba(var(--color-success-rgb), 0.2);
+  --color-success-text-dark: var(--color-success-text);
+  --color-warning-soft: rgba(245, 158, 11, 0.2);
 }
 
 
@@ -243,6 +298,15 @@
   --color-node-queue-text: #E4E4E4;
   --color-node-queue-item-bg: rgba(var(--color-node-queue-rgb), 0.34);
   --color-node-queue-on-solid: #FFFFFF;
+
+  --color-primary-rgb: 179, 156, 208;
+  --color-nav-text-bold: #E4E4E4;
+  --color-nav-input-text: #E4E4E4;
+  --color-nav-input-placeholder: rgba(228, 228, 228, 0.56);
+  --color-sidebar-bg: #363636;
+  --color-surface-white-glass: rgba(54, 54, 54, 0.76);
+  --color-success-soft: rgba(var(--color-success-rgb), 0.18);
+  --color-warning-soft: rgba(245, 158, 11, 0.18);
 }
 
 /* --- Base Styles --- */
@@ -296,14 +360,14 @@ body {
   width: 32px;
   height: 32px;
   background: var(--surface-soft, var(--accent-soft));
-  border-radius: 9px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   color: var(--accent);
   border: 1px solid var(--border-medium);
-  transition: all 0.2s ease;
+  transition: transform var(--motion-base) var(--ease-out), background-color var(--motion-base) var(--ease-out), border-color var(--motion-base) var(--ease-out), color var(--motion-base) var(--ease-out);
 }
 
 .card-elevated {
@@ -318,6 +382,32 @@ body {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
   border-color: var(--border-medium);
+}
+
+.reveal-up {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: revealUp 0.55s ease forwards;
+  animation-delay: var(--anim-delay, 0s);
+}
+
+@keyframes revealUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* --- Semantic Badge Classes (Legacy Support) --- */
@@ -392,7 +482,7 @@ textarea.ant-input {
 
 /* --- Status Tag Styling (Global 8px Standard) --- */
 .ant-tag:not(.ant-tag-disabled) {
-  font-size: 10px !important;
+  font-size: var(--text-xs) !important;
   font-weight: 600 !important;
   padding: 0 8px !important;
   border-radius: 4px !important;
@@ -400,7 +490,6 @@ textarea.ant-input {
   border: none !important;
   text-transform: capitalize;
   letter-spacing: 0.05em !important;
-  border: none !important;
 }
 
 .ant-tag.ant-tag-warning.ant-tag-filled {
@@ -436,17 +525,17 @@ textarea.ant-input {
   color: #ef4444 !important;
 }
 
-/* --- Global Input & Select Height Styling (36px Standard) --- */
+/* --- Global Input & Select Height Styling --- */
 .ant-input:not(textarea),
 .ant-select,
 .ant-select-selector,
 .ant-picker,
 .ant-input-number,
 .ant-input-affix-wrapper:not(.ant-input-textarea-affix-wrapper) {
-  height: 36px !important;
-  min-height: 36px !important;
-  border-radius: 4px !important;
-  padding: 2px 8px !important;
+  height: var(--control-md-height) !important;
+  min-height: var(--control-md-height) !important;
+  border-radius: var(--control-radius) !important;
+  padding: 0 var(--control-padding-x-md) !important;
 }
 
 /* Ensure global vertical centering for Selects and Search Inputs */
@@ -471,7 +560,7 @@ textarea.ant-input,
 .ant-modal .ant-input-textarea-show-count>.ant-input {
   height: auto !important;
   min-height: 120px !important;
-  border-radius: 4px !important;
+  border-radius: var(--control-radius) !important;
   padding: 12px !important;
   font-size: 14px !important;
   line-height: 1.6 !important;
@@ -503,9 +592,9 @@ textarea.ant-input,
 
 /* --- Global Header Add Button --- */
 .global-header-add-btn {
-  width: 24px !important;
-  height: 24px !important;
-  min-width: 24px !important;
+  width: var(--control-sm-height) !important;
+  height: var(--control-sm-height) !important;
+  min-width: var(--control-sm-height) !important;
   padding: 0 !important;
   display: flex !important;
   align-items: center !important;
@@ -514,9 +603,8 @@ textarea.ant-input,
   border: none !important;
   color: #fff !important;
   box-shadow: 0 4px 10px var(--accent-soft, rgba(99, 102, 241, 0.2)) !important;
-  transition: all .2s ease !important;
+  transition: transform var(--motion-base) var(--ease-out), box-shadow var(--motion-base) var(--ease-out), background-color var(--motion-base) var(--ease-out) !important;
   border-radius: 50% !important;
-  margin-top: 4px;
   cursor: pointer;
 }
 
@@ -528,14 +616,14 @@ textarea.ant-input,
 /* --- Premium Page Headers --- */
 .header-title-premium {
   margin: 0 !important;
-  font-size: 28px !important;
+  font-size: var(--text-2xl) !important;
   font-weight: 700 !important;
   letter-spacing: -0.022em !important;
   line-height: 1.2 !important;
 }
 
 .header-subtitle-premium {
-  font-size: 13px !important;
+  font-size: var(--text-sm) !important;
   font-weight: 400 !important;
   color: var(--text-muted) !important;
   display: block !important;
@@ -548,14 +636,6 @@ textarea.ant-input,
   color: #1e293b;
 }
 
-.title-row .ant-typography {
-  color: var(--text-main) !important;
-  margin: 0 !important;
-  font-size: var(--text-xl) !important;
-  font-weight: 600 !important;
-  letter-spacing: -0.02em;
-}
-
 .add-variable-trigger-row {
   width: 100%;
   display: flex;
@@ -564,19 +644,19 @@ textarea.ant-input,
   padding: 10px var(--space-1-5);
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 10px;
-  color: var(--text-subtle, var(--text-subtle));
-  font-size: 13px;
+  border-radius: var(--radius-sm);
+  color: var(--text-subtle);
+  font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color var(--motion-base) var(--ease-out), border-color var(--motion-base) var(--ease-out), color var(--motion-base) var(--ease-out);
   margin: 4px 0;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
 }
 
 .var-key-code {
-  font-size: 10px;
-  color: #9ca3af !important;
+  font-size: var(--text-xs);
+  color: var(--text-subtle) !important;
   font-family: var(--font-mono, monospace);
   font-weight: 500;
   letter-spacing: 0.03em;

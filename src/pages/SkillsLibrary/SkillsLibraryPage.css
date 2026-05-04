@@ -1,160 +1,48 @@
 .skills-library-page {
     display: flex;
     flex-direction: column;
-    padding: 0;
     height: 100%;
     background-color: var(--bg-page);
-    animation: fadeIn var(--motion-base) var(--ease-out);
-}
-
-.skills-library-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-
-}
-
-.title-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.title-row .ant-typography {
-    color: var(--text-main) !important;
-    margin: 0 !important;
-    font-size: var(--text-xl) !important;
-    font-weight: 700 !important;
-    letter-spacing: -0.02em;
-}
-
-
-.skills-library-toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 20px;
-    border-bottom: 1px solid var(--border-light);
-    padding-bottom: 2px;
-}
-
-.skills-library-tabs.ant-tabs {
-    margin-bottom: -2px;
-    /* Pull down to overlay the border-bottom */
-}
-
-.skills-library-tabs .ant-tabs-nav {
-    margin: 0 !important;
-}
-
-.skills-library-tabs .ant-tabs-tab {
-    padding: var(--space-1-5) 27px !important;
-    /* font-weight: 600 !important; */
-    font-size: var(--text-sm) !important;
-    color: var(--text-subtle) !important;
-    transition: all 0.3s ease !important;
-}
-
-.skills-library-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
-    color: var(--accent) !important;
-}
-
-.skills-library-tabs .ant-tabs-ink-bar {
-    height: 3px !important;
-    background: var(--accent) !important;
-    border-radius: 3px 3px 0 0;
+    animation: pageFadeIn var(--motion-base) var(--ease-out);
 }
 
 .skills-library-search-container {
-    margin-bottom: 6px;
+    width: min(100%, 320px);
 }
 
 .skills-library-body {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    padding-bottom: 32px;
-    padding-right: 8px;
-    /* For scrollbar breathing room */
+    padding: var(--space-1) var(--space-1) var(--space-4) 0;
 }
 
 .skills-library-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
-    gap: 20px;
-    padding: 4px 0;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: var(--space-2);
+    padding: var(--space-1) 0;
 }
 
-.skills-empty {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 400px;
-    background: #ffffff;
-    border: 1px dashed var(--border-medium);
-    border-radius: 20px;
-    padding: 40px;
+.sl-hidden-loader {
+    display: none;
 }
 
-.skills-empty-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    max-width: 400px;
-}
-
-.skills-empty-icon-shell {
-    width: 80px;
-    height: 80px;
-    background: var(--accent-light);
-    border-radius: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 24px;
-}
-
-.skills-empty-title {
-    margin-bottom: 8px !important;
-    color: var(--text-main) !important;
-}
-
-.skills-empty-desc {
-    font-size: var(--text-sm);
-    color: var(--text-muted);
-    margin-bottom: 32px;
-}
-
-.skills-empty-actions .ant-btn {
-    height: 40px;
-    padding: 0 24px;
-    border-radius: 8px;
-    font-weight: 600;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(4px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Custom Scrollbar */
 .skills-library-body::-webkit-scrollbar {
     width: 6px;
 }
 
 .skills-library-body::-webkit-scrollbar-thumb {
     background: var(--border-strong);
-    border-radius: 10px;
+    border-radius: var(--radius-full);
 }
 
-.sl-hidden-loader {
-    display: none;
+@media (max-width: 768px) {
+    .skills-library-search-container {
+        width: 100%;
+    }
+
+    .skills-library-body {
+        padding-right: 0;
+    }
 }

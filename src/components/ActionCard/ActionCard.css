@@ -1,16 +1,15 @@
 .action-card-premium {
     background: var(--bg-card);
     border: 1px solid var(--border-light);
-    border-radius: var(--space-1-5);
-    padding: 18px;
-    height: 195px;
-    /* Slightly taller to accommodate multi-pill footer */
+    border-radius: var(--radius-lg);
+    padding: var(--card-padding);
+    min-height: var(--card-min-height);
     display: flex;
     flex-direction: column;
     cursor: pointer;
     position: relative;
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: transform var(--motion-base) var(--ease-out), box-shadow var(--motion-base) var(--ease-out), border-color var(--motion-base) var(--ease-out);
+    box-shadow: var(--shadow-xs);
 }
 
 .action-card-premium:hover {
@@ -30,7 +29,7 @@
 .ac-title-group {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-1-5);
     flex: 1;
     min-width: 0;
 }
@@ -55,15 +54,15 @@
 }
 
 .ac-more-btn {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 8px;
     color: var(--text-subtle);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background-color var(--motion-base) var(--ease-out), color var(--motion-base) var(--ease-out);
 }
 
 .ac-more-btn:hover {
@@ -110,9 +109,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 14px;
-    padding-top: 14px;
+    margin-top: var(--space-1-5);
+    padding-top: var(--space-1-5);
     border-top: 1px solid var(--border-light);
+    gap: var(--space-1);
 }
 
 .ac-meta-section {
@@ -130,14 +130,14 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 11px;
+    font-size: var(--text-xs);
     font-weight: 600;
     text-transform: capitalize;
     color: var(--text-main);
     padding: 2px 8px;
     border-radius: 6px;
     letter-spacing: 0.04em;
-    transition: all 0.2s ease;
+    transition: transform var(--motion-base) var(--ease-out), opacity var(--motion-base) var(--ease-out);
 }
 
 .ac-meta-pill:hover {
@@ -162,7 +162,7 @@
 }
 
 .ac-mini-tag {
-    font-size: 10px;
+    font-size: var(--text-xs);
     font-weight: 700;
     text-transform: uppercase;
     padding: 2px 8px;
@@ -174,7 +174,7 @@
     border: 1px solid var(--border-light);
     color: var(--text-subtle);
     letter-spacing: 0.04em;
-    transition: all 0.2s ease;
+    transition: transform var(--motion-base) var(--ease-out), box-shadow var(--motion-base) var(--ease-out), background-color var(--motion-base) var(--ease-out);
 }
 
 .ac-mini-tag:hover {

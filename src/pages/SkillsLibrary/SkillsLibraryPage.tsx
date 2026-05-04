@@ -1,10 +1,16 @@
-
-
 import { useState } from 'react';
-import { Input, Typography, Modal, message, Tabs, Badge, Space, Empty, Button } from 'antd';
-import { PlusOutlined, ExclamationCircleOutlined, SearchOutlined, BulbOutlined } from '@ant-design/icons';
+import { Modal, message, Button } from 'antd';
+import { PlusOutlined, ExclamationCircleOutlined, BulbOutlined } from '@ant-design/icons';
 import { useSkills, useCategories } from '@/hooks';
-import { SkillCard, CreateSkillModal, EditSkillModal, SearchInput } from '@/components';
+import {
+    SkillCard,
+    CreateSkillModal,
+    EditSkillModal,
+    SearchInput,
+    CollectionPageHeader,
+    CollectionEmptyState,
+    CollectionPageTabs,
+} from '@/components';
 import { PAGE_HEADER_CONTENT } from '@/constants/ui.constants';
 import SkillCardSkeleton from '@/components/Skeletons/SkillCardSkeleton';
 import { STATUS_FILTER_OPTIONS, CARD_ACTION_KEYS } from '@/constants';
@@ -16,7 +22,6 @@ import {
 import type { UseSkillsFilters } from '@/interfaces';
 import './SkillsLibraryPage.css';
 
-const { Title, Text } = Typography;
 const { SKILLS_LIBRARY } = PAGE_HEADER_CONTENT;
 
 export default function SkillsLibraryPage() {
@@ -110,44 +115,39 @@ export default function SkillsLibraryPage() {
 
     return (
         <div className="skills-library-page">
-            <header className="skills-library-header">
-                <div className="title-section">
-                    <div className="title-row">
-                        <Title level={2} className="header-title-premium">{SKILLS_LIBRARY.title}</Title>
-                        <Button
-                            type="primary"
-                            shape="circle"
-                            icon={<PlusOutlined />}
-                            className="global-header-add-btn"
-                            onClick={() => setIsCreateModalOpen(true)}
-                            title="Create New Skill"
-                        />
-                    </div>
-                    <Text type="secondary" className="header-subtitle-premium">
-                        {SKILLS_LIBRARY.description}
-                    </Text>
-                </div>
-            </header>
-
-            <div className="skills-library-toolbar">
-                <Tabs
-                    activeKey={activeStatus}
-                    onChange={handleStatusFilter}
-                    className="skills-library-tabs"
-                    items={STATUS_FILTER_OPTIONS.map((option) => ({
-                        key: option.key,
-                        label: option.label,
-                    }))}
-                />
-
-                <div className="skills-library-search-container">
-                    <SearchInput
-                        placeholder="Search skills..."
-                        value={searchValue}
-                        onChange={handleSearch}
+            <CollectionPageHeader
+                title={SKILLS_LIBRARY.title}
+                description={SKILLS_LIBRARY.description}
+                action={(
+                    <Button
+                        type="primary"
+                        shape="circle"
+                        icon={<PlusOutlined />}
+                        className="global-header-add-btn"
+                        onClick={() => setIsCreateModalOpen(true)}
+                        title="Create New Skill"
                     />
-                </div>
-            </div>
+                )}
+                bottom={(
+                    <CollectionPageTabs
+                        activeKey={activeStatus}
+                        onChange={handleStatusFilter}
+                        items={STATUS_FILTER_OPTIONS.map((option) => ({
+                            key: option.key,
+                            label: option.label,
+                        }))}
+                        trailing={(
+                            <div className="skills-library-search-container">
+                                <SearchInput
+                                    placeholder="Search skills..."
+                                    value={searchValue}
+                                    onChange={handleSearch}
+                                />
+                            </div>
+                        )}
+                    />
+                )}
+            />
 
             <div className="skills-library-body">
                 {isLoading ? (
@@ -158,34 +158,27 @@ export default function SkillsLibraryPage() {
                         ))}
                     </div>
                 ) : skills.length === 0 ? (
-                    <div className="skills-empty reveal-up">
-                        <div className="skills-empty-inner">
-                            <div className="skills-empty-icon-shell">
-                                <BulbOutlined style={{ fontSize: '48px', color: 'var(--accent)' }} />
-                            </div>
-                            <Title level={4} className="skills-empty-title">
-                                {searchValue ? "No matching skills found" : "Your skill library is empty"}
-                            </Title>
-                            <Text type="secondary" className="skills-empty-desc">
-                                {searchValue 
-                                    ? "Try adjusting your search or category filters to find the skill you're looking for." 
-                                    : "Start by creating your first skill to begin automating your workflows."}
-                            </Text>
-                            <div className="skills-empty-actions">
-                                {searchValue ? (
-                                    <Button onClick={() => handleSearch('')}>Clear search</Button>
-                                ) : (
-                                    <Button 
-                                        type="primary" 
-                                        icon={<PlusOutlined />} 
-                                        onClick={() => setIsCreateModalOpen(true)}
-                                    >
-                                        Create First Skill
-                                    </Button>
-                                )}
-                            </div>
-                        </div>
-                    </div>
+                    <CollectionEmptyState
+                        className="reveal-up"
+                        icon={<BulbOutlined />}
+                        title={searchValue ? 'No matching skills found' : 'Your skill library is empty'}
+                        description={
+                            searchValue
+                                ? "Try adjusting your search or category filters to find the skill you're looking for."
+                                : 'Start by creating your first skill to begin automating your workflows.'
+                        }
+                        action={searchValue ? (
+                            <Button onClick={() => handleSearch('')}>Clear search</Button>
+                        ) : (
+                            <Button
+                                type="primary"
+                                icon={<PlusOutlined />}
+                                onClick={() => setIsCreateModalOpen(true)}
+                            >
+                                Create First Skill
+                            </Button>
+                        )}
+                    />
                 ) : (
                     <div className="skills-library-grid">
                         {skills.map((skill) => {

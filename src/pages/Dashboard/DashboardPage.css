@@ -9,35 +9,13 @@
   justify-content: center;
 }
 
-/* Page Header */
-.industry-header-modern {
-  margin-bottom: 24px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--border-light);
-}
-
-.db-page-title {
-  margin: 0 !important;
-  font-weight: 600 !important;
-  font-size: var(--text-2xl) !important;
-  letter-spacing: -0.02em;
-  color: var(--text-main) !important;
-}
-
-.db-page-subtitle {
-  font-size: 13px !important;
-  color: var(--text-muted) !important;
-  margin-top: 4px;
-}
-
-/* Activity Container */
 .activity-container {
   background: var(--bg-card);
-  border-radius: var(--space-1-5);
+  border-radius: var(--radius-lg);
   border: 1px solid var(--border-light);
   overflow: hidden;
-  margin-top: 24px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  margin-top: var(--space-3);
+  box-shadow: var(--shadow-xs);
   min-height: 200px;
 }
 
@@ -45,20 +23,21 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
+  padding: var(--space-3);
   border-bottom: 1px solid var(--border-light);
+  gap: var(--space-2);
 }
 
 .header-content-left {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-05);
 }
 
-.title-row {
+.dashboard__activity-title-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-1-5);
 }
 
 .activity-icon {
@@ -66,70 +45,65 @@
   opacity: 0.8;
 }
 
-.title-row .ant-typography {
-  color: var(--text-main) !important;
-  margin: 0 !important;
-  font-size: var(--text-xl) !important;
-  font-weight: 600 !important;
+.updates-title {
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
   letter-spacing: -0.02em;
+  color: var(--text-main);
 }
 
 .header-description {
+  margin: 0;
   font-size: var(--text-xs);
   color: var(--text-muted);
 }
 
 .header-actions-group .ant-btn {
   font-size: var(--text-sm);
-  font-weight: 600;
-  border-radius: 6px;
+  font-weight: var(--weight-semibold);
+  border-radius: var(--radius-sm);
   height: 32px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-1);
 }
 
-.activity-filter-btn {
-  color: var(--text-main);
-  border-color: var(--border-medium) !important;
-}
-
+.activity-filter-btn,
 .activity-view-all-btn {
   color: var(--text-main);
   border-color: var(--border-medium) !important;
 }
 
-/* Table Styling */
 .dashboard-skills-table .ant-table {
   background: transparent !important;
 }
 
 .dashboard-skills-table .ant-table-thead > tr > th {
-  background: #f8fafc !important;
+  background: var(--surface-1) !important;
   font-size: var(--text-xs) !important;
-  font-weight: 600 !important;
-  color: #94a3b8 !important;
+  font-weight: var(--weight-semibold) !important;
+  color: var(--text-subtle) !important;
   letter-spacing: 0.05em;
-  padding: var(--space-1-5) 24px !important;
-  border-bottom: 1px solid #e2e8f0 !important;
+  padding: var(--space-2) var(--space-3) !important;
+  border-bottom: 1px solid var(--border-medium) !important;
 }
 
 .dashboard-skills-table .ant-table-tbody > tr:not(.ant-table-measure-row) > td {
-  padding: 14px 24px !important;
-  border-bottom: 1px solid #f1f5f9 !important;
+  padding: var(--space-2) var(--space-3) !important;
+  border-bottom: 1px solid var(--border-light) !important;
   vertical-align: middle;
 }
 
 .dashboard-skills-table .ant-table-thead > tr > th:first-child,
 .dashboard-skills-table .ant-table-tbody > tr:not(.ant-table-measure-row) > td:first-child {
-  padding-left: 16px !important;
+  padding-left: var(--space-2) !important;
 }
 
 .dashboard-skills-table .ant-table-tbody > tr:not(.ant-table-measure-row):hover > td {
-  background: #f8fafc !important;
+  background: var(--surface-1) !important;
 }
 
-/* Cell Styles */
 .dc-skill-cell {
   display: flex;
   align-items: center;
@@ -138,93 +112,91 @@
 .dc-skill-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-05);
 }
 
 .dc-skill-name {
   font-size: var(--text-sm);
-  font-weight: 600;
-  color: #1e293b;
+  font-weight: var(--weight-semibold);
+  color: var(--text-main);
   text-transform: capitalize;
 }
 
 .dc-skill-key {
-  font-size: 10px;
-  color: #94a3b8;
+  font-size: var(--text-xs);
+  color: var(--text-subtle);
   font-family: var(--font-mono);
 }
 
 .dc-desc-text {
   font-size: var(--text-sm);
-  color: #475569;
+  color: var(--text-muted);
   line-height: 1.5;
 }
 
-/* Status Badges */
 .dc-status-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 2px 8px;
+  gap: var(--space-1);
+  padding: 2px var(--space-1);
   border-radius: 6px;
-  font-size: var(--text-sm);
-  font-weight: 600;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
 }
 
 .dc-status-dot {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
 }
 
-/* Date Cell */
 .dc-date-full {
   font-size: var(--text-sm);
-  color: #64748b;
-  font-weight: 500;
+  color: var(--text-muted);
+  font-weight: var(--weight-medium);
 }
 
-/* View Link */
 .dc-view-link {
   font-size: var(--text-sm);
-  font-weight: 600;
-  color: #3b82f6;
+  font-weight: var(--weight-semibold);
+  color: var(--color-info);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-05);
 }
 
 .dc-view-link:hover {
-  color: #2563eb;
+  color: var(--color-info-text);
   text-decoration: underline;
 }
 
 .dc-view-arrow {
   font-size: var(--text-sm);
-  font-weight: 400;
-}
-
-/* Reveal Animations */
-.reveal-up {
-  opacity: 0;
-  transform: translateY(10px);
-  animation: revealUp 0.5s ease forwards;
-  animation-delay: var(--anim-delay, 0s);
+  font-weight: var(--weight-regular);
 }
 
 .metric-card__label {
-    font-size: 11px;
-    color: var(--text-muted);
-    font-weight: 600;
-    /* text-transform: uppercase; */
-    margin: 0 !important;
-    letter-spacing: 0.06em;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  font-weight: var(--weight-semibold);
+  margin: 0 !important;
+  letter-spacing: 0.06em;
 }
 
-@keyframes revealUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
+@media (max-width: 768px) {
+  .activity-header-modern {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .header-actions-group .ant-space {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .header-actions-group .ant-btn {
+    flex: 1;
+    justify-content: center;
   }
 }

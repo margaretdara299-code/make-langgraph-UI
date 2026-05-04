@@ -4,22 +4,24 @@
  */
 
 import { useState } from 'react';
-import { Typography, message, Modal, Empty, Tabs, Space, Badge, Select, Button } from 'antd';
-import { PlusOutlined, ExclamationCircleOutlined, SettingOutlined } from '@ant-design/icons';
+import { message, Modal, Select, Button } from 'antd';
+import { ExclamationCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { useActions, useCategories, useCapabilities } from '@/hooks';
 import {
     ActionCard,
     ActionCardSkeleton,
     Grid,
     CreateActionModal,
-    SearchInput
+    SearchInput,
+    CollectionEmptyState,
+    CollectionPageHeader,
+    CollectionPageTabs,
 } from '@/components';
 import { Plus } from 'lucide-react';
 import { fetchActionById, deleteAction } from '@/services';
 import { PAGE_HEADER_CONTENT } from '@/constants/ui.constants';
 import './ActionCatalogPage.css';
 
-const { Title, Text } = Typography;
 const { ACTION_CATALOG } = PAGE_HEADER_CONTENT;
 
 export default function ActionCatalogPage() {
@@ -99,28 +101,23 @@ export default function ActionCatalogPage() {
 
     return (
         <div className="action-catalog-page">
-            <header className="catalog-header">
-                <div className="catalog-header-top">
-                    <div className="title-section">
-                        <div className="title-row">
-                            <Title level={2} className="header-title-premium">{ACTION_CATALOG.title}</Title>
-                            <Button
-                                type="primary"
-                                shape="circle"
-                                icon={<Plus size={20} />}
-                                onClick={() => {
-                                    setActionToEdit(null);
-                                    setInitialStep(0);
-                                    setModalOpen(true);
-                                }}
-                                className="global-header-add-btn"
-                            />
-                        </div>
-                        <Text type="secondary" className="header-subtitle-premium">
-                            {ACTION_CATALOG.description}
-                        </Text>
-                    </div>
-
+            <CollectionPageHeader
+                title={ACTION_CATALOG.title}
+                description={ACTION_CATALOG.description}
+                action={(
+                    <Button
+                        type="primary"
+                        shape="circle"
+                        icon={<Plus size={18} />}
+                        onClick={() => {
+                            setActionToEdit(null);
+                            setInitialStep(0);
+                            setModalOpen(true);
+                        }}
+                        className="global-header-add-btn"
+                    />
+                )}
+                aside={(
                     <div className="catalog-filters-row">
                         <div className="catalog-search-wrap">
                             <SearchInput
@@ -131,6 +128,7 @@ export default function ActionCatalogPage() {
                         </div>
                         <div className="catalog-options-row">
                             <Select
+                                className="catalog-filter-select"
                                 placeholder="All Categories"
                                 defaultValue="all"
                                 onChange={handleCategoryFilter}
@@ -142,6 +140,7 @@ export default function ActionCatalogPage() {
                                 ]}
                             />
                             <Select
+                                className="catalog-filter-select"
                                 placeholder="All Capabilities"
                                 defaultValue="all"
                                 onChange={handleCapabilityFilter}
@@ -154,77 +153,57 @@ export default function ActionCatalogPage() {
                             />
                         </div>
                     </div>
-                </div>
-
-                <div className="catalog-toolbar">
-                    <Tabs
+                )}
+                bottom={(
+                    <CollectionPageTabs
                         activeKey={filters.status || 'all'}
                         onChange={handleStatusFilter}
-                        className="status-tabs"
                         items={[
-                            {
-                                key: 'all',
-                                label: 'All'
-                            },
-                            {
-                                key: 'published',
-                                label: 'Published'
-                            },
-                            {
-                                key: 'draft',
-                                label: 'Draft'
-                            },
+                            { key: 'all', label: 'All' },
+                            { key: 'published', label: 'Published' },
+                            { key: 'draft', label: 'Draft' },
                         ]}
                     />
-                </div>
-            </header>
+                )}
+            />
 
             <div className="catalog-body">
                 {actions.length === 0 && !isLoading ? (
-                    <div className="catalog-empty reveal-up">
-                        <div className="catalog-empty-inner">
-                            <div className="catalog-empty-icon-shell">
-                                <SettingOutlined style={{ fontSize: '48px', color: 'var(--accent)' }} />
-                            </div>
-                            <Title level={4} className="catalog-empty-title">
-                                {searchValue ? "No matching actions found" : "Your action catalog is empty"}
-                            </Title>
-                            <Text type="secondary" className="catalog-empty-desc">
-                                {searchValue
-                                    ? "Try adjusting your search or filters to find what you're looking for."
-                                    : "Start by creating your first action to automate your workflow."}
-                            </Text>
-                            <div className="catalog-empty-actions">
-                                {searchValue ? (
-                                    <Button onClick={() => handleSearch('')}>Clear all filters</Button>
-                                ) : (
-                                    <Button
-                                        type="primary"
-                                        icon={<Plus size={16} />}
-                                        onClick={() => setModalOpen(true)}
-                                    >
-                                        Create New Action
-                                    </Button>
-                                )}
-                            </div>
-                        </div>
-                    </div>
+                    <CollectionEmptyState
+                        className="reveal-up"
+                        icon={<SettingOutlined />}
+                        title={searchValue ? 'No matching actions found' : 'Your action catalog is empty'}
+                        description={
+                            searchValue
+                                ? "Try adjusting your search or filters to find what you're looking for."
+                                : 'Start by creating your first action to automate your workflow.'
+                        }
+                        action={searchValue ? (
+                            <Button onClick={() => handleSearch('')}>Clear all filters</Button>
+                        ) : (
+                            <Button
+                                type="primary"
+                                icon={<Plus size={16} />}
+                                onClick={() => setModalOpen(true)}
+                            >
+                                Create New Action
+                            </Button>
+                        )}
+                    />
                 ) : (
-                    <>
-                        <Grid
-                            isLoading={isLoading}
-                            SkeletonComponent={ActionCardSkeleton}
-                            data={actions}
-                            gutter={[20, 20]}
-                            autoFitMinWidth={280}
-                            renderItem={(action) => (
-                                <ActionCard
-                                    action={action}
-                                    onAction={handleAction}
-                                />
-                            )}
-                        />
-                    </>
+                    <Grid
+                        isLoading={isLoading}
+                        SkeletonComponent={ActionCardSkeleton}
+                        data={actions}
+                        gutter={[16, 16]}
+                        autoFitMinWidth={280}
+                        renderItem={(action) => (
+                            <ActionCard
+                                action={action}
+                                onAction={handleAction}
+                            />
+                        )}
+                    />
                 )}
             </div>
 

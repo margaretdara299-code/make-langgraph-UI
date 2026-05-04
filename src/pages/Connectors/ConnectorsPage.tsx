@@ -1,19 +1,23 @@
 /**
- * Connectors page — displays API and DB connectors with tabs, search, and grid.
+ * Connectors page - displays API and DB connectors with tabs, search, and grid.
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { Input, Button, Typography, Tabs, Empty, Spin, message, Modal } from 'antd';
+import { Button, Spin, message, Modal } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { CONNECTOR_TAB_CONFIG } from '@/constants';
 import { CONNECTOR_TYPES } from '@/interfaces';
 import type { ConnectorTab, ConnectorResponse } from '@/interfaces';
 import { fetchConnectors, deleteConnector } from '@/services/connector.service';
-import ConnectorCard from '@/components/ConnectorCard/ConnectorCard';
-import CreateConnectorModal from '@/components/CreateConnectorModal/CreateConnectorModal';
+import {
+    ConnectorCard,
+    CreateConnectorModal,
+    SearchInput,
+    CollectionEmptyState,
+    CollectionPageHeader,
+    CollectionPageTabs,
+} from '@/components';
 import './ConnectorsPage.css';
-
-const { Title } = Typography;
 
 export default function ConnectorsPage() {
     const [activeTab, setActiveTab] = useState<ConnectorTab>('api');
@@ -25,7 +29,6 @@ export default function ConnectorsPage() {
 
     const currentTabConfig = CONNECTOR_TAB_CONFIG.find((t) => t.key === activeTab)!;
 
-    /** Fetch connectors from the backend */
     const loadConnectors = useCallback(async () => {
         setIsLoading(true);
         try {
@@ -42,7 +45,6 @@ export default function ConnectorsPage() {
         loadConnectors();
     }, [loadConnectors]);
 
-    /** Filter connectors by active tab type and search query */
     const getFilteredConnectors = () => {
         const tabType = activeTab === 'api' ? CONNECTOR_TYPES.API : CONNECTOR_TYPES.DATABASE;
         let filtered = connectors.filter((connector) => connector.connectorType === tabType);
@@ -61,15 +63,17 @@ export default function ConnectorsPage() {
 
     const filteredConnectors = getFilteredConnectors();
 
-    /** Handle card action (edit / delete) */
     const handleCardAction = (actionKey: string, connectorId: number) => {
-        const connector = connectors.find((connector) => connector.connectorId === connectorId);
+        const connector = connectors.find((item) => item.connectorId === connectorId);
         if (!connector) return;
 
         if (actionKey === 'edit') {
             setConnectorToEdit(connector);
             setIsModalOpen(true);
-        } else if (actionKey === 'delete') {
+            return;
+        }
+
+        if (actionKey === 'delete') {
             Modal.confirm({
                 title: 'Delete Connector',
                 icon: <ExclamationCircleOutlined />,
@@ -94,13 +98,11 @@ export default function ConnectorsPage() {
         }
     };
 
-    /** Open create modal (no edit) */
     const handleOpenCreate = () => {
         setConnectorToEdit(null);
         setIsModalOpen(true);
     };
 
-    /** Close modal and reset edit state */
     const handleCloseModal = () => {
         setConnectorToEdit(null);
         setIsModalOpen(false);
@@ -108,40 +110,39 @@ export default function ConnectorsPage() {
 
     return (
         <div className="connectors-page">
-            {/* ── Page Header ── */}
-            <div className="connectors-page__header">
-                <Title level={3} className="connectors-page__title">Connectors</Title>
-                <Button
-                    type="primary"
-                    shape="circle"
-                    icon={<PlusOutlined />}
-                    onClick={handleOpenCreate}
-                    className="global-header-add-btn"
-                />
-            </div>
+            <CollectionPageHeader
+                title="Connectors"
+                description="Manage API and database connectors used across your action and workflow catalog."
+                action={(
+                    <Button
+                        type="primary"
+                        shape="circle"
+                        icon={<PlusOutlined />}
+                        onClick={handleOpenCreate}
+                        className="global-header-add-btn"
+                    />
+                )}
+                bottom={(
+                    <CollectionPageTabs
+                        activeKey={activeTab}
+                        onChange={(key) => setActiveTab(key as ConnectorTab)}
+                        items={CONNECTOR_TAB_CONFIG.map((tab) => ({
+                            key: tab.key,
+                            label: tab.label,
+                        }))}
+                        trailing={(
+                            <div className="connectors-page__search">
+                                <SearchInput
+                                    placeholder="Search connectors by name or description..."
+                                    value={searchValue}
+                                    onChange={setSearchValue}
+                                />
+                            </div>
+                        )}
+                    />
+                )}
+            />
 
-            {/* ── Search Bar & Tabs ── */}
-            <div className="connectors-page__toolbar">
-                <Input.Search
-                    placeholder="Search connectors by name or description..."
-                    size="large"
-                    allowClear
-                    value={searchValue}
-                    onChange={(e) => setSearchValue(e.target.value)}
-                    className="connectors-page__search"
-                />
-
-                <Tabs
-                    activeKey={activeTab}
-                    onChange={(key) => setActiveTab(key as ConnectorTab)}
-                    items={CONNECTOR_TAB_CONFIG.map((tab) => ({
-                        key: tab.key,
-                        label: tab.label,
-                    }))}
-                />
-            </div>
-
-            {/* ── Main Content Area ── */}
             <div className="connectors-page__body">
                 <main className="connectors-page__grid-area">
                     {isLoading ? (
@@ -149,9 +150,17 @@ export default function ConnectorsPage() {
                             <Spin size="large" />
                         </div>
                     ) : filteredConnectors.length === 0 ? (
-                        <div className="connectors-page__empty">
-                            <Empty description={`No ${currentTabConfig.label}s yet. Click "${currentTabConfig.createLabel}" to add one.`} />
-                        </div>
+                        <CollectionEmptyState
+                            className="connectors-page__empty"
+                            icon={<PlusOutlined />}
+                            title={`No ${currentTabConfig.label}s yet`}
+                            description={`Click "${currentTabConfig.createLabel}" to add your first ${currentTabConfig.label.toLowerCase()}.`}
+                            action={(
+                                <Button type="primary" onClick={handleOpenCreate}>
+                                    {currentTabConfig.createLabel}
+                                </Button>
+                            )}
+                        />
                     ) : (
                         <div className="connectors-page__grid">
                             {filteredConnectors.map((connector) => (
@@ -166,7 +175,6 @@ export default function ConnectorsPage() {
                 </main>
             </div>
 
-            {/* ── Create / Edit Connector Modal ── */}
             <CreateConnectorModal
                 isOpen={isModalOpen}
                 connectorType={connectorToEdit?.connectorType as any ?? currentTabConfig.connectorType}

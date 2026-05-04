@@ -4,12 +4,12 @@
  */
 
 .connector-card {
-    border-radius: var(--space-1-5);
+    border-radius: var(--radius-lg);
     overflow: hidden;
     height: 100%;
     display: flex;
     flex-direction: column;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform var(--motion-base) var(--ease-out), box-shadow var(--motion-base) var(--ease-out);
 }
 
 .connector-card:hover {
@@ -17,7 +17,7 @@
 }
 
 .connector-card .ant-card-body {
-    padding: 20px;
+    padding: var(--card-padding);
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -50,7 +50,7 @@
     color: inherit;
     padding: 4px;
     border-radius: 4px;
-    transition: background-color 0.2s ease;
+    transition: background-color var(--motion-base) var(--ease-out);
     line-height: 1;
 }
 
@@ -64,8 +64,8 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin-bottom: 20px;
+    gap: var(--space-1);
+    margin-bottom: var(--space-2);
 }
 
 .connector-card__title {
@@ -143,5 +143,5 @@
 
 .connector-card__date {
     font-size: var(--text-xs);
-    color: GrayText;
+    color: var(--text-subtle);
 }

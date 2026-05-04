@@ -44,7 +44,7 @@
     border-color: var(--border-light) !important;
 }
 
-.capability-card-skeleton .cc-premium-icon-box {
+.capability-card-skeleton .capability-card-skeleton__icon-box {
     width: 40px;
     height: 40px;
     border-radius: 10px;
@@ -58,14 +58,20 @@
     justify-content: center;
 }
 
-.capability-card-skeleton .cc-premium-header {
+.capability-card-skeleton .capability-card-skeleton__header {
     margin-bottom: 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.capability-card-skeleton .cc-premium-body {
+.capability-card-skeleton .capability-card-skeleton__menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.capability-card-skeleton .capability-card-skeleton__body {
     flex: 1;
 }
 

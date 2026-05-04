@@ -5,20 +5,21 @@
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useDebounce } from '@/hooks';
-import { Button, Typography, message, Modal, Empty, Input, Spin } from 'antd';
-import { PlusOutlined, SearchOutlined, ExclamationCircleOutlined, AppstoreOutlined } from '@ant-design/icons';
+import { Button, message, Modal } from 'antd';
+import { PlusOutlined, ExclamationCircleOutlined, AppstoreOutlined } from '@ant-design/icons';
 import { fetchCategories, deleteCategory } from '@/services/category.service';
 import type { Category } from '@/interfaces';
 import { PAGE_HEADER_CONTENT } from '@/constants/ui.constants';
 import { 
     CategoryCard, 
-    SearchInput 
+    SearchInput,
+    CollectionPageHeader,
+    CollectionEmptyState,
 } from '@/components';
 import CategoryCardSkeleton from '@/components/CategoryCardSkeleton/CategoryCardSkeleton';
 import CreateCategoryModal from '@/components/CreateCategoryModal/CreateCategoryModal';
 import './CategoriesPage.css';
 
-const { Title, Text } = Typography;
 const { CATEGORIES: CATEGORIES_UI } = PAGE_HEADER_CONTENT;
 
 export default function CategoriesPage() {
@@ -98,33 +99,29 @@ export default function CategoriesPage() {
 
     return (
         <div className="categories-page">
-            <header className="categories-header">
-                <div className="title-section">
-                    <div className="title-row">
-                        <Title level={2} className="header-title-premium">{CATEGORIES_UI.title}</Title>
-                        <div className="header-button-wrap">
-                            <Button 
-                                type="primary"
-                                shape="circle"
-                                className="global-header-add-btn" 
-                                onClick={handleOpenCreate}
-                                title="Create New Category"
-                                icon={<PlusOutlined />}
-                            />
-                        </div>
-                    </div>
-                    <Text type="secondary" className="header-subtitle-premium">
-                        {CATEGORIES_UI.description}
-                    </Text>
-                </div>
-                <div className="categories-toolbar">
-                    <SearchInput
-                        placeholder="Search categories..."
-                        value={searchValue}
-                        onChange={setSearchValue}
+            <CollectionPageHeader
+                title={CATEGORIES_UI.title}
+                description={CATEGORIES_UI.description}
+                action={(
+                    <Button
+                        type="primary"
+                        shape="circle"
+                        className="global-header-add-btn"
+                        onClick={handleOpenCreate}
+                        title="Create New Category"
+                        icon={<PlusOutlined />}
                     />
-                </div>
-            </header>
+                )}
+                aside={(
+                    <div className="categories-toolbar">
+                        <SearchInput
+                            placeholder="Search categories..."
+                            value={searchValue}
+                            onChange={setSearchValue}
+                        />
+                    </div>
+                )}
+            />
 
             <div className="categories-body">
                 {isLoading ? (
@@ -134,34 +131,27 @@ export default function CategoriesPage() {
                         ))}
                     </div>
                 ) : filteredCategories.length === 0 ? (
-                    <div className="categories-empty reveal-up">
-                        <div className="categories-empty-inner">
-                            <div className="categories-empty-icon-shell">
-                                <AppstoreOutlined style={{ fontSize: '48px', color: 'var(--accent)' }} />
-                            </div>
-                            <Title level={4} className="categories-empty-title">
-                                {searchValue ? "No matching categories found" : "Your category list is empty"}
-                            </Title>
-                            <Text type="secondary" className="categories-empty-desc">
-                                {searchValue 
-                                    ? "Try adjusting your search to find the category you're looking for." 
-                                    : "Start by creating your first category to organize your skills."}
-                            </Text>
-                            <div className="categories-empty-actions">
-                                {searchValue ? (
-                                    <Button onClick={() => setSearchValue('')}>Clear search</Button>
-                                ) : (
-                                    <Button 
-                                        type="primary" 
-                                        icon={<PlusOutlined />} 
-                                        onClick={handleOpenCreate}
-                                    >
-                                        Create New Category
-                                    </Button>
-                                )}
-                            </div>
-                        </div>
-                    </div>
+                    <CollectionEmptyState
+                        className="reveal-up"
+                        icon={<AppstoreOutlined />}
+                        title={searchValue ? 'No matching categories found' : 'Your category list is empty'}
+                        description={
+                            searchValue
+                                ? "Try adjusting your search to find the category you're looking for."
+                                : 'Start by creating your first category to organize your skills.'
+                        }
+                        action={searchValue ? (
+                            <Button onClick={() => setSearchValue('')}>Clear search</Button>
+                        ) : (
+                            <Button
+                                type="primary"
+                                icon={<PlusOutlined />}
+                                onClick={handleOpenCreate}
+                            >
+                                Create New Category
+                            </Button>
+                        )}
+                    />
                 ) : (
                     <div className="categories-grid reveal-up">
                         {filteredCategories.map((category) => (

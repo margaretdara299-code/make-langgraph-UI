@@ -21,7 +21,7 @@ export default function CategoryCard({ category, onAction }: CategoryCardProps) 
             className="category-card-premium"
             onDoubleClick={() => onAction?.('edit', (category as any).categoryId ?? category.category_id)}
         >
-            <div className="cc-premium-header">
+            <div className="category-card__header">
                 <div className="ts-icon-container">
                     <DynamicLucideIcon name={category.icon || 'Folder'} size={18} />
                 </div>
@@ -42,7 +42,7 @@ export default function CategoryCard({ category, onAction }: CategoryCardProps) 
                     placement="bottomRight"
                     onOpenChange={(flag) => setIsMenuOpen(flag)}
                 >
-                    <button className="cc-menu-btn" onClick={(e) => e.stopPropagation()}>
+                    <button className="category-card__menu-btn" onClick={(e) => e.stopPropagation()}>
                         <motion.div animate={{ rotate: isMenuOpen ? 90 : 0 }} transition={{ duration: 0.2 }}>
                             <MoreOutlined />
                         </motion.div>
@@ -50,7 +50,7 @@ export default function CategoryCard({ category, onAction }: CategoryCardProps) 
                 </Dropdown>
             </div>
 
-            <div className="cc-premium-body">
+            <div className="category-card__body">
                 <div className="category-name">{category.name}</div>
                 <Paragraph
                     className="category-desc"

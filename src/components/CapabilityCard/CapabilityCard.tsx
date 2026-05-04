@@ -21,7 +21,7 @@ export default function CapabilityCard({ capability, onAction }: CapabilityCardP
             className="capability-card-premium"
             onDoubleClick={() => onAction?.('edit', (capability as any).capabilityId ?? capability.capability_id)}
         >
-            <div className="cc-premium-header">
+            <div className="capability-card__header">
                 <div className="ts-icon-container">
                     <DynamicLucideIcon name={capability.icon || 'Rocket'} size={22} />
                 </div>
@@ -43,7 +43,7 @@ export default function CapabilityCard({ capability, onAction }: CapabilityCardP
                     placement="bottomRight"
                     onOpenChange={(flag) => setIsMenuOpen(flag)}
                 >
-                    <button className="cc-menu-btn" onClick={(e) => e.stopPropagation()}>
+                    <button className="capability-card__menu-btn" onClick={(e) => e.stopPropagation()}>
                         <motion.div animate={{ rotate: isMenuOpen ? 90 : 0 }} transition={{ duration: 0.2 }}>
                             <MoreOutlined />
                         </motion.div>
@@ -51,7 +51,7 @@ export default function CapabilityCard({ capability, onAction }: CapabilityCardP
                 </Dropdown>
             </div>
 
-            <div className="cc-premium-body">
+            <div className="capability-card__body">
                 <div className="capability-name">{capability.name}</div>
                 <Paragraph
                     className="capability-desc"

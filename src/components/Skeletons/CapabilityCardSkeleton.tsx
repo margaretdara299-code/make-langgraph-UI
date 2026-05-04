@@ -1,4 +1,3 @@
-import React from 'react';
 import { Skeleton } from 'antd';
 import './CapabilityCardSkeleton.css';
 
@@ -9,16 +8,16 @@ import './CapabilityCardSkeleton.css';
 export default function CapabilityCardSkeleton() {
     return (
         <div className="capability-card-premium capability-card-skeleton">
-            <div className="cc-premium-header">
-                <div className="cc-premium-icon-box">
+            <div className="capability-card-skeleton__header">
+                <div className="capability-card-skeleton__icon-box">
                     <Skeleton.Button active shape="square" className="skeleton-premium-icon" />
                 </div>
-                <div className="cc-menu-btn">
+                <div className="capability-card-skeleton__menu-btn">
                      <Skeleton.Button active shape="square" className="skeleton-menu-trigger" />
                 </div>
             </div>
 
-            <div className="cc-premium-body">
+            <div className="capability-card-skeleton__body">
                 <div className="capability-name">
                     <Skeleton.Input active size="small" className="skeleton-cap-name" block />
                 </div>

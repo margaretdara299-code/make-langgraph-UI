@@ -82,10 +82,10 @@ function slugify(text: string): string {
 }
 
 /* ─── Section Header ─────────────────────────────────────────── */
-const SectionTitle: React.FC<{ children: React.ReactNode; style?: React.CSSProperties }> = ({
-    children, style
+const SectionTitle: React.FC<{ children: React.ReactNode; className?: string }> = ({
+    children, className
 }) => (
-    <div className="properties-drawer__section-title" style={{ marginTop: 20, ...style }}>
+    <div className={['properties-drawer__section-title', className].filter(Boolean).join(' ')}>
         {children}
     </div>
 );
@@ -170,15 +170,15 @@ export default function SplitPropertiesPanel({
     return (
         <>
             {/* ── 1. Basic Details ──────────────────────────────────── */}
-            <SectionTitle style={{ marginTop: 0 }}>Basic Details</SectionTitle>
-            <Text type="secondary" className="pd-state-description" style={{ marginBottom: 12 }}>
+            <SectionTitle className="pd-section-title-first">Basic Details</SectionTitle>
+            <Text type="secondary" className="pd-state-description pd-state-description--compact">
                 A Split node starts multiple branches at the same time. Use it when the next actions can run independently.
             </Text>
 
 
 
             {/* ── 2. Split Mode ──────────────────────────────────────── */}
-            <SectionTitle style={{ marginTop: 4 }}>Split Mode</SectionTitle>
+            <SectionTitle className="pd-section-title-compact">Split Mode</SectionTitle>
             <Form.Item label="How should this split run?" name="split_mode">
                 <Select
                     options={[
@@ -186,7 +186,7 @@ export default function SplitPropertiesPanel({
                             label: (
                                 <span>
                                     <strong>Run all branches</strong>
-                                    <span style={{ fontSize: 11, color: 'var(--text-subtle)', marginLeft: 6 }}>
+                                    <span className="pd-inline-hint pd-inline-hint--muted">
                                         — Every configured branch runs in parallel
                                     </span>
                                 </span>
@@ -197,7 +197,7 @@ export default function SplitPropertiesPanel({
                             label: (
                                 <span>
                                     <strong>Run matching branches</strong>
-                                    <span style={{ fontSize: 11, color: 'var(--text-subtle)', marginLeft: 6 }}>
+                                    <span className="pd-inline-hint pd-inline-hint--muted">
                                         — Evaluate conditions; all matched branches run
                                     </span>
                                 </span>
@@ -206,7 +206,7 @@ export default function SplitPropertiesPanel({
                         },
                         {
                             label: (
-                                <span style={{ color: 'var(--text-subtle)' }}>
+                                <span className="pd-option-muted">
                                     Run for each item in a list — <em>Coming soon</em>
                                 </span>
                             ),
@@ -219,11 +219,11 @@ export default function SplitPropertiesPanel({
 
             {splitMode === 'parallel_conditional' && (
                 <>
-                    <Divider style={{ margin: '14px 0' }} />
+                    <Divider className="pd-divider-compact" />
 
                     {/* ── 3. Source Data ─────────────────────────────────── */}
-                    <SectionTitle style={{ marginTop: 4 }}>Source Data for Conditions</SectionTitle>
-                    <Text type="secondary" className="pd-state-description" style={{ marginBottom: 12 }}>
+                    <SectionTitle className="pd-section-title-compact">Source Data for Conditions</SectionTitle>
+                    <Text type="secondary" className="pd-state-description pd-state-description--compact">
                         Branch conditions are evaluated against this source data.
                         For example, use <code>claim.amount &gt; 5000</code> to run a high-dollar review branch.
                     </Text>
@@ -256,7 +256,7 @@ export default function SplitPropertiesPanel({
                     )}
 
                     <Form.Item label="Output Key" name="source_output_key">
-                        <Input placeholder="e.g. response, data, result" style={{ fontFamily: 'monospace' }} />
+                        <Input placeholder="e.g. response, data, result" className="pd-input-mono" />
                     </Form.Item>
 
                     <Form.Item
@@ -264,16 +264,16 @@ export default function SplitPropertiesPanel({
                         name="source_path"
                         extra="Use dot notation: claim.amount, patient.hasInsurance, response.data.status"
                     >
-                        <Input placeholder="e.g. claim.amount" style={{ fontFamily: 'monospace' }} />
+                        <Input placeholder="e.g. claim.amount" className="pd-input-mono" />
                     </Form.Item>
                 </>
             )}
 
-            <Divider style={{ margin: '14px 0' }} />
+            <Divider className="pd-divider-compact" />
 
             {/* ── 4. Parallel Branches ──────────────────────────────── */}
-            <SectionTitle style={{ marginTop: 4 }}>Parallel Branches</SectionTitle>
-            <Text type="secondary" className="pd-state-description" style={{ marginBottom: 12 }}>
+            <SectionTitle className="pd-section-title-compact">Parallel Branches</SectionTitle>
+            <Text type="secondary" className="pd-state-description pd-state-description--compact">
                 Each branch creates one output connector on the Split node.
                 Connect each handle to an Action node that should run in parallel.
             </Text>
@@ -282,14 +282,8 @@ export default function SplitPropertiesPanel({
                 {(fields, { add, remove }) => (
                     <>
                         {fields.length === 0 && (
-                            <div style={{
-                                padding: '14px',
-                                border: '1px dashed var(--border-light)',
-                                borderRadius: 6,
-                                marginBottom: 12,
-                                textAlign: 'center',
-                            }}>
-                                <Text type="secondary" style={{ fontSize: 12 }}>
+                            <div className="pd-empty-panel">
+                                <Text type="secondary" className="pd-empty-panel__text">
                                     No branches added yet.<br />
                                     Add branches to create output connectors on this Split node.
                                     Each branch can run in parallel.
@@ -303,43 +297,23 @@ export default function SplitPropertiesPanel({
                             const connection = connectedBranchIds[branchId];
 
                             return (
-                                <div
-                                    key={key}
-                                    style={{
-                                        border: '1px solid var(--border-light)',
-                                        borderRadius: 8,
-                                        padding: '12px 12px 8px',
-                                        marginBottom: 10,
-                                        background: 'var(--surface-0, #fff)',
-                                    }}
-                                >
+                                <div key={key} className="senior-branch-card">
                                     {/* Branch header row */}
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                                        <Tag
-                                            style={{
-                                                background: 'rgba(236,72,153,0.1)',
-                                                color: 'var(--color-node-split, #ec4899)',
-                                                border: 'none',
-                                                fontWeight: 700,
-                                                fontSize: 10,
-                                            }}
-                                        >
+                                    <div className="senior-branch-card__header">
+                                        <Tag className="senior-branch-number-tag">
                                             Branch {fieldName + 1}
                                         </Tag>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                        <div className="senior-branch-status">
                                             {connection ? (
-                                                <Tag icon={<CheckCircleOutlined />} color="success" style={{ fontSize: 10 }}>
+                                                <Tag icon={<CheckCircleOutlined />} color="success" className="pd-tag-xs">
                                                     → {connection.targetLabel}
                                                 </Tag>
                                             ) : (
-                                                <Tag icon={<WarningOutlined />} color="default" style={{ fontSize: 10, color: 'var(--text-subtle)' }}>
+                                                <Tag icon={<WarningOutlined />} color="default" className="pd-tag-xs pd-tag-xs--muted">
                                                     Not connected
                                                 </Tag>
                                             )}
-                                            <DeleteOutlined
-                                                style={{ color: 'var(--color-error)', cursor: 'pointer' }}
-                                                onClick={() => remove(fieldName)}
-                                            />
+                                            <DeleteOutlined className="senior-delete-trigger" onClick={() => remove(fieldName)} />
                                         </div>
                                     </div>
 
@@ -348,7 +322,7 @@ export default function SplitPropertiesPanel({
                                         {...restField}
                                         name={[fieldName, 'label']}
                                         rules={[{ required: true, message: 'Branch name required' }]}
-                                        style={{ marginBottom: 8 }}
+                                        className="senior-form-item-tight"
                                     >
                                         <Input
                                             placeholder="e.g. Eligibility Check"
@@ -368,11 +342,11 @@ export default function SplitPropertiesPanel({
                                                 message: 'Must start with a letter, lowercase + underscores only',
                                             },
                                         ]}
-                                        style={{ marginBottom: 8 }}
+                                        className="senior-form-item-tight"
                                     >
                                         <Input
                                             placeholder="e.g. eligibility_check"
-                                            style={{ fontFamily: 'monospace', fontSize: 12 }}
+                                            className="pd-input-mono-sm"
                                         />
                                     </Form.Item>
 
@@ -381,8 +355,8 @@ export default function SplitPropertiesPanel({
                                     {/* ── Condition fields (only for conditional mode) ── */}
                                     {splitMode === 'parallel_conditional' && (
                                         <>
-                                            <Divider style={{ margin: '8px 0 10px' }} />
-                                            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-subtle)', marginBottom: 8 }}>
+                                            <Divider className="pd-divider-tight" />
+                                            <div className="senior-conditions-title">
                                                 CONDITIONS
                                             </div>
 
@@ -426,7 +400,7 @@ export default function SplitPropertiesPanel({
                                                                                     <div className="senior-cond-label-row">
                                                                                         <span className="senior-cond-label">
                                                                                             Field Path
-                                                                                            <span style={{ fontSize: 10, color: '#94a3b8', marginLeft: 4 }}>
+                                                                                            <span className="senior-cond-hint senior-cond-hint--with-offset">
                                                                                                 (nested: data.items.code)
                                                                                             </span>
                                                                                         </span>
@@ -446,8 +420,7 @@ export default function SplitPropertiesPanel({
                                                                                                 placeholder="e.g. status or data.result"
                                                                                                 size="small"
                                                                                                 variant="borderless"
-                                                                                                className="senior-inner-input"
-                                                                                                style={{ fontFamily: 'monospace', fontSize: 12 }}
+                                                                                                className="senior-inner-input pd-input-mono-sm"
                                                                                             />
                                                                                         </Form.Item>
                                                                                     </div>
@@ -476,7 +449,7 @@ export default function SplitPropertiesPanel({
                                                                                     <span className="senior-cond-label">
                                                                                         Compare With
                                                                                         {isListOp && (
-                                                                                            <span style={{ fontSize: 10, color: '#94a3b8', marginLeft: 4 }}>
+                                                                                            <span className="senior-cond-hint senior-cond-hint--with-offset">
                                                                                                 (comma separated)
                                                                                             </span>
                                                                                         )}
@@ -502,7 +475,7 @@ export default function SplitPropertiesPanel({
                                                                 </div>
                                                             );
                                                         })}
-                                                        <div className="senior-add-cond-wrap" style={{ marginTop: 8 }}>
+                                                        <div className="senior-add-cond-wrap senior-add-cond-wrap--spaced">
                                                             <Button
                                                                 type="text"
                                                                 size="small"
@@ -534,7 +507,7 @@ export default function SplitPropertiesPanel({
                                 condition_match_type: 'all',
                             })}
                             block
-                            style={{ marginBottom: 4 }}
+                            className="senior-add-branch-btn--split"
                         >
                             Add Branch
                         </Button>
@@ -542,10 +515,10 @@ export default function SplitPropertiesPanel({
                 )}
             </Form.List>
 
-            <Divider style={{ margin: '14px 0' }} />
+            <Divider className="pd-divider-compact" />
 
             {/* ── 5. Execution Rules ────────────────────────────────── */}
-            <SectionTitle style={{ marginTop: 4 }}>Execution Rules</SectionTitle>
+            <SectionTitle className="pd-section-title-compact">Execution Rules</SectionTitle>
 
             <Form.Item
                 label="What if an optional branch fails?"
@@ -562,20 +535,11 @@ export default function SplitPropertiesPanel({
 
             {/* ── Validation warnings ──────────────────────────────── */}
             {warnings.length > 0 && (
-                <div style={{
-                    marginTop: 14,
-                    padding: '10px 12px',
-                    background: 'var(--color-warning-bg, #fffbeb)',
-                    border: '1px solid rgba(245,158,11,0.25)',
-                    borderRadius: 6,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 4,
-                }}>
+                <div className="pd-warning-panel">
                     {warnings.map((w, i) => (
-                        <div key={i} style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
-                            <WarningOutlined style={{ color: 'var(--color-warning)', marginTop: 2 }} />
-                            <Text style={{ fontSize: 12 }}>{w}</Text>
+                        <div key={i} className="pd-warning-item">
+                            <WarningOutlined className="pd-warning-icon" />
+                            <Text className="pd-warning-text">{w}</Text>
                         </div>
                     ))}
                 </div>

@@ -9,11 +9,11 @@
   background: rgba(255, 255, 255, 0.6) !important;
   backdrop-filter: blur(8px);
   border: 1px solid var(--border-medium) !important;
-  border-radius: 10px !important;
-  padding: 4px var(--space-1-5) !important; /* Reduced vertical padding */
+  border-radius: var(--control-radius) !important;
+  padding: 0 var(--control-padding-x-md) !important;
   box-shadow: var(--shadow-xs);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  height: 38px !important; /* Fixed height for precision */
+  transition: border-color var(--motion-base) var(--ease-out), background-color var(--motion-base) var(--ease-out), box-shadow var(--motion-base) var(--ease-out);
+  height: var(--control-md-height) !important;
 }
 
 .premium-search-input.ant-input-affix-wrapper:hover {
@@ -28,13 +28,13 @@
 }
 
 .premium-search-input .ant-input-prefix {
-  margin-inline-end: 10px !important; /* Precisely space text from icon */
+  margin-inline-end: var(--space-1-5) !important;
 }
 
 .premium-search-input .search-icon {
   color: var(--text-subtle);
-  font-size: var(--text-lg); /* Slightly larger icon */
-  transition: color 0.2s ease;
+  font-size: var(--text-lg);
+  transition: color var(--motion-base) var(--ease-out);
 }
 
 .premium-search-input.ant-input-affix-wrapper-focused .search-icon {
